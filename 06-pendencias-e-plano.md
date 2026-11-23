@@ -81,10 +81,10 @@ Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
 2. Rever cruzadamente 02, 03, 05, 06 e 07; após validação, decidir a aprovação documental de ARC-002.
 3. Produzir UML de domínio, sequências e máquinas de estado dos fluxos críticos.
 4. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
-4. Definir modelo físico, constraints, precisão monetária, transações e estratégia de concorrência.
-5. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
-6. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
-7. Rever e aprovar a especificação e o plano de implementação.
+5. Definir modelo físico, constraints, precisão monetária, transações e estratégia de concorrência.
+6. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
+7. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
+8. Rever e aprovar a especificação e o plano de implementação.
 
 ## Critério para iniciar implementação estrutural
 Não iniciar antes de aprovar arquitetura/UML, definir precisão monetária e integridade transacional, especificar fluxos críticos, concluir interfaces da primeira fase e definir critérios de aceitação/testes.
