@@ -12,7 +12,7 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 | 5. Stack principal | Aprovada |
 | 6. Organização do repositório | Aprovada |
 | 7. Decisão ARC-001 — destino dos lançamentos | Aprovada |
-| 8. Modelo ER conceptual (ARC-002) | Proposta consolidada; aprovação documental pendente |
+| 8. Modelo ER conceptual (ARC-002) | Proposta atualizada; aprovação documental pendente |
 | 9. UML complementar e modelo físico | Por fazer |
 | 10. Validação final e plano de implementação | Por fazer |
 
@@ -50,7 +50,7 @@ Foi criado [07 — Modelo ER](07-modelo-er.md), que contém:
 - Contratos de leitura das páginas, com foco na diferença entre Dashboard, Movimentos e Rota Financeira.
 - Pontos que ainda precisam de decisão antes do modelo físico.
 
-**Estado:** proposta conceptual consolidada após validação dos fluxos de compra parcelada, obrigações em períodos `PLANNED`, pagamento/alocação de faturas, planos vencidos, exposição inicial, unicidade de ciclo `OPEN`, transferências e reembolsos. Aguarda aprovação documental explícita. Não iniciar migrations com base neste desenho.
+**Estado:** proposta conceptual atualizada para incluir saldo inicial de cartão integralmente distribuído por faturas, distribuições históricas, correções, rastreabilidade de reversões e pagamentos multi-fatura. Aguarda aprovação documental explícita. Não iniciar migrations com base neste desenho.
 
 ## Decisões de produto ainda pendentes
 Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de especificar os comportamentos finais correspondentes.
@@ -58,15 +58,13 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 | Tema | Decisão pendente |
 |---|---|
 | Planos de fatura vencidos | Se existe débito automático ou reagendamento automático após o vencimento; sem aprovação, não inventar nova data. |
-| Exposição inicial de cartão | Se a parte `UNALLOCATED` pode permanecer sem distribuição por tempo indeterminado. |
-| Alocação de pagamentos iniciais | FIFO por ciclo mais antigo como padrão recomendado ou escolha manual obrigatória/disponível. |
 | Faturas anteriores | Como apresentar faturas de ciclos anteriores que continuam com obrigação em aberto. |
 | Compra no dia do fecho | Regra de atribuição ao ciclo quando a compra ocorre na data de fecho. |
 | Crédito negativo de fatura | Se é permitido, como transita para ciclos seguintes e em que condições pode ser devolvido à conta. |
 | Estimativa variável da Rota | Categorias iniciais, janela histórica, fórmula, distribuição diária e comunicação de dados `UNCLASSIFIED`. |
 | Moeda e precisão | Escala, arredondamento e se a moeda principal pode mudar depois de existirem movimentos. |
 
-**Nota de consistência a resolver no modelo ER:** a representação da exposição inicial não distribuída deve continuar compatível com a fonte de verdade financeira e com ARC-001. Não criar uma fonte paralela de dívida nem inventar uma fatura artificial. O destino/relação contabilística dessa exposição deve ficar explícito antes do modelo físico.
+**Contrato de saldo inicial de cartão definido:** saldo inicial positivo é integralmente distribuído por faturas; não existe parcela por distribuir, obrigação especial em dívidas ou novo destino financeiro. A operação original é única por cartão. Distribuições históricas são imutáveis; correções e reversões são rastreáveis. A obrigação em aberto deriva exclusivamente de `financial_entries`.
 
 ## Trabalho funcional pendente
 - Desenhar subpáginas de Contas, Cartões e Dívidas.
@@ -79,8 +77,9 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
 
 ## Próxima sequência recomendada
-1. Rever e aprovar documentalmente o modelo ER conceptual consolidado (ARC-002), incluindo a ressalva da exposição inicial não distribuída.
-2. Produzir UML de domínio, sequências e máquinas de estado dos fluxos críticos.
+1. Validar os cenários do saldo inicial distribuído, correções, reversões e pagamentos multi-fatura no modelo ER atualizado (ARC-002).
+2. Rever cruzadamente 02, 03, 05, 06 e 07; após validação, decidir a aprovação documental de ARC-002.
+3. Produzir UML de domínio, sequências e máquinas de estado dos fluxos críticos.
 3. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
 4. Definir modelo físico, constraints, precisão monetária, transações e estratégia de concorrência.
 5. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
