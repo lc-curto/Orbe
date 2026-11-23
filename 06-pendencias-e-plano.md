@@ -27,13 +27,23 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 ## Decisões técnicas pendentes
 | ID | Decisão | Estado |
 |---|---|---|
-| ARC-001 | Destino/referência dos lançamentos: específica ou genérica | Pendente |
+| ARC-001 | Destino/referência dos lançamentos: referências específicas recomendadas; aprovação pendente | Recomendação apresentada |
 | ARC-002 | Modelo físico, cardinalidades e constraints | Pendente |
 | ARC-003 | Representação monetária, escala e arredondamento | Pendente |
 | ARC-004 | Autenticação e sessões | Pendente |
 | ARC-006 | Alojamento, deploy e ambientes | Pendente |
 | ARC-007 | Scheduler, filas e processamento assíncrono | Em análise |
 | ARC-008 | Testes, CI/CD, backup e recuperação | Pendente |
+
+## ARC-001 — conclusão da comparação
+Foram comparadas:
+- Referências específicas a conta, fatura e dívida, com FKs próprias e constraint de destino único.
+- Associação polimórfica `destination_type + destination_id`, sem FK SQL direta para as várias tabelas.
+- Superentidade `financial_destinations`, com FK do lançamento para a identidade genérica e relações para as especializações.
+
+**Recomendação técnica:** referências específicas. A opção polimórfica foi desaconselhada para o núcleo financeiro por não garantir a existência do destino através de FK nativa. A superentidade preserva uma FK, mas acrescenta complexidade e não garante, isoladamente, a existência de exatamente uma especialização válida.
+
+**Aprovação do utilizador ainda necessária.** Consultar a análise completa e as fontes em [05 — Arquitetura e UML](05-arquitetura-e-uml.md), secção ARC-001.
 
 ## Trabalho funcional pendente
 - Desenhar subpáginas de Contas, Cartões e Dívidas.
@@ -46,7 +56,7 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
 
 ## Próxima sequência recomendada
-1. Resolver ARC-001.
+1. Aprovar ou rejeitar a recomendação ARC-001.
 2. Fechar modelo conceptual e UML.
 3. Definir modelo físico, precisão monetária e transações.
 4. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
