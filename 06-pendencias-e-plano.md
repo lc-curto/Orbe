@@ -80,7 +80,7 @@ Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
 1. Validar os cenários do saldo inicial distribuído, correções, reversões e pagamentos multi-fatura no modelo ER atualizado (ARC-002).
 2. Rever cruzadamente 02, 03, 05, 06 e 07; após validação, decidir a aprovação documental de ARC-002.
 3. Produzir UML de domínio, sequências e máquinas de estado dos fluxos críticos.
-3. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
+4. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
 4. Definir modelo físico, constraints, precisão monetária, transações e estratégia de concorrência.
 5. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
 6. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
