@@ -1,6 +1,6 @@
 # 05 — Arquitetura e UML
 
-**Estado: em análise.** A stack principal, a organização em monorepo e a decisão ARC-001 estão aprovadas. O desenho detalhado do modelo de dados e da infraestrutura ainda precisa de validação. Uma proposta não autoriza implementação.
+**Estado:** stack, monorepo e ARC-001 aprovados. O modelo ER conceptual foi consolidado para aprovação documental; o modelo físico, migrations e detalhes de infraestrutura continuam por aprovar. Uma proposta não autoriza implementação.
 
 ## 1. Stack tecnológica aprovada
 - **Backend:** Laravel 13 + PHP.
@@ -46,7 +46,7 @@ O documento detalha:
 - A diferença entre os dados efetivos e os eventos usados em projeções.
 - Como Dashboard, Movimentos, Rota Financeira e restantes páginas consultam o mesmo núcleo com objetivos e granularidades diferentes.
 
-**Estado:** proposta conceptual elaborada; ARC-002 aguarda validação. O diagrama não é ainda esquema físico e não autoriza migrations.
+**Estado:** proposta conceptual consolidada após validação dos fluxos de cartões, faturas, parcelas, pagamentos, transferências, reembolsos e projeções. ARC-002 aguarda aprovação documental explícita. O diagrama não é esquema físico e não autoriza migrations.
 
 ## 4. ARC-001 — Destino dos lançamentos financeiros
 
@@ -93,8 +93,15 @@ Fontes técnicas:
 
 O domínio não deve depender da interface. Regras financeiras não devem ser reimplementadas separadamente nos clientes.
 
-## 6. Consistência e concorrência — proposta a validar
-Transações de base de dados; constraints de integridade/unicidade; bloqueios quando necessários; ocorrências recorrentes idempotentes; tratamento de deadlocks; confirmação financeira consistente; tarefas assíncronas apenas quando não comprometem consistência imediata.
+## 6. Consistência e concorrência — princípios consolidados
+- Operações que geram vários lançamentos devem ser confirmadas numa única transação.
+- Pagamento de fatura: saída da conta, redução da fatura e respetivas alocações são atómicos.
+- Compra parcelada: operação, alocações de compra e lançamentos de obrigação são confirmados em conjunto.
+- Validações que abrangem várias linhas (somas, saldos restantes e alocações) exigem lógica de domínio/transação; não podem ser delegadas a um `CHECK` de linha.
+- Bloquear as linhas de obrigação/alvo antes de validar e criar alocações concorrentes; tratar deadlocks com política de repetição segura.
+- Usar chaves de idempotência/constraints de unicidade para impedir repetição de pagamentos, materialização de ocorrências e confirmação de compras.
+- A unicidade de ciclo `OPEN` é protegida por índice `UNIQUE` sobre coluna gerada nullable e por bloqueio transacional da linha do cartão no MySQL 8.4.
+- Tarefas assíncronas não podem quebrar a atomicidade dos efeitos financeiros imediatos.
 
 ## 7. Persistência e desempenho — proposta a validar
 MySQL/InnoDB; índices baseados em consultas reais; análise de planos de execução; evitar N+1; paginação adequada; cache apenas de dados derivados e reconstruíveis. Não introduzir Redis, Elasticsearch ou microserviços sem necessidade demonstrada.
@@ -105,14 +112,44 @@ Aritmética exata. Definir escala, arredondamento e representação persistida a
 ## 9. UML a produzir e aprovar
 1. ER: entidades, atributos essenciais, cardinalidades, chaves e constraints.
 2. Domínio/classes: responsabilidades e relações financeiras.
-3. Sequência: despesa, compra/pagamento de cartão, pagamento parcial de dívida, transferência, reversão e recorrência.
-4. Estados: transições de operações e entidades relevantes.
+3. Sequência: despesa, compra parcelada, abertura de ciclo, pagamento integral/parcial de fatura, plano vencido, saldo inicial de cartão, pagamento parcial de dívida, transferência, reversão/reembolso e recorrência.
+4. Estados: transições de operações, ciclos de faturação, planos de pagamento e obrigações.
 5. Modelo físico: tabelas, índices e integridade referencial, após aprovação conceptual.
+
+### Sequência conceptual — compra parcelada
+1. Confirmar uma única operação de compra.
+2. Criar as alocações para os períodos de faturação identificados, incluindo períodos `PLANNED`.
+3. Criar um lançamento de obrigação por alocação, com destino à respetiva fatura/período.
+4. Não criar saída de conta bancária.
+5. A abertura futura do ciclo altera apenas o estado operacional; não cria lançamentos.
+6. A projeção de pagamentos futuros é calculada separadamente.
+
+### Sequência conceptual — pagamento de fatura
+1. Confirmar a operação de pagamento.
+2. Criar o lançamento de saída com destino à conta.
+3. Criar o lançamento de redução com destino à fatura.
+4. Alocar a redução a um ou vários lançamentos de obrigação através de `payment_allocations`.
+5. Validar limites e somas sob transação/bloqueio.
+6. Confirmar tudo em conjunto; a operação não é uma despesa.
+
+### Sequência conceptual — plano vencido
+1. Antes da data, o plano reserva uma parcela identificada da obrigação e projeta a saída na data prevista.
+2. Sem confirmação na data, o plano passa a vencido e deixa de ser saída futura nessa data passada.
+3. A obrigação permanece vencida; a liquidação residual cobre apenas a parte não reservada.
+4. Sem regra de débito/reagendamento automático aprovada, não criar uma nova data futura.
 
 O ER conceptual está apresentado em [07 — Modelo ER](07-modelo-er.md). As restantes vistas UML e o modelo físico continuam por produzir/aprovar.
 
 ## 10. Testes de arquitetura
 Testar domínio sem interface, persistência/constraints, transações/concorrência, idempotência, fluxos financeiros completos e consistência entre consultas e saldos.
 
-## 11. Decisões técnicas ainda pendentes
-Validação do modelo ER (ARC-002); modelo físico e cardinalidades; representação monetária, escala e arredondamento; autenticação e sessões; alojamento e deploy; ferramentas de testes e CI/CD; backups e recuperação.
+## 11. Decisões técnicas e de produto ainda pendentes
+- Aprovação documental do modelo ER conceptual (ARC-002).
+- Modelo físico final, cardinalidades, índices e constraints detalhadas.
+- Representação monetária, escala e arredondamento (ARC-003).
+- Autenticação e sessões (ARC-004).
+- Alojamento, deploy e ambientes (ARC-006).
+- Scheduler, filas e processamento assíncrono (ARC-007).
+- Testes, CI/CD, backup e recuperação (ARC-008).
+- Decisões de produto sobre débito/reagendamento automático de planos vencidos, exposição inicial não distribuída, preferência FIFO/seleção manual, apresentação de faturas antigas, compras no dia do fecho e crédito negativo de fatura.
+- Fonte, janela, cálculo e apresentação das estimativas de despesas variáveis na Rota.
