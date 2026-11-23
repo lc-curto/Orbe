@@ -33,7 +33,7 @@ erDiagram
     FINANCIAL_ACCOUNTS o|--o{ FINANCIAL_ENTRIES : destination
     CARDS ||--o{ CARD_INVOICES : issues
     CARD_INVOICES o|--o{ FINANCIAL_ENTRIES : destination
-    OPERATIONS o|--o| CARD_OPENING_BALANCES : opening_operation
+    OPERATIONS ||--o| CARD_OPENING_BALANCES : opening_operation
     CARDS ||--o| CARD_OPENING_BALANCES : opening_balance
     CARD_OPENING_BALANCES ||--|{ OPENING_BALANCE_DISTRIBUTIONS : distributes
     CARD_INVOICES ||--o{ OPENING_BALANCE_DISTRIBUTIONS : receives
@@ -125,6 +125,7 @@ Referências compostas ou validação transacional deverão impedir que uma oper
 | `invoice_payment_plans` | Intenção de pagamento e data prevista | id, invoice_id, operation_id, amount, planned_date, state |
 | `payment_plan_allocations` | Parcela da obrigação reservada por um plano | id, payment_plan_id, obligation_entry_id, amount |
 | `payment_allocations` | Associação entre redução de fatura e obrigações liquidadas | id, payment_operation_id, settlement_entry_id, obligation_entry_id, amount |
+| `payment_reversal_allocations` | Rastreabilidade da reversão de uma alocação de pagamento | id, reversal_operation_id, original_payment_allocation_id, account_reversal_entry_id, invoice_reversal_entry_id, amount |
 
 #### Ciclos e faturas
 
@@ -171,7 +172,7 @@ Invariantes:
 
 Cada registo identifica a `payment_allocation` original, o lançamento de entrada na conta, o lançamento de aumento da obrigação na mesma fatura e o montante revertido. A soma das reversões associadas a uma alocação nunca pode exceder o valor original dessa alocação. Reversões parciais são permitidas; o saldo ainda reversível é calculado considerando todas as reversões anteriores.
 
-A operação de reversão, os efeitos na conta e nas faturas e as relações de rastreabilidade são atómicos. A reversão não apaga nem altera a liquidação original.
+A operação de reversão, os efeitos na conta e nas faturas e as relações de rastreabilidade são atómicos. A reversão não apaga nem altera a liquidação original. Uma reversão pode abranger várias alocações originais, mantendo uma única operação de reversão e uma única entrada total na conta, com aumentos por fatura e relações específicas por alocação compensada.
 
 #### Planos de pagamento e projeção
 
@@ -202,6 +203,7 @@ Entidades conceptuais:
 | `card_opening_balances` | Extensão 1:1 da operação original, associando-a a um cartão | id, card_id, operation_id, declared_amount |
 | `opening_balance_distributions` | Distribuição histórica inicial, imutável, por fatura | id, opening_balance_id, invoice_id, amount, obligation_entry_id |
 | `opening_balance_adjustments` | Correção/redistribuição posterior, ligada à distribuição e à operação corretiva | id, source_distribution_id, correction_operation_id, source_entry_id, destination_invoice_id, source_reduction_entry_id, destination_increase_entry_id, amount |
+| `payment_reversal_allocations` | Associação entre a reversão e a alocação de pagamento original compensada | id, reversal_operation_id, original_payment_allocation_id, account_reversal_entry_id, invoice_reversal_entry_id, amount |
 
 Cardinalidades e limites:
 - Um cartão tem zero ou uma operação original de saldo inicial; a extensão `card_opening_balances` é única por cartão e por operação.
@@ -408,6 +410,7 @@ As regras conceptuais do saldo inicial distribuído, das correções, dos pagame
 - Bloqueio das obrigações/alvos antes de validar alocações concorrentes; somas multi-linha exigem lógica transacional.
 - Unicidade e geração idempotente para ocorrências recorrentes, compras, pagamentos, criação de saldo inicial, correções/redistribuições, reversões e abertura de ciclos.
 - Para redistribuições e pagamentos concorrentes, bloquear o cartão e os lançamentos de obrigação envolvidos numa ordem consistente; recalcular a disponibilidade dentro da transação e repetir com segurança em caso de conflito.
+- Os comandos de criação do saldo inicial, redistribuição e reversão devem ter chave de idempotência com unicidade no âmbito do utilizador e do tipo de comando; a repetição devolve o resultado original sem gerar novos efeitos.
 - Para uma fatura `OPEN` por cartão no MySQL 8.4: coluna gerada nullable com índice `UNIQUE`, combinada com `SELECT ... FOR UPDATE` na linha do cartão; unicidade adicional de cartão/período.
 - Não criar tabelas para Dashboard, Movimentos ou Rota Financeira. São consultas/read models sobre as entidades acima.
 - Índices devem decorrer dos filtros reais: user, estado, tipo, datas, categoria, destino e relações de recorrência.
