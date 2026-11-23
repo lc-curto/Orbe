@@ -67,12 +67,20 @@ A especificação detalhada será feita depois das páginas principais.
 - Abrir um período não volta a criar lançamentos.
 - A confirmação deve ser idempotente: repetir o pedido não pode duplicar despesa, alocações ou obrigações.
 
+### Saldo inicial do cartão
+- Saldo inicial zero não exige distribuição.
+- Saldo inicial positivo exige uma operação própria e distribuição integral por faturas/ciclos; o total distribuído tem de coincidir exatamente com o saldo informado.
+- Cada distribuição reconhece obrigação na fatura indicada. Não é compra, despesa, receita nem saída de conta.
+- Um cartão pode ter zero ou uma operação original de saldo inicial. Distribuições iniciais são preservadas; correções posteriores são operações associadas e não uma nova abertura.
+- Redistribuição só pode atingir a parcela ainda não liquidada. Não se altera silenciosamente o destino de lançamentos confirmados.
+
 ### Pagamento de fatura
-- O pagamento confirmado cria o efeito de saída na conta e o efeito de redução na fatura.
-- A redução é alocada a uma ou várias obrigações específicas da fatura.
-- Pagamentos parciais são permitidos; apenas o valor efetivamente pago é alocado.
-- A soma das alocações tem de coincidir com o valor do efeito de redução da fatura.
-- O pagamento e todos os seus efeitos/alocações são atómicos: ou são confirmados em conjunto ou nenhum é confirmado.
+- Um pagamento pode abranger várias faturas, mantendo uma única operação na interface.
+- O pagamento cria uma saída total na conta e uma redução por cada fatura abrangida.
+- Cada redução é alocada a obrigações específicas da mesma fatura.
+- Pagamentos parciais são permitidos; a soma das reduções tem de coincidir com a saída total.
+- A operação, a saída, todas as reduções e as alocações são atómicas: ou são confirmadas em conjunto ou nenhuma é confirmada.
+- Reversões mantêm ligação às alocações originais através de rastreabilidade própria; não reutilizam `payment_allocations`.
 
 ### Pagamentos planeados
 - Um plano de pagamento não é um lançamento efetivo e não altera saldos.
@@ -96,3 +104,8 @@ A especificação detalhada será feita depois das páginas principais.
 7. Um plano vencido continua representado como obrigação vencida, mas não como saída futura numa data passada.
 8. Planos explícitos e liquidação residual não podem projetar duas vezes a mesma parcela.
 9. A abertura concorrente de ciclos não pode criar duas faturas `OPEN` para o mesmo cartão.
+10. Um saldo inicial positivo é distribuído integralmente por faturas, sem parcela não atribuída.
+11. Redistribuições não alteram a exposição total e não podem consumir valores já liquidados.
+12. Um pagamento que abrange várias faturas gera uma saída total e reduções por fatura, numa única transação.
+13. Reversões parciais e totais de pagamentos identificam as alocações originais e respeitam o limite ainda não revertido.
+14. Criação do saldo inicial, redistribuições e reversões são idempotentes; repetição não duplica efeitos.
