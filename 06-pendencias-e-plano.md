@@ -12,7 +12,7 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 | 5. Stack principal | Aprovada |
 | 6. Organização do repositório | Aprovada |
 | 7. Decisão ARC-001 — destino dos lançamentos | Aprovada |
-| 8. Modelo ER conceptual (ARC-002) | Proposta atualizada; aprovação documental pendente |
+| 8. Modelo ER conceptual (ARC-002) | Aprovada como especificação de domínio |
 | 9. UML complementar e modelo físico | Por fazer |
 | 10. Validação final e plano de implementação | Por fazer |
 
@@ -29,7 +29,7 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 ## Decisões técnicas pendentes
 | ID | Decisão | Estado |
 |---|---|---|
-| ARC-002 | Aprovar documentalmente o modelo ER conceptual consolidado e fechar cardinalidades | Aprovação pendente |
+| ARC-002 | Modelo ER conceptual consolidado | Aprovado como especificação de domínio |
 | ARC-003 | Representação monetária, escala e arredondamento | Pendente |
 | ARC-004 | Autenticação e sessões | Pendente |
 | ARC-006 | Alojamento, deploy e ambientes | Pendente |
@@ -50,7 +50,7 @@ Foi criado [07 — Modelo ER](07-modelo-er.md), que contém:
 - Contratos de leitura das páginas, com foco na diferença entre Dashboard, Movimentos e Rota Financeira.
 - Pontos que ainda precisam de decisão antes do modelo físico.
 
-**Estado:** proposta conceptual atualizada para incluir saldo inicial de cartão integralmente distribuído por faturas, distribuições históricas, correções, rastreabilidade de reversões e pagamentos multi-fatura. Aguarda aprovação documental explícita. Não iniciar migrations com base neste desenho.
+**Estado: APROVADO.** O modelo ER conceptual foi aprovado como especificação de domínio, incluindo saldo inicial integralmente distribuído por faturas, distribuições históricas, correções, rastreabilidade de reversões e pagamentos multi-fatura. Esta aprovação não aprova o modelo físico nem autoriza migrations.
 
 ## Decisões de produto ainda pendentes
 Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de especificar os comportamentos finais correspondentes.
@@ -77,14 +77,12 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
 
 ## Próxima sequência recomendada
-1. Validar os cenários do saldo inicial distribuído, correções, reversões e pagamentos multi-fatura no modelo ER atualizado (ARC-002).
-2. Rever cruzadamente 02, 03, 05, 06 e 07; após validação, decidir a aprovação documental de ARC-002.
-3. Produzir UML de domínio, sequências e máquinas de estado dos fluxos críticos.
-4. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
-5. Definir modelo físico, constraints, precisão monetária, transações e estratégia de concorrência.
-6. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
-7. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
-8. Rever e aprovar a especificação e o plano de implementação.
+1. Produzir UML complementar de domínio, sequências e máquinas de estado dos fluxos críticos, respeitando o ER aprovado.
+2. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
+3. Definir o modelo físico, constraints, precisão monetária, transações e estratégia de concorrência.
+4. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
+5. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
+6. Rever e aprovar a especificação e o plano de implementação.
 
 ## Critério para iniciar implementação estrutural
 Não iniciar antes de aprovar arquitetura/UML, definir precisão monetária e integridade transacional, especificar fluxos críticos, concluir interfaces da primeira fase e definir critérios de aceitação/testes.
