@@ -11,8 +11,9 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 | 4. Páginas principais | Aprovada |
 | 5. Stack principal | Aprovada |
 | 6. Organização do repositório | Aprovada |
-| 7. Arquitetura detalhada e UML | Em análise |
-| 8. Validação e plano de implementação | Por fazer |
+| 7. Decisão ARC-001 — destino dos lançamentos | Aprovada |
+| 8. Arquitetura detalhada e UML | Em análise |
+| 9. Validação e plano de implementação | Por fazer |
 
 ## Stack tecnológica e organização aprovadas
 - Backend: Laravel 13 + PHP.
@@ -27,7 +28,6 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 ## Decisões técnicas pendentes
 | ID | Decisão | Estado |
 |---|---|---|
-| ARC-001 | Destino/referência dos lançamentos: referências específicas recomendadas; aprovação pendente | Recomendação apresentada |
 | ARC-002 | Modelo físico, cardinalidades e constraints | Pendente |
 | ARC-003 | Representação monetária, escala e arredondamento | Pendente |
 | ARC-004 | Autenticação e sessões | Pendente |
@@ -35,15 +35,10 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 | ARC-007 | Scheduler, filas e processamento assíncrono | Em análise |
 | ARC-008 | Testes, CI/CD, backup e recuperação | Pendente |
 
-## ARC-001 — conclusão da comparação
-Foram comparadas:
-- Referências específicas a conta, fatura e dívida, com FKs próprias e constraint de destino único.
-- Associação polimórfica `destination_type + destination_id`, sem FK SQL direta para as várias tabelas.
-- Superentidade `financial_destinations`, com FK do lançamento para a identidade genérica e relações para as especializações.
+## ARC-001 — decisão aprovada
+**Alternativa A: referências específicas.** Cada lançamento terá exatamente um destino, referenciado por uma FK específica para conta, fatura ou dívida/obrigação. A regra de destino único deverá ser protegida por `CHECK` constraint e testes. A decisão não fecha ainda todos os detalhes do modelo físico.
 
-**Recomendação técnica:** referências específicas. A opção polimórfica foi desaconselhada para o núcleo financeiro por não garantir a existência do destino através de FK nativa. A superentidade preserva uma FK, mas acrescenta complexidade e não garante, isoladamente, a existência de exatamente uma especialização válida.
-
-**Aprovação do utilizador ainda necessária.** Consultar a análise completa e as fontes em [05 — Arquitetura e UML](05-arquitetura-e-uml.md), secção ARC-001.
+A comparação e a fundamentação estão documentadas em [05 — Arquitetura e UML](05-arquitetura-e-uml.md), secção ARC-001.
 
 ## Trabalho funcional pendente
 - Desenhar subpáginas de Contas, Cartões e Dívidas.
@@ -56,15 +51,14 @@ Foram comparadas:
 Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
 
 ## Próxima sequência recomendada
-1. Aprovar ou rejeitar a recomendação ARC-001.
-2. Fechar modelo conceptual e UML.
-3. Definir modelo físico, precisão monetária e transações.
-4. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
-5. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
-6. Rever e aprovar a especificação e o plano de implementação.
+1. Fechar o modelo conceptual e UML, incorporando ARC-001.
+2. Definir modelo físico, precisão monetária e transações.
+3. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
+4. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
+5. Rever e aprovar a especificação e o plano de implementação.
 
 ## Critério para iniciar implementação estrutural
-Não iniciar antes de fechar destino dos lançamentos, aprovar arquitetura/UML, definir precisão monetária e integridade transacional, especificar fluxos críticos, concluir interfaces da primeira fase e definir critérios de aceitação/testes.
+Não iniciar antes de aprovar arquitetura/UML, definir precisão monetária e integridade transacional, especificar fluxos críticos, concluir interfaces da primeira fase e definir critérios de aceitação/testes.
 
 Protótipos ou experiências técnicas isoladas só devem avançar com autorização explícita e não constituem arquitetura aprovada.
 
