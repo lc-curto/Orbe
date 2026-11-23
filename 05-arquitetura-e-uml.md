@@ -1,6 +1,6 @@
 # 05 — Arquitetura e UML
 
-**Estado: em análise.** A stack principal dos clientes e do backend está aprovada. O desenho detalhado da arquitetura, modelo de dados e infraestrutura ainda precisa de validação. Uma proposta não autoriza implementação.
+**Estado: em análise.** A stack principal e a organização em monorepo estão aprovadas. O desenho detalhado da arquitetura, modelo de dados e infraestrutura ainda precisa de validação. Uma proposta não autoriza implementação.
 
 ## 1. Stack tecnológica aprovada
 - **Backend:** Laravel 13 + PHP.
@@ -8,11 +8,26 @@
 - **Web:** React + TypeScript + Vite.
 - **Mobile:** React Native + Expo + TypeScript para Android e iOS.
 - **Comunicação:** API REST com JSON, comum aos dois clientes.
+- **Organização:** monorepo único.
+
+Estrutura lógica de referência:
+```text
+Orbe/
+├── backend/
+├── web/
+├── mobile/
+├── docs/
+├── AGENTS.md
+└── README.md
+```
+
+Cada aplicação mantém as suas próprias dependências, configuração e processo de execução. Não adotar Nx, Turborepo ou outra ferramenta de orquestração nesta fase sem necessidade demonstrada.
 
 Web e mobile terão interfaces próprias. Tipos, validações e módulos partilháveis podem ser reutilizados quando adequado; componentes visuais não precisam de ser os mesmos.
 
 ## 2. Decisões arquiteturais já tomadas
 - API Laravel comum para Web, Android e iOS.
+- Monorepo para Backend, Web, Mobile e documentação.
 - Preferência por monólito modular.
 - Motor financeiro único.
 - Separação conceptual entre operação (evento de negócio) e lançamentos (efeitos), relação 1:N.
@@ -60,4 +75,4 @@ Aritmética exata. Definir escala, arredondamento e representação persistida a
 Testar domínio sem interface, persistência/constraints, transações/concorrência, idempotência, fluxos financeiros completos e consistência entre consultas e saldos.
 
 ## 11. Decisões técnicas ainda pendentes
-Autenticação e sessões; estratégia de monorepo/repositórios; alojamento e deploy; ferramentas de testes e CI/CD; backups e recuperação.
+Autenticação e sessões; alojamento e deploy; ferramentas de testes e CI/CD; backups e recuperação.
