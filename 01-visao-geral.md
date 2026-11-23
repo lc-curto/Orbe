@@ -21,10 +21,20 @@ Aplicação de gestão financeira pessoal para compreender e gerir contas, movim
 ## Moeda
 O utilizador escolhe uma moeda principal. A aplicação opera apenas nessa moeda.
 
-## Plataformas e tecnologia
-**Obrigatório:** Laravel 13, MySQL, Android, iOS e Web complementar. Uma API Laravel comum serve os clientes mobile e Web.
+## Plataformas e stack aprovada
+- **Backend:** Laravel 13 + PHP.
+- **Base de dados:** MySQL 8.4 LTS.
+- **Web:** React + TypeScript + Vite.
+- **Mobile:** React Native + Expo + TypeScript, para Android e iOS.
+- **Comunicação:** API REST com JSON, comum aos clientes Web e mobile.
 
-**Por decidir:** Flutter ou React Native; alojamento, distribuição, autenticação e infraestrutura.
+Os clientes Web e mobile terão interfaces próprias, mas utilizarão o mesmo backend. Tipos, validações e módulos partilháveis podem ser reutilizados quando tecnicamente adequado; não se exige partilha de todos os componentes visuais.
+
+## Outras decisões técnicas pendentes
+- Autenticação e gestão de sessões.
+- Alojamento, distribuição e infraestrutura.
+- Estratégia de monorepo ou repositórios separados.
+- Ferramentas finais de testes e CI/CD.
 
 ## Princípios
 1. Motor financeiro único.
