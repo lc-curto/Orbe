@@ -79,7 +79,7 @@ erDiagram
 | `financial_accounts` | Contas bancárias, dinheiro físico e carteiras digitais | id, user_id, tipo, nome, instituição/descrição, estado |
 | `categories` | Classificação de receitas e despesas | id, user_id, nome, natureza, estado |
 | `operations` | Evento de negócio visível e manipulável pelo utilizador | id, user_id, category_id, tipo, descrição, valor, estado, data efetiva, data prevista, operação de origem |
-| `financial_entries` | Efeitos financeiros confirmados; fonte de verdade dos saldos | id, operation_id, destino, valor, efeito sobre o destino, data efetiva |
+| `financial_entries` | Efeitos financeiros confirmados; fonte de verdade dos saldos/obrigações | id, operation_id, destino ARC-001, valor, efeito sobre o destino, data efetiva, purchase_allocation_id quando for obrigação de compra parcelada |
 | `operation_audit` | Histórico técnico/funcional de alterações relevantes | id, operation_id, ator, alteração, motivo, data |
 
 **Operação e lançamento não são sinónimos.** A operação conserva a identidade do evento. Os lançamentos registam os efeitos sobre os destinos. Uma operação de pagamento pode, por exemplo, produzir um lançamento na conta e outro na fatura ou dívida.
@@ -209,17 +209,6 @@ No modelo físico será necessário impor exatamente uma perna `OUT` e uma `IN`,
 Cada ocorrência pode materializar uma operação. Quando isso acontece, a projeção deve utilizar a operação gerada, e não contar também a ocorrência como outro evento. A unicidade da ocorrência e a geração idempotente impedem duplicações.
 
 A classificação para estimativas da Rota tem precedência: operação → ocorrência → programação → categoria → `UNCLASSIFIED`. A classificação resolvida deve ficar materializada na operação para preservar histórico. `EXCLUDED` significa excluída apenas da estimativa variável; `UNCLASSIFIED` não pode ser silenciosamente tratada como zero ou como variável. A categoria fornece o padrão; programação, ocorrência e operação podem substituí-lo nessa ordem de especificidade.
-
-Alterações a uma ocorrência ou à ocorrência selecionada e seguintes respeitam as regras aprovadas; ocorrências passadas/realizadas não são reescritas.
-
-### 3.8 Conferência de saldos
-
-| Entidade | Responsabilidade |
-|---|---|
-| `recurrence_schedules` | Regra de repetição e configuração da programação |
-| `recurrence_occurrences` | Ocorrências individualizadas, com data/valor/estado próprios e chave de unicidade |
-
-Cada ocorrência pode materializar uma operação. Quando isso acontece, a projeção deve utilizar a operação gerada, e não contar também a ocorrência como outro evento. A unicidade da ocorrência e a geração idempotente impedem duplicações.
 
 Alterações a uma ocorrência ou à ocorrência selecionada e seguintes respeitam as regras aprovadas; ocorrências passadas/realizadas não são reescritas.
 
