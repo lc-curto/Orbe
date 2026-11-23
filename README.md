@@ -1,1 +1,34 @@
-# Orbe
+# Orbe — Especificação do produto
+
+O Orbe é uma aplicação de gestão financeira pessoal. Este repositório é a referência funcional e técnica para produto, design, desenvolvimento e validação; não contém a implementação da aplicação.
+
+## Como navegar
+1. Ler [AGENTS.md](AGENTS.md) antes de executar trabalho neste projeto.
+2. Consultar as regras financeiras antes de alterar qualquer fluxo que afete dinheiro, saldos, cartões, dívidas ou projeções.
+3. Consultar interfaces antes de alterar páginas ou navegação.
+4. Consultar arquitetura/UML antes de alterar entidades, persistência ou serviços.
+5. Verificar pendências antes de assumir decisões ainda não aprovadas.
+
+## Documentos
+| Ficheiro | Conteúdo |
+|---|---|
+| [01-visao-geral.md](01-visao-geral.md) | Produto, âmbito, plataformas e princípios |
+| [02-regras-financeiras.md](02-regras-financeiras.md) | Modelo financeiro, invariantes e cálculos |
+| [03-funcionalidades-e-operacoes.md](03-funcionalidades-e-operacoes.md) | Operações, estados, ações e aceitação |
+| [04-interfaces-e-navegacao.md](04-interfaces-e-navegacao.md) | Páginas aprovadas e navegação |
+| [05-arquitetura-e-uml.md](05-arquitetura-e-uml.md) | Arquitetura, modelo conceptual e UML |
+| [06-pendencias-e-plano.md](06-pendencias-e-plano.md) | Decisões abertas e sequência de trabalho |
+
+## Estado das decisões
+- **Aprovado:** confirmado pelo responsável do produto.
+- **Em análise:** proposta ainda não aprovada.
+- **Pendente:** decisão necessária.
+- **Substituído:** decisão anterior que deixou de vigorar.
+
+Uma proposta técnica não se torna requisito aprovado apenas por estar documentada. Decisões pendentes devem permanecer identificadas.
+
+## Manutenção
+Manter a documentação concisa, verificável e sem duplicação. Cada regra tem uma localização principal. Quando uma decisão mudar, atualizar o documento de origem e as referências afetadas no mesmo conjunto de alterações.
+
+## Estado atual
+Fundamentos, modelo financeiro, comportamento das operações e páginas principais estão aprovados. Arquitetura/UML está em análise. Subpáginas e modais ainda precisam de especificação detalhada.
