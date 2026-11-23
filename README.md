@@ -32,4 +32,4 @@ Uma proposta técnica não se torna requisito aprovado apenas por estar document
 Manter a documentação concisa, verificável e sem duplicação. Cada regra tem uma localização principal. Quando uma decisão mudar, atualizar o documento de origem e as referências afetadas no mesmo conjunto de alterações.
 
 ## Estado atual
-Fundamentos, modelo financeiro, comportamento das operações, páginas principais, stack, monorepo e ARC-001 estão aprovados. O modelo ER foi elaborado como proposta conceptual e aguarda validação. Subpáginas, modais e alguns detalhes de estados/projeções ainda precisam de especificação.
+Fundamentos, modelo financeiro, comportamento das operações, páginas principais, stack, monorepo e ARC-001 estão aprovados. O modelo ER conceptual foi consolidado para aprovação documental; o modelo físico e migrations não estão aprovados. Permanecem decisões de produto sobre cartões/faturas, estimativas variáveis e alguns estados/apresentações.
