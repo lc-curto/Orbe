@@ -57,3 +57,42 @@ Abordagem aprovada: subpáginas para consulta/exploração; modais para ações 
 - Cartões: detalhes e faturas em subpágina; adicionar/editar em modal.
 - Dívidas: detalhes em subpágina; adicionar/editar em modal.
 A especificação detalhada será feita depois das páginas principais.
+
+## Regras operacionais de cartões e faturas
+
+### Compra parcelada
+- A confirmação da compra reconhece a despesa uma única vez.
+- Na mesma transação, cria as alocações de compra para os períodos correspondentes e os lançamentos de obrigação associados.
+- Períodos futuros podem estar em `PLANNED`; a obrigação já existe, embora a fatura ainda não esteja aberta na interface.
+- Abrir um período não volta a criar lançamentos.
+- A confirmação deve ser idempotente: repetir o pedido não pode duplicar despesa, alocações ou obrigações.
+
+### Pagamento de fatura
+- O pagamento confirmado cria o efeito de saída na conta e o efeito de redução na fatura.
+- A redução é alocada a uma ou várias obrigações específicas da fatura.
+- Pagamentos parciais são permitidos; apenas o valor efetivamente pago é alocado.
+- A soma das alocações tem de coincidir com o valor do efeito de redução da fatura.
+- O pagamento e todos os seus efeitos/alocações são atómicos: ou são confirmados em conjunto ou nenhum é confirmado.
+
+### Pagamentos planeados
+- Um plano de pagamento não é um lançamento efetivo e não altera saldos.
+- O valor reservado por planos explícitos não pode ser novamente incluído na liquidação residual automática.
+- Um plano não confirmado na data prevista passa a vencido; a obrigação permanece em aberto.
+- Sem política aprovada de débito/reagendamento automático, não criar uma nova data futura por inferência.
+
+### Ciclo de faturação
+- O estado do ciclo (`PLANNED`, `OPEN`, `CLOSED`) é distinto do valor em dívida e do estado de pagamento.
+- Podem existir vários ciclos anteriores com dívida pendente.
+- No máximo um ciclo por cartão pode estar `OPEN`; a integridade deve ser protegida no banco de dados e no fluxo transacional.
+
+## Critérios específicos de aceitação de cartões
+
+1. Uma compra parcelada de 1.200 € em quatro parcelas reconhece 1.200 € de despesa, não 4.800 €.
+2. As quatro obrigações de 300 € são reconhecidas na confirmação, mesmo que os períodos estejam `PLANNED`.
+3. Abrir um período não cria novos lançamentos.
+4. A compra não altera o saldo da conta bancária.
+5. O pagamento de 300 € cria uma saída de 300 € na conta e uma redução de 300 € na fatura, sem nova despesa.
+6. A alocação de um pagamento parcial não pode exceder o saldo da obrigação liquidada.
+7. Um plano vencido continua representado como obrigação vencida, mas não como saída futura numa data passada.
+8. Planos explícitos e liquidação residual não podem projetar duas vezes a mesma parcela.
+9. A abertura concorrente de ciclos não pode criar duas faturas `OPEN` para o mesmo cartão.
