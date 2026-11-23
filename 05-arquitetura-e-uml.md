@@ -42,11 +42,13 @@ O modelo ER conceptual e a sua fundamentação estão em [07 — Modelo ER](07-m
 O documento detalha:
 - Operação como evento de negócio e lançamento como efeito financeiro.
 - Destinos específicos aprovados em ARC-001.
+- Saldo inicial de cartão distribuído integralmente por faturas, com histórico, correções e reversões rastreáveis.
+- Pagamentos multi-fatura com uma saída total e reduções por fatura.
 - Cartões, faturas, dívidas, prestações, transferências, recorrências e conferências.
 - A diferença entre os dados efetivos e os eventos usados em projeções.
 - Como Dashboard, Movimentos, Rota Financeira e restantes páginas consultam o mesmo núcleo com objetivos e granularidades diferentes.
 
-**Estado:** proposta conceptual consolidada após validação dos fluxos de cartões, faturas, parcelas, pagamentos, transferências, reembolsos e projeções. ARC-002 aguarda aprovação documental explícita. O diagrama não é esquema físico e não autoriza migrations.
+**Estado:** proposta conceptual atualizada para incorporar saldo inicial integralmente distribuído, correções, reversões de pagamento e pagamentos multi-fatura. ARC-002 continua a aguardar aprovação documental explícita. O diagrama não é esquema físico e não autoriza migrations.
 
 ## 4. ARC-001 — Destino dos lançamentos financeiros
 
