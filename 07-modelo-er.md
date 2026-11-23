@@ -1,6 +1,6 @@
 # 07 — Modelo Entidade-Relacionamento (ER) do Orbe
 
-**Estado: proposta conceptual consolidada para aprovação documental.** O modelo incorpora as regras financeiras e os fluxos refinados de cartões, faturas, compras parceladas, pagamentos, planos vencidos, transferências e reembolsos. Ainda não é o esquema físico definitivo, não fecha todas as decisões de produto e não autoriza a criação de migrations.
+**Estado: APROVADO como modelo ER conceptual / especificação de domínio (ARC-002).** O modelo incorpora as regras financeiras e os fluxos refinados de cartões, faturas, compras parceladas, pagamentos, planos vencidos, transferências e reembolsos. Não é o esquema físico definitivo e não autoriza, por si só, a criação de migrations.
 
 ## 1. Objetivo e princípio de desenho
 
@@ -426,4 +426,4 @@ A documentação técnica orienta os mecanismos; as relações e invariantes do 
 
 ## 10. Estado de aprovação
 
-O modelo conceptual está consolidado para aprovação documental, mas ainda não está formalmente aprovado como esquema físico. A aprovação do ER não aprova automaticamente migrations, nomes físicos definitivos, tipos monetários, índices completos ou decisões de produto listadas na secção 7.
+O modelo ER conceptual está formalmente aprovado como especificação de domínio. Esta aprovação não aprova automaticamente o esquema físico, migrations, nomes físicos definitivos, tipos monetários, índices completos ou decisões de produto ainda listadas na secção 7.
