@@ -97,10 +97,12 @@ O domínio não deve depender da interface. Regras financeiras não devem ser re
 
 ## 6. Consistência e concorrência — princípios consolidados
 - Operações que geram vários lançamentos devem ser confirmadas numa única transação.
-- Pagamento de fatura: saída da conta, redução da fatura e respetivas alocações são atómicos.
+- Pagamento multi-fatura: uma saída total na conta, reduções por fatura e respetivas alocações são atómicas; cada par redução/obrigação pertence à mesma fatura.
 - Compra parcelada: operação, alocações de compra e lançamentos de obrigação são confirmados em conjunto.
+- Saldo inicial de cartão: operação original única por cartão, distribuição integral por faturas e lançamentos de obrigação confirmados em conjunto.
+- Redistribuição e reversão: efeitos corretivos e relações de rastreabilidade são atómicos; não alteram lançamentos confirmados.
 - Validações que abrangem várias linhas (somas, saldos restantes e alocações) exigem lógica de domínio/transação; não podem ser delegadas a um `CHECK` de linha.
-- Bloquear as linhas de obrigação/alvo antes de validar e criar alocações concorrentes; tratar deadlocks com política de repetição segura.
+- Bloquear o cartão e as linhas de obrigação/alvo numa ordem consistente antes de validar redistribuições e pagamentos concorrentes; recalcular os montantes disponíveis dentro da transação e tratar deadlocks com repetição segura.
 - Usar chaves de idempotência/constraints de unicidade para impedir repetição de pagamentos, materialização de ocorrências e confirmação de compras.
 - A unicidade de ciclo `OPEN` é protegida por índice `UNIQUE` sobre coluna gerada nullable e por bloqueio transacional da linha do cartão no MySQL 8.4.
 - Tarefas assíncronas não podem quebrar a atomicidade dos efeitos financeiros imediatos.
@@ -125,6 +127,27 @@ Aritmética exata. Definir escala, arredondamento e representação persistida a
 4. Não criar saída de conta bancária.
 5. A abertura futura do ciclo altera apenas o estado operacional; não cria lançamentos.
 6. A projeção de pagamentos futuros é calculada separadamente.
+
+### Sequência conceptual — saldo inicial de cartão
+1. Criar no máximo uma operação original de natureza `CARD_OPENING_BALANCE` por cartão, apenas quando o saldo inicial é positivo.
+2. Exigir distribuição integral do valor por faturas/ciclos; a soma tem de coincidir exatamente com o valor declarado.
+3. Criar um lançamento de obrigação por distribuição, sempre com destino `invoice_id`; não criar despesa, receita ou saída de conta.
+4. Preservar as distribuições originais. Redistribuições posteriores são operações corretivas com redução na fatura de origem e aumento na fatura de destino.
+5. A obrigação em aberto é reconstruída a partir dos lançamentos; as distribuições são rastreabilidade, não fonte paralela de saldo.
+
+### Sequência conceptual — pagamento multi-fatura
+1. Confirmar uma única operação de pagamento e criar uma saída total na conta.
+2. Criar uma redução por cada fatura abrangida.
+3. Criar `payment_allocations` entre cada redução e obrigações da mesma fatura.
+4. Validar que a soma das reduções coincide com a saída e que nenhuma obrigação é liquidada acima do saldo disponível.
+5. Confirmar saída, reduções e alocações na mesma transação.
+
+### Sequência conceptual — reversão de pagamento
+1. Criar uma operação de reversão ligada ao pagamento original.
+2. Criar a entrada compensatória na conta e os aumentos compensatórios nas faturas afetadas.
+3. Registar cada parcela revertida em `payment_reversal_allocations`, ligada à `payment_allocation` original.
+4. Rejeitar reversões acumuladas superiores ao montante ainda não revertido.
+5. Confirmar todos os efeitos e relações na mesma transação.
 
 ### Sequência conceptual — pagamento de fatura
 1. Confirmar a operação de pagamento.
@@ -153,5 +176,5 @@ Testar domínio sem interface, persistência/constraints, transações/concorrê
 - Alojamento, deploy e ambientes (ARC-006).
 - Scheduler, filas e processamento assíncrono (ARC-007).
 - Testes, CI/CD, backup e recuperação (ARC-008).
-- Decisões de produto sobre débito/reagendamento automático de planos vencidos, exposição inicial não distribuída, preferência FIFO/seleção manual, apresentação de faturas antigas, compras no dia do fecho e crédito negativo de fatura.
+- Decisões de produto sobre débito/reagendamento automático de planos vencidos, apresentação de faturas antigas, compras no dia do fecho e crédito negativo de fatura.
 - Fonte, janela, cálculo e apresentação das estimativas de despesas variáveis na Rota.
