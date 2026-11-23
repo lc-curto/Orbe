@@ -1,6 +1,6 @@
 # 07 — Modelo Entidade-Relacionamento (ER) do Orbe
 
-**Estado: proposta conceptual para validação.** Este documento transforma as regras de negócio e os objetivos das páginas num modelo de dados coerente. Não é ainda o esquema físico definitivo nem autoriza a criação de migrations.
+**Estado: proposta conceptual consolidada para aprovação documental.** O modelo incorpora as regras financeiras e os fluxos refinados de cartões, faturas, compras parceladas, pagamentos, planos vencidos, transferências e reembolsos. Ainda não é o esquema físico definitivo, não fecha todas as decisões de produto e não autoriza a criação de migrations.
 
 ## 1. Objetivo e princípio de desenho
 
@@ -12,7 +12,7 @@ O desenho assenta em três conceitos distintos:
 2. **Lançamento financeiro:** efeito efetivo de uma operação sobre um destino financeiro (conta, fatura ou dívida).
 3. **Projeção:** cálculo temporal que combina saldos reais com acontecimentos futuros ainda não confirmados. É um resultado calculado, não um lançamento efetivo.
 
-Esta separação preserva a regra de que só lançamentos válidos e realizados alteram saldos efetivos. Pendentes e projeções nunca são registados como efeitos financeiros realizados.
+Esta separação preserva a regra de que só lançamentos válidos e realizados alteram saldos efetivos. Um lançamento dirigido a uma fatura pode reconhecer uma obrigação efetiva sem representar saída de dinheiro de uma conta. Pendentes e projeções de fluxo de caixa nunca são registados como saídas efetivas de conta.
 
 ## 2. Modelo conceptual ER
 
@@ -33,6 +33,13 @@ erDiagram
     FINANCIAL_ACCOUNTS o|--o{ FINANCIAL_ENTRIES : destination
     CARDS ||--o{ CARD_INVOICES : issues
     CARD_INVOICES o|--o{ FINANCIAL_ENTRIES : destination
+    OPERATIONS ||--o{ PURCHASE_ALLOCATIONS : splits
+    CARD_INVOICES ||--o{ PURCHASE_ALLOCATIONS : receives
+    PURCHASE_ALLOCATIONS o|--o| FINANCIAL_ENTRIES : creates_obligation
+    CARD_INVOICES ||--o{ INVOICE_PAYMENT_PLANS : plans
+    INVOICE_PAYMENT_PLANS ||--o{ PAYMENT_PLAN_ALLOCATIONS : reserves
+    FINANCIAL_ENTRIES ||--o{ PAYMENT_ALLOCATIONS : settlement_entry
+    FINANCIAL_ENTRIES ||--o{ PAYMENT_ALLOCATIONS : obligation_entry
     DEBTS o|--o{ FINANCIAL_ENTRIES : destination
 
     DEBTS ||--o{ DEBT_INSTALLMENTS : schedules
@@ -52,7 +59,10 @@ erDiagram
 **Leitura do diagrama:**
 - Uma operação pode ainda não ter lançamentos (pendente) ou gerar um ou vários lançamentos quando confirmada.
 - Cada lançamento aponta para exatamente um destino: conta, fatura ou dívida. É a decisão ARC-001 já aprovada.
-- Uma fatura pertence a um cartão. Compras e pagamentos são operações distintas, com efeitos dirigidos à fatura e/ou à conta.
+- Uma fatura/período pertence a um cartão. Pode estar `PLANNED`, `OPEN` ou `CLOSED`; o estado do ciclo é distinto do valor em dívida.
+- Uma compra parcelada cria alocações e lançamentos de obrigação na confirmação, mesmo para períodos `PLANNED`. A abertura do ciclo não cria novos lançamentos.
+- Um pagamento de fatura gera saída na conta e redução na fatura; `payment_allocations` identifica as obrigações específicas liquidadas.
+- Planos de pagamento são projeções, não lançamentos; a reserva explícita e a liquidação residual não podem duplicar a mesma obrigação.
 - Uma dívida pode ter várias prestações planeadas. As prestações não são novas dívidas.
 - Uma programação gera ocorrências individualizadas. Uma ocorrência pode originar, no máximo, uma operação.
 - Uma transferência tem duas pernas (saída e entrada), com data e estado independentes. Cada perna gera o respetivo lançamento quando realizada.
@@ -94,20 +104,77 @@ A semântica do efeito depende do tipo de destino. O campo não deve ser confund
 
 Referências compostas ou validação transacional deverão impedir que uma operação de um utilizador aponte para conta, fatura ou dívida de outro utilizador.
 
-### 3.3 Cartões e faturas
+### 3.3 Cartões, ciclos, compras parceladas e faturas
 
 | Entidade | Responsabilidade | Campos conceptuais principais |
 |---|---|---|
 | `cards` | Cartão de crédito e condições | id, user_id, nome, limite, condições de fecho/vencimento |
-| `card_invoices` | Fatura/período de um cartão | id, card_id, período, data de fecho, data de vencimento |
+| `card_invoices` | Período/fatura de um cartão | id, card_id, período, data de fecho, data de vencimento, estado do ciclo |
+| `purchase_allocations` | Distribuição de uma compra pelos períodos de faturação | id, purchase_operation_id, invoice_id, amount |
+| `invoice_payment_plans` | Intenção de pagamento e data prevista | id, invoice_id, operation_id, amount, planned_date, state |
+| `payment_plan_allocations` | Parcela da obrigação reservada por um plano | id, payment_plan_id, obligation_entry_id, amount |
+| `payment_allocations` | Associação entre redução de fatura e obrigações liquidadas | id, payment_operation_id, settlement_entry_id, obligation_entry_id, amount |
 
-A utilização do cartão, o disponível e o valor em aberto são derivados das faturas e dos lançamentos associados; não devem tornar-se fontes de verdade independentes.
+#### Ciclos e faturas
 
-**Compra com cartão:** a operação de compra classifica a despesa uma única vez e gera efeito na fatura. Não reduz imediatamente o saldo de uma conta bancária.
+`card_invoices` representa o período interno de faturação e a sua apresentação operacional. Estados conceptuais do ciclo:
+- `PLANNED`: período futuro identificado, ainda não aberto na interface;
+- `OPEN`: ciclo operacional atual;
+- `CLOSED`: ciclo encerrado.
 
-**Pagamento da fatura:** é uma operação diferente. Gera um efeito de saída na conta utilizada e um efeito de redução do valor em aberto da fatura. Não cria uma segunda despesa.
+O estado do ciclo não é o estado da obrigação. Um ciclo `CLOSED` pode continuar com valor em dívida; podem existir várias faturas anteriores com obrigação pendente. No máximo uma fatura por cartão pode estar em `OPEN`.
 
-Os detalhes físicos de compras, parcelas e associação a faturas serão afinados nas sequências UML e nas subpáginas de Cartões.
+No MySQL 8.4, a unicidade de `OPEN` deve ser protegida por uma coluna gerada nullable (por exemplo, chave igual a `card_id` apenas quando o ciclo está `OPEN`, caso contrário `NULL`) com índice `UNIQUE`. A abertura deve ocorrer em transação, bloqueando a linha do cartão com `SELECT ... FOR UPDATE`; o índice único é a proteção final. Também deve existir unicidade de `(card_id, billing_period)`.
+
+#### Compra com cartão e alocações
+
+A compra com cartão é uma operação económica única. Na confirmação:
+1. reconhecer a despesa uma única vez pelo valor total;
+2. criar as `purchase_allocations` que distribuem o valor pelos ciclos;
+3. criar um lançamento de obrigação por alocação, com destino à fatura/período correspondente, mesmo quando o ciclo está `PLANNED`;
+4. não criar saída de conta bancária.
+
+A abertura posterior do período apenas altera estado e apresentação. Não cria lançamentos adicionais. Para uma compra de 1.200 € em quatro parcelas, a despesa é 1.200 € e as quatro obrigações são 300 € cada; não são quatro operações de despesa.
+
+Relação proposta: `financial_entries.purchase_allocation_id` referencia `purchase_allocations.id`, com `UNIQUE` para garantir no máximo um lançamento de obrigação por alocação. A soma das alocações deve igualar o valor da compra e exige validação transacional/domínio. O lançamento continua a ter `invoice_id` como único destino ARC-001; `purchase_allocation_id` é referência de rastreabilidade, não um segundo destino.
+
+#### Pagamento e alocação às obrigações
+
+Um pagamento confirmado de fatura é uma operação própria e gera:
+- lançamento de saída com destino à conta;
+- lançamento de redução com destino à fatura.
+
+`payment_allocations` liga o lançamento de redução (`settlement_entry_id`) aos lançamentos originais de obrigação (`obligation_entry_id`) que estão a ser liquidados. Uma operação de pagamento pode alocar a várias obrigações e uma obrigação pode receber pagamentos parciais de várias operações.
+
+Invariantes:
+- todos os registos envolvidos pertencem ao mesmo utilizador e à mesma fatura;
+- o lançamento de redução pertence à operação de pagamento indicada;
+- a soma das alocações corresponde ao valor efetivamente reduzido na fatura;
+- a soma alocada a uma obrigação não ultrapassa o seu saldo restante;
+- uma alocação não é lançamento e não altera saldos diretamente;
+- os dois lançamentos e as alocações são confirmados na mesma transação;
+- validações multi-linha exigem bloqueio/transação; não podem depender apenas de `CHECK` de linha;
+- repetição do pedido de pagamento é idempotente.
+
+#### Planos de pagamento e projeção
+
+`invoice_payment_plans` e `payment_plan_allocations` representam intenção e reserva para projeção, não efeitos realizados. Os lançamentos efetivos só surgem quando o pagamento é confirmado.
+
+- A projeção explícita cobre apenas a parte da obrigação reservada pelo plano.
+- A liquidação residual automática cobre apenas a obrigação não reservada.
+- Um plano não confirmado na data prevista passa a vencido; deixa de ser uma saída futura na data passada, mas a obrigação permanece em aberto/vencida.
+- O valor vencido não é automaticamente reagendado para uma nova data sem regra de produto aprovada.
+- Cancelar ou alterar um plano liberta/atualiza a reserva de forma auditada.
+- A confirmação substitui a projeção correspondente por efeitos efetivos, sem duplicação.
+- Para uma mesma obrigação, pagamentos realizados, reservas ativas e residual projetado não podem exceder o saldo em aberto, salvo política explícita de crédito aprovada.
+
+#### Exposição inicial do cartão
+
+A proposta conceptual prevê `card_opening_balances`, `card_balance_allocations` e `card_payment_allocations` para distinguir exposição inicial declarada, montante distribuído por ciclos e parcela `UNALLOCATED`. Pagamentos devem ser alocados explicitamente à exposição ou aos ciclos, com FIFO pelo ciclo mais antigo como padrão recomendado quando o utilizador não escolher outro alvo.
+
+**Ponto ainda não fechado para o modelo físico:** a representação da exposição inicial não distribuída tem de permanecer compatível com a fonte de verdade financeira e com ARC-001. Não pode criar uma dívida paralela nem exigir faturas artificiais. O destino/relação financeira dessa exposição deve ser explicitado antes de migrations; até lá, estas entidades são apenas uma proposta conceptual, não uma autorização para manter uma fonte independente de dívida.
+
+A utilização, o crédito disponível e o valor em aberto são derivados das obrigações e da exposição inicial reconhecida; não devem tornar-se fontes de verdade independentes.
 
 ### 3.4 Dívidas e prestações
 
@@ -122,17 +189,30 @@ As prestações representam a agenda/afetação da obrigação, não uma segunda
 
 ### 3.5 Transferências
 
-Uma operação de transferência contém duas pernas:
-- saída de uma conta;
-- entrada noutra conta.
-
-Cada perna conserva a sua própria data prevista/efetiva e estado, porque a saída e a entrada podem ser confirmadas em momentos diferentes. Quando uma perna é realizada, gera um lançamento com destino à respetiva conta. O valor e a associação entre as duas pernas são coerentes.
+Uma operação de transferência contém exatamente duas pernas conceptuais: uma saída (`OUT`) e uma entrada (`IN`). Cada perna conserva a sua própria data prevista/efetiva e estado `PENDING`, `REALIZED` ou `CANCELLED`. Quando realizada, gera um lançamento com destino à respetiva conta. O valor e a associação entre as duas pernas são coerentes.
 
 A interface apresenta uma única operação de transferência, não duas operações soltas. Os dois lançamentos existem para atualizar corretamente os saldos das contas. No agregado de todas as contas, uma transferência concluída não altera o património líquido.
 
-O diagrama conceptual usa `transfer_legs`. No modelo físico será necessário impor que cada transferência tenha exatamente uma perna de saída e uma de entrada, e garantir que o lançamento associado à perna aponta para a mesma conta. Esta regra exige constraints/validação transacional; a mera cardinalidade do diagrama não a garante.
+O estado global é derivado das duas pernas: pendente/pendente = planeada; realizada/pendente ou pendente/realizada = parcial; realizada/realizada = concluída; cancelada/cancelada = cancelada. Combinações de uma perna realizada com a outra cancelada são exceções de liquidação e exigem ação corretiva explícita; não se pode apagar ou cancelar o efeito já realizado.
 
-### 3.6 Recorrências
+A diferença entre saídas realizadas e entradas realizadas deve ser apresentada como desequilíbrio de liquidação (saída não correspondida ou entrada não correspondida), não como saldo de caixa adicional nem como terceiro lançamento. Uma entrada realizada antes da saída aumenta efetivamente a conta de destino, mas permanece identificada como perna não correspondida.
+
+No modelo físico será necessário impor exatamente uma perna `OUT` e uma `IN`, valor coerente, unicidade por operação/direção e correspondência entre perna, conta e lançamento. A validação exige constraints e transação; a mera cardinalidade do diagrama não a garante.
+
+### 3.6 Recorrências e classificação
+
+| Entidade | Responsabilidade |
+|---|---|
+| `recurrence_schedules` | Regra de repetição e configuração da programação |
+| `recurrence_occurrences` | Ocorrências individualizadas, com data/valor/estado próprios e chave de unicidade |
+
+Cada ocorrência pode materializar uma operação. Quando isso acontece, a projeção deve utilizar a operação gerada, e não contar também a ocorrência como outro evento. A unicidade da ocorrência e a geração idempotente impedem duplicações.
+
+A classificação para estimativas da Rota tem precedência: operação → ocorrência → programação → categoria → `UNCLASSIFIED`. A classificação resolvida deve ficar materializada na operação para preservar histórico. `EXCLUDED` significa excluída apenas da estimativa variável; `UNCLASSIFIED` não pode ser silenciosamente tratada como zero ou como variável. A categoria fornece o padrão; programação, ocorrência e operação podem substituí-lo nessa ordem de especificidade.
+
+Alterações a uma ocorrência ou à ocorrência selecionada e seguintes respeitam as regras aprovadas; ocorrências passadas/realizadas não são reescritas.
+
+### 3.8 Conferência de saldos
 
 | Entidade | Responsabilidade |
 |---|---|
@@ -168,6 +248,12 @@ Alterações a uma ocorrência ou à ocorrência selecionada e seguintes respeit
 12. Ocorrências recorrentes são únicas e a materialização em operação é idempotente.
 13. Conferências de saldo não participam no livro de lançamentos.
 14. Dados derivados (saldo de conta, valor em aberto, disponível do cartão e totais) podem ser guardados como cache, mas têm de ser reconstruíveis a partir das fontes de verdade.
+15. Cada alocação de compra cria no máximo um lançamento de obrigação; abrir um ciclo não cria novos lançamentos.
+16. Pagamento de fatura liga o lançamento de redução às obrigações liquidadas por alocações explícitas.
+17. Planos de pagamento e reservas de projeção não são lançamentos efetivos.
+18. A soma de pagamentos alocados a uma obrigação não pode exceder o seu saldo restante.
+19. Ciclos `PLANNED`, `OPEN` e `CLOSED` são estados operacionais; não representam diretamente o estado de liquidação da obrigação.
+20. Transferências têm uma perna `OUT` e uma `IN`; estados globais são derivados e não apagam efeitos realizados.
 
 ## 5. A mesma base de dados, três objetivos de página diferentes
 
@@ -221,7 +307,10 @@ A Rota não é outra lista de operações nem outro livro contabilístico. É um
 - A compra é reconhecida como despesa na data da compra e aparece em Movimentos/Relatórios.
 - A compra não é saída imediata de uma conta bancária.
 - A saída de dinheiro é projetada na data prevista de pagamento da fatura e só passa a efetiva quando o pagamento é confirmado.
-- Se já existir um pagamento pendente explícito para a fatura, a Rota não pode somar também uma segunda saída automática pela mesma fatura.
+- Se já existir um pagamento pendente explícito para a fatura, a Rota não pode somar também uma segunda saída automática pela mesma obrigação.
+- Planos não confirmados na data prevista passam a vencidos; deixam de ser eventos futuros na data passada, mas a obrigação continua vencida e visível.
+- A liquidação residual automática cobre apenas o saldo não reservado por planos explícitos.
+- Sem regra aprovada de débito automático/reagendamento, a Rota não inventa uma nova data futura para obrigações vencidas.
 
 **Distinção crítica para dívidas:**
 - A obrigação e a agenda de prestações permitem identificar compromissos futuros.
@@ -257,26 +346,30 @@ Calculado pelos efeitos de aumento e redução dirigidos à fatura/dívida. Paga
 ### Saldo da Rota
 É uma série temporal: saldo efetivo de partida + efeitos reais por data + eventos futuros simulados. Não deve ser persistido como saldo contabilístico nem alterado pelo seletor do Dashboard.
 
-## 7. Pontos que continuam por decidir antes do modelo físico
+## 7. Pontos pendentes antes do modelo físico
 
-1. **Prestações e afetação de pagamentos:** se um pagamento pode liquidar várias prestações, como se associa explicitamente a cada uma e como se determina o estado de cada prestação.
-2. **Projeção de faturas de cartão:** regra para estimar a saída quando ainda não existe pagamento explícito e tratamento de pagamentos parciais.
-3. **Projeção de despesas variáveis:** a Rota usa estados de cobertura de despesas variáveis estimadas, mas a origem e o cálculo dessas estimativas não estão especificados. Não criar orçamento ou meta de poupança por inferência.
-4. **Estado de transferências:** constraints para garantir exatamente uma perna de saída e uma de entrada e como tratar uma perna confirmada enquanto a outra permanece pendente.
-5. **Saldos iniciais:** definir como o saldo de abertura de uma conta entra no livro sem ser classificado como receita.
-6. **Precisão monetária:** tipo decimal, escala, arredondamento e política para valores parcelados.
-7. **Estados específicos:** completar a máquina de estados de faturas, dívidas, prestações e ocorrências nas respetivas subpáginas.
+1. **Exposição inicial não distribuída de cartão:** definir como o valor `UNALLOCATED` permanece reconciliado com a fonte de verdade financeira e ARC-001 sem criar dívida paralela ou fatura artificial.
+2. **Saldo inicial de contas:** definir como o saldo de abertura entra no livro sem ser classificado como receita.
+3. **Precisão monetária:** tipo/representação, escala e arredondamento (ARC-003).
+4. **Máquinas de estado:** completar estados e transições de faturas, planos de pagamento, dívidas, prestações, ocorrências e exceções de transferências.
+5. **Projeção variável da Rota:** origem, janela histórica, fórmula, distribuição diária e tratamento visual de valores `UNCLASSIFIED`.
+6. **Políticas de produto:** débito/reagendamento automático de planos vencidos; duração da exposição `UNALLOCATED`; FIFO versus seleção manual; apresentação de faturas antigas; compras no dia do fecho; crédito negativo de fatura.
+7. **Detalhes de apresentação:** como mostrar obrigações de ciclos anteriores sem confundir estado do ciclo com estado de pagamento.
+
+As regras conceptuais de compra parcelada, pagamento/alocação de fatura, vencimento de plano e unicidade de ciclo `OPEN` estão definidas neste documento. Os pontos acima não devem ser resolvidos por inferência durante a implementação.
 
 ## 8. Decisões técnicas recomendadas para o esquema físico
 
 - Usar MySQL/InnoDB com FKs reais e índices correspondentes.
 - Usar `CHECK` para destino único de cada lançamento e validações locais de valores.
-- Aplicar restrições de propriedade do utilizador nas relações entre operação, lançamento e destino.
+- Aplicar FKs/restrições compostas ou validação transacional para propriedade do utilizador e coerência entre operação, lançamento, fatura e alocação.
 - Usar `RESTRICT`/política equivalente para impedir eliminação em cascata de dados com efeitos financeiros.
 - Usar `DECIMAL` com escala a aprovar; nunca `FLOAT`/`DOUBLE` para dinheiro.
 - Imutabilidade lógica dos lançamentos confirmados; correções por novas operações associadas.
-- Transações de base de dados na confirmação de operações com vários lançamentos.
-- Unicidade e geração idempotente para ocorrências recorrentes.
+- Transações de base de dados na confirmação de compras parceladas e pagamentos com múltiplos lançamentos.
+- Bloqueio das obrigações/alvos antes de validar alocações concorrentes; somas multi-linha exigem lógica transacional.
+- Unicidade e geração idempotente para ocorrências recorrentes, compras, pagamentos e abertura de ciclos.
+- Para uma fatura `OPEN` por cartão no MySQL 8.4: coluna gerada nullable com índice `UNIQUE`, combinada com `SELECT ... FOR UPDATE` na linha do cartão; unicidade adicional de cartão/período.
 - Não criar tabelas para Dashboard, Movimentos ou Rota Financeira. São consultas/read models sobre as entidades acima.
 - Índices devem decorrer dos filtros reais: user, estado, tipo, datas, categoria, destino e relações de recorrência.
 
@@ -288,3 +381,7 @@ Calculado pelos efeitos de aumento e redução dirigidos à fatura/dívida. Paga
 - [Laravel 13 — Database Transactions](https://laravel.com/docs/13.x/database#database-transactions): atomicidade das confirmações com vários efeitos.
 
 A documentação técnica orienta os mecanismos; as relações e invariantes do Orbe derivam das regras de negócio aprovadas neste projeto.
+
+## 10. Estado de aprovação
+
+O modelo conceptual está consolidado para aprovação documental, mas ainda não está formalmente aprovado como esquema físico. A aprovação do ER não aprova automaticamente migrations, nomes físicos definitivos, tipos monetários, índices completos ou decisões de produto listadas na secção 7.
