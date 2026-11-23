@@ -35,10 +35,18 @@ Web e mobile terão interfaces próprias. Tipos, validações e módulos partilh
 - Integridade e rastreabilidade financeira obrigatórias.
 - **ARC-001 aprovado:** cada lançamento referencia exatamente um destino através de referências específicas com FKs próprias.
 
-## 3. Modelo conceptual inicial
-Conceitos identificados: Utilizador, Conta financeira, Operação, Lançamento financeiro, Transferência, Cartão, Fatura, Dívida/obrigação, Prestação/agenda, Pagamento, Programação recorrente, Ocorrência recorrente, Histórico/auditoria e Conferência de saldo.
+## 3. Modelo conceptual e ER
 
-Isto não é ainda esquema físico. Atributos, cardinalidades, chaves, constraints e fronteiras de agregados precisam de UML.
+O modelo ER conceptual e a sua fundamentação estão em [07 — Modelo ER](07-modelo-er.md).
+
+O documento detalha:
+- Operação como evento de negócio e lançamento como efeito financeiro.
+- Destinos específicos aprovados em ARC-001.
+- Cartões, faturas, dívidas, prestações, transferências, recorrências e conferências.
+- A diferença entre os dados efetivos e os eventos usados em projeções.
+- Como Dashboard, Movimentos, Rota Financeira e restantes páginas consultam o mesmo núcleo com objetivos e granularidades diferentes.
+
+**Estado:** proposta conceptual elaborada; ARC-002 aguarda validação. O diagrama não é ainda esquema físico e não autoriza migrations.
 
 ## 4. ARC-001 — Destino dos lançamentos financeiros
 
@@ -101,8 +109,10 @@ Aritmética exata. Definir escala, arredondamento e representação persistida a
 4. Estados: transições de operações e entidades relevantes.
 5. Modelo físico: tabelas, índices e integridade referencial, após aprovação conceptual.
 
+O ER conceptual está apresentado em [07 — Modelo ER](07-modelo-er.md). As restantes vistas UML e o modelo físico continuam por produzir/aprovar.
+
 ## 10. Testes de arquitetura
 Testar domínio sem interface, persistência/constraints, transações/concorrência, idempotência, fluxos financeiros completos e consistência entre consultas e saldos.
 
 ## 11. Decisões técnicas ainda pendentes
-Modelo físico e cardinalidades; representação monetária, escala e arredondamento; autenticação e sessões; alojamento e deploy; ferramentas de testes e CI/CD; backups e recuperação.
+Validação do modelo ER (ARC-002); modelo físico e cardinalidades; representação monetária, escala e arredondamento; autenticação e sessões; alojamento e deploy; ferramentas de testes e CI/CD; backups e recuperação.
