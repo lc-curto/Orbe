@@ -1,6 +1,6 @@
 # 05 — Arquitetura e UML
 
-**Estado:** stack, monorepo e ARC-001 aprovados. O modelo ER conceptual foi consolidado para aprovação documental; o modelo físico, migrations e detalhes de infraestrutura continuam por aprovar. Uma proposta não autoriza implementação.
+**Estado:** stack, monorepo, ARC-001 e modelo ER conceptual (ARC-002) aprovados. O modelo físico, migrations e detalhes de infraestrutura continuam por aprovar.
 
 ## 1. Stack tecnológica aprovada
 - **Backend:** Laravel 13 + PHP.
@@ -48,7 +48,7 @@ O documento detalha:
 - A diferença entre os dados efetivos e os eventos usados em projeções.
 - Como Dashboard, Movimentos, Rota Financeira e restantes páginas consultam o mesmo núcleo com objetivos e granularidades diferentes.
 
-**Estado:** proposta conceptual atualizada para incorporar saldo inicial integralmente distribuído, correções, reversões de pagamento e pagamentos multi-fatura. ARC-002 continua a aguardar aprovação documental explícita. O diagrama não é esquema físico e não autoriza migrations.
+**Estado: ARC-002 aprovado.** O modelo ER conceptual incorpora saldo inicial integralmente distribuído, correções, reversões de pagamento e pagamentos multi-fatura. O diagrama continua a ser conceptual; não aprova o esquema físico nem autoriza migrations.
 
 ## 4. ARC-001 — Destino dos lançamentos financeiros
 
@@ -169,7 +169,6 @@ O ER conceptual está apresentado em [07 — Modelo ER](07-modelo-er.md). As res
 Testar domínio sem interface, persistência/constraints, transações/concorrência, idempotência, fluxos financeiros completos e consistência entre consultas e saldos.
 
 ## 11. Decisões técnicas e de produto ainda pendentes
-- Aprovação documental do modelo ER conceptual (ARC-002).
 - Modelo físico final, cardinalidades, índices e constraints detalhadas.
 - Representação monetária, escala e arredondamento (ARC-003).
 - Autenticação e sessões (ARC-004).
