@@ -51,7 +51,8 @@ erDiagram
     FINANCIAL_ENTRIES ||--o{ PAYMENT_ALLOCATIONS : obligation_entry
     PAYMENT_ALLOCATIONS ||--o{ PAYMENT_REVERSAL_ALLOCATIONS : reversed_by
     OPERATIONS ||--o{ PAYMENT_REVERSAL_ALLOCATIONS : reverses
-    FINANCIAL_ENTRIES ||--o{ PAYMENT_REVERSAL_ALLOCATIONS : reversal_effect
+    FINANCIAL_ENTRIES ||--o{ PAYMENT_REVERSAL_ALLOCATIONS : account_reversal_effect
+    FINANCIAL_ENTRIES ||--o{ PAYMENT_REVERSAL_ALLOCATIONS : invoice_reversal_effect
     DEBTS o|--o{ FINANCIAL_ENTRIES : destination
     DEBTS ||--o{ DEBT_INSTALLMENTS : schedules
     FINANCIAL_ACCOUNTS ||--o{ BALANCE_RECONCILIATIONS : reconciled
@@ -203,7 +204,6 @@ Entidades conceptuais:
 | `card_opening_balances` | Extensão 1:1 da operação original, associando-a a um cartão | id, card_id, operation_id, declared_amount |
 | `opening_balance_distributions` | Distribuição histórica inicial, imutável, por fatura | id, opening_balance_id, invoice_id, amount, obligation_entry_id |
 | `opening_balance_adjustments` | Correção/redistribuição posterior, ligada à distribuição e à operação corretiva | id, source_distribution_id, correction_operation_id, source_entry_id, destination_invoice_id, source_reduction_entry_id, destination_increase_entry_id, amount |
-| `payment_reversal_allocations` | Associação entre a reversão e a alocação de pagamento original compensada | id, reversal_operation_id, original_payment_allocation_id, account_reversal_entry_id, invoice_reversal_entry_id, amount |
 
 Cardinalidades e limites:
 - Um cartão tem zero ou uma operação original de saldo inicial; a extensão `card_opening_balances` é única por cartão e por operação.
