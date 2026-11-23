@@ -10,15 +10,19 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 | 3. Comportamento das operações | Aprovada |
 | 4. Páginas principais | Aprovada |
 | 5. Stack principal | Aprovada |
-| 6. Arquitetura detalhada e UML | Em análise |
-| 7. Validação e plano de implementação | Por fazer |
+| 6. Organização do repositório | Aprovada |
+| 7. Arquitetura detalhada e UML | Em análise |
+| 8. Validação e plano de implementação | Por fazer |
 
-## Stack tecnológica aprovada
+## Stack tecnológica e organização aprovadas
 - Backend: Laravel 13 + PHP.
 - Base de dados: MySQL 8.4 LTS.
 - Web: React + TypeScript + Vite.
 - Mobile: React Native + Expo + TypeScript (Android e iOS).
 - Comunicação: API REST/JSON comum.
+- Organização: monorepo único com `backend/`, `web/`, `mobile/` e `docs/`, além de `README.md` e `AGENTS.md` na raiz.
+- Cada aplicação mantém dependências, configuração e execução próprias.
+- Não adotar ferramenta de orquestração de monorepo nesta fase.
 
 ## Decisões técnicas pendentes
 | ID | Decisão | Estado |
@@ -27,7 +31,6 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 | ARC-002 | Modelo físico, cardinalidades e constraints | Pendente |
 | ARC-003 | Representação monetária, escala e arredondamento | Pendente |
 | ARC-004 | Autenticação e sessões | Pendente |
-| ARC-005 | Organização do código: monorepo ou repositórios separados | Pendente |
 | ARC-006 | Alojamento, deploy e ambientes | Pendente |
 | ARC-007 | Scheduler, filas e processamento assíncrono | Em análise |
 | ARC-008 | Testes, CI/CD, backup e recuperação | Pendente |
@@ -47,7 +50,7 @@ Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
 2. Fechar modelo conceptual e UML.
 3. Definir modelo físico, precisão monetária e transações.
 4. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
-5. Definir autenticação, organização dos repositórios, testes, segurança, deploy e recuperação.
+5. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
 6. Rever e aprovar a especificação e o plano de implementação.
 
 ## Critério para iniciar implementação estrutural
