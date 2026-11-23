@@ -203,7 +203,7 @@ Entidades conceptuais:
 |---|---|---|
 | `card_opening_balances` | Extensão 1:1 da operação original, associando-a a um cartão | id, card_id, operation_id, declared_amount |
 | `opening_balance_distributions` | Distribuição histórica inicial, imutável, por fatura | id, opening_balance_id, invoice_id, amount, obligation_entry_id |
-| `opening_balance_adjustments` | Correção/redistribuição posterior, ligada à distribuição e à operação corretiva | id, source_distribution_id, correction_operation_id, source_entry_id, destination_invoice_id, source_reduction_entry_id, destination_increase_entry_id, amount |
+| `opening_balance_adjustments` | Correção/redistribuição posterior, ligada à distribuição e à operação corretiva | id, source_distribution_id, correction_operation_id, adjustment_type, source_entry_id, destination_invoice_id, source_reduction_entry_id, destination_increase_entry_id, reverses_adjustment_id quando aplicável, amount |
 
 Cardinalidades e limites:
 - Um cartão tem zero ou uma operação original de saldo inicial; a extensão `card_opening_balances` é única por cartão e por operação.
@@ -217,7 +217,7 @@ A distribuição histórica inicial mantém-se igual ao valor reconhecido, mesmo
 
 Para cada distribuição, a posição vigente considera o valor original, os ajustes de entrada/saída e as liquidações/reversões associadas aos lançamentos da sua linhagem. O montante redistribuível é apenas a parcela ainda não liquidada nem comprometida por correções anteriores. Exemplo: distribuição de 1.000 €, correção de 300 € para outra fatura e pagamento líquido de 400 € deixam 300 € disponíveis para nova redistribuição. O cálculo considera todos os efeitos acumulados, não apenas o valor da linha original.
 
-A reversão de uma distribuição ou correção cria novos efeitos contrários associados ao evento original. O valor revertido não pode exceder o montante ainda reversível, considerando correções posteriores e pagamentos líquidos. Valores já liquidados não podem ser redistribuídos nem revertidos como se continuassem disponíveis.
+A reversão de uma distribuição ou correção cria novos efeitos contrários associados ao evento original. O registo corretivo identifica o tipo de ajuste e, quando reverte uma correção anterior, referencia-a explicitamente por `reverses_adjustment_id`; quando reverte a distribuição inicial, referencia a distribuição original. O valor revertido não pode exceder o montante ainda reversível, considerando correções posteriores e pagamentos líquidos. Valores já liquidados não podem ser redistribuídos nem revertidos como se continuassem disponíveis.
 
 A criação do saldo inicial, as distribuições e os respetivos lançamentos são atómicos e idempotentes. A repetição do mesmo comando não pode criar uma segunda operação original, duplicar distribuições ou duplicar lançamentos.
 
