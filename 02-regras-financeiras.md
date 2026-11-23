@@ -30,8 +30,17 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Os períodos `PLANNED` podem conter obrigações efetivas já reconhecidas; não são projeções nem faturas abertas na interface.
 - A projeção de pagamentos futuros é separada dos lançamentos de obrigação. Só a confirmação do pagamento cria os efeitos efetivos na conta e na fatura.
 - Pagamento da fatura é uma operação distinta: cria saída na conta e redução da obrigação da fatura; não cria uma segunda despesa.
-- A redução da fatura é alocada explicitamente a um ou mais lançamentos de obrigação, sem exceder o saldo de cada obrigação.
+- A redução de cada fatura é alocada explicitamente a um ou mais lançamentos de obrigação dessa mesma fatura, sem exceder o saldo de cada obrigação.
+- Um único pagamento pode abranger várias faturas: uma saída total na conta e uma redução por fatura; todos os efeitos e alocações são atómicos.
 - Reembolsos mantêm ligação à operação de origem e o respetivo destino é determinado pelos lançamentos ARC-001.
+
+### Saldo inicial de cartões
+- O saldo já utilizado antes da entrada no Orbe é registado por uma operação própria, sem natureza de receita/despesa e sem saída de conta.
+- Saldo inicial zero não exige distribuição; saldo inicial positivo exige distribuição integral por faturas/ciclos, com soma exatamente igual ao valor informado.
+- Cada efeito de reconhecimento aponta diretamente para uma fatura (`invoice_id`); não existe parcela por distribuir nem novo destino financeiro.
+- A operação original é única por cartão. Distribuições iniciais são históricas e imutáveis; redistribuições posteriores são operações corretivas com efeitos de redução na fatura de origem e aumento na fatura de destino.
+- Distribuição histórica, correções e obrigação em aberto são grandezas distintas. A obrigação em aberto é sempre derivada dos lançamentos financeiros válidos; as estruturas de distribuição apenas preservam proveniência e rastreabilidade.
+- Só pode ser redistribuída a obrigação ainda não liquidada e não comprometida por correções anteriores.
 
 
 ## Cartões, faturas e projeções
@@ -43,11 +52,12 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - A obrigação do cartão e o saldo de caixa são grandezas diferentes: a compra aumenta a primeira, mas não reduz a conta bancária.
 
 ### Pagamento e alocação
-- Um pagamento de fatura é uma operação própria com, no mínimo, dois efeitos quando liquidado a partir de uma conta: saída na conta e redução da obrigação na fatura.
-- Cada lançamento tem um único destino ARC-001. O lançamento de saída aponta para a conta; o lançamento de redução aponta para a fatura.
-- `payment_allocations` relaciona o lançamento de redução com os lançamentos de obrigação que liquida. A alocação não é lançamento e não altera saldos diretamente.
-- A soma das alocações corresponde ao valor efetivamente liquidado; nenhuma obrigação pode receber alocações superiores ao seu saldo restante.
-- Os dois efeitos do pagamento e as respetivas alocações são confirmados na mesma transação. Repetições devem ser idempotentes.
+- Um pagamento pode abranger uma ou várias faturas. Quando parte de uma conta, gera uma saída total na conta e uma redução por cada fatura abrangida.
+- Cada lançamento tem um único destino ARC-001. A saída aponta para a conta; cada redução aponta para a respetiva fatura.
+- `payment_allocations` relaciona cada redução com lançamentos de obrigação da mesma fatura. A regra de mesma fatura aplica-se a cada par de alocação, não à operação inteira.
+- A soma das reduções por fatura corresponde à saída total; as alocações correspondem a cada redução e não podem exceder o saldo restante das obrigações.
+- A saída, todas as reduções e todas as alocações são confirmadas na mesma transação. Repetições devem ser idempotentes.
+- Reversões de pagamento usam rastreabilidade própria ligada às alocações originais; `payment_allocations` não é reutilizada para representar reversões.
 
 ### Planos de pagamento e Rota Financeira
 - Um plano de pagamento é uma intenção/projeção, não um lançamento efetivo.
