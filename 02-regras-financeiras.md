@@ -10,7 +10,7 @@ Estas invariantes são obrigatórias. Uma implementação que as viole está inc
 - Saldos agregados podem ser armazenados como otimização se forem reconstruíveis.
 - Rota Financeira é simulação sobre o motor central, não um segundo motor.
 
-A separação operação/lançamentos (1:N) foi escolhida conceptualmente. O destino/referência de cada lançamento continua pendente; ver documento 05.
+A separação operação/lançamentos (1:N) está aprovada. O destino de cada lançamento também está decidido: referência específica a uma conta, fatura ou dívida, com exatamente um destino por lançamento (ARC-001). O modelo conceptual e as relações entre entidades estão detalhados em [07 — Modelo ER](07-modelo-er.md); o esquema físico continua por validar.
 
 ## Realizado, pendente e projetado
 - Pago/recebido é realizado; por pagar/receber é pendente.
