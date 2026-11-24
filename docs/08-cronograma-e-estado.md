@@ -36,7 +36,8 @@
 - [x] Executar testes negativos de integridade.
 - [x] Executar testes positivos de compras, pagamentos e reversões.
 - [x] Completar a validação do modelo físico contra o núcleo financeiro implementado; cobertura e lacunas estão em [09 — Auditoria do backend e do núcleo](09-auditoria-backend-e-nucleo.md).
-- [!] Implementar despesas comuns, receitas, transferências, recorrências e gestão completa de dívidas: faltam contratos e endpoints confirmados.
+- [x] Definir e implementar o contrato mínimo de contas, categorias, despesas comuns e receitas — Fase 1.
+- [!] Implementar transferências, recorrências e gestão completa de dívidas: dependem das fases seguintes e dos contratos específicos documentados.
 
 ## 3. Autenticação e API
 
@@ -53,10 +54,10 @@
 - [x] Implementar endpoint de compras parceladas.
 - [x] Implementar endpoint de alocação de pagamentos.
 - [x] Implementar endpoint de reversão de pagamentos.
-- [ ] Implementar endpoints de contas.
-- [ ] Implementar endpoints de categorias.
-- [ ] Implementar endpoints de despesas comuns.
-- [ ] Implementar endpoints de receitas.
+- [x] Implementar endpoints mínimos de contas.
+- [x] Implementar endpoints mínimos de categorias.
+- [x] Implementar endpoints mínimos de despesas comuns.
+- [x] Implementar endpoints mínimos de receitas.
 - [ ] Implementar endpoints de transferências.
 - [ ] Implementar endpoints de edição, cancelamento, eliminação e reversão contextual.
 - [ ] Integrar o frontend com a API e a autenticação.

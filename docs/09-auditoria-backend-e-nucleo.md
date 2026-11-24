@@ -4,7 +4,7 @@
 
 ## Veredicto
 
-O núcleo financeiro implementado está coberto por migrations, modelos, serviços, controllers, constraints e testes para os fluxos de cartões/faturas já suportados. A validação é concluída para este perímetro.
+O núcleo financeiro implementado está coberto por migrations, modelos, serviços, controllers, constraints e testes para os fluxos de cartões/faturas já suportados e, após a Fase 1, para contas, categorias, despesas simples e receitas simples. A validação é concluída para este perímetro.
 
 O ER conceptual também descreve módulos que ainda não existem fisicamente no backend. Despesas comuns, receitas, transferências completas, recorrências e gestão completa de dívidas não podem ser marcadas como implementadas porque ainda faltam contratos de campos, estados, permissões, dependências e endpoints. Criá-los agora exigiria inventar comportamento fora dos documentos aprovados.
 
@@ -44,8 +44,8 @@ As regras que abrangem várias linhas continuam nos serviços transacionais: som
 
 | Fluxo | O que existe | O que falta antes de implementar |
 |---|---|---|
-| Despesa comum | conceito no ER e na documentação | contrato de campos, categoria, conta, estado, endpoint e regras de edição/cancelamento |
-| Receita | conceito no ER e na documentação | contrato de campos, categoria, conta, confirmação, endpoint e permissões |
+| Despesa comum | contrato mínimo e endpoint de criação Fase 1 | edição, eliminação, cancelamento e regras contextuais ainda não implementados |
+| Receita | contrato mínimo e endpoint de criação/confirmação Fase 1 | edição, eliminação, cancelamento e regras contextuais ainda não implementados |
 | Transferência | relação conceptual de duas pernas | tabelas/constraints das pernas, estados independentes, liquidação parcial, endpoints e testes |
 | Recorrência | conceito no ER e regras de ocorrência | tabelas de programação/ocorrência, materialização idempotente, edição “esta e seguintes” e endpoints |
 | Gestão completa de dívidas | `debts` e lançamentos básicos | detalhe de prestações, pagamentos, estados, dependências, endpoints e regras de associação |
