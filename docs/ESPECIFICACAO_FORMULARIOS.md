@@ -279,7 +279,7 @@ Os campos efetivos e a sua obrigatoriedade devem vir da documentação funcional
 2. Campo de valor em destaque.
 3. Campos funcionais da despesa, com etiquetas superiores e contorno.
 4. Seletor de categoria em lista simples com ícones.
-5. Seletor de conta em lista compacta.
+5. Apresentação do destino/meio financeiro apenas conforme o tipo e o estado funcional: conta para despesa realizada paga por conta; cartão de crédito para compra realizada com cartão. A seleção antecipada numa despesa pendente continua por decidir.
 6. Controlo de data com atalhos rápidos.
 7. Rodapé fixo com ação secundária e ação principal.
 
@@ -317,6 +317,7 @@ Data
 - Distinguir a natureza da operação com tratamento visual coerente, por exemplo na cor do valor, sem criar um segundo design system.
 - Não usar uma cor diferente em todos os elementos indiscriminadamente.
 - Se a receita usar categorias ou campos diferentes por regra funcional, respeitar essa diferença sem alterar a estrutura visual comum.
+- Quando já recebida, representar a conta onde o valor entrou; quando prevista/pendente, não apresentar a seleção da conta como obrigatória nem assumir que fica associada na criação. O momento de associação da conta em receitas pendentes continua por decidir.
 
 ### 6.3 Transferência
 
@@ -771,3 +772,193 @@ Este documento não define:
 Esses pontos devem ser obtidos na documentação funcional aprovada e no código existente. Se houver conflito ou ausência de informação, assinalar antes de implementar.
 
 **Resultado esperado:** formulários visualmente consistentes, responsivos e fiéis às decisões aprovadas, sem invenção de requisitos funcionais ou alterações fora do âmbito.
+
+
+---
+
+## 17. Correspondência obrigatória com as regras funcionais
+
+Esta secção confronta os padrões visuais anteriores com as regras de `docs/02-regras-financeiras.md`, `docs/03-funcionalidades-e-operacoes.md`, `docs/04-interfaces-e-navegacao.md`, `docs/06-pendencias-e-plano.md` e `docs/07-modelo-er.md`.
+
+**Hierarquia documental:** as regras funcionais e o modelo de domínio prevalecem sobre qualquer wireframe deste ficheiro. Esta especificação apenas determina como apresentar e interagir com os fluxos já definidos. Um exemplo visual não cria um campo, método de pagamento, estado, associação ou ação nova.
+
+### 17.1 Princípios transversais que todos os formulários têm de respeitar
+
+- A operação representa o acontecimento de negócio; os lançamentos representam os efeitos financeiros. Uma operação pode originar vários lançamentos, mas deve continuar a ser apresentada como uma única operação na interface.
+- Um lançamento tem exatamente um destino: conta, fatura ou dívida. Não apresentar um único lançamento como se afetasse simultaneamente vários destinos.
+- Apenas efeitos realizados válidos dirigidos a contas alteram saldos efetivos. Operações pendentes, planos e projeções não alteram saldos.
+- Uma data prevista, por si só, nunca confirma pagamento ou recebimento.
+- O estado inicial decorre dos dados e da natureza do evento. Não disponibilizar um seletor de estado livre que permita combinações incoerentes.
+- A confirmação de pagamento/recebimento tem de ser explícita e idempotente. A interface deve impedir submissões repetidas enquanto a ação está em curso e apresentar o resultado sem sugerir duplicação.
+- As ações de editar, confirmar, cancelar, eliminar e reverter são distintas. Mostrar apenas as ações permitidas pelo estado, natureza e dependências.
+- Eliminar só é permitido quando não existem efeitos confirmados nem dependências impeditivas. Quando há efeitos confirmados, a correção é rastreável; a ação é **Reverter**, não apagar ou editar silenciosamente.
+- Cancelar preserva o registo, motivo e data, não altera saldo efetivo e retira a operação da projeção.
+- Mensagens, resumos e confirmações devem descrever apenas efeitos comprovados pelo domínio; não prometer alterações de saldo para operações pendentes.
+
+### 17.2 Despesa: conta ou cartão de crédito
+
+A interface deve distinguir o instrumento utilizado e o efeito financeiro correspondente, sem tratar ambos como o mesmo fluxo:
+
+**Despesa realizada paga por conta**
+- Apresentar a seleção da conta que recebeu o efeito financeiro.
+- O formulário e o resumo devem deixar claro que a operação foi realizada e que o lançamento efetivo afeta essa conta.
+- Não criar uma segunda seleção genérica de “método de pagamento” se a documentação não definir essa taxonomia.
+
+**Compra realizada com cartão de crédito**
+- Apresentar a seleção do cartão de crédito, não uma conta bancária como origem da compra.
+- Na confirmação da compra, reconhecer a despesa uma única vez na data da compra e reconhecer a obrigação na(s) fatura(s)/período(s) correspondente(s).
+- Não apresentar uma saída imediata de conta bancária nem reduzir o saldo da conta por causa da compra.
+- Compra parcelada: a confirmação reconhece o valor total da despesa uma única vez e cria as alocações/obrigações dos períodos correspondentes na mesma confirmação. Períodos `PLANNED` podem já conter obrigações efetivas; abrir o ciclo não cria novos lançamentos.
+- A interface não deve sugerir que cada parcela é uma nova despesa.
+- A atribuição ao ciclo de uma compra realizada exatamente no dia do fecho continua pendente de decisão de produto.
+
+**Despesa pendente**
+- Mostrar claramente que está pendente e que a data é prevista.
+- Não aumentar saldo de conta nem reconhecer como realizado antes da confirmação.
+- A documentação não decide se conta/cartão é associado já na criação ou apenas no momento da confirmação. Não impor uma destas opções nem tornar o campo obrigatório até essa decisão ser fechada.
+- Na confirmação, recolher os dados necessários para criar os efeitos efetivos permitidos. O detalhe exato depende da decisão pendente sobre associação antecipada.
+
+### 17.3 Receita recebida ou prevista
+
+**Receita recebida**
+- A confirmação explícita representa recebimento realizado.
+- Apresentar a conta onde o valor entrou e o efeito de entrada nessa conta.
+- A receita é reconhecida uma vez; não criar entradas duplicadas por causa de vários detalhes de apresentação.
+
+**Receita prevista/pendente**
+- Mostrar estado pendente e data prevista.
+- Não aumentar o saldo efetivo da conta.
+- A associação antecipada a uma conta, ou a seleção apenas no momento da confirmação, não está definida nos documentos. Não escolher silenciosamente uma alternativa.
+- A confirmação do recebimento deve ser uma ação explícita.
+
+**Recebimentos parciais:** as regras aprovadas detalham pagamentos parciais de obrigações, mas não fecham suficientemente o fluxo de recebimentos parciais de receitas. Não inventar um fluxo, alocação ou conjunto de ações.
+
+### 17.4 Transferência entre contas
+
+- A interface representa uma única operação com duas pernas associadas: saída (`OUT`) e entrada (`IN`).
+- Exibir claramente conta de origem e conta de destino, sem permitir confusão entre os seletores.
+- O valor e a associação entre as pernas têm de ser coerentes.
+- Cada perna tem data prevista/efetiva e estado próprios; não assumir que ambas são realizadas ou canceladas em simultâneo.
+- O estado global é derivado das duas pernas. Combinações parcialmente realizadas devem ser apresentadas como parciais, não como transferência integralmente concluída.
+- Se uma perna estiver realizada e a outra pendente, a interface deve preservar o efeito realizado e identificar a parte ainda não correspondida. Não oferecer cancelamento/eliminação que apague o efeito já realizado.
+- A transferência não é receita nem despesa e não deve ser apresentada como tal.
+- A especificação visual não cria um fluxo de reversão independente por perna; exceções de liquidação exigem ação corretiva explícita conforme o domínio.
+
+### 17.5 Pagamento de fatura de cartão
+
+- Uma única operação na interface pode pagar uma ou várias faturas.
+- Apresentar as faturas abrangidas e a alocação por fatura, com valores legíveis e verificáveis; não reduzir a operação a uma seleção de uma única fatura.
+- Apresentar a conta de origem do pagamento.
+- Antes da confirmação, mostrar resumo com saída total da conta e redução atribuída a cada fatura.
+- A soma das reduções tem de corresponder à saída total. Cada redução é alocada a obrigações da mesma fatura e não pode exceder o saldo restante dessas obrigações.
+- Pagamentos parciais são permitidos. A interface deve permitir representar a liquidação parcial sem apresentar a fatura como totalmente liquidada.
+- A confirmação é atómica: saída da conta, reduções por fatura e alocações são confirmadas em conjunto ou não são confirmadas.
+- O pagamento de fatura não cria uma segunda despesa.
+- Reversões de pagamento mantêm rastreabilidade própria às alocações originais; não reutilizar a alocação original como se fosse a reversão.
+- Podem existir várias faturas de ciclos anteriores com obrigações em aberto. Não assumir que só existe uma fatura em dívida porque só pode existir um ciclo `OPEN` por cartão.
+- O estado do ciclo (`PLANNED`, `OPEN`, `CLOSED`) não é o estado de pagamento nem o valor em dívida. Não os fundir num único badge ou seletor.
+- A regra de apresentação das faturas anteriores com obrigação em aberto continua pendente.
+
+### 17.6 Saldo inicial de cartão
+
+O formulário próprio referido na secção 6.6 deve respeitar o contrato funcional:
+- Saldo inicial zero não exige distribuição.
+- Saldo inicial positivo exige distribuição integral por faturas/ciclos, e a soma distribuída tem de ser exatamente igual ao valor informado.
+- Não pode existir parcela por distribuir.
+- Não é compra, despesa, receita nem saída de conta.
+- Existe no máximo uma operação original de saldo inicial por cartão.
+- A distribuição inicial é histórica e imutável. Correções/redistribuições posteriores são operações corretivas rastreáveis; só podem atingir obrigação ainda não liquidada e não comprometida por correções anteriores.
+- A pré-visualização/resumo deve permitir conferir a distribuição integral antes da confirmação, sem criar uma nova natureza de movimento.
+- Não inventar a política de crédito negativo de fatura; esse tema continua pendente.
+
+### 17.7 Dívidas e pagamentos parciais
+
+Embora o formulário detalhado de Dívidas ainda dependa do desenho da subpágina, qualquer formulário de pagamento deve respeitar:
+- Cada pagamento parcial é uma operação individual ligada à dívida/obrigação.
+- Cada pagamento identifica a conta de origem; pagamentos da mesma dívida podem partir de contas diferentes.
+- O pagamento cria efeito na conta de origem e redução da obrigação. Não criar uma segunda despesa.
+- Reverter um pagamento parcial não reverte os restantes pagamentos.
+- O valor em aberto é derivado dos efeitos financeiros válidos, não de um campo editável manualmente.
+- Prestações são agenda/afetação da obrigação, não uma segunda dívida.
+- A associação explícita de pagamentos a uma ou várias prestações ainda não está fechada. Não assumir FIFO nem inventar um seletor/alocação por prestação.
+- Um plano de pagamento é intenção/projeção, não lançamento efetivo. Não altera saldo nem obrigação liquidada.
+- Um plano não confirmado até à data prevista passa a vencido; a obrigação permanece em aberto. Sem política aprovada de débito automático/reagendamento, não propor nova data automaticamente.
+
+### 17.8 Recorrências e ocorrências
+
+- A programação e cada ocorrência são conceitos distintos.
+- A interface deve distinguir editar a programação de editar uma ocorrência materializada/individual.
+- Quando a ação incide numa ocorrência recorrente, as opções funcionais aprovadas são “Apenas esta ocorrência” e “Esta e todas as seguintes”.
+- “Apenas esta ocorrência” afeta apenas a selecionada.
+- “Esta e todas as seguintes” afeta a selecionada e futuras e atualiza a programação a partir dela.
+- Ocorrências passadas/realizadas permanecem preservadas; não as reescrever.
+- Cancelar uma ocorrência não cancela a programação inteira.
+- Não duplicar ocorrências nem apresentar simultaneamente uma ocorrência e a operação que já a materializou como dois eventos.
+- A classificação para estimativas da Rota segue a precedência operação → ocorrência → programação → categoria → não classificada. A interface de formulários não deve alterar esta precedência nem tratar `UNCLASSIFIED` como zero ou variável.
+- A especificação visual das opções não autoriza alterar a regra de geração ou persistência das recorrências.
+
+### 17.9 Categorias, classificações e Rota Financeira
+
+- A categoria classifica a natureza da operação e fornece a classificação predefinida para estimativas, mas classificação fixa/variável/excluída não altera a natureza económica, os saldos ou os relatórios.
+- `EXCLUDED` significa excluída apenas da estimativa variável; não significa excluída dos movimentos, saldos ou relatórios.
+- `UNCLASSIFIED` significa desconhecida; não a representar como zero nem como variável por omissão.
+- Transferências, liquidações de fatura/dívida e efeitos técnicos não entram na estimativa variável por natureza.
+- Apenas a Rota Financeira apresenta projeções. Formulários e resumos de Movimentos, Dashboard e Relatórios não devem introduzir projeções como se fossem valores realizados.
+- O Dashboard mostra saldo atual; não incorporar nele saldo futuro ou pendentes.
+- Relatórios consideram operações realizadas, sem projeções.
+
+### 17.10 Conferência de saldos
+
+A conferência é uma comparação, não um movimento:
+- Apresentar saldo calculado, saldo real informado, diferença e data da conferência, conforme a funcionalidade aprovada.
+- Não apresentar a conferência como despesa, receita, transferência ou ajuste de saldo.
+- Não criar lançamento nem alterar o saldo calculado.
+- O histórico de conferências pertence à subpágina de Contas, não a um formulário de movimento.
+
+### 17.11 Ações permitidas por estado e dependências
+
+A apresentação dos botões e menus deve obedecer a `docs/03-funcionalidades-e-operacoes.md` e `docs/04-interfaces-e-navegacao.md`:
+- Não mostrar ações indisponíveis. Não mostrar opções desativadas apenas para explicar que não podem ser usadas.
+- **Pendente:** pode permitir edição conforme natureza/dependências e confirmação explícita; não assumir que todos os campos continuam editáveis.
+- **Realizado:** alterações com efeitos financeiros confirmados exigem correção rastreável. Não disponibilizar eliminação destrutiva; apresentar Reverter apenas quando permitido.
+- **Cancelado:** preservar histórico e excluir da projeção; não assumir que pode ser reativado.
+- **Parcial:** na lista de Movimentos, mostrar apenas o indicador “Parcial”, sem valores detalhados. O detalhe pode consultar os efeitos relacionados segundo o fluxo funcional aprovado.
+- Eliminação, cancelamento e reversão devem ter confirmações contextuais distintas. A confirmação não deve ser usada para contornar dependências impeditivas.
+- Menus e ações contextuais só incluem operações permitidas no contexto atual.
+
+### 17.12 Decisões funcionais ainda pendentes — não resolver no desenho
+
+A documentação consultada não permite fechar os pontos seguintes. Permanecem explicitamente pendentes:
+1. Associar conta/cartão na criação de operação pendente ou apenas na confirmação, tanto para despesas como para receitas.
+2. Taxonomia completa de meios de pagamento e respetiva apresentação. Não inventar opções como dinheiro, débito, transferência ou outras como catálogo fechado.
+3. Recebimentos parciais de receitas: criação, associação, conta de destino e reversão.
+4. Associação de pagamentos de dívida a prestações específicas; não presumir FIFO.
+5. Regra para compras efetuadas no próprio dia do fecho do cartão.
+6. Apresentação de faturas de ciclos anteriores que continuam com obrigação em aberto.
+7. Política de planos de fatura vencidos: débito automático ou reagendamento.
+8. Crédito negativo de fatura, passagem a ciclos seguintes e eventual devolução à conta.
+9. Fórmula, janela histórica, distribuição diária e apresentação de estimativas variáveis na Rota.
+10. Precisão monetária, escala e arredondamento; a interface não deve fixar casas decimais ou regras de arredondamento por conta própria.
+11. Moeda principal e possibilidade de alteração depois de existirem movimentos.
+12. Máquinas de estado completas de faturas, planos, dívidas, prestações, ocorrências e exceções de transferências.
+
+Até estas decisões serem aprovadas:
+- Não transformar os pontos pendentes em campos obrigatórios, opções, botões, validações ou comportamentos.
+- Não usar wireframes como fonte para resolver lacunas.
+- Se um fluxo depender de uma decisão pendente, apresentar o diagnóstico e pedir decisão antes de implementar a parte afetada.
+
+### 17.13 Matriz de rastreabilidade documental
+
+| Fluxo/interface | Regras que condicionam o desenho |
+|---|---|
+| Despesa por conta/cartão | 02 — Receitas, despesas e cartões; 03 — Compra parcelada |
+| Receita recebida/pendente | 02 — Realizado, pendente e projetado; 03 — OP-001/002/005 |
+| Transferência | 02 — Transferências e contas; 03 — OP-011; 07 — duas pernas e estado global derivado |
+| Pagamento de fatura | 02 — Pagamento e alocação; 03 — Regras operacionais de cartões e faturas |
+| Saldo inicial de cartão | 02 — Saldo inicial de cartões; 03 — Regras operacionais de saldo inicial |
+| Dívidas e pagamentos | 02 — Dívidas e pagamentos; 03 — OP-006/007; 07 — dívida e prestações |
+| Recorrências | 02 — Recorrências; 03 — OP-012 a OP-014 |
+| Editar/cancelar/eliminar/reverter | 02 — Correções e conferência; 03 — OP-003/004/008/009/010/015 |
+| Conferência de saldos | 02 — Correções e conferência; 04 — Contas; 07 — Conferências |
+| Dashboard/Movimentos/Rota/Relatórios | 02 — Classificação para estimativas; 04 — Páginas aprovadas; 07 — objetivos das páginas |
+
