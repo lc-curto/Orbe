@@ -112,15 +112,15 @@
 - [x] Validar com `npm run lint`, `npm run build` e `git diff --check`.
 - [x] Publicar a Fase A na `origin/main` no commit `b2cf768`.
 
-## 7. Cliente API e autenticação do frontend — próximo passo
+## 7. Cliente API e autenticação do frontend — Fase 4
 
-- [ ] Criar cliente HTTP centralizado.
-- [ ] Criar tipos TypeScript para respostas e erros da API.
-- [ ] Implementar login, logout e consulta `/auth/me` no frontend.
-- [ ] Armazenar e enviar o token Sanctum segundo a arquitetura aprovada.
-- [ ] Tratar respostas `401`, `422` e erros gerais.
-- [ ] Criar camada comum de loading, erro e vazio.
-- [ ] Testar expiração e revogação de sessão no frontend.
+- [x] Criar cliente HTTP centralizado.
+- [x] Criar tipos TypeScript para respostas e erros da API.
+- [x] Implementar login, logout e consulta `/auth/me` no frontend.
+- [x] Armazenar e enviar o token Sanctum segundo a arquitetura aprovada.
+- [x] Tratar respostas `401`, `422` e erros gerais.
+- [x] Criar provider comum de loading e erro de sessão.
+- [ ] Testar expiração e revogação de sessão no frontend com interação real.
 
 ## 8. Leitura de dados reais
 
