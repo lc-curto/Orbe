@@ -20,6 +20,7 @@ O Orbe é uma aplicação de gestão financeira pessoal. Este repositório é a 
 | [05-arquitetura-e-uml.md](docs/05-arquitetura-e-uml.md) | Arquitetura, decisões e UML |
 | [06-pendencias-e-plano.md](docs/06-pendencias-e-plano.md) | Decisões abertas e sequência de trabalho |
 | [07-modelo-er.md](docs/07-modelo-er.md) | Entidades, relações, regras de integridade e objetivos de leitura por página |
+| [08-cronograma-e-estado.md](docs/08-cronograma-e-estado.md) | Cronograma de implementação e checklist de estado |
 
 ## Estado das decisões
 - **Aprovado:** confirmado pelo responsável do produto.
