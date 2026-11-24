@@ -6,8 +6,12 @@ namespace Tests\Feature;
 
 use App\Models\Card;
 use App\Models\CardInvoice;
+use App\Models\FinancialAccount;
+use App\Models\FinancialEntry;
 use App\Models\Operation;
 use App\Models\User;
+use App\Services\PaymentAllocationService;
+use App\Services\PurchaseService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
 use PHPUnit\Framework\Attributes\Test;
@@ -93,5 +97,70 @@ final class ReadApiTest extends TestCase
         $this->getJson('/api/cards')->assertUnauthorized();
         $this->getJson('/api/invoices')->assertUnauthorized();
         $this->getJson('/api/operations')->assertUnauthorized();
+    }
+
+    #[Test]
+    public function invoice_summary_reconstructs_open_amount_from_obligations_payments_and_reversals(): void
+    {
+        $user = User::factory()->create();
+        $account = FinancialAccount::query()->create([
+            'user_id' => $user->id,
+            'name' => 'Conta resumo',
+            'account_type' => 'BANK',
+            'status' => 'ACTIVE',
+        ]);
+        $card = Card::query()->create([
+            'user_id' => $user->id,
+            'name' => 'Cartão resumo',
+            'credit_limit' => '5000.0000',
+            'status' => 'ACTIVE',
+        ]);
+        $invoice = CardInvoice::query()->create([
+            'user_id' => $user->id,
+            'card_id' => $card->id,
+            'period_start' => '2027-02-01',
+            'period_end' => '2027-02-28',
+            'due_date' => '2027-03-10',
+            'cycle_state' => 'OPEN',
+        ]);
+
+        $purchase = app(PurchaseService::class)->create(
+            $user->id,
+            '1000.0000',
+            [['invoice_id' => $invoice->id, 'amount' => '1000.0000']],
+        );
+        $obligation = $purchase->entries()->firstOrFail();
+        $payment = Operation::query()->create([
+            'user_id' => $user->id,
+            'operation_type' => 'PAYMENT',
+            'state' => 'REALIZED',
+            'amount' => '300.0000',
+        ]);
+        $settlement = FinancialEntry::query()->create([
+            'user_id' => $user->id,
+            'operation_id' => $payment->id,
+            'account_id' => $account->id,
+            'amount' => '300.0000',
+            'effect' => 'DECREASE',
+            'state' => 'REALIZED',
+        ]);
+
+        app(PaymentAllocationService::class)->allocate($payment, $settlement->id, [[
+            'obligation_entry_id' => $obligation->id,
+            'amount' => '300.0000',
+        ]]);
+
+        Sanctum::actingAs($user);
+
+        $this->getJson('/api/invoices')
+            ->assertOk()
+            ->assertJsonPath('data.0.summary.obligation_amount', '1000.0000')
+            ->assertJsonPath('data.0.summary.paid_amount', '300.0000')
+            ->assertJsonPath('data.0.summary.open_amount', '700.0000');
+
+        $this->getJson('/api/cards/'.$card->id)
+            ->assertOk()
+            ->assertJsonPath('data.summary.used_amount', '700.0000')
+            ->assertJsonPath('data.summary.available_amount', '4300.0000');
     }
 }
