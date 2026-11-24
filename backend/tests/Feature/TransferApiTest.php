@@ -43,7 +43,9 @@ final class TransferApiTest extends TestCase
             'out' => ['account_id' => $out->id, 'state' => 'REALIZED', 'effective_at' => '2026-11-24 10:00:00'],
             'in' => ['account_id' => $in->id, 'state' => 'PENDING', 'planned_at' => '2026-11-25 10:00:00'],
         ]])->assertCreated();
-        $legId = $response->json('data.transfer_legs.1.id');
+        $pendingLeg = collect($response->json('data.transfer_legs'))->firstWhere('state', 'PENDING');
+        self::assertNotNull($pendingLeg);
+        $legId = $pendingLeg['id'];
         $this->assertDatabaseCount('financial_entries', 1);
         $this->postJson('/api/operations/'.$response->json('data.id').'/transfer-legs/'.$legId.'/confirm', ['effective_at' => '2026-11-25 10:00:00'])->assertOk();
         $this->assertDatabaseCount('financial_entries', 2);
