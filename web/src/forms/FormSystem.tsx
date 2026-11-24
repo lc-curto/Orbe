@@ -44,6 +44,29 @@ function CloseGuard({ confirming, setConfirming, onClose }: { confirming: boolea
   return <div className="orbe-confirm-backdrop" role="presentation"><div className="orbe-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="orbe-confirm-title"><h2 id="orbe-confirm-title">Tem alterações por guardar</h2><p>Pretende sair sem guardar?</p><div className="orbe-form-actions"><button type="button" className="orbe-button orbe-button-secondary" onClick={() => setConfirming(false)}>Continuar a editar</button><button type="button" className="orbe-button orbe-button-danger" onClick={onClose}>Sair sem guardar</button></div></div></div>
 }
 
+function useIsMobile() {
+  const [mobile, setMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches)
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 767px)')
+    const update = () => setMobile(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  return mobile
+}
+
+function useBodyScrollLock(locked: boolean) {
+  useEffect(() => {
+    if (!locked) return
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = previousOverflow }
+  }, [locked])
+}
+
 export function FormModal({ open, title, description, children, onClose, dirty, submitting, fullScreen }: FormContainerProps) {
   const guard = useCloseGuard({ open, dirty, submitting, onClose })
   if (!open) return null
@@ -53,7 +76,7 @@ export function FormModal({ open, title, description, children, onClose, dirty, 
 export function FormSheet(props: FormContainerProps) {
   const guard = useCloseGuard(props)
   if (!props.open) return null
-  return createPortal(<div className="orbe-form-backdrop" role="presentation"><section className="orbe-form-container orbe-form-sheet" role="dialog" aria-modal="true" aria-labelledby="orbe-form-title"><FormHeader title={props.title} description={props.description} onClose={guard.requestClose} /><div className="orbe-form-scroll">{props.children}</div><CloseGuard {...guard} onClose={props.onClose} /></section></div>, document.body)
+  return createPortal(<div className="orbe-form-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) guard.requestClose() }}><section className="orbe-form-container orbe-form-sheet" role="dialog" aria-modal="true" aria-labelledby="orbe-form-title"><FormHeader title={props.title} description={props.description} onClose={guard.requestClose} /><div className="orbe-form-scroll">{props.children}</div><CloseGuard {...guard} onClose={props.onClose} /></section></div>, document.body)
 }
 
 export function FullScreenForm(props: FormContainerProps) {
@@ -61,7 +84,10 @@ export function FullScreenForm(props: FormContainerProps) {
 }
 
 export function ResponsiveFormContainer(props: FormContainerProps) {
-  return <><div className="orbe-responsive-form orbe-desktop-tablet"><FormModal {...props} /></div><div className="orbe-responsive-form orbe-mobile"><FormSheet {...props} /></div></>
+  const mobile = useIsMobile()
+  useBodyScrollLock(props.open)
+  if (!props.open) return null
+  return mobile ? <FormSheet {...props} /> : <FormModal {...props} />
 }
 
 function FormHeader({ title, description, onClose }: { title: string; description?: string; onClose: () => void }) {
