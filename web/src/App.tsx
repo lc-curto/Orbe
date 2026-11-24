@@ -10,6 +10,7 @@ import {
   XStack,
   YStack,
 } from 'tamagui'
+import { MovementForm } from './forms/FormSystem'
 
 type IconName = 'home' | 'activity' | 'route' | 'wallet' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight'
 
@@ -79,12 +80,13 @@ function QuickAction({ icon, label, detail, color }: { icon: IconName; label: st
   )
 }
 
-function MobileDashboard({ period, navigation, activeKey, setActiveKey, notify }: {
+function MobileDashboard({ period, navigation, activeKey, setActiveKey, notify, openForm }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   navigation: Array<{ icon: IconName; label: string }>
   activeKey: string
   setActiveKey: (value: string) => void
   notify: (message: string) => void
+  openForm: (kind: 'expense' | 'income' | 'transfer') => void
 }) {
   const [hidden, setHidden] = useState(false)
 
@@ -98,7 +100,7 @@ function MobileDashboard({ period, navigation, activeKey, setActiveKey, notify }
         <Card className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <YStack gap={12}><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }}><Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text><Button onPress={() => setHidden((value) => !value)} aria-label={hidden ? 'Mostrar saldo' : 'Ocultar saldo'} width={30} height={30} padding={0} borderRadius={9} borderWidth={0} backgroundColor="rgba(255,255,255,0.14)"><Icon name={hidden ? 'eyeOff' : 'eye'} size={15} color="#ffffff" /></Button></XStack><YStack gap={2}><Text color="#ffffff" fontSize={30} fontWeight="800">{hidden ? '••••••' : '€ 2.840,50'}</Text><Text color="#dbeafe" fontSize={12}>Todas as contas</Text></YStack><Separator borderColor="rgba(255,255,255,0.24)" /><XStack style={{ justifyContent: 'space-between' }}>{[['Receitas', period.income], ['Despesas', period.expenses], ['Resultado', '+ € 2.054,20']].map(([label, value]) => <YStack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{hidden ? '••••' : value}</Text></YStack>)}</XStack></YStack>
         </Card>
-        <YStack gap={9}><Text color="#101828" fontSize={16} fontWeight="800">Ações rápidas</Text><XStack gap={9}>{[['expense', 'Despesa'], ['income', 'Receita'], ['transfer', 'Câmbio']].map(([icon, label]) => <Button key={label} onPress={() => notify(`${label} selecionado`)} flex={1} height={72} padding={8} borderRadius={14} {...border} backgroundColor="#ffffff"><YStack gap={7} style={{ alignItems: 'center', justifyContent: 'center' }}><YStack width={28} height={28} borderRadius={10} backgroundColor="#e6f0ff" style={centered}><Icon name={icon as IconName} size={15} color="#175cd3" /></YStack><Text color="#101828" fontSize={11} fontWeight="700">{label}</Text></YStack></Button>)}</XStack></YStack>
+        <YStack gap={9}><Text color="#101828" fontSize={16} fontWeight="800">Ações rápidas</Text><XStack gap={9}>{[['expense', 'Despesa'], ['income', 'Receita'], ['transfer', 'Transferência']].map(([icon, label]) => <Button key={label} onPress={() => openForm(icon as 'expense' | 'income' | 'transfer')} flex={1} height={72} padding={8} borderRadius={14} {...border} backgroundColor="#ffffff"><YStack gap={7} style={{ alignItems: 'center', justifyContent: 'center' }}><YStack width={28} height={28} borderRadius={10} backgroundColor="#e6f0ff" style={centered}><Icon name={icon as IconName} size={15} color="#175cd3" /></YStack><Text color="#101828" fontSize={11} fontWeight="700">{label}</Text></YStack></Button>)}</XStack></YStack>
         <Card {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}><Text color="#101828" fontSize={16} fontWeight="800">Despesas por categoria</Text><Button onPress={() => notify('A mostrar despesas por categoria')} borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontSize={12} fontWeight="700">Ver todas</Button></XStack><YStack gap={12}>{[['Casa', '€ 162,00', 82], ['Juros', '€ 1,00', 12]].map(([label, value, width]) => <YStack key={String(label)} gap={5}><XStack style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={12}>{label}</Text><Text color="#101828" fontSize={12} fontWeight="700">{value}</Text></XStack><YStack height={5} borderRadius={99} backgroundColor="#e6f0ff"><YStack width={`${width}%`} height={5} borderRadius={99} backgroundColor="#175cd3" /></YStack></YStack>)}</YStack></Card>
         <Card {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={10}><Text color="#101828" fontSize={16} fontWeight="800">Cartões</Text><Button onPress={() => notify('A abrir cartões')} borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontSize={12} fontWeight="700">Ver todos</Button></XStack><XStack padding={12} borderRadius={12} backgroundColor="#f7f9fc" style={{ justifyContent: 'space-between', alignItems: 'center' }}><YStack gap={3}><Text color="#667085" fontSize={11}>Fatura do cartão</Text><Text color="#101828" fontSize={19} fontWeight="800">€ 12,00</Text></YStack><Text color="#087f70" backgroundColor="#e6f4f1" borderRadius={99} paddingHorizontal={9} paddingVertical={5} fontSize={11} fontWeight="700">Em aberto</Text></XStack></Card>
       </YStack>
@@ -121,6 +123,7 @@ export default function App() {
   const [activeKey, setActiveKey] = useState('Início')
   const [periodIndex, setPeriodIndex] = useState(0)
   const [feedback, setFeedback] = useState('')
+  const [activeForm, setActiveForm] = useState<'expense' | 'income' | 'transfer' | null>(null)
 
   const periods = [
     { label: 'novembro de 2026', shortLabel: 'Nov/26', date: 'Seg, 23 nov. 2026', income: '+ € 3.200,00', expenses: '− € 1.145,80' },
@@ -147,6 +150,10 @@ export default function App() {
   function notify(message: string) {
     setFeedback(message)
     window.setTimeout(() => setFeedback(''), 2400)
+  }
+
+  function openForm(kind: 'expense' | 'income' | 'transfer') {
+    setActiveForm(kind)
   }
 
   return (
@@ -202,9 +209,9 @@ export default function App() {
             </XStack>
 
             <XStack flexWrap="wrap" gap={16}>
-              <Button onPress={() => notify('A abrir registo de despesa')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="expense" label="Despesa" detail="Registar despesa" color="#175cd3" /></Button>
-              <Button onPress={() => notify('A abrir registo de receita')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="income" label="Receita" detail="Registar receita" color="#087f70" /></Button>
-              <Button onPress={() => notify('A abrir transferência entre contas')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="transfer" label="Transferir" detail="Entre contas" color="#175cd3" /></Button>
+              <Button onPress={() => openForm('expense')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="expense" label="Despesa" detail="Registar despesa" color="#175cd3" /></Button>
+              <Button onPress={() => openForm('income')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="income" label="Receita" detail="Registar receita" color="#087f70" /></Button>
+              <Button onPress={() => openForm('transfer')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="transfer" label="Transferir" detail="Entre contas" color="#175cd3" /></Button>
             </XStack>
 
             <Card className="desktop-categories-card" {...border} borderRadius={20} padding={20} backgroundColor="#ffffff">
@@ -242,7 +249,7 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        <MobileDashboard period={period} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} />
+        <MobileDashboard period={period} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} />
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => (
@@ -251,6 +258,7 @@ export default function App() {
             </Button>
           ))}
         </XStack>
+        {activeForm ? <MovementForm kind={activeForm} onClose={() => setActiveForm(null)} onUnavailable={(message) => { setActiveForm(null); notify(message) }} /> : null}
       </YStack>
     </Theme>
   )
