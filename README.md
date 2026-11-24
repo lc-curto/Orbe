@@ -34,4 +34,4 @@ Uma proposta técnica não se torna requisito aprovado apenas por estar document
 Manter a documentação concisa, verificável e sem duplicação. Cada regra tem uma localização principal. Quando uma decisão mudar, atualizar o documento de origem e as referências afetadas no mesmo conjunto de alterações.
 
 ## Estado atual
-Fundamentos, modelo financeiro, comportamento das operações, páginas principais, stack, monorepo e ARC-001 estão aprovados. O modelo ER conceptual (ARC-002) está aprovado como especificação de domínio. O modelo físico, migrations, nomes físicos definitivos, tipos monetários e índices completos continuam por definir e aprovar. Permanecem decisões de produto sobre estimativas variáveis e alguns estados/apresentações.
+Fundamentos, modelo financeiro, comportamento das operações, páginas principais, stack, monorepo e ARC-001 estão aprovados. O modelo ER conceptual (ARC-002), o UML complementar e o modelo físico do núcleo financeiro estão aprovados; o núcleo usa migrations versionadas e `DECIMAL(19,4)`. Permanecem decisões de produto sobre estimativas variáveis, alguns estados/apresentações e módulos conceptuais ainda sem migrations.

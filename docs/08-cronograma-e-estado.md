@@ -15,8 +15,8 @@
 - [x] Fechar os fundamentos do produto e as regras financeiras principais.
 - [x] Consolidar regras de cartões, faturas, pagamentos, reversões e saldo inicial.
 - [x] Aprovar o modelo ER conceptual e a decisão ARC-001.
-- [ ] Produzir UML complementar de domínio, sequências e máquinas de estado.
-- [ ] Aprovar o modelo físico definitivo, precisão monetária e arredondamento.
+- [x] Produzir e aprovar UML complementar de domínio, sequências e máquinas de estado do núcleo financeiro.
+- [x] Aprovar o modelo físico do núcleo financeiro, precisão monetária e arredondamento (`DECIMAL(19,4)`); extensões conceptuais ainda sem migrations permanecem delimitadas.
 - [x] Organizar a documentação na pasta `docs/`.
 
 ## 2. Backend e núcleo financeiro

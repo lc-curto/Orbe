@@ -13,7 +13,7 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 | 6. Organização do repositório | Aprovada |
 | 7. Decisão ARC-001 — destino dos lançamentos | Aprovada |
 | 8. Modelo ER conceptual (ARC-002) | Aprovada como especificação de domínio |
-| 9. UML complementar e modelo físico | Por fazer |
+| 9. UML complementar e modelo físico do núcleo financeiro | Aprovados; extensões futuras permanecem delimitadas |
 | 10. Validação final e plano de implementação | Por fazer |
 
 ## Stack tecnológica e organização aprovadas
@@ -30,7 +30,7 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 | ID | Decisão | Estado |
 |---|---|---|
 | ARC-002 | Modelo ER conceptual consolidado | Aprovado como especificação de domínio |
-| ARC-003 | Representação monetária, escala e arredondamento | Pendente |
+| ARC-003 | Representação monetária, escala e arredondamento | Aprovado para o núcleo financeiro: `DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas |
 | ARC-004 | Autenticação e sessões | Pendente |
 | ARC-006 | Alojamento, deploy e ambientes | Pendente |
 | ARC-007 | Scheduler, filas e processamento assíncrono | Em análise |
@@ -77,12 +77,11 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
 
 ## Próxima sequência recomendada
-1. Produzir UML complementar de domínio, sequências e máquinas de estado dos fluxos críticos, respeitando o ER aprovado.
-2. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
-3. Definir o modelo físico, constraints, precisão monetária, transações e estratégia de concorrência.
-4. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
-5. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
-6. Rever e aprovar a especificação e o plano de implementação.
+1. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
+2. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
+3. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
+4. Executar a integração frontend/API e os testes de aceitação.
+5. Rever e aprovar a especificação e o plano de implementação.
 
 ## Critério para iniciar implementação estrutural
 Não iniciar antes de aprovar arquitetura/UML, definir precisão monetária e integridade transacional, especificar fluxos críticos, concluir interfaces da primeira fase e definir critérios de aceitação/testes.

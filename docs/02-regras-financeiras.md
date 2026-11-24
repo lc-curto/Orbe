@@ -118,7 +118,7 @@ A classificação fixa/variável/excluída serve a estimativa de despesas variá
 
 A fórmula, janela histórica, distribuição diária e tratamento visual de estimativas incompletas continuam dependentes de decisão de produto.
 ## Precisão e invariantes de teste
-Valores monetários exigem aritmética decimal exata; nunca usar float/double. Representação, escala e arredondamento ainda precisam de decisão técnica.
+Valores monetários exigem aritmética decimal exata; o núcleo financeiro persiste `DECIMAL(19,4)` e nunca usa `float/double`. Valores com mais de quatro casas são rejeitados. Somatórios e alocações não fazem arredondamento intermédio; divisões distribuem o resto em unidades de `0,0001` por ordem determinística para preservar a soma. A apresentação a duas casas usa arredondamento half-up e não altera o valor persistido. Esta decisão é o ARC-003 aprovado para o núcleo financeiro.
 
 Testar sempre:
 - pendentes não alteram saldo efetivo;

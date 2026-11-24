@@ -1,6 +1,6 @@
 # 05 — Arquitetura e UML
 
-**Estado:** stack, monorepo, ARC-001 e modelo ER conceptual (ARC-002) aprovados. O modelo físico, migrations e detalhes de infraestrutura continuam por aprovar.
+**Estado:** stack, monorepo, ARC-001, modelo ER conceptual (ARC-002), UML complementar e modelo físico do núcleo financeiro estão aprovados. O modelo físico de módulos ainda não implementados permanece fora deste fecho.
 
 ## 1. Stack tecnológica aprovada
 - **Backend:** Laravel 13 + PHP.
@@ -110,8 +110,17 @@ O domínio não deve depender da interface. Regras financeiras não devem ser re
 ## 7. Persistência e desempenho — proposta a validar
 MySQL/InnoDB; índices baseados em consultas reais; análise de planos de execução; evitar N+1; paginação adequada; cache apenas de dados derivados e reconstruíveis. Não introduzir Redis, Elasticsearch ou microserviços sem necessidade demonstrada.
 
-## 8. Precisão monetária
-Aritmética exata. Definir escala, arredondamento e representação persistida antes dos cálculos. Nunca usar float/double para valores monetários.
+## 8. Precisão monetária — ARC-003
+
+**Estado: aprovado para o núcleo financeiro.** Todos os valores monetários persistidos usam `DECIMAL(19,4)`. A aplicação usa aritmética decimal exata; `float` e `double` são proibidos em cálculos financeiros.
+
+- Os quatro algarismos decimais são a escala canónica persistida.
+- Valores com mais de quatro casas decimais são rejeitados; não há truncamento silencioso.
+- Somatórios, saldos, alocações, pagamentos e reversões são calculados na escala canónica, sem arredondamento intermédio.
+- Uma operação multi-linha só é confirmada quando as somas coincidem exatamente na escala canónica.
+- Quando uma divisão necessária não for exata, o valor é distribuído em unidades de `0,0001`, atribuindo o resto por ordem determinística às primeiras parcelas; a soma final tem de coincidir exatamente com o total.
+- O arredondamento para apresentação monetária é apenas visual, para duas casas, usando arredondamento half-up; não altera o valor persistido nem os cálculos.
+- Conversões entre moeda, impostos e regras de escala de moedas não suportadas ficam fora deste contrato até existir decisão de produto.
 
 ## 9. UML a produzir e aprovar
 1. ER: entidades, atributos essenciais, cardinalidades, chaves e constraints.
@@ -163,7 +172,127 @@ Aritmética exata. Definir escala, arredondamento e representação persistida a
 3. A obrigação permanece vencida; a liquidação residual cobre apenas a parte não reservada.
 4. Sem regra de débito/reagendamento automático aprovada, não criar uma nova data futura.
 
-O ER conceptual está apresentado em [07 — Modelo ER](07-modelo-er.md). As restantes vistas UML e o modelo físico continuam por produzir/aprovar.
+O ER conceptual está apresentado em [07 — Modelo ER](07-modelo-er.md). As vistas UML complementares e o modelo físico do núcleo financeiro estão fechados nas secções seguintes.
+
+## 9.1 UML complementar de domínio
+
+```mermaid
+classDiagram
+    class User
+    class FinancialAccount
+    class Card
+    class CardInvoice
+    class Debt
+    class Operation
+    class FinancialEntry
+    class PurchaseAllocation
+    class CardOpeningBalance
+    class OpeningBalanceDistribution
+    class OpeningBalanceAdjustment
+    class PaymentAllocation
+    class PaymentReversalAllocation
+
+    User "1" --> "0..*" FinancialAccount : owns
+    User "1" --> "0..*" Card : owns
+    User "1" --> "0..*" Debt : owns
+    User "1" --> "0..*" Operation : records
+    Card "1" --> "0..*" CardInvoice : issues
+    Card "1" --> "0..1" CardOpeningBalance : has
+    CardOpeningBalance "1" --> "1" Operation : original operation
+    CardOpeningBalance "1" --> "1..*" OpeningBalanceDistribution : distributes
+    OpeningBalanceDistribution "1" --> "1" CardInvoice : destination
+    OpeningBalanceDistribution "1" --> "1" FinancialEntry : obligation effect
+    Operation "1" --> "0..*" FinancialEntry : generates
+    Operation "1" --> "0..*" PurchaseAllocation : splits purchase
+    PurchaseAllocation "1" --> "1" CardInvoice : destination
+    PurchaseAllocation "1" --> "0..1" FinancialEntry : obligation effect
+    Operation "1" --> "0..*" OpeningBalanceAdjustment : corrects
+    OpeningBalanceAdjustment "1" --> "1" OpeningBalanceDistribution : source
+    OpeningBalanceAdjustment "1" --> "2" FinancialEntry : corrective effects
+    Operation "1" --> "0..*" PaymentAllocation : payment context
+    PaymentAllocation "1" --> "1" FinancialEntry : settlement
+    PaymentAllocation "1" --> "1" FinancialEntry : obligation
+    PaymentAllocation "1" --> "0..*" PaymentReversalAllocation : reversed by
+    PaymentReversalAllocation "1" --> "2" FinancialEntry : compensating effects
+```
+
+`Operation` identifica o evento, `FinancialEntry` representa o efeito e as entidades de allocation explicam relações entre efeitos. Nenhuma allocation é um lançamento ou altera saldo diretamente.
+
+## 9.2 Sequência UML — compra parcelada, pagamento e reversão
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant API
+    participant Service
+    participant DB
+    User->>API: confirmar compra(total, parcelas, idempotency_key)
+    API->>Service: validar utilizador, faturas e soma
+    Service->>DB: iniciar transação e bloquear alvos
+    alt chave já processada
+        Service-->>API: devolver resultado original
+    else novo pedido
+        Service->>DB: criar operation e purchase_allocations
+        Service->>DB: criar obligation financial_entries
+        Service->>DB: confirmar transação
+        Service-->>API: compra confirmada
+    end
+    User->>API: confirmar pagamento(alocações)
+    API->>Service: validar mesma fatura, utilizador e saldo disponível
+    Service->>DB: criar saída, reduções e payment_allocations
+    Service->>DB: validar somas e confirmar transação
+    User->>API: reverter pagamento(valor)
+    API->>Service: validar saldo ainda reversível
+    Service->>DB: criar efeitos compensatórios e reversal_allocations
+    Service->>DB: confirmar transação
+```
+
+## 9.3 Máquinas de estado do núcleo implementado
+
+```mermaid
+stateDiagram-v2
+    [*] --> PENDING
+    PENDING --> REALIZED: confirmação válida
+    PENDING --> CANCELLED: cancelamento permitido
+    REALIZED --> REALIZED: correção/reversão por nova operação
+    REALIZED --> [*]
+    CANCELLED --> [*]
+```
+
+Para faturas, o ciclo operacional é independente da liquidação:
+
+```mermaid
+stateDiagram-v2
+    [*] --> PLANNED
+    PLANNED --> OPEN: abertura do ciclo
+    OPEN --> CLOSED: fecho do ciclo
+    CLOSED --> [*]
+```
+
+Uma fatura `CLOSED` pode manter obrigação em aberto. A transição de ciclo não cria lançamentos.
+
+## 9.4 Modelo físico fechado — núcleo financeiro
+
+O modelo físico aprovado para o núcleo implementado é InnoDB/MySQL e corresponde às migrations versionadas em `backend/database/migrations/`.
+
+| Tabela | Papel | Constraints relevantes |
+|---|---|---|
+| `financial_accounts` | Destino de efeitos em contas | `user_id` e FK de utilizador |
+| `cards` | Cartões de crédito | `credit_limit DECIMAL(19,4)`, dias entre 1 e 31 |
+| `debts` | Obrigações/dívidas | `user_id` e FKs restritivas |
+| `card_invoices` | Ciclos de faturação | `PLANNED/OPEN/CLOSED`, período válido, uma `OPEN` por cartão |
+| `operations` | Eventos de negócio | `amount DECIMAL(19,4) > 0`, estado e idempotência |
+| `financial_entries` | Efeitos financeiros | `amount DECIMAL(19,4) > 0`, exatamente um destino, efeito e estado válidos |
+| `purchase_allocations` | Distribuição de compra | valor positivo, no máximo uma obrigação por allocation |
+| `card_opening_balances` | Saldo inicial | valor positivo, relação única cartão/operação |
+| `opening_balance_distributions` | Distribuição histórica | valor positivo, fatura e obrigação associadas |
+| `opening_balance_adjustments` | Correções | `REDISTRIBUTION/REVERSAL`, dois efeitos rastreáveis |
+| `payment_allocations` | Liquidação de obrigações | valor positivo e par redução/obrigação |
+| `payment_reversal_allocations` | Reversão rastreável | valor positivo e efeitos compensatórios |
+
+As regras que dependem de várias linhas — somas de alocações, saldo disponível, limites acumulados, coerência entre utilizador/fatura/operação e concorrência — permanecem validações transacionais dos serviços. Não são substituídas por `CHECK` de uma única linha.
+
+O modelo físico fechado não afirma que entidades conceptuais ainda sem migration (`categories`, recorrências, planos, pernas de transferência, conferências e auditoria funcional) estejam implementadas. Essas extensões exigem migrations e contratos próprios antes de serem marcadas como concluídas.
 
 ## 10. Testes de arquitetura
 Testar domínio sem interface, persistência/constraints, transações/concorrência, idempotência, fluxos financeiros completos e consistência entre consultas e saldos.

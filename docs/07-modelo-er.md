@@ -1,6 +1,6 @@
 # 07 — Modelo Entidade-Relacionamento (ER) do Orbe
 
-**Estado: APROVADO como modelo ER conceptual / especificação de domínio (ARC-002).** O modelo incorpora as regras financeiras e os fluxos refinados de cartões, faturas, compras parceladas, pagamentos, planos vencidos, transferências e reembolsos. Não é o esquema físico definitivo e não autoriza, por si só, a criação de migrations.
+**Estado: APROVADO como modelo ER conceptual / especificação de domínio (ARC-002), com o modelo físico do núcleo financeiro fechado em `05-arquitetura-e-uml.md`.** O modelo incorpora as regras financeiras e os fluxos refinados de cartões, faturas, compras parceladas, pagamentos, planos vencidos, transferências e reembolsos. O fecho físico aplica-se às entidades já implementadas; módulos conceptuais ainda sem migrations continuam fora do núcleo aprovado.
 
 ## 1. Objetivo e princípio de desenho
 
@@ -16,7 +16,7 @@ Esta separação preserva a regra de que só lançamentos válidos e realizados 
 
 ## 2. Modelo conceptual ER
 
-O diagrama seguinte representa as entidades centrais e as relações propostas. A cardinalidade exata e algumas constraints adicionais serão fechadas no modelo físico.
+O diagrama seguinte representa as entidades centrais e as relações aprovadas. A correspondência física do núcleo financeiro e as constraints implementadas estão fechadas em [05 — Arquitetura e UML](05-arquitetura-e-uml.md).
 
 ```mermaid
 erDiagram
@@ -387,10 +387,10 @@ Calculado pelos efeitos de aumento e redução dirigidos à fatura/dívida. Paga
 ### Saldo da Rota
 É uma série temporal: saldo efetivo de partida + efeitos reais por data + eventos futuros simulados. Não deve ser persistido como saldo contabilístico nem alterado pelo seletor do Dashboard.
 
-## 7. Pontos pendentes antes do modelo físico
+## 7. Pontos pendentes fora do núcleo físico fechado
 
 1. **Saldo inicial de contas:** definir como o saldo de abertura entra no livro sem ser classificado como receita.
-2. **Precisão monetária:** tipo/representação, escala e arredondamento (ARC-003).
+2. **Precisão monetária:** fechada para o núcleo como `DECIMAL(19,4)` e apresentação half-up a duas casas; permanece por detalhar apenas para moedas adicionais não aprovadas.
 3. **Máquinas de estado:** completar estados e transições de faturas, planos de pagamento, dívidas, prestações, ocorrências e exceções de transferências.
 4. **Projeção variável da Rota:** origem, janela histórica, fórmula, distribuição diária e tratamento visual de valores `UNCLASSIFIED`.
 5. **Políticas de produto:** débito/reagendamento automático de planos vencidos; apresentação de faturas antigas; compras no dia do fecho; crédito negativo de fatura.
@@ -404,7 +404,7 @@ As regras conceptuais do saldo inicial distribuído, das correções, dos pagame
 - Usar `CHECK` para destino único de cada lançamento e validações locais de valores.
 - Aplicar FKs/restrições compostas ou validação transacional para propriedade do utilizador e coerência entre operação, lançamento, fatura e alocação.
 - Usar `RESTRICT`/política equivalente para impedir eliminação em cascata de dados com efeitos financeiros.
-- Usar `DECIMAL` com escala a aprovar; nunca `FLOAT`/`DOUBLE` para dinheiro.
+- Usar `DECIMAL(19,4)` no núcleo financeiro; nunca `FLOAT`/`DOUBLE` para dinheiro.
 - Imutabilidade lógica dos lançamentos confirmados; correções por novas operações associadas.
 - Transações de base de dados na confirmação de compras parceladas e pagamentos com múltiplos lançamentos.
 - Bloqueio das obrigações/alvos antes de validar alocações concorrentes; somas multi-linha exigem lógica transacional.
@@ -426,4 +426,4 @@ A documentação técnica orienta os mecanismos; as relações e invariantes do 
 
 ## 10. Estado de aprovação
 
-O modelo ER conceptual está formalmente aprovado como especificação de domínio. Esta aprovação não aprova automaticamente o esquema físico, migrations, nomes físicos definitivos, tipos monetários, índices completos ou decisões de produto ainda listadas na secção 7.
+O modelo ER conceptual está formalmente aprovado como especificação de domínio. O esquema físico do núcleo financeiro, migrations versionadas, tipos monetários `DECIMAL(19,4)` e constraints correspondentes estão aprovados conforme a secção 9.4 de [05 — Arquitetura e UML](05-arquitetura-e-uml.md). As decisões de produto ainda listadas na secção 7 e os módulos sem migrations não são considerados implementados.
