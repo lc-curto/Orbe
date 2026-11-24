@@ -35,7 +35,7 @@
 - [x] Implementar idempotência nos fluxos financeiros implementados.
 - [x] Executar testes negativos de integridade.
 - [x] Executar testes positivos de compras, pagamentos e reversões.
-- [ ] Completar a validação do modelo físico contra todos os fluxos do ER.
+- [x] Completar a validação do modelo físico contra o núcleo financeiro implementado; cobertura e lacunas estão em [09 — Auditoria do backend e do núcleo](09-auditoria-backend-e-nucleo.md).
 - [!] Implementar despesas comuns, receitas, transferências, recorrências e gestão completa de dívidas: faltam contratos e endpoints confirmados.
 
 ## 3. Autenticação e API
