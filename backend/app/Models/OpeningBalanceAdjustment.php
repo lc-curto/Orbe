@@ -1,0 +1,4 @@
+<?php
+namespace App\Models;
+use Illuminate\Database\Eloquent\Model;
+class OpeningBalanceAdjustment extends Model { protected $fillable=['source_distribution_id','correction_operation_id','adjustment_type','source_reduction_entry_id','destination_increase_entry_id','reverses_adjustment_id','amount']; protected $casts=['amount'=>'decimal:4']; public function sourceDistribution(){return $this->belongsTo(OpeningBalanceDistribution::class,'source_distribution_id');} public function operation(){return $this->belongsTo(Operation::class,'correction_operation_id');} public function sourceReductionEntry(){return $this->belongsTo(FinancialEntry::class,'source_reduction_entry_id');} public function destinationIncreaseEntry(){return $this->belongsTo(FinancialEntry::class,'destination_increase_entry_id');} }
