@@ -5,7 +5,7 @@ Estas instruções aplicam-se a qualquer trabalho neste repositório e, quando c
 ## Antes de trabalhar
 1. Ler este ficheiro e README.md.
 2. Identificar requisitos relevantes nos documentos funcionais.
-3. Consultar 06-pendencias-e-plano.md para confirmar o estado das decisões.
+3. Consultar docs/06-pendencias-e-plano.md para confirmar o estado das decisões.
 4. Se uma decisão estiver pendente ou em análise, não escolher silenciosamente uma alternativa. Explicar a lacuna e pedir decisão se bloquear o trabalho.
 
 ## Regras obrigatórias
