@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Operation extends Model
 {
@@ -16,4 +17,5 @@ class Operation extends Model
     public function source() { return $this->belongsTo(self::class, 'source_operation_id'); }
     public function entries() { return $this->hasMany(FinancialEntry::class); }
     public function transferLegs() { return $this->hasMany(TransferLeg::class); }
+    public function recurrenceOccurrence(): HasOne { return $this->hasOne(RecurrenceOccurrence::class); }
 }

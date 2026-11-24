@@ -38,7 +38,8 @@
 - [x] Completar a validação do modelo físico contra o núcleo financeiro implementado; cobertura e lacunas estão em [09 — Auditoria do backend e do núcleo](09-auditoria-backend-e-nucleo.md).
 - [x] Definir e implementar o contrato mínimo de contas, categorias, despesas comuns e receitas — Fase 1.
 - [x] Definir e implementar o contrato mínimo de transferências com duas pernas — Fase 2.
-- [!] Implementar recorrências e gestão completa de dívidas: dependem das fases seguintes e dos contratos específicos documentados.
+- [x] Implementar recorrências — Fase 3, conforme [12 — Contrato de recorrências](12-contrato-recorrencias.md).
+- [!] Implementar gestão completa de dívidas: depende do contrato específico e das fases seguintes.
 
 ## 3. Autenticação e API
 
@@ -60,6 +61,7 @@
 - [x] Implementar endpoints mínimos de despesas comuns.
 - [x] Implementar endpoints mínimos de receitas.
 - [x] Implementar endpoint mínimo de transferências com confirmação de pernas pendentes.
+- [x] Implementar endpoints de recorrências, geração idempotente, materialização e alterações de ocorrências.
 - [ ] Implementar endpoints de transferências.
 - [ ] Implementar endpoints de edição, cancelamento, eliminação e reversão contextual.
 - [ ] Integrar o frontend com a API e a autenticação.
