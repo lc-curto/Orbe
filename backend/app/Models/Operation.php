@@ -15,4 +15,5 @@ class Operation extends Model
     public function account() { return $this->belongsTo(FinancialAccount::class); }
     public function source() { return $this->belongsTo(self::class, 'source_operation_id'); }
     public function entries() { return $this->hasMany(FinancialEntry::class); }
+    public function transferLegs() { return $this->hasMany(TransferLeg::class); }
 }

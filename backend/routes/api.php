@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\FinancialController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ReadController;
 use App\Http\Controllers\Api\BasicOperationsController;
+use App\Http\Controllers\Api\TransferController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('throttle:auth')->post('/auth/login', [AuthController::class, 'login']);
@@ -24,6 +25,8 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
     Route::post('/expenses', [BasicOperationsController::class, 'store'])->defaults('nature', 'EXPENSE');
     Route::post('/incomes', [BasicOperationsController::class, 'store'])->defaults('nature', 'INCOME');
     Route::post('/operations/{operation}/confirm', [BasicOperationsController::class, 'confirm']);
+    Route::post('/transfers', [TransferController::class, 'store']);
+    Route::post('/operations/{operation}/transfer-legs/{leg}/confirm', [TransferController::class, 'confirm']);
     Route::post('/cards/{card}/opening-balance', [FinancialController::class, 'openingBalance']);
     Route::post('/purchases', [FinancialController::class, 'purchase']);
     Route::post('/operations/{payment}/payment-allocations', [FinancialController::class, 'allocatePayment']);

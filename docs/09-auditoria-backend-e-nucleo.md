@@ -4,7 +4,7 @@
 
 ## Veredicto
 
-O núcleo financeiro implementado está coberto por migrations, modelos, serviços, controllers, constraints e testes para os fluxos de cartões/faturas já suportados e, após a Fase 1, para contas, categorias, despesas simples e receitas simples. A validação é concluída para este perímetro.
+O núcleo financeiro implementado está coberto por migrations, modelos, serviços, controllers, constraints e testes para os fluxos de cartões/faturas já suportados, operações base da Fase 1 e transferências de duas pernas da Fase 2. A validação é concluída para este perímetro.
 
 O ER conceptual também descreve módulos que ainda não existem fisicamente no backend. Despesas comuns, receitas, transferências completas, recorrências e gestão completa de dívidas não podem ser marcadas como implementadas porque ainda faltam contratos de campos, estados, permissões, dependências e endpoints. Criá-los agora exigiria inventar comportamento fora dos documentos aprovados.
 
@@ -22,6 +22,7 @@ O ER conceptual também descreve módulos que ainda não existem fisicamente no 
 | Correções do saldo inicial | `opening_balance_adjustments` | serviço financeiro correspondente | rastreabilidade e limites acumulados | Estrutura implementada; endpoint de correção ainda não exposto |
 | Pagamentos | `payment_allocations` | `POST /api/operations/{payment}/payment-allocations` | mesma fatura, limites e atomicidade | Implementado |
 | Reversões | `payment_reversal_allocations` | `POST /api/payment-allocations/{allocation}/reversals` | reversão parcial/total e rastreabilidade | Implementado |
+| Transferências | `transfer_legs` | `POST /api/transfers` e confirmação de perna | duas pernas, contas do mesmo utilizador e efeitos direcionais | Implementado |
 
 ## Constraints verificadas no esquema físico
 
@@ -46,7 +47,7 @@ As regras que abrangem várias linhas continuam nos serviços transacionais: som
 |---|---|---|
 | Despesa comum | contrato mínimo e endpoint de criação Fase 1 | edição, eliminação, cancelamento e regras contextuais ainda não implementados |
 | Receita | contrato mínimo e endpoint de criação/confirmação Fase 1 | edição, eliminação, cancelamento e regras contextuais ainda não implementados |
-| Transferência | relação conceptual de duas pernas | tabelas/constraints das pernas, estados independentes, liquidação parcial, endpoints e testes |
+| Transferência | contrato mínimo, `transfer_legs`, endpoints de criação/confirmação e testes Fase 2 | cancelamento explícito de perna e regras contextuais de edição ainda não implementados |
 | Recorrência | conceito no ER e regras de ocorrência | tabelas de programação/ocorrência, materialização idempotente, edição “esta e seguintes” e endpoints |
 | Gestão completa de dívidas | `debts` e lançamentos básicos | detalhe de prestações, pagamentos, estados, dependências, endpoints e regras de associação |
 | Correção/redistribuição do saldo inicial | tabela e relações de rastreabilidade | endpoint público, payload aprovado e testes de API |

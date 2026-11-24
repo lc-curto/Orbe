@@ -23,6 +23,7 @@ O Orbe é uma aplicação de gestão financeira pessoal. Este repositório é a 
 | [08-cronograma-e-estado.md](docs/08-cronograma-e-estado.md) | Cronograma de implementação e checklist de estado |
 | [09-auditoria-backend-e-nucleo.md](docs/09-auditoria-backend-e-nucleo.md) | Cobertura do ER pelo backend e lacunas de implementação |
 | [10-contrato-operacoes-base.md](docs/10-contrato-operacoes-base.md) | Contrato mínimo de contas, categorias, despesas e receitas |
+| [11-contrato-transferencias.md](docs/11-contrato-transferencias.md) | Contrato mínimo de transferências |
 
 ## Estado das decisões
 - **Aprovado:** confirmado pelo responsável do produto.

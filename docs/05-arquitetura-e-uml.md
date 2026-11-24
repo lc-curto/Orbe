@@ -292,7 +292,7 @@ O modelo físico aprovado para o núcleo implementado é InnoDB/MySQL e correspo
 
 As regras que dependem de várias linhas — somas de alocações, saldo disponível, limites acumulados, coerência entre utilizador/fatura/operação e concorrência — permanecem validações transacionais dos serviços. Não são substituídas por `CHECK` de uma única linha.
 
-O modelo físico fechado não afirma que entidades conceptuais ainda sem migration (`categories`, recorrências, planos, pernas de transferência, conferências e auditoria funcional) estejam implementadas. Essas extensões exigem migrations e contratos próprios antes de serem marcadas como concluídas.
+O modelo físico fechado não afirma que entidades conceptuais ainda sem migration (`recurrence_schedules`, planos, conferências e auditoria funcional) estejam implementadas. `categories` e `transfer_legs` já têm migrations e contratos mínimos versionados; as extensões restantes exigem migrations e contratos próprios antes de serem marcadas como concluídas.
 
 ## 10. Testes de arquitetura
 Testar domínio sem interface, persistência/constraints, transações/concorrência, idempotência, fluxos financeiros completos e consistência entre consultas e saldos.
