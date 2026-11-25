@@ -191,3 +191,63 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   .movement-main span { font-size: 11px; }
   .movement-amount { min-width: 78px; font-size: 12px; }
 }
+
+/* Ajustes de fidelidade à referência visual aprovada */
+.movements-brand { display: flex; align-items: center; gap: 8px; color: var(--orbe-teal); font-size: 14px; margin-bottom: 12px; }
+.brand-mark { display: grid; width: 20px; height: 20px; place-items: center; border: 1.5px solid currentColor; border-radius: 5px; font-size: 11px; }
+.profile-button { width: 32px; height: 32px; margin-left: auto; border: 0; border-radius: 999px; background: transparent; color: var(--orbe-muted); cursor: pointer; letter-spacing: 2px; }
+.movements-header { padding-top: 0; }
+.month-navigation { display: flex; align-items: center; gap: 8px; margin-top: 5px; color: var(--orbe-muted); font-size: 13px; text-transform: capitalize; }
+.month-navigation button { width: 28px; height: 28px; border: 1px solid var(--orbe-border); border-radius: 8px; background: #fff; color: var(--orbe-muted); cursor: pointer; font-size: 20px; line-height: 1; }
+.movement-toolbar { align-items: center; justify-content: flex-start; }
+.movement-toolbar .search-control { max-width: none; }
+.toolbar-filter { flex: 0 0 auto; }
+.schedule-list-header { display: flex; align-items: center; justify-content: space-between; margin: 10px 0 8px; color: var(--orbe-muted); font-size: 12px; font-weight: 700; }
+.schedule-list-header button { border: 0; background: transparent; color: var(--orbe-muted); cursor: pointer; font: inherit; }
+@media (max-width: 1023px) {
+  .mobile-page-shell .movements-page { padding-top: 14px; }
+  .movements-brand { margin-bottom: 6px; }
+  .movements-header { align-items: flex-start; padding-bottom: 10px; }
+  .movements-header h1 { font-size: 22px; letter-spacing: -0.5px; }
+  .month-navigation { font-size: 12px; }
+  .month-navigation button { width: 26px; height: 26px; }
+  .movement-tabs { gap: 0; border: 1px solid #e5e7eb; border-radius: 9px; background: #f2f4f7; padding: 3px; margin-bottom: 12px; }
+  .movement-tabs button { flex: 1; border: 0; border-radius: 7px; padding: 8px 5px; font-size: 11px; }
+  .movement-tabs button.active { background: #fff; box-shadow: 0 1px 4px rgba(16, 24, 40, .08); color: var(--orbe-teal); }
+  .movement-toolbar, .schedule-toolbar { align-items: center; flex-direction: row; gap: 7px; margin-bottom: 10px; }
+  .movement-toolbar .search-control, .schedule-toolbar .search-control { flex: 1; }
+  .search-control span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .search-control input { min-height: 36px; border-radius: 8px; font-size: 11px; }
+  .toolbar-filter { min-height: 36px; padding: 0 10px; font-size: 11px; }
+  .movement-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-bottom: 10px; }
+  .movement-kpi { min-height: 68px; border-radius: 9px; padding: 8px; }
+  .movement-kpi span { font-size: 9px; }
+  .movement-kpi strong { font-size: 12px; white-space: nowrap; }
+  .movement-kpi small { display: none; }
+  .movement-filter-row { align-items: center; flex-direction: row; gap: 6px; margin-bottom: 10px; overflow: hidden; }
+  .filter-chips { flex: 1; flex-wrap: nowrap; gap: 5px; overflow-x: auto; scrollbar-width: none; }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .filter-chips button { min-height: 29px; flex: 0 0 auto; border-radius: 999px; padding: 0 10px; font-size: 9px; }
+  .movement-filter-row .sort-button { display: none; }
+  .movement-list, .schedule-list { border-radius: 10px; }
+  .movement-group h2 { padding: 9px 10px 6px; font-size: 10px; }
+  .movement-row { gap: 8px; padding: 9px 10px; }
+  .movement-icon { width: 30px; height: 30px; flex-basis: 30px; border-radius: 9px; font-size: 15px; }
+  .movement-main { gap: 2px; }
+  .movement-main strong { font-size: 11px; }
+  .movement-main span { font-size: 9px; }
+  .movement-badges { min-height: 13px; }
+  .state-badge { padding: 2px 5px; font-size: 8px; }
+  .movement-amount { min-width: 78px; font-size: 10px; }
+  .schedule-list-header { margin: 8px 2px 6px; font-size: 10px; }
+  .schedule-summary { gap: 8px; padding: 10px; }
+  .schedule-summary .movement-icon { width: 30px; height: 30px; flex-basis: 30px; }
+  .schedule-summary .movement-main strong { font-size: 11px; }
+  .schedule-summary .movement-main span { font-size: 9px; }
+  .schedule-summary > .state-badge { align-self: flex-start; }
+  .icon-action { width: 28px; height: 28px; border-radius: 8px; font-size: 16px; }
+  .schedules-intro { gap: 8px; margin: 8px 0 10px; }
+  .schedules-intro h2 { font-size: 15px; }
+  .schedules-intro p { font-size: 10px; }
+  .schedules-intro .primary-button { min-height: 34px; align-self: flex-end; border-radius: 8px; font-size: 11px; }
+}
