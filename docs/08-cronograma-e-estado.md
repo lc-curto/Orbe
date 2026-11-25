@@ -233,3 +233,19 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 ## Regra de controlo
 
 Este documento é um mapa de execução, não substitui as especificações funcionais, financeiras ou de arquitetura. Quando houver conflito, prevalecem `AGENTS.md`, as regras financeiras, a especificação funcional e as decisões aprovadas nos documentos de origem. Cada alteração relevante deve atualizar este estado no mesmo conjunto de alterações, sem marcar como concluído algo que apenas foi proposto.
+
+## Navegação responsiva — complemento 2026-11-25
+
+- A ação **Mais** existe exclusivamente na bottom bar; não aparece na sidebar.
+- A bottom bar apresenta Início, Movimentos, Rota, Contas e Mais.
+- Mais abre as páginas secundárias: Cartões, Dívidas, Relatórios e Configurações.
+- A sidebar apresenta todas as páginas, agrupadas em Principal, Gestão financeira e Ferramentas.
+- O botão global (+) apresenta ações conforme a página ativa:
+  - Dashboard e Movimentos: despesa, receita e transferência.
+  - Contas: nova conta.
+  - Cartões: novo cartão.
+  - Dívidas: nova dívida.
+  - Movimentos/Programações: nova programação.
+  - Rota, Relatórios e Configurações: sem criação direta nesta fase.
+- Ações cujos formulários ainda não existem informam a indisponibilidade; não criam registos fictícios.
+- Relatórios, Configurações e Dívidas estão acessíveis na navegação, mas permanecem páginas-placeholder até à implementação funcional.
