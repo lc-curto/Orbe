@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Account } from './api/types'
 
 type Props = {
@@ -22,11 +22,34 @@ function AccountIcon({ type }: { type: Account['account_type'] }) {
 
 export function AccountsPage({ accounts, loading, error }: Props) {
   const [filter, setFilter] = useState<AccountFilter>('ACTIVE')
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
+  const pageRef = useRef<HTMLElement | null>(null)
+
   const activeAccounts = accounts.filter((account) => account.status === 'ACTIVE')
   const closedAccounts = accounts.filter((account) => account.status !== 'ACTIVE')
   const visibleAccounts = filter === 'ACTIVE' ? activeAccounts : closedAccounts
 
-  return <section className="accounts-page" aria-labelledby="accounts-page-title">
+  useEffect(() => {
+    if (openMenuId === null) return
+
+    function closeOnOutsideClick(event: PointerEvent) {
+      if (!pageRef.current?.contains(event.target as Node)) setOpenMenuId(null)
+    }
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpenMenuId(null)
+    }
+
+    document.addEventListener('pointerdown', closeOnOutsideClick)
+    document.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick)
+      document.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [openMenuId])
+
+  return <section ref={pageRef} className="accounts-page" aria-labelledby="accounts-page-title">
     <header className="accounts-page-header">
       <div>
         <h1 id="accounts-page-title">Contas</h1>
@@ -35,13 +58,31 @@ export function AccountsPage({ accounts, loading, error }: Props) {
       <button className="accounts-new-button" type="button" disabled aria-label="Nova conta — disponível na fase de formulários">＋ Nova</button>
     </header>
 
+    <div className="accounts-total-card">
+      <span className="accounts-total-label">Saldo total</span>
+      <strong className="accounts-total-value">—</strong>
+      <p className="accounts-readonly-note">O saldo calculado será apresentado quando o modelo de saldos estiver disponível.</p>
+    </div>
+
     <div className="accounts-filter-row">
       <label className="accounts-filter-label" htmlFor="accounts-status-filter">Mostrar:</label>
-      <select id="accounts-status-filter" className="accounts-status-filter" value={filter} onChange={(event) => setFilter(event.target.value as AccountFilter)} disabled={loading || Boolean(error)}>
+      <select
+        id="accounts-status-filter"
+        className="accounts-status-filter"
+        value={filter}
+        onChange={(event) => {
+          setFilter(event.target.value as AccountFilter)
+          setOpenMenuId(null)
+          setNotice(null)
+        }}
+        disabled={loading || Boolean(error)}
+      >
         <option value="ACTIVE">Ativas ({activeAccounts.length})</option>
         <option value="CLOSED">Encerradas ({closedAccounts.length})</option>
       </select>
     </div>
+
+    <h2 className="accounts-section-title">As minhas contas</h2>
 
     <div className="accounts-list">
       {loading ? <div className="accounts-state" role="status">A carregar contas…</div> : null}
@@ -49,6 +90,9 @@ export function AccountsPage({ accounts, loading, error }: Props) {
       {!loading && !error && visibleAccounts.length === 0 ? <div className="accounts-state">{filter === 'ACTIVE' ? 'Ainda não existem contas ativas.' : 'Não existem contas encerradas.'}</div> : null}
       {!loading && !error ? visibleAccounts.map((account) => {
         const isActive = account.status === 'ACTIVE'
+        const menuId = `accounts-menu-${account.id}`
+        const menuOpen = openMenuId === account.id
+
         return <article className="accounts-row" key={account.id}>
           <AccountIcon type={account.account_type} />
           <div className="accounts-row-main">
@@ -62,19 +106,38 @@ export function AccountsPage({ accounts, loading, error }: Props) {
             <strong>—</strong>
             <span>Saldo atual</span>
           </div>
+          <div className="accounts-row-actions">
+            <button
+              className="accounts-menu-button"
+              type="button"
+              aria-label={`Ações da conta ${account.name}`}
+              aria-haspopup="menu"
+              aria-expanded={menuOpen}
+              aria-controls={menuId}
+              onClick={() => {
+                setOpenMenuId(menuOpen ? null : account.id)
+                setNotice(null)
+              }}
+            >⋮</button>
+            {menuOpen ? <div className="accounts-menu-panel" id={menuId} role="menu">
+              <button
+                className="accounts-menu-item"
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setNotice(`A conferência de saldo de “${account.name}” ainda não está implementada nesta fase.`)
+                  setOpenMenuId(null)
+                }}
+              >
+                <span aria-hidden="true">◎</span>
+                <span>Conferir saldo</span>
+              </button>
+            </div> : null}
+          </div>
         </article>
       }) : null}
     </div>
 
-    <div className="accounts-total-card">
-      <span className="accounts-total-label">Saldo total</span>
-      <strong className="accounts-total-value">—</strong>
-      <p className="accounts-readonly-note">O saldo calculado será apresentado quando o modelo de saldos estiver disponível.</p>
-    </div>
-
-    <div className="accounts-reconciliation-entry" aria-label="Conferência de saldos, interface prevista para fase posterior">
-      <div><strong>Conferência de saldos</strong><span>Comparação e histórico serão disponibilizados numa fase posterior.</span></div>
-      <span aria-hidden="true">↗</span>
-    </div>
+    {notice ? <div className="accounts-action-notice" role="status">{notice}</div> : null}
   </section>
 }
