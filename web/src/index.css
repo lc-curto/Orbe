@@ -526,3 +526,20 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   .filter-chips button { padding: 0 10px !important; }
   .movement-amount { min-width: 76px !important; font-size: 11px !important; }
 }
+
+
+/* Final alignment and overflow safeguards for compact account/navigation surfaces. */
+.mobile-more-menu button { width: 100%; min-width: 0; }
+.mobile-more-menu button > div { width: 100%; min-width: 0; }
+.mobile-more-menu button > div > div { min-width: 0; max-width: 100%; overflow: hidden; }
+.mobile-more-menu button > div > div > span:last-child {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 1023px) {
+  .movement-kpi { border-radius: 12px !important; }
+  .mobile-dashboard-nav button[aria-expanded="true"] { background: #e6f4f1 !important; color: var(--orbe-teal) !important; }
+}
