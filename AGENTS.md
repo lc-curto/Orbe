@@ -5,7 +5,7 @@ Estas instruções aplicam-se a qualquer trabalho neste repositório e, quando c
 ## Antes de trabalhar
 1. Ler este ficheiro e README.md.
 2. Identificar requisitos relevantes nos documentos funcionais.
-3. Consultar docs/06-pendencias-e-plano.md para confirmar o estado das decisões.
+3. Consultar docs/05-estado-e-plano.md para confirmar o estado das decisões.
 4. Se uma decisão estiver pendente ou em análise, não escolher silenciosamente uma alternativa. Explicar a lacuna e pedir decisão se bloquear o trabalho.
 
 ## Regras obrigatórias
@@ -39,4 +39,4 @@ Atualizar a documentação quando decisões aprovadas mudarem. Manter IDs estáv
 
 ## Frontend Web
 
-Seguir o padrão frontend definido em [docs/04-arquitetura-modelo-e-auditoria.md](docs/05-arquitetura-e-uml.md#frontend-web). A referência visual define UI e comportamento, não a estrutura do código. Novas páginas devem separar composição, apresentação e lógica derivada, reutilizar o design system e evitar refatorações fora do escopo.
+Seguir o padrão frontend definido em [docs/04-arquitetura-modelo-e-auditoria.md](docs/04-arquitetura-modelo-e-auditoria.md#frontend-web). A referência visual define UI e comportamento, não a estrutura do código. Novas páginas devem separar composição, apresentação e lógica derivada, reutilizar o design system e evitar refatorações fora do escopo.
