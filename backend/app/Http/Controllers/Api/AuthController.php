@@ -23,6 +23,7 @@ final class AuthController extends Controller
             'name' => ['required', 'string', 'min:2', 'max:120'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'confirmed', PasswordRule::min(8)],
+            'password_confirmation' => ['required', 'string'],
         ]);
 
         $user = User::query()->create([
@@ -68,6 +69,7 @@ final class AuthController extends Controller
             'token' => ['required', 'string'],
             'email' => ['required', 'email'],
             'password' => ['required', 'confirmed', PasswordRule::min(8)],
+            'password_confirmation' => ['required', 'string'],
         ]);
 
         $status = Password::reset(
