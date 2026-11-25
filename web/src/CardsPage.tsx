@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Card, CardInvoice } from './api/types'
+import type { Card, CardInvoice, Operation } from './api/types'
+import { MovementRow } from './MovementsPage'
 
 type Props = {
   cards: Card[]
+  operations: Operation[]
   loading: boolean
   error: string | null
 }
@@ -32,9 +34,11 @@ function CardIcon() {
   return <span className="accounts-row-icon cards-row-icon" aria-hidden="true">▣</span>
 }
 
-export function CardsPage({ cards, loading, error }: Props) {
+export function CardsPage({ cards, operations, loading, error }: Props) {
   const [filter, setFilter] = useState<CardFilter>('ACTIVE')
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null)
+  const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null)
+  const [invoiceSearch, setInvoiceSearch] = useState('')
   const [openMenuId, setOpenMenuId] = useState<number | null>(null)
   const pageRef = useRef<HTMLElement | null>(null)
 
@@ -42,6 +46,10 @@ export function CardsPage({ cards, loading, error }: Props) {
   const closedCards = cards.filter((card) => card.status !== 'ACTIVE')
   const visibleCards = filter === 'ACTIVE' ? activeCards : closedCards
   const selectedCard = cards.find((card) => card.id === selectedCardId) ?? null
+  const selectedInvoice = selectedCard?.invoices?.find((invoice) => invoice.id === selectedInvoiceId) ?? null
+  const invoiceOperations = selectedInvoice ? operations.filter((operation) => operation.entries?.some((entry) => entry.invoice?.id === selectedInvoice.id)) : []
+  const filteredInvoiceOperations = invoiceOperations.filter((operation) => `${operation.description ?? ''} ${operation.category?.name ?? ''} ${operation.account?.name ?? ''} ${operation.entries?.map((entry) => entry.account?.name ?? '').join(' ') ?? ''}`.toLowerCase().includes(invoiceSearch.toLowerCase()))
+  const groupedInvoiceOperations = filteredInvoiceOperations.reduce<Record<string, Operation[]>>((groups, operation) => { const key = operation.effective_at ?? operation.planned_at ?? 'sem-data'; (groups[key] ??= []).push(operation); return groups }, {})
   const totalDebt = activeCards.reduce((total, card) => total + Number(card.summary.used_amount || 0), 0)
 
   useEffect(() => {
@@ -67,7 +75,7 @@ export function CardsPage({ cards, loading, error }: Props) {
 
   function renderInvoice(invoice: CardInvoice) {
     const state = invoiceState(invoice)
-    return <article className="cards-invoice-row" key={invoice.id}>
+    return <button className="cards-invoice-row cards-invoice-button" type="button" key={invoice.id} onClick={() => { setSelectedInvoiceId(invoice.id); setInvoiceSearch('') }}>
       <div className="cards-invoice-heading">
         <div>
           <strong>Fatura</strong>
@@ -81,14 +89,43 @@ export function CardsPage({ cards, loading, error }: Props) {
         <div><span>Pago</span><strong>{money(invoice.summary.paid_amount)}</strong></div>
       </div>
       <div className="cards-invoice-due"><span>Vencimento</span><strong>{date(invoice.due_date)}</strong></div>
-    </article>
+    </button>
   }
 
   return <section ref={pageRef} className="accounts-page cards-page" aria-labelledby="cards-page-title">
-    {selectedCard ? <>
+    {selectedCard && selectedInvoice ? <>
       <header className="accounts-page-header cards-detail-header">
         <div>
-          <button className="cards-back-button" type="button" onClick={() => { setSelectedCardId(null); setOpenMenuId(null) }}>‹ Cartões</button>
+          <button className="cards-back-button" type="button" onClick={() => { setSelectedInvoiceId(null); setInvoiceSearch('') }}>‹ Voltar à fatura</button>
+          <h1 id="cards-page-title">Fatura de {date(selectedInvoice.period_start)}</h1>
+          <p className="accounts-page-subtitle">{selectedCard.name} · Vence {date(selectedInvoice.due_date)}</p>
+        </div>
+      </header>
+      <div className="cards-detail-summary">
+        <span className="cards-summary-label">Total da fatura</span>
+        <strong className="cards-available-value">{money(selectedInvoice.summary.obligation_amount)}</strong>
+        <div className="cards-invoice-total-lines">
+          <span>Pago <strong>{money(selectedInvoice.summary.paid_amount)}</strong></span>
+          <span>Em aberto <strong>{money(selectedInvoice.summary.open_amount)}</strong></span>
+        </div>
+      </div>
+      <h2 className="accounts-section-title">Movimentos</h2>
+      <div className="cards-invoice-movements">
+        <label className="cards-invoice-search-label" htmlFor="cards-invoice-search">Pesquisar movimentos</label>
+        <input id="cards-invoice-search" className="cards-invoice-search" type="search" placeholder="Pesquisar por descrição, categoria ou conta…" value={invoiceSearch} onChange={(event) => setInvoiceSearch(event.target.value)} />
+        {loading ? <div className="accounts-state" role="status">A carregar movimentos…</div> : null}
+        {!loading && error ? <div className="accounts-state" role="alert">Não foi possível carregar os movimentos. {error}</div> : null}
+        {!loading && !error && invoiceOperations.length === 0 ? <div className="accounts-state">Esta fatura ainda não tem movimentos associados.</div> : null}
+        {!loading && !error && invoiceOperations.length > 0 && filteredInvoiceOperations.length === 0 ? <div className="accounts-state">Nenhum movimento corresponde à pesquisa.</div> : null}
+        {!loading && !error ? Object.entries(groupedInvoiceOperations).sort(([a], [b]) => b.localeCompare(a)).map(([day, dayOperations]) => <section className="cards-invoice-day-group" key={day}>
+          <h3>{day === 'sem-data' ? 'Sem data' : new Intl.DateTimeFormat('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(day.length === 10 ? `${day}T00:00:00` : day))}</h3>
+          <div className="cards-invoice-day-list">{dayOperations.map((operation) => <MovementRow key={operation.id} operation={operation} />)}</div>
+        </section>) : null}
+      </div>
+    </> : selectedCard ? <>
+      <header className="accounts-page-header cards-detail-header">
+        <div>
+          <button className="cards-back-button" type="button" onClick={() => { setSelectedInvoiceId(null); setSelectedCardId(null); setOpenMenuId(null) }}>‹ Cartões</button>
           <h1 id="cards-page-title">{selectedCard.name}</h1>
           <p className="accounts-page-subtitle">Detalhes do cartão</p>
         </div>
