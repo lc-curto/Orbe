@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import {
   Button,
   Card,
@@ -42,6 +42,80 @@ function Icon({ name, size = 18, color = 'currentColor', strokeWidth = 1.8 }: { 
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
       <path d={iconPaths[name]} />
     </svg>
+  )
+}
+
+type AuthMode = 'login' | 'register' | 'forgot' | 'reset'
+
+function LoginScreen() {
+  const { login, register, requestPasswordReset, resetPassword, loading, error, clearError } = useAuth()
+  const initialParams = typeof window === 'undefined' ? new URLSearchParams() : new URLSearchParams(window.location.search)
+  const hasResetLink = Boolean(initialParams.get('token'))
+  const [mode, setMode] = useState<AuthMode>(hasResetLink ? 'reset' : 'login')
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState(initialParams.get('email') ?? '')
+  const [password, setPassword] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+
+  function changeMode(nextMode: AuthMode) {
+    setMode(nextMode)
+    setFormError(null)
+    setSuccess(null)
+    clearError()
+  }
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const normalizedEmail = email.trim()
+    if (mode === 'register' && !name.trim()) return setFormError('Introdu o teu nome.')
+    if (!normalizedEmail) return setFormError('Introdu um email válido.')
+    if ((mode === 'login' || mode === 'register' || mode === 'reset') && !password) return setFormError('Introdu a palavra-passe.')
+    if ((mode === 'register' || mode === 'reset') && password !== passwordConfirmation) return setFormError('As palavras-passe não coincidem.')
+
+    setFormError(null)
+    setSuccess(null)
+    clearError()
+    try {
+      if (mode === 'login') await login(normalizedEmail, password)
+      if (mode === 'register') await register(name.trim(), normalizedEmail, password, passwordConfirmation)
+      if (mode === 'forgot') setSuccess(await requestPasswordReset(normalizedEmail))
+      if (mode === 'reset') {
+        const token = new URLSearchParams(window.location.search).get('token') ?? ''
+        setSuccess(await resetPassword(normalizedEmail, token, password, passwordConfirmation))
+        setPassword('')
+        setPasswordConfirmation('')
+        setMode('login')
+      }
+    } catch {
+      // A mensagem do provider é apresentada no formulário.
+    }
+  }
+
+  const message = formError ?? error
+  const title = mode === 'login' ? 'Iniciar sessão' : mode === 'register' ? 'Criar conta' : mode === 'forgot' ? 'Recuperar palavra-passe' : 'Definir nova palavra-passe'
+  const description = mode === 'login' ? 'Entra na tua conta para consultar as tuas finanças.' : mode === 'register' ? 'Cria a tua conta para começar a organizar as tuas finanças.' : mode === 'forgot' ? 'Enviaremos instruções para o teu email, se existir uma conta associada.' : 'Escolhe uma palavra-passe nova para a tua conta.'
+
+  return (
+    <YStack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" padding={24} style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <YStack className="auth-card" backgroundColor="#ffffff" borderWidth={1} borderColor="#e4e7ec" borderRadius={24} padding={32} width="100%" maxWidth={440} gap={24}>
+        <YStack gap={8}><Text color="#175cd3" fontSize={28} fontWeight="800">Orbe</Text><H1 fontSize={28} letterSpacing={-0.6}>{title}</H1><Paragraph color="#667085" margin={0}>{description}</Paragraph></YStack>
+        <form className="auth-form" onSubmit={submit} noValidate>
+          {mode === 'register' ? <><label className="auth-label" htmlFor="auth-name">Nome</label><input className="auth-input" id="auth-name" name="name" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="O teu nome" disabled={loading} autoFocus /></> : null}
+          <label className="auth-label" htmlFor="auth-email">Email</label><input className="auth-input" id="auth-email" name="email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="nome@exemplo.pt" disabled={loading} autoFocus={mode !== 'register'} />
+          {mode === 'login' || mode === 'register' || mode === 'reset' ? <><label className="auth-label" htmlFor="auth-password">Palavra-passe</label><div className="auth-password-field"><input className="auth-input" id="auth-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={mode === 'login' ? 'current-password' : 'new-password'} value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Introduz a tua palavra-passe" disabled={loading} /><button className="auth-password-toggle" type="button" onClick={() => setShowPassword((value) => !value)} disabled={loading}>{showPassword ? 'Ocultar' : 'Mostrar'}</button></div></> : null}
+          {mode === 'register' || mode === 'reset' ? <><label className="auth-label" htmlFor="auth-password-confirmation">Confirmar palavra-passe</label><input className="auth-input" id="auth-password-confirmation" name="password_confirmation" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={passwordConfirmation} onChange={(event) => setPasswordConfirmation(event.target.value)} placeholder="Repete a palavra-passe" disabled={loading} /></> : null}
+          {message ? <div className="auth-error" role="alert">{message}</div> : null}
+          {success ? <div className="auth-success" role="status">{success}</div> : null}
+          <button className="auth-submit" type="submit" disabled={loading}>{loading ? 'A processar…' : mode === 'login' ? 'Entrar' : mode === 'register' ? 'Criar conta' : mode === 'forgot' ? 'Enviar instruções' : 'Alterar palavra-passe'}</button>
+        </form>
+        <YStack gap={10} style={{ alignItems: 'center' }}>
+          {mode === 'login' ? <><button className="auth-link" type="button" onClick={() => changeMode('forgot')}>Esqueci-me da palavra-passe</button><Text color="#667085" fontSize={13}>Ainda não tens conta? <button className="auth-link" type="button" onClick={() => changeMode('register')}>Criar conta</button></Text></> : <button className="auth-link" type="button" onClick={() => changeMode('login')}>Voltar a iniciar sessão</button>}
+        </YStack>
+      </YStack>
+    </YStack>
   )
 }
 
@@ -104,7 +178,7 @@ function QuickAction({ icon, label, detail, color }: { icon: IconName; label: st
   )
 }
 
-function MobileDashboard({ period, card, invoice, navigation, activeKey, setActiveKey, notify, openForm }: {
+function MobileDashboard({ period, card, invoice, navigation, activeKey, setActiveKey, notify, openForm, userName, onLogout, logoutDisabled }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   card?: FinancialCard
   invoice?: CardInvoice
@@ -113,6 +187,9 @@ function MobileDashboard({ period, card, invoice, navigation, activeKey, setActi
   setActiveKey: (value: string) => void
   notify: (message: string) => void
   openForm: (kind: 'expense' | 'income' | 'transfer') => void
+  userName: string
+  onLogout: () => void
+  logoutDisabled: boolean
 }) {
   const [hidden, setHidden] = useState(false)
 
@@ -120,8 +197,8 @@ function MobileDashboard({ period, card, invoice, navigation, activeKey, setActi
     <YStack className="mobile-dashboard" backgroundColor="#f7f9fc" minHeight="100vh">
       <YStack className="mobile-dashboard-content" gap={16}>
         <XStack style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <YStack gap={3}><Text color="#101828" fontSize={22} fontWeight="800">Bom dia, Lucas</Text><Text color="#667085" fontSize={13}>{period.date}</Text></YStack>
-          <Button onPress={() => notify('Seletor de mês')} aria-label="Selecionar mês" height={38} paddingHorizontal={12} borderRadius={12} {...border} backgroundColor="#ffffff"><XStack gap={6} style={{ alignItems: 'center' }}><Text color="#101828" fontSize={12} fontWeight="700">{period.shortLabel}</Text><Icon name="chevronRight" size={15} color="#667085" /></XStack></Button>
+          <YStack gap={3}><Text color="#101828" fontSize={22} fontWeight="800">Bom dia, {userName.split(' ')[0]}</Text><Text color="#667085" fontSize={13}>{period.date}</Text></YStack>
+          <XStack gap={6} style={{ alignItems: 'center' }}><Button onPress={() => notify('Seletor de mês')} aria-label="Selecionar mês" height={38} paddingHorizontal={12} borderRadius={12} {...border} backgroundColor="#ffffff"><XStack gap={6} style={{ alignItems: 'center' }}><Text color="#101828" fontSize={12} fontWeight="700">{period.shortLabel}</Text><Icon name="chevronRight" size={15} color="#667085" /></XStack></Button><Button onPress={onLogout} disabled={logoutDisabled} aria-label="Terminar sessão" height={38} paddingHorizontal={10} borderRadius={12} {...border} backgroundColor="#ffffff" color="#c2415d" fontSize={11}>Sair</Button></XStack>
         </XStack>
         <Card className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <YStack gap={12}><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }}><Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text><Button onPress={() => setHidden((value) => !value)} aria-label={hidden ? 'Mostrar saldo' : 'Ocultar saldo'} width={30} height={30} padding={0} borderRadius={9} borderWidth={0} backgroundColor="rgba(255,255,255,0.14)"><Icon name={hidden ? 'eyeOff' : 'eye'} size={15} color="#ffffff" /></Button></XStack><YStack gap={2}><Text color="#ffffff" fontSize={30} fontWeight="800">{hidden ? '••••••' : '€ 2.840,50'}</Text><Text color="#dbeafe" fontSize={12}>Todas as contas</Text></YStack><Separator borderColor="rgba(255,255,255,0.24)" /><XStack style={{ justifyContent: 'space-between' }}>{[['Receitas', period.income], ['Despesas', period.expenses], ['Resultado', '+ € 2.054,20']].map(([label, value]) => <YStack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{hidden ? '••••' : value}</Text></YStack>)}</XStack></YStack>
@@ -136,12 +213,9 @@ function MobileDashboard({ period, card, invoice, navigation, activeKey, setActi
 }
 
 export default function App() {
-  const { user } = useAuth()
+  const { user, loading: authLoading, error: authError, logout } = useAuth()
+  const [logoutError, setLogoutError] = useState<string | null>(null)
   const finance = useFinanceData(user)
-  const movements = finance.data.operations.slice(0, 4).map(movementView)
-  const card = finance.data.cards[0]
-  const invoice = finance.data.invoices[0]
-
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (typeof window === 'undefined') return true
     try {
@@ -156,6 +230,16 @@ export default function App() {
   const [periodIndex, setPeriodIndex] = useState(0)
   const [feedback, setFeedback] = useState('')
   const [activeForm, setActiveForm] = useState<'expense' | 'income' | 'transfer' | null>(null)
+
+  if (authLoading && user === null) {
+    return <YStack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" style={{ justifyContent: 'center', alignItems: 'center' }}><Text color="#667085">A verificar a sessão…</Text></YStack>
+  }
+
+  if (user === null) return <LoginScreen />
+
+  const movements = finance.data.operations.slice(0, 4).map(movementView)
+  const card = finance.data.cards[0]
+  const invoice = finance.data.invoices[0]
 
   const periods = [
     { label: 'novembro de 2026', shortLabel: 'Nov/26', date: 'Seg, 23 nov. 2026', income: '+ € 3.200,00', expenses: '− € 1.145,80' },
@@ -212,14 +296,22 @@ export default function App() {
           <YStack className="main-content" flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             <XStack style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <YStack gap={4}>
-                <H1 fontSize={36} letterSpacing={-1.2}>Bom dia, Lucas</H1>
+                <H1 fontSize={36} letterSpacing={-1.2}>Bom dia, {user.name.split(' ')[0]}</H1>
                 <Paragraph color="#667085">{period.date}</Paragraph>
               </YStack>
               <XStack gap={12}>
                 <Button onPress={() => notify('Não existem notificações novas')} aria-label="Notificações" width={44} height={44} borderRadius={999} {...border} padding={0}><Icon name="bell" size={17} color="#344054" /></Button>
-                <Button onPress={() => notify('Perfil do utilizador')} aria-label="Perfil" width={44} height={44} borderRadius={999} {...border} padding={0}><Icon name="user" size={17} color="#344054" /></Button>
+                <YStack className="account-menu" gap={4} style={{ alignItems: 'flex-end' }}>
+                  <XStack gap={8} style={{ alignItems: 'center' }}>
+                    <YStack gap={1} style={{ alignItems: 'flex-end' }}><Text fontSize={13} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text></YStack>
+                    <Button aria-label="Perfil" width={44} height={44} borderRadius={999} {...border} padding={0}><Icon name="user" size={17} color="#344054" /></Button>
+                  </XStack>
+                  <Button className="logout-button" onPress={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={0} color="#c2415d" fontSize={12}>Terminar sessão</Button>
+                </YStack>
               </XStack>
             </XStack>
+
+            {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
 
             <XStack style={{ justifyContent: 'flex-end' }}>
               <XStack borderWidth={1} borderColor="#d0d5dd" borderRadius={999} backgroundColor="#ffffff" paddingHorizontal={12} paddingVertical={8} gap={16} style={centered}>
@@ -282,7 +374,7 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        <MobileDashboard period={period} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} />
+        <MobileDashboard period={period} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => (

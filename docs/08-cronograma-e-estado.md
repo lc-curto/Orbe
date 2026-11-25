@@ -44,9 +44,11 @@
 ## 3. Autenticação e API
 
 - [x] Implementar autenticação com Laravel Sanctum.
+- [x] Implementar registo de utilizador e emissão de token.
 - [x] Implementar login.
 - [x] Implementar logout e revogação de token.
 - [x] Implementar consulta do utilizador autenticado.
+- [x] Implementar pedido de recuperação e redefinição de palavra-passe.
 - [x] Implementar autorização e isolamento por utilizador nos endpoints existentes.
 - [x] Implementar leitura de cartões.
 - [x] Implementar leitura de detalhe de cartão.
@@ -117,6 +119,8 @@
 - [x] Criar cliente HTTP centralizado.
 - [x] Criar tipos TypeScript para respostas e erros da API.
 - [x] Implementar login, logout e consulta `/auth/me` no frontend.
+- [x] Implementar interfaces de entrada, criação de conta, recuperação e redefinição de palavra-passe.
+- [x] Apresentar logout funcional no Dashboard desktop e mobile.
 - [x] Armazenar e enviar o token Sanctum segundo a arquitetura aprovada.
 - [x] Tratar respostas `401`, `422` e erros gerais.
 - [x] Criar provider comum de loading e erro de sessão.

@@ -66,3 +66,26 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
+
+.auth-screen { color: var(--orbe-text); }
+.auth-card { box-shadow: 0 20px 60px rgba(16, 24, 40, 0.08); }
+.auth-form { display: flex; flex-direction: column; gap: 8px; }
+.auth-label { color: var(--orbe-text); font-size: 13px; font-weight: 700; margin-top: 8px; }
+.auth-input { width: 100%; min-height: 46px; border: 1px solid var(--orbe-border); border-radius: var(--orbe-radius-control); background: #fff; color: var(--orbe-text); font: inherit; font-size: 14px; padding: 0 13px; transition: border-color 140ms ease, box-shadow 140ms ease; }
+.auth-input::placeholder { color: #98a2b3; }
+.auth-input:focus { outline: none; border-color: var(--orbe-primary); box-shadow: 0 0 0 3px rgba(23, 92, 211, 0.14); }
+.auth-input:disabled { background: #f2f4f7; cursor: not-allowed; }
+.auth-password-field { position: relative; }
+.auth-password-field .auth-input { padding-right: 82px; }
+.auth-password-toggle { position: absolute; top: 1px; right: 1px; height: 44px; border: 0; background: transparent; color: var(--orbe-primary); cursor: pointer; font-size: 12px; font-weight: 700; padding: 0 12px; }
+.auth-submit { min-height: 46px; margin-top: 12px; border: 0; border-radius: var(--orbe-radius-control); background: var(--orbe-primary); color: #fff; cursor: pointer; font: inherit; font-size: 14px; font-weight: 700; }
+.auth-submit:hover:not(:disabled) { background: #1249aa; box-shadow: 0 6px 18px rgba(23, 92, 211, 0.2); }
+.auth-submit:disabled, .auth-password-toggle:disabled { cursor: not-allowed; opacity: 0.55; }
+.auth-error, .auth-success { border-radius: 10px; font-size: 13px; line-height: 1.45; padding: 10px 12px; }
+.auth-error { background: #fff1f3; color: #b4233f; }
+.auth-success { background: #ecfdf3; color: #027a48; }
+.auth-link { border: 0; background: transparent; color: var(--orbe-primary); cursor: pointer; font: inherit; font-size: 13px; font-weight: 700; padding: 0; text-decoration: none; }
+.auth-link:hover { text-decoration: underline; }
+.auth-inline-error { padding: 10px 14px; border-radius: 10px; background: #fff1f3; }
+.logout-button { text-decoration: none; }
+.logout-button:hover { text-decoration: underline; }

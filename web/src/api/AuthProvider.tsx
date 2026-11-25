@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
 import { ApiError } from './client'
-import { fetchCurrentUser, login as requestLogin, logout as requestLogout } from './auth'
+import { fetchCurrentUser, login as requestLogin, logout as requestLogout, register as requestRegister, requestPasswordReset as requestPasswordResetApi, resetPassword as resetPasswordApi } from './auth'
 import { AuthContext } from './auth-context'
 import type { AuthSession, AuthUser } from './types'
 
@@ -62,6 +62,47 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   }, [])
 
+  const register = useCallback(async (name: string, email: string, password: string, passwordConfirmation: string): Promise<AuthSession> => {
+    setLoading(true)
+    setError(null)
+    try {
+      const session = await requestRegister(name, email, password, passwordConfirmation)
+      setUser(session.user)
+      return session
+    } catch (requestError) {
+      setError(errorMessage(requestError))
+      throw requestError
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const requestPasswordReset = useCallback(async (email: string): Promise<string> => {
+    setLoading(true)
+    setError(null)
+    try {
+      return await requestPasswordResetApi(email)
+    } catch (requestError) {
+      setError(errorMessage(requestError))
+      throw requestError
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const resetPassword = useCallback(async (email: string, token: string, password: string, passwordConfirmation: string): Promise<string> => {
+    setLoading(true)
+    setError(null)
+    try {
+      return await resetPasswordApi(email, token, password, passwordConfirmation)
+    } catch (requestError) {
+      setError(errorMessage(requestError))
+      throw requestError
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
   const logout = useCallback(async (): Promise<void> => {
     setLoading(true)
     setError(null)
@@ -77,8 +118,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, [])
 
   const value = useMemo(() => ({
-    user, loading, error, login, logout, refresh, clearError: () => setError(null),
-  }), [user, loading, error, login, logout, refresh])
+    user, loading, error, login, register, requestPasswordReset, resetPassword, logout, refresh, clearError: () => setError(null),
+  }), [user, loading, error, login, register, requestPasswordReset, resetPassword, logout, refresh])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

@@ -11,6 +11,9 @@ use App\Http\Controllers\Api\RecurrenceController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('throttle:auth')->post('/auth/login', [AuthController::class, 'login']);
+Route::middleware('throttle:auth')->post('/auth/register', [AuthController::class, 'register']);
+Route::middleware('throttle:auth')->post('/auth/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::middleware('throttle:auth')->post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
     Route::get('/auth/me', [AuthController::class, 'me']);
