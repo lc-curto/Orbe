@@ -247,7 +247,7 @@ Este documento é um mapa de execução, não substitui as especificações func
   - Cartões: novo cartão.
   - Dívidas: nova dívida.
   - Movimentos/Programações: nova programação.
-  - Rota: permanece visível, sem criação direta nesta fase; informa que a página apresenta projeções.
+  - Rota: permanece visível e apresenta a ação contextual **Nova projeção**; a criação informa indisponibilidade até existir contrato/read model de projeção, sem criar dados fictícios.
   - Relatórios e Configurações: o botão (+) fica oculto, pois não existem ações de criação nestas páginas.
 - Ações cujos formulários ainda não existem informam a indisponibilidade; não criam registos fictícios.
 - Relatórios, Configurações e Dívidas estão acessíveis na navegação, mas permanecem páginas-placeholder até à implementação funcional.
