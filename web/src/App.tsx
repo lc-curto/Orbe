@@ -230,6 +230,7 @@ export default function App() {
   const [activeKey, setActiveKey] = useState('Início')
   const [movementTab, setMovementTab] = useState<'movements' | 'schedules'>('movements')
   const [periodIndex, setPeriodIndex] = useState(0)
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false)
   const [feedback, setFeedback] = useState('')
   const [activeForm, setActiveForm] = useState<'expense' | 'income' | 'transfer' | null>(null)
 
@@ -301,7 +302,7 @@ export default function App() {
           </YStack>
 
           <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
-            {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} /> : null}
+            {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} /> : null}
             <XStack style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <YStack gap={4}>
                 <H1 fontSize={36} letterSpacing={-1.2}>Bom dia, {user.name.split(' ')[0]}</H1>
@@ -309,12 +310,11 @@ export default function App() {
               </YStack>
               <XStack gap={12}>
                 <Button onPress={() => notify('Não existem notificações novas')} aria-label="Notificações" width={44} height={44} borderRadius={999} {...border} padding={0}><Icon name="bell" size={17} color="#344054" /></Button>
-                <YStack className="account-menu" gap={4} style={{ alignItems: 'flex-end' }}>
-                  <XStack gap={8} style={{ alignItems: 'center' }}>
-                    <YStack gap={1} style={{ alignItems: 'flex-end' }}><Text fontSize={13} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text></YStack>
-                    <Button aria-label="Perfil" width={44} height={44} borderRadius={999} {...border} padding={0}><Icon name="user" size={17} color="#344054" /></Button>
-                  </XStack>
-                  <Button className="logout-button" onPress={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={0} color="#c2415d" fontSize={12}>Terminar sessão</Button>
+                <YStack className="account-menu" style={{ alignItems: 'flex-end' }}>
+                  <Button aria-label="Abrir menu da conta" aria-expanded={accountMenuOpen} onPress={() => setAccountMenuOpen((value) => !value)} borderWidth={0} backgroundColor="transparent" padding={0}>
+                    <XStack gap={8} style={{ alignItems: 'center' }}><YStack gap={1} style={{ alignItems: 'flex-end' }}><Text fontSize={13} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text></YStack><YStack width={44} height={44} borderRadius={999} {...border} style={centered}><Icon name="user" size={17} color="#344054" /></YStack></XStack>
+                  </Button>
+                  {accountMenuOpen ? <YStack className="account-dropdown" gap={4}><Text color="#667085" fontSize={11}>{user.email}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
                 </YStack>
               </XStack>
             </XStack>
@@ -382,15 +382,15 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        {activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} /></div> : <MobileDashboard period={period} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão.')) }} logoutDisabled={authLoading} />}
+        {activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} /></div> : <MobileDashboard period={period} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão.')) }} logoutDisabled={authLoading} />}
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
-        <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
+        {activeKey === 'Movimentos' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => (
             <Button key={item.label} onPress={() => { setActiveKey(item.label); notify(`${item.label} selecionado`) }} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#667085'}>
               <YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon name={item.icon} size={18} /><Text fontSize={11} fontWeight={activeKey === item.label ? '700' : '500'}>{item.label}</Text></YStack>
             </Button>
           ))}
-        </XStack>
+        </XStack> : null}
         {activeForm ? <MovementForm kind={activeForm} onClose={() => setActiveForm(null)} onUnavailable={(message) => { setActiveForm(null); notify(message) }} /> : null}
       </YStack>
     </Theme>
