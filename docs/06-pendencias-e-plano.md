@@ -105,27 +105,3 @@ Protótipos ou experiências técnicas isoladas só devem avançar com autoriza�
 
 ## Atualização de decisões
 Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e os requisitos/diagramas afetados. Registar motivo e impacto quando substituir uma decisão. Não criar atas separadas por conversa.
-
-
-## Rota Financeira — estado após implementação inicial (2026-11-25)
-
-- Implementado: página responsiva desktop/mobile, seletor de mês, KPIs de entradas/saídas realizadas, grelha diária, switch de dias com movimento e modal de detalhe com filtros aprovados.
-- Não implementado: cálculo de saldo diário, saldo projetado final, estimativa variável, classificação persistida de gastos fixos/variáveis e read model consolidado.
-- A interface apresenta indisponibilidade de saldo/projeção em vez de usar saldo fictício ou assumir saldo inicial.
-- Próximo passo técnico: definir e aprovar contrato de projeção e classificação; só depois ligar a célula Saldo e o cabeçalho aos valores do motor financeiro central.
-
-
-## Prevenção de regressão de arquitetura frontend
-- A arquitetura frontend web passa a ter norma explícita em [12 — Arquitetura Frontend Web](12-arquitetura-frontend-web.md), referenciada também no `AGENTS.md`.
-- A Rota Financeira foi escolhida como primeira página a corrigir: separar composição, lógica de dados, componentes de apresentação, tipos e utilitários sem alterar os requisitos de produto.
-- A correção deve preservar o escopo e comportamento aprovado e reutilizar o design system existente.
-- Critério de aceitação: a página principal não deve conter a implementação detalhada de tabela/modal/filtros e agregação de dados; a lógica derivada deve ser isolada e testável; a estrutura deve ser coerente com React/TypeScript; build e lint devem ser verificados ou explicitamente marcados como não executados.
-
-### Correção de arquitetura da Rota Financeira — 2026-11-25
-
-- [x] Criar norma de arquitetura frontend web e torná-la obrigatória em `AGENTS.md` e `README.md`.
-- [x] Separar a Rota Financeira em page composition, componentes visuais, hook de agregação, tipos e utilitários.
-- [ ] Executar build e lint frontend e validar a interface em desktop/tablet/mobile.
-- [ ] Continuar a implementação funcional apenas após os contratos financeiros pendentes serem fechados.
-
-A refatoração não altera regras financeiras nem transforma a Rota em funcionalmente concluída.
