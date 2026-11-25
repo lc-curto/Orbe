@@ -7,11 +7,11 @@ export class ApiError extends Error {
   readonly status: number
   readonly errors: Record<string, string[]>
 
-  constructor(status: number, payload: ApiErrorPayload = {}) {
-    super(payload.message ?? `Pedido à API falhou (${status}).`)
+  constructor(status: number, payload: ApiErrorPayload | null = {}) {
+    super(payload?.message ?? `Pedido à API falhou (${status}).`)
     this.name = 'ApiError'
     this.status = status
-    this.errors = payload.errors ?? {}
+    this.errors = payload?.errors ?? {}
   }
 }
 
