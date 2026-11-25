@@ -243,6 +243,7 @@ export default function App() {
   const [feedback, setFeedback] = useState('')
   const [activeForm, setActiveForm] = useState<'expense' | 'income' | 'transfer' | null>(null)
   const [addMenuOpen, setAddMenuOpen] = useState(false)
+  const [morePagesOpen, setMorePagesOpen] = useState(false)
 
   useEffect(() => { setAddMenuOpen(false) }, [activeKey, movementTab])
 
@@ -277,6 +278,14 @@ export default function App() {
     { icon: 'wallet' as IconName, label: 'Contas' },
     { icon: 'more' as IconName, label: 'Mais' },
   ]
+  const morePages = [
+    { icon: 'wallet' as IconName, label: 'Cartões' },
+    { icon: 'wallet' as IconName, label: 'Dívidas' },
+  ]
+  const sidebarGroups = [
+    { title: 'Principal', pages: navigation.filter((item) => ['Início', 'Movimentos', 'Rota'].includes(item.label)) },
+    { title: 'Gestão financeira', pages: [{ icon: 'wallet' as IconName, label: 'Contas' }, ...morePages] },
+  ]
 
   function notify(message: string) {
     setFeedback(message)
@@ -288,13 +297,24 @@ export default function App() {
   }
 
   function handleAddFabClick() {
-    if (activeKey === 'Contas' || activeKey === 'Cartões') return
-    if (activeKey === 'Movimentos' && movementTab === 'schedules') {
-      notify('O formulário de nova programação será adicionado na fase de formulários.')
-      return
-    }
     setAddMenuOpen((value) => !value)
   }
+
+  const fabActions = activeKey === 'Contas'
+    ? [{ label: 'Nova conta', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de contas será disponibilizada na fase de formulários.' }]
+    : activeKey === 'Cartões'
+      ? [{ label: 'Novo cartão', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de cartões será disponibilizada na fase de formulários.' }]
+      : activeKey === 'Dívidas'
+        ? [{ label: 'Nova dívida', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de dívidas será disponibilizada na fase de formulários.' }]
+        : activeKey === 'Rota'
+          ? [{ label: 'Criar programação', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de programações será disponibilizada na fase de formulários.' }]
+          : activeKey === 'Movimentos' && movementTab === 'schedules'
+            ? [{ label: 'Nova programação', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de programações será disponibilizada na fase de formulários.' }]
+            : [
+                { label: 'Nova despesa', icon: 'expense' as IconName, kind: 'expense' as const },
+                { label: 'Nova receita', icon: 'income' as IconName, kind: 'income' as const },
+                { label: 'Nova transferência', icon: 'transfer' as IconName, kind: 'transfer' as const },
+              ]
 
   function changeMovementMonth(value: string) {
     const nextIndex = value === '2026-12' ? 1 : 0
@@ -312,12 +332,13 @@ export default function App() {
                 <Icon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} color="#667085" />
               </Button>
             </XStack>
-            <YStack className="desktop-sidebar-navigation" gap={8} flex={1}>
-              {navigation.map((item) => (
-                <Button key={item.label} onPress={() => { setActiveKey(item.label === 'Mais' ? 'Cartões' : item.label) }} aria-label={item.label} aria-current={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#e6f4f1' : 'transparent'} color={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#087f70' : '#475467'}>
+            <YStack className="desktop-sidebar-navigation" gap={18} flex={1}>
+              {sidebarGroups.map((group) => <YStack key={group.title} gap={7}>
+                {sidebarOpen ? <Text color="#98a2b3" fontSize={10} fontWeight="800" letterSpacing={1}>{group.title.toUpperCase()}</Text> : null}
+                {group.pages.map((item) => <Button key={item.label} onPress={() => setActiveKey(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
                   <XStack gap={10} style={{ alignItems: 'center', justifyContent: sidebarOpen ? 'flex-start' : 'center' }}><Icon name={item.icon} size={16} />{sidebarOpen ? <Text>{item.label}</Text> : null}</XStack>
-                </Button>
-              ))}
+                </Button>)}
+              </YStack>)}
             </YStack>
             <YStack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
               <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" borderWidth={0} backgroundColor="transparent" color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={42} justifyContent={sidebarOpen ? "flex-start" : "center"}>
@@ -335,6 +356,7 @@ export default function App() {
           <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
+            {activeKey === 'Dívidas' ? <YStack gap={12}><H1 fontSize={30}>Dívidas</H1><Paragraph color="#667085">Esta página está prevista na estrutura do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
             <XStack className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <YStack gap={4} flex={1} minWidth={0}>
@@ -393,21 +415,18 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} userName={user.name} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />}
+        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Dívidas' ? <div className="mobile-page-shell"><YStack className="main-content" gap={12}><Text color="#101828" fontSize={24} fontWeight="800">Dívidas</Text><Text color="#667085">Esta página está prevista na estrutura do Orbe e será implementada numa etapa posterior.</Text></YStack></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} userName={user.name} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />}
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
-        {activeKey === 'Movimentos' || activeKey === 'Cartões' || activeKey === 'Contas' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
-          {navigation.map((item) => (
-            <Button key={item.label} onPress={() => { setActiveKey(item.label === 'Mais' ? 'Cartões' : item.label) }} aria-label={item.label} aria-current={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#e6f4f1' : 'transparent'} color={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#087f70' : '#667085'}>
-              <YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon name={item.icon} size={18} /><Text fontSize={11} fontWeight={activeKey === item.label ? '700' : '500'}>{item.label}</Text></YStack>
-            </Button>
-          ))}
+        {activeKey !== 'Início' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
+          {navigation.map((item) => <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } setMorePagesOpen(false); setActiveKey(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={activeKey === item.label || (item.label === 'Mais' && morePages.some((page) => page.label === activeKey)) ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#e6f4f1' : 'transparent'} color={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#087f70' : '#667085'}>
+            <YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon name={item.icon} size={18} /><Text fontSize={11} fontWeight="700">{item.label}</Text></YStack>
+          </Button>)}
         </XStack> : null}
-        {addMenuOpen ? <><button className="add-fab-dismiss" type="button" aria-label="Fechar menu de criação" onClick={() => setAddMenuOpen(false)} /><div className="add-fab-menu" role="menu" aria-label="Criar novo">
-          <button className="add-fab-menu-item" type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); openForm('expense') }}><Icon name="expense" size={18} color="#c2415d" /><span>Nova despesa</span></button>
-          <button className="add-fab-menu-item" type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); openForm('income') }}><Icon name="income" size={18} color="#16805b" /><span>Nova receita</span></button>
-          <button className="add-fab-menu-item" type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); openForm('transfer') }}><Icon name="transfer" size={18} color="#175cd3" /><span>Nova transferência</span></button>
+        {morePagesOpen ? <><button className="add-fab-dismiss" type="button" aria-label="Fechar menu de páginas" onClick={() => setMorePagesOpen(false)} /><div className="mobile-more-pages-menu" role="menu" aria-label="Outras páginas">{morePages.map((page) => <button key={page.label} className="add-fab-menu-item" type="button" role="menuitem" onClick={() => { setMorePagesOpen(false); setActiveKey(page.label) }}><Icon name={page.icon} size={18} /><span>{page.label}</span></button>)}</div></> : null}
+        {addMenuOpen ? <><button className="add-fab-dismiss" type="button" aria-label="Fechar opções de criação" onClick={() => setAddMenuOpen(false)} /><div className="add-fab-menu" role="menu" aria-label={`Criar na página ${activeKey}`}>
+          {fabActions.map((action) => <button key={action.label} className="add-fab-menu-item" type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); if (action.kind === 'unavailable') notify(action.message); else openForm(action.kind) }}><Icon name={action.icon} size={18} color={action.kind === 'expense' ? '#c2415d' : action.kind === 'income' ? '#16805b' : action.kind === 'transfer' ? '#175cd3' : '#667085'} /><span>{action.label}</span></button>)}
         </div></> : null}
-        <button className="app-add-fab" type="button" onClick={handleAddFabClick} disabled={activeKey === 'Contas' || activeKey === 'Cartões'} aria-label={activeKey === 'Contas' ? 'Adicionar conta — formulário ainda não disponível' : activeKey === 'Cartões' ? 'Adicionar cartão — formulário ainda não disponível' : 'Adicionar movimento'} aria-expanded={addMenuOpen} title={activeKey === 'Contas' || activeKey === 'Cartões' ? 'A criação estará disponível na fase de formulários' : 'Adicionar'}>
+        <button className="app-add-fab" type="button" onClick={handleAddFabClick} aria-label={`Adicionar na página ${activeKey}`} aria-expanded={addMenuOpen} title={`Adicionar — ${activeKey}`}>
           <Icon name="plus" size={26} color="#ffffff" strokeWidth={2.2} />
         </button>
         {activeForm ? <MovementForm kind={activeForm} onClose={() => setActiveForm(null)} onUnavailable={(message) => { setActiveForm(null); notify(message) }} /> : null}
