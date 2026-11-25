@@ -28,6 +28,7 @@ Estados específicos de faturas, dívidas, cartões e ocorrências serão detalh
 | OP-014 | Ocorrências recorrentes não podem duplicar | Aprovado |
 | OP-015 | Dependências e operações relacionadas são protegidas | Aprovado |
 | OP-016 | Projeções recalculam após alterações relevantes | Aprovado |
+| OP-017 | Saldo inicial de conta é reconhecido uma única vez por operação própria, sem natureza de receita/despesa, e integra o saldo efetivo por lançamento realizado | Aprovado |
 
 ## Ações
 - **Criar:** estado inicial decorre dos dados; não permitir estado incoerente.
@@ -92,6 +93,16 @@ A especificação detalhada será feita depois das páginas principais.
 - O estado do ciclo (`PLANNED`, `OPEN`, `CLOSED`) é distinto do valor em dívida e do estado de pagamento.
 - Podem existir vários ciclos anteriores com dívida pendente.
 - No máximo um ciclo por cartão pode estar `OPEN`; a integridade deve ser protegida no banco de dados e no fluxo transacional.
+
+## Saldo inicial de conta
+
+- Na criação da conta, informar o saldo existente no início da utilização da conta no Orbe.
+- O saldo inicial é reconhecido como `ACCOUNT_OPENING_BALANCE`, com efeito realizado dirigido à conta; não é receita, despesa, transferência ou conferência.
+- Saldo inicial positivo aumenta a conta; saldo inicial negativo, quando permitido pelo tipo de conta, reduz a conta; zero não cria lançamento.
+- A data efetiva é a data de início de utilização da conta no Orbe. O saldo inicial é uma posição de abertura, não uma importação automática de movimentos anteriores.
+- Existe no máximo uma operação original por conta. A criação é atómica e idempotente.
+- O saldo inicial não pode ser alterado diretamente na edição da conta. Correções posteriores preservam a abertura original e são rastreáveis.
+- O saldo atual é derivado da abertura e dos restantes lançamentos realizados válidos da conta.
 
 ## Critérios específicos de aceitação de cartões
 

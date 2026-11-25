@@ -361,8 +361,12 @@ Valor
 - Recipiente responsivo conforme a secção 3.
 - Rodapé fixo.
 - Edição reutiliza a mesma composição de criação, preenchida com os dados existentes.
+- Na criação, incluir o campo funcional **Saldo inicial** conforme `docs/02-regras-financeiras.md`: valor existente no início da utilização da conta no Orbe; não é receita/despesa.
+- Na edição, não permitir sobrescrever o saldo inicial ou o efeito financeiro de abertura. A abertura original deve ser preservada; correção exige fluxo rastreável definido pela especificação funcional.
 - Não criar pré-visualização decorativa de conta.
 - Não acrescentar campos não definidos funcionalmente.
+
+**Regra funcional associada:** saldo inicial zero não gera lançamento; saldo inicial não zero gera uma única operação de abertura com efeito realizado na conta, confirmada atomicamente com a criação. O campo não deve ser confundido com o saldo atual, que é derivado dos lançamentos válidos.
 
 ### 6.5 Criar/editar cartão
 
