@@ -53,6 +53,7 @@ final class RecurrenceController extends Controller
     {
         $data = RecurrenceSchedule::query()
             ->where('user_id', $request->user()->id)
+            ->with(['account', 'category'])
             ->orderByDesc('created_at')
             ->get();
         return response()->json(['data' => $data]);

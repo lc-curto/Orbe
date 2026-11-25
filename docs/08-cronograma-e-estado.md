@@ -132,6 +132,7 @@
 - [x] Disponibilizar leitura tipada do detalhe de cartão.
 - [x] Remover dados estáticos de fatura e últimos movimentos onde existe fonte API disponível.
 - [x] Mostrar loading, erro e vazio baseados nos dados do utilizador.
+- [x] Implementar a leitura frontend das páginas Movimentos e Programações, incluindo KPIs mensais de operações realizadas, filtros de estado e consulta de ocorrências.
 - [ ] Validar o isolamento entre utilizadores no consumo da API com interação real.
 
 ## 9. Formulários concretos suportados pelos contratos atuais
@@ -182,7 +183,7 @@ Enquanto estes contratos não existirem, o frontend não deve criar categorias, 
 
 ## 12. Subpáginas
 
-- [ ] Implementar Movimentos.
+- [x] Implementar Movimentos e a aba Programações em modo de leitura.
 - [ ] Implementar Rota Financeira.
 - [ ] Implementar Contas.
 - [ ] Implementar Cartões e detalhe de faturas.

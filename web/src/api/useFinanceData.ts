@@ -10,7 +10,7 @@ type FinanceDataState = {
   userId?: number | null
 }
 
-const emptyData: FinanceReadResult = { cards: [], invoices: [], operations: [] }
+const emptyData: FinanceReadResult = { cards: [], invoices: [], operations: [], accounts: [], categories: [], recurrences: [] }
 
 function messageFor(error: unknown): string {
   if (error instanceof ApiError) return error.message

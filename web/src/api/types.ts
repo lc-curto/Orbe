@@ -38,11 +38,13 @@ export type Category = {
 export type Operation = {
   id: number
   operation_type: 'EXPENSE' | 'INCOME' | 'TRANSFER'
-  state: string
+  state: 'REALIZED' | 'PENDING' | 'CANCELLED' | string
   amount: string
   description?: string | null
   effective_at?: string | null
   planned_at?: string | null
+  category?: Category | null
+  account?: Account | null
   entries?: FinancialEntry[]
 }
 
@@ -54,6 +56,36 @@ export type FinancialEntry = {
   effective_at?: string | null
   account?: Account | null
   invoice?: CardInvoice | null
+}
+
+export type RecurrenceSchedule = {
+  id: number
+  nature: 'EXPENSE' | 'INCOME'
+  amount: string
+  account_id: number
+  category_id: number
+  description?: string | null
+  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY'
+  first_occurrence_at: string
+  status: 'ACTIVE' | 'PAUSED' | 'ENDED' | string
+  end_at?: string | null
+  account?: Account | null
+  category?: Category | null
+}
+
+export type RecurrenceOccurrence = {
+  id: number
+  recurrence_schedule_id: number
+  scheduled_at: string
+  amount: string
+  state: 'PENDING' | 'REALIZED' | 'CANCELLED' | string
+  operation_id?: number | null
+  account_id: number
+  category_id: number
+  description?: string | null
+  effective_at?: string | null
+  account?: Account | null
+  category?: Category | null
 }
 
 export type CardInvoice = {

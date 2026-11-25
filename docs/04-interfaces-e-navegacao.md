@@ -23,6 +23,8 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 
 ## Movimentos — aprovado
 - Abas Movimentos e Programações; seletor mensal compacto.
+- Em Movimentos, apresentar três KPIs compactos do mês selecionado: Receitas, Despesas e Resultado (Receitas − Despesas).
+- Os KPIs de Movimentos consideram apenas operações realizadas, excluem canceladas, pendentes e transferências, e não substituem o saldo atual do Dashboard.
 - Lista única, uma linha por operação.
 - Filtros horizontais: Todos, Pendentes, Realizados, Cancelados; acessos a Filtros e ordenação/Recentes.
 - Pesquisa e filtros por tipo, estado, período, conta e categoria.
@@ -32,6 +34,9 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Parcial aparece apenas como badge, sem valores detalhados na lista.
 - Ícones e botão adicionar.
 - Operação com vários lançamentos não pode aparecer duplicada; detalhes completos na vista/modal de detalhes.
+- A aba Programações mostra as regras recorrentes, com natureza, valor, periodicidade, conta, categoria, estado e a data da primeira ocorrência; a próxima ocorrência é consultada através das ocorrências reais.
+- As ocorrências de uma programação são consultadas numa área de detalhe própria; uma ocorrência materializada também aparece em Movimentos como operação única, sem duplicação.
+- A edição e as ações sobre programações/ocorrências usam botões dedicados e não permitem edição inline.
 
 ## Rota Financeira — aprovado
 - Visão mensal com uma linha por dia, incluindo dias sem movimentos.

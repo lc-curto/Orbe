@@ -54,7 +54,7 @@ final class ReadController extends Controller
     {
         $operations = Operation::query()
             ->where('user_id', $request->user()->id)
-            ->with(['entries.invoice', 'entries.account'])
+            ->with(['category', 'account', 'entries.invoice', 'entries.account'])
             ->orderByDesc('effective_at')
             ->orderByDesc('planned_at')
             ->orderByDesc('id')

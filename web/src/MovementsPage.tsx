@@ -1,0 +1,94 @@
+import { useMemo, useState } from 'react'
+import { fetchRecurrenceOccurrences } from './api/finance'
+import type { Account, Category, Operation, RecurrenceOccurrence, RecurrenceSchedule } from './api/types'
+
+type Tab = 'movements' | 'schedules'
+type MovementFilter = 'ALL' | 'PENDING' | 'REALIZED' | 'CANCELLED'
+
+type Props = {
+  tab: Tab
+  setTab: (tab: Tab) => void
+  operations: Operation[]
+  recurrences: RecurrenceSchedule[]
+  accounts: Account[]
+  categories: Category[]
+  month: string
+  onMonthChange: (month: string) => void
+  onNewMovement: () => void
+  onNotify: (message: string) => void
+}
+
+const money = (value: string | number, sign = '') => `${sign}${new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(Number(value))}`
+const dateText = (value?: string | null) => value ? new Intl.DateTimeFormat('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value)) : 'Sem data'
+const monthValue = (value?: string | null) => value ? new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' }).format(new Date(value)) : ''
+const frequencyLabel = (frequency: RecurrenceSchedule['frequency']) => ({ DAILY: 'Diária', WEEKLY: 'Semanal', MONTHLY: 'Mensal' })[frequency]
+const stateLabel = (state: string) => ({ PENDING: 'Pendente', REALIZED: 'Realizada', CANCELLED: 'Cancelada', ACTIVE: 'Ativa', PAUSED: 'Pausada', ENDED: 'Terminada' }[state] ?? state)
+const typeLabel = (type: string) => ({ EXPENSE: 'Despesa', INCOME: 'Receita', TRANSFER: 'Transferência' }[type] ?? type)
+
+function Kpi({ label, value, tone, detail }: { label: string; value: string; tone: string; detail: string }) {
+  return <div className="movement-kpi"><span>{label}</span><strong style={{ color: tone }}>{value}</strong><small>{detail}</small></div>
+}
+
+function movementName(operation: Operation) {
+  if (operation.description) return operation.description
+  return typeLabel(operation.operation_type)
+}
+
+function movementAccount(operation: Operation) {
+  return operation.account?.name ?? operation.entries?.find((entry) => entry.account)?.account?.name ?? 'Conta não identificada'
+}
+
+function MovementRow({ operation }: { operation: Operation }) {
+  const isExpense = operation.operation_type === 'EXPENSE'
+  const isIncome = operation.operation_type === 'INCOME'
+  const sign = isExpense ? '− ' : isIncome ? '+ ' : ''
+  const tone = isExpense ? '#c2415d' : isIncome ? '#16805b' : '#175cd3'
+  return <div className="movement-row">
+    <div className={`movement-icon ${isExpense ? 'expense' : isIncome ? 'income' : 'transfer'}`}>{isExpense ? '↓' : isIncome ? '↑' : '↔'}</div>
+    <div className="movement-main"><strong>{movementName(operation)}</strong><span>{operation.category?.name ?? typeLabel(operation.operation_type)} · {movementAccount(operation)}</span><div className="movement-badges">{operation.state !== 'REALIZED' ? <em className={`state-badge ${operation.state.toLowerCase()}`}>{stateLabel(operation.state)}</em> : null}{operation.entries && operation.entries.length > 1 ? <em className="state-badge partial">Parcial</em> : null}</div></div>
+    <strong className="movement-amount" style={{ color: tone }}>{sign}{money(operation.amount)}</strong>
+  </div>
+}
+
+function ScheduleRow({ schedule, accounts, categories, expanded, occurrence, loading, onToggle }: { schedule: RecurrenceSchedule; accounts: Account[]; categories: Category[]; expanded: boolean; occurrence?: RecurrenceOccurrence; loading: boolean; onToggle: () => void }) {
+  const account = schedule.account?.name ?? accounts.find((item) => item.id === schedule.account_id)?.name ?? 'Conta não identificada'
+  const category = schedule.category?.name ?? categories.find((item) => item.id === schedule.category_id)?.name ?? 'Categoria não identificada'
+  return <div className="schedule-card">
+    <div className="schedule-summary"><div className={`movement-icon ${schedule.nature === 'EXPENSE' ? 'expense' : 'income'}`}>{schedule.nature === 'EXPENSE' ? '↓' : '↑'}</div><div className="movement-main"><strong>{schedule.description || typeLabel(schedule.nature)}</strong><span>{typeLabel(schedule.nature)} · {category} · {account}</span><span>{money(schedule.amount)} · {frequencyLabel(schedule.frequency)} · Primeira ocorrência: {dateText(schedule.first_occurrence_at)}</span></div><em className={`state-badge ${schedule.status.toLowerCase()}`}>{stateLabel(schedule.status)}</em><button className="icon-action" type="button" aria-label={`Ver ocorrências de ${schedule.description || 'programação'}`} onClick={onToggle}>{expanded ? '−' : '+'}</button></div>
+    {expanded ? <div className="occurrence-panel">{loading ? <span className="muted">A carregar ocorrências…</span> : occurrence ? <div className="occurrence-line"><span>{dateText(occurrence.scheduled_at)}</span><strong>{money(occurrence.amount)}</strong><em className={`state-badge ${occurrence.state.toLowerCase()}`}>{stateLabel(occurrence.state)}</em></div> : <span className="muted">Não existem ocorrências disponíveis.</span>}<span className="muted occurrence-note">As ações de edição e materialização serão adicionadas no contexto dos formulários.</span></div> : null}
+  </div>
+}
+
+export function MovementsPage({ tab, setTab, operations, recurrences, accounts, categories, month, onMonthChange, onNewMovement, onNotify }: Props) {
+  const [filter, setFilter] = useState<MovementFilter>('ALL')
+  const [search, setSearch] = useState('')
+  const [expandedSchedule, setExpandedSchedule] = useState<number | null>(null)
+  const [occurrence, setOccurrence] = useState<RecurrenceOccurrence | undefined>()
+  const [occurrenceLoading, setOccurrenceLoading] = useState(false)
+  const monthOperations = useMemo(() => operations.filter((operation) => monthValue(operation.effective_at ?? operation.planned_at) === month), [operations, month])
+  const kpis = useMemo(() => monthOperations.reduce((summary, operation) => { if (operation.state !== 'REALIZED' || operation.operation_type === 'TRANSFER') return summary; if (operation.operation_type === 'INCOME') summary.income += Number(operation.amount); if (operation.operation_type === 'EXPENSE') summary.expenses += Number(operation.amount); return summary }, { income: 0, expenses: 0 }), [monthOperations])
+  const visibleOperations = useMemo(() => monthOperations.filter((operation) => (filter === 'ALL' || operation.state === filter) && `${movementName(operation)} ${operation.category?.name ?? ''} ${movementAccount(operation)}`.toLowerCase().includes(search.toLowerCase())), [monthOperations, filter, search])
+  const grouped = useMemo(() => visibleOperations.reduce<Record<string, Operation[]>>((groups, operation) => { const key = operation.effective_at ?? operation.planned_at ?? 'sem-data'; (groups[key] ??= []).push(operation); return groups }, {}), [visibleOperations])
+
+  async function toggleSchedule(id: number) {
+    if (expandedSchedule === id) { setExpandedSchedule(null); return }
+    setExpandedSchedule(id); setOccurrence(undefined); setOccurrenceLoading(true)
+    try { const data = await fetchRecurrenceOccurrences(id); setOccurrence(data[0]) } catch { onNotify('Não foi possível carregar as ocorrências.') } finally { setOccurrenceLoading(false) }
+  }
+
+  return <section className="movements-page">
+    <div className="movements-header"><div><h1>Movimentos</h1><p>Registo de operações financeiras</p></div><button className="primary-button desktop-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button></div>
+    <div className="movement-tabs" role="tablist"><button type="button" role="tab" aria-selected={tab === 'movements'} className={tab === 'movements' ? 'active' : ''} onClick={() => setTab('movements')}>Movimentos</button><button type="button" role="tab" aria-selected={tab === 'schedules'} className={tab === 'schedules' ? 'active' : ''} onClick={() => setTab('schedules')}>Programações</button></div>
+    {tab === 'movements' ? <>
+      <div className="movement-toolbar"><label className="month-control">Mês<input type="month" value={month} onChange={(event) => onMonthChange(event.target.value)} /></label><label className="search-control"><span>Pesquisar</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Pesquisar movimentos" /></label></div>
+      <div className="movement-kpis"><Kpi label="Receitas" value={money(kpis.income, '+ ')} tone="#16805b" detail="Realizadas no período" /><Kpi label="Despesas" value={money(kpis.expenses, '− ')} tone="#c2415d" detail="Realizadas no período" /><Kpi label="Resultado" value={money(kpis.income - kpis.expenses, kpis.income - kpis.expenses >= 0 ? '+ ' : '− ')} tone={kpis.income - kpis.expenses >= 0 ? '#175cd3' : '#c2415d'} detail="Receitas − despesas" /></div>
+      <div className="movement-filter-row"><div className="filter-chips">{([['ALL', 'Todos'], ['PENDING', 'Pendentes'], ['REALIZED', 'Realizados'], ['CANCELLED', 'Cancelados']] as const).map(([value, label]) => <button key={value} type="button" className={filter === value ? 'selected' : ''} onClick={() => setFilter(value)}>{label}</button>)}</div><button className="secondary-button" type="button" onClick={() => onNotify('Filtros avançados serão adicionados com o formulário de consulta.')}>Filtros</button><button className="secondary-button sort-button" type="button">Mais recentes⌄</button></div>
+      <div className="movement-list">{Object.keys(grouped).length === 0 ? <div className="empty-state">Não existem movimentos para os critérios selecionados.</div> : Object.entries(grouped).map(([date, items]) => <div className="movement-group" key={date}><h2>{dateText(date)}</h2>{items.map((operation) => <MovementRow operation={operation} key={operation.id} />)}</div>)}</div>
+      <button className="primary-button mobile-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button>
+    </> : <>
+      <div className="schedules-intro"><div><h2>Regras que geram movimentos futuros</h2><p>Consulta as programações e as ocorrências previstas sem duplicar movimentos já materializados.</p></div><button className="primary-button" type="button" onClick={() => onNotify('O formulário de nova programação será adicionado na fase de formulários.')}>+ Nova programação</button></div>
+      <div className="schedule-toolbar"><label className="search-control"><span>Pesquisar</span><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Pesquisar programações" /></label><button className="secondary-button" type="button" onClick={() => onNotify('Filtros de programações serão adicionados na fase de formulários.')}>Filtros</button></div>
+      <div className="schedule-list">{recurrences.filter((schedule) => `${schedule.description ?? ''} ${schedule.frequency}`.toLowerCase().includes(search.toLowerCase())).map((schedule) => <ScheduleRow key={schedule.id} schedule={schedule} accounts={accounts} categories={categories} expanded={expandedSchedule === schedule.id} occurrence={occurrence} loading={occurrenceLoading && expandedSchedule === schedule.id} onToggle={() => void toggleSchedule(schedule.id)} />)}{recurrences.length === 0 ? <div className="empty-state">Ainda não existem programações.</div> : null}</div>
+    </>}
+  </section>
+}
