@@ -358,7 +358,7 @@ export default function App() {
             <XStack className="dashboard-kpi-row" flexWrap="nowrap" gap={16}>
               <Card {...border} borderRadius={20} padding={20} flex={1} minWidth={0} backgroundColor="#175cd3">
                 <YStack gap={8}>
-                  <Text color="#dbeafe" fontSize={16}>Saldo total</Text>
+                  <Text color="#dbeafe" fontSize={16}>Saldo disponível</Text>
                   <Text color="#ffffff" fontSize={34} fontWeight="800">€ 2.840,50</Text>
                   <Text color="#dbeafe" fontSize={14}>Todas as contas</Text>
                 </YStack>
