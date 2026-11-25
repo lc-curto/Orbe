@@ -153,7 +153,7 @@ const centered = { alignItems: 'center' as const, justifyContent: 'center' as co
 
 function SummaryCard({ label, amount, detail, tone }: { label: string; amount: string; detail: string; tone?: string }) {
   return (
-    <Card {...border} borderRadius={20} padding={20} flex={1} minWidth={220} backgroundColor="#ffffff">
+    <Card {...border} borderRadius={20} padding={20} flex={1} minWidth={0} backgroundColor="#ffffff">
       <YStack gap={8}>
         <Text color="#667085" fontSize={16}>{label}</Text>
         <Text color={tone ?? '#101828'} fontSize={28} fontWeight="800">{amount}</Text>
@@ -329,8 +329,8 @@ export default function App() {
               </XStack>
             </XStack>
 
-            <XStack flexWrap="wrap" gap={16}>
-              <Card {...border} borderRadius={20} padding={20} flex={1} minWidth={260} backgroundColor="#175cd3">
+            <XStack className="dashboard-kpi-row" flexWrap="nowrap" gap={16}>
+              <Card {...border} borderRadius={20} padding={20} flex={1} minWidth={0} backgroundColor="#175cd3">
                 <YStack gap={8}>
                   <Text color="#dbeafe" fontSize={16}>Saldo total</Text>
                   <Text color="#ffffff" fontSize={34} fontWeight="800">€ 2.840,50</Text>
