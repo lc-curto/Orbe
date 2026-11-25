@@ -230,6 +230,13 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 6. Implementar os formulários comuns após o fecho dos contratos pendentes.
 7. Executar a auditoria final e publicar apenas após autorização explícita.
 
+## Publicação e validação — 2026-11-25
+
+- PR #5 foi integrado na `main` no merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`.
+- A navegação responsiva, o painel Mais e o FAB contextual estão implementados; os respetivos detalhes estão registados em `docs/04-interfaces-e-navegacao.md`.
+- A regra de entrada global de criação foi sincronizada com `docs/ESPECIFICACAO_FORMULARIOS.md`: o FAB pertence ao `AppShell`, não é duplicado dentro dos formulários, e opções sem suporte continuam indisponíveis.
+- Build, lint e testes frontend não foram executados após o merge do PR #5. A validação visual/responsiva e a auditoria final permanecem pendentes.
+
 ## Regra de controlo
 
 Este documento é um mapa de execução, não substitui as especificações funcionais, financeiras ou de arquitetura. Quando houver conflito, prevalecem `AGENTS.md`, as regras financeiras, a especificação funcional e as decisões aprovadas nos documentos de origem. Cada alteração relevante deve atualizar este estado no mesmo conjunto de alterações, sem marcar como concluído algo que apenas foi proposto.
