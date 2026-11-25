@@ -11,6 +11,9 @@ import {
   YStack,
 } from 'tamagui'
 import { MovementForm } from './forms/FormSystem'
+import { useAuth } from './api/useAuth'
+import { useFinanceData } from './api/useFinanceData'
+import type { Card as FinancialCard, CardInvoice, Operation } from './api/types'
 
 type IconName = 'home' | 'activity' | 'route' | 'wallet' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight'
 
@@ -42,12 +45,33 @@ function Icon({ name, size = 18, color = 'currentColor', strokeWidth = 1.8 }: { 
   )
 }
 
-const movements = [
-  { icon: 'store' as IconName, name: 'Supermercado Silva', meta: 'Despesa · Alimentação', amount: '− € 120,45', tone: '#c2415d', iconColor: '#c2415d' },
-  { icon: 'salary' as IconName, name: 'Salário', meta: 'Receita · Trabalho', amount: '+ € 2.400,00', tone: '#16805b', iconColor: '#16805b' },
-  { icon: 'transfer' as IconName, name: 'Transferência', meta: 'Entre contas · Conta principal → Poupança', amount: '€ 300,00', tone: '#175cd3', iconColor: '#175cd3' },
-  { icon: 'house' as IconName, name: 'Renda', meta: 'Despesa · Habitação', amount: '− € 750,00', tone: '#c2415d', iconColor: '#c2415d' },
-]
+function formatMoney(amount: string): string {
+  return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(Number(amount))
+}
+
+function movementView(operation: Operation) {
+  const isExpense = operation.operation_type === 'EXPENSE'
+  const isIncome = operation.operation_type === 'INCOME'
+  const tone = isExpense ? '#c2415d' : isIncome ? '#16805b' : '#175cd3'
+  const icon = isExpense ? 'expense' : isIncome ? 'income' : 'transfer'
+  const sign = isExpense ? '− ' : isIncome ? '+ ' : ''
+  const state = operation.state === 'PENDING' ? 'Pendente' : 'Realizada'
+  return {
+    icon: icon as IconName,
+    name: operation.description || (operation.operation_type === 'TRANSFER' ? 'Transferência' : isExpense ? 'Despesa' : 'Receita'),
+    meta: `${operation.operation_type} · ${state}`,
+    amount: `${sign}${formatMoney(operation.amount)}`,
+    tone,
+    iconColor: tone,
+  }
+}
+
+function FinanceStatus({ loading, error, authenticated }: { loading: boolean; error: string | null; authenticated: boolean }) {
+  if (loading) return <Text className="finance-read-status" color="#667085" fontSize={13}>A carregar dados financeiros…</Text>
+  if (error) return <Text className="finance-read-status" color="#c2415d" fontSize={13}>{error}</Text>
+  if (!authenticated) return <Text className="finance-read-status" color="#667085" fontSize={13}>Inicie sessão para carregar os seus dados financeiros.</Text>
+  return null
+}
 
 const border = { borderWidth: 1, borderColor: '#e4e7ec' as const }
 const centered = { alignItems: 'center' as const, justifyContent: 'center' as const }
@@ -80,8 +104,10 @@ function QuickAction({ icon, label, detail, color }: { icon: IconName; label: st
   )
 }
 
-function MobileDashboard({ period, navigation, activeKey, setActiveKey, notify, openForm }: {
+function MobileDashboard({ period, card, invoice, navigation, activeKey, setActiveKey, notify, openForm }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
+  card?: FinancialCard
+  invoice?: CardInvoice
   navigation: Array<{ icon: IconName; label: string }>
   activeKey: string
   setActiveKey: (value: string) => void
@@ -102,7 +128,7 @@ function MobileDashboard({ period, navigation, activeKey, setActiveKey, notify, 
         </Card>
         <YStack gap={9}><Text color="#101828" fontSize={16} fontWeight="800">Ações rápidas</Text><XStack gap={9}>{[['expense', 'Despesa'], ['income', 'Receita'], ['transfer', 'Transferência']].map(([icon, label]) => <Button key={label} onPress={() => openForm(icon as 'expense' | 'income' | 'transfer')} flex={1} height={72} padding={8} borderRadius={14} {...border} backgroundColor="#ffffff"><YStack gap={7} style={{ alignItems: 'center', justifyContent: 'center' }}><YStack width={28} height={28} borderRadius={10} backgroundColor="#e6f0ff" style={centered}><Icon name={icon as IconName} size={15} color="#175cd3" /></YStack><Text color="#101828" fontSize={11} fontWeight="700">{label}</Text></YStack></Button>)}</XStack></YStack>
         <Card {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}><Text color="#101828" fontSize={16} fontWeight="800">Despesas por categoria</Text><Button onPress={() => notify('A mostrar despesas por categoria')} borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontSize={12} fontWeight="700">Ver todas</Button></XStack><YStack gap={12}>{[['Casa', '€ 162,00', 82], ['Juros', '€ 1,00', 12]].map(([label, value, width]) => <YStack key={String(label)} gap={5}><XStack style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={12}>{label}</Text><Text color="#101828" fontSize={12} fontWeight="700">{value}</Text></XStack><YStack height={5} borderRadius={99} backgroundColor="#e6f0ff"><YStack width={`${width}%`} height={5} borderRadius={99} backgroundColor="#175cd3" /></YStack></YStack>)}</YStack></Card>
-        <Card {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={10}><Text color="#101828" fontSize={16} fontWeight="800">Cartões</Text><Button onPress={() => notify('A abrir cartões')} borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontSize={12} fontWeight="700">Ver todos</Button></XStack><XStack padding={12} borderRadius={12} backgroundColor="#f7f9fc" style={{ justifyContent: 'space-between', alignItems: 'center' }}><YStack gap={3}><Text color="#667085" fontSize={11}>Fatura do cartão</Text><Text color="#101828" fontSize={19} fontWeight="800">€ 12,00</Text></YStack><Text color="#087f70" backgroundColor="#e6f4f1" borderRadius={99} paddingHorizontal={9} paddingVertical={5} fontSize={11} fontWeight="700">Em aberto</Text></XStack></Card>
+        <Card {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={10}><Text color="#101828" fontSize={16} fontWeight="800">Cartões</Text><Button onPress={() => notify('A abrir cartões')} borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontSize={12} fontWeight="700">Ver todos</Button></XStack>{invoice ? <XStack padding={12} borderRadius={12} backgroundColor="#f7f9fc" style={{ justifyContent: 'space-between', alignItems: 'center' }}><YStack gap={3}><Text color="#667085" fontSize={11}>{card?.name ?? invoice.card?.name ?? 'Fatura do cartão'}</Text><Text color="#101828" fontSize={19} fontWeight="800">{formatMoney(invoice.summary.open_amount)}</Text></YStack><Text color="#087f70" backgroundColor="#e6f4f1" borderRadius={99} paddingHorizontal={9} paddingVertical={5} fontSize={11} fontWeight="700">{invoice.cycle_state}</Text></XStack> : card ? <Text color="#667085" fontSize={13}>{card.name} · sem faturas disponíveis.</Text> : <Text color="#667085" fontSize={13}>Sem cartões disponíveis.</Text>}</Card>
       </YStack>
       <XStack className="mobile-dashboard-nav" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={6} paddingTop={6} paddingBottom={6}>{navigation.map((item) => <Button key={item.label} onPress={() => { setActiveKey(item.label); notify(`${item.label} selecionado`) }} flex={1} height={50} padding={0} borderWidth={0} borderRadius={10} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#667085'}><YStack gap={3} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon name={item.icon} size={17} /><Text fontSize={10} fontWeight={activeKey === item.label ? '700' : '500'}>{item.label}</Text></YStack></Button>)}</XStack>
     </YStack>
@@ -110,6 +136,12 @@ function MobileDashboard({ period, navigation, activeKey, setActiveKey, notify, 
 }
 
 export default function App() {
+  const { user } = useAuth()
+  const finance = useFinanceData(user)
+  const movements = finance.data.operations.slice(0, 4).map(movementView)
+  const card = finance.data.cards[0]
+  const invoice = finance.data.invoices[0]
+
   const [sidebarOpen, setSidebarOpen] = useState(() => {
     if (typeof window === 'undefined') return true
     try {
@@ -159,6 +191,7 @@ export default function App() {
   return (
     <Theme name="light">
       <YStack flex={1} backgroundColor="#f8fafc" minHeight="100vh">
+        <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <XStack className="desktop-layout" flex={1}>
           <YStack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} padding={20} borderRightWidth={1} borderColor="#eaecf0" backgroundColor="#ffffff">
             <XStack style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom={40}>
@@ -230,7 +263,7 @@ export default function App() {
                 <Button onPress={() => { setActiveKey('Movimentos'); notify('A mostrar todos os movimentos') }} aria-label="Ver todos os movimentos" borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontWeight="700">Ver todos →</Button>
               </XStack>
               <YStack>
-                {movements.map((movement, index) => (
+                {movements.length === 0 ? <Text color="#667085" paddingVertical={16}>Sem movimentos disponíveis.</Text> : movements.map((movement, index) => (
                   <YStack key={movement.name}>
                     <XStack paddingVertical={16} gap={12} style={centered}>
                       <YStack width={38} height={38} borderRadius={16} backgroundColor="#f2f4f7" style={centered}>
@@ -249,7 +282,7 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        <MobileDashboard period={period} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} />
+        <MobileDashboard period={period} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} />
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => (

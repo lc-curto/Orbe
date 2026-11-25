@@ -124,11 +124,11 @@
 
 ## 8. Leitura de dados reais
 
-- [ ] Ligar o frontend às listagens de cartões, faturas e operações.
-- [ ] Ligar o frontend ao detalhe de cartão.
-- [ ] Remover dados estáticos onde exista fonte API disponível.
-- [ ] Mostrar loading, erro e vazio baseados nos dados do utilizador.
-- [ ] Validar o isolamento entre utilizadores no consumo da API.
+- [x] Ligar o frontend às listagens de cartões, faturas e operações.
+- [x] Disponibilizar leitura tipada do detalhe de cartão.
+- [x] Remover dados estáticos de fatura e últimos movimentos onde existe fonte API disponível.
+- [x] Mostrar loading, erro e vazio baseados nos dados do utilizador.
+- [ ] Validar o isolamento entre utilizadores no consumo da API com interação real.
 
 ## 9. Formulários concretos suportados pelos contratos atuais
 
