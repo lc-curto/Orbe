@@ -6,11 +6,11 @@ import {
   Paragraph,
   Separator,
   Text,
-  Theme,
   XStack,
   YStack,
 } from 'tamagui'
 import { MovementForm } from './forms/FormSystem'
+import { AppShell } from './AppShell'
 import { useAuth } from './api/useAuth'
 import { useFinanceData } from './api/useFinanceData'
 import type { Card as FinancialCard, CardInvoice, Operation } from './api/types'
@@ -303,8 +303,7 @@ export default function App() {
   }
 
   return (
-    <Theme name="light">
-      <YStack flex={1} backgroundColor="#f8fafc" minHeight="100vh">
+    <AppShell>
         <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <XStack className="desktop-layout" flex={1}>
           <YStack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} padding={20} borderRightWidth={1} borderColor="#eaecf0" backgroundColor="#ffffff">
@@ -409,7 +408,6 @@ export default function App() {
           ))}
         </XStack> : null}
         {activeForm ? <MovementForm kind={activeForm} onClose={() => setActiveForm(null)} onUnavailable={(message) => { setActiveForm(null); notify(message) }} /> : null}
-      </YStack>
-    </Theme>
+    </AppShell>
   )
 }

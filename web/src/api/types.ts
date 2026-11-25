@@ -38,7 +38,7 @@ export type Category = {
 export type Operation = {
   id: number
   operation_type: 'EXPENSE' | 'INCOME' | 'TRANSFER'
-  state: 'REALIZED' | 'PENDING' | 'CANCELLED' | string
+  state: 'REALIZED' | 'PENDING' | 'CANCELLED' | 'PARTIAL' | string
   amount: string
   description?: string | null
   effective_at?: string | null
