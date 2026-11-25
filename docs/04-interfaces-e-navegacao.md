@@ -125,3 +125,7 @@ Esta secção regista o comportamento atualmente implementado no frontend, após
 - A lista usa operações realizadas de receita/despesa disponíveis no read model; transferências e estados não realizados são excluídos dos totais apresentados.
 - **Limitação explícita:** o frontend atual não calcula saldo diário nem projeção final. A célula Saldo e o saldo projetado mostram indisponibilidade, sem inventar valores. Os filtros G. fixos/variáveis informam que a classificação ainda não existe no contrato de leitura.
 - Esta entrega é uma implementação parcial da interface, não conclusão da Rota Financeira nem alteração das regras financeiras aprovadas.
+
+
+## Regra de implementação frontend
+As especificações desta documentação definem comportamento e apresentação, não a estrutura do código. A implementação deve respeitar a arquitetura React documentada em [12 — Arquitetura Frontend Web](12-arquitetura-frontend-web.md): página como composição, componentes por responsabilidade, lógica derivada em hooks/utilitários e reutilização do design system. Não reproduzir no código a estrutura monolítica de um protótipo HTML de referência.
