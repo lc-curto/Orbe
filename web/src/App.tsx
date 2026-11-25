@@ -189,6 +189,7 @@ function MobileDashboard({ period, card, invoice, navigation, activeKey, setActi
   notify: (message: string) => void
   openForm: (kind: 'expense' | 'income' | 'transfer') => void
   userName: string
+  userEmail: string
   onLogout: () => void
   logoutDisabled: boolean
 }) {
