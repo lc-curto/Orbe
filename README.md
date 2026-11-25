@@ -20,20 +20,16 @@ A documentação é a referência para produto, design, desenvolvimento e valida
 
 ## Documentos
 
-| Ficheiro | Conteúdo |
+A documentação está organizada por domínio. Consultar o documento correspondente e atualizar a fonte existente; **não criar ficheiros para cada página, contrato, caso ou etapa**.
+
+| Documento | Conteúdo |
 |---|---|
-| [ESPECIFICACAO_FORMULARIOS.md](docs/ESPECIFICACAO_FORMULARIOS.md) | Formulários, modais, validações e interações frontend |
-| [01-visao-geral.md](docs/01-visao-geral.md) | Produto, âmbito, plataformas e princípios |
-| [02-regras-financeiras.md](docs/02-regras-financeiras.md) | Modelo financeiro, invariantes e cálculos |
-| [03-funcionalidades-e-operacoes.md](docs/03-funcionalidades-e-operacoes.md) | Operações, estados, ações e aceitação |
-| [04-interfaces-e-navegacao.md](docs/04-interfaces-e-navegacao.md) | Páginas aprovadas e navegação |
-| [05-arquitetura-e-uml.md](docs/05-arquitetura-e-uml.md) | Arquitetura, decisões, UML e padrão frontend |
-| [06-pendencias-e-plano.md](docs/06-pendencias-e-plano.md) | Decisões abertas e sequência de trabalho |
-| [07-modelo-er.md](docs/07-modelo-er.md) | Entidades, relações, regras de integridade e objetivos de leitura por página |
-| [08-cronograma-e-estado.md](docs/08-cronograma-e-estado.md) | Cronograma de implementação e checklist de estado |
-| [09-auditoria-backend-e-nucleo.md](docs/09-auditoria-backend-e-nucleo.md) | Cobertura do ER pelo backend e lacunas de implementação |
-| [10-contrato-operacoes-base.md](docs/10-contrato-operacoes-base.md) | Contrato mínimo de contas, categorias, despesas e receitas |
-| [11-contrato-transferencias.md](docs/11-contrato-transferencias.md) | Contrato mínimo de transferências |
+| [01 — Produto e funcionalidades](docs/01-produto-e-funcionalidades.md) | Âmbito, requisitos, operações e critérios de aceitação |
+| [02 — Regras financeiras](docs/02-regras-financeiras.md) | Invariantes, cálculos, estados financeiros e projeções |
+| [03 — Interface e formulários](docs/03-interface-e-formularios.md) | Navegação, páginas, padrões visuais e comportamento dos formulários |
+| [04 — Arquitetura, modelo e auditoria](docs/04-arquitetura-modelo-e-auditoria.md) | Stack, arquitetura, UML, ER, integridade e auditoria técnica |
+| [05 — Estado e plano](docs/05-estado-e-plano.md) | Implementação, pendências, decisões abertas, validações e sequência de trabalho |
+| [06 — Contratos da API](docs/06-contratos-api.md) | Contratos de operações, transferências e recorrências |
 
 ## Estado das decisões
 
