@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import {
   Button,
   Card,
@@ -19,9 +19,10 @@ import { AccountsPage } from './AccountsPage'
 import { CardsPage } from './CardsPage'
 import { MonthSelector } from './MonthSelector'
 
-type IconName = 'home' | 'activity' | 'route' | 'wallet' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight'
+type IconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight'
 
 const iconPaths: Record<IconName, string> = {
+  plus: 'M12 5v14M5 12h14',
   home: 'M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-10.5Z',
   activity: 'M4 19V5m0 14h16M8 16v-5m4 5V7m4 9v-8',
   route: 'M5 19c2.5 0 3.5-2 3.5-4.5S7.5 10 10 10s3.5 2 3.5 4.5S12.5 19 15 19s3.5-2 4-4',
@@ -166,23 +167,7 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
   )
 }
 
-function QuickAction({ icon, label, detail, color }: { icon: IconName; label: string; detail: string; color: string }) {
-  return (
-    <XStack {...border} flex={1} minWidth={180} height={76} borderRadius={16} backgroundColor="#ffffff" paddingHorizontal={16} style={{ justifyContent: 'flex-start' }}>
-      <XStack gap={12} style={centered}>
-        <YStack width={40} height={40} borderRadius={16} backgroundColor={color === '#175cd3' ? '#e6f0ff' : '#e6f4f1'} style={centered}>
-          <Icon name={icon} size={19} color={color} />
-        </YStack>
-        <YStack style={{ alignItems: 'flex-start' }} gap={4}>
-          <Text fontWeight="700">{label}</Text>
-          <Text color="#667085" fontSize={14}>{detail}</Text>
-        </YStack>
-      </XStack>
-    </XStack>
-  )
-}
-
-function MobileDashboard({ period, month, onMonthChange, card, invoice, navigation, activeKey, setActiveKey, notify, openForm, userName, userEmail, onLogout, logoutDisabled }: {
+function MobileDashboard({ period, month, onMonthChange, card, invoice, navigation, activeKey, setActiveKey, notify, userName, onLogout, logoutDisabled }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
@@ -192,9 +177,7 @@ function MobileDashboard({ period, month, onMonthChange, card, invoice, navigati
   activeKey: string
   setActiveKey: (value: string) => void
   notify: (message: string) => void
-  openForm: (kind: 'expense' | 'income' | 'transfer') => void
   userName: string
-  userEmail: string
   onLogout: () => void
   logoutDisabled: boolean
 }) {
@@ -215,7 +198,7 @@ function MobileDashboard({ period, month, onMonthChange, card, invoice, navigati
           <YStack className="mobile-more-menu" borderWidth={1} borderColor="#e4e7ec" borderRadius={16} backgroundColor="#ffffff" padding={12} gap={4}>
             <Text color="#667085" fontSize={11} fontWeight="800" paddingHorizontal={8} paddingVertical={4}>MAIS</Text>
             <Button className="mobile-more-menu-item" onPress={() => { setMoreMenuOpen(false); notify("Perfil selecionado") }} borderWidth={0} backgroundColor="transparent" justifyContent="flex-start" paddingHorizontal={10} height={44}>
-              <XStack alignItems="center" gap={10}><Icon name="user" size={17} color="#475467" /><YStack flex={1} gap={2}><Text color="#101828" fontSize={13} fontWeight="700">Perfil</Text><Text color="#667085" fontSize={11}>{userEmail}</Text></YStack></XStack>
+              <XStack alignItems="center" gap={10}><Icon name="user" size={17} color="#475467" /><Text color="#101828" fontSize={13} fontWeight="700">{userName}</Text></XStack>
             </Button>
             <Button className="mobile-more-menu-item" onPress={() => { setMoreMenuOpen(false); notify("Não existem notificações novas") }} borderWidth={0} backgroundColor="transparent" justifyContent="flex-start" paddingHorizontal={10} height={40}>
               <XStack alignItems="center" gap={10}><Icon name="bell" size={17} color="#475467" /><Text color="#101828" fontSize={13} fontWeight="700">Notificações</Text></XStack>
@@ -231,7 +214,6 @@ function MobileDashboard({ period, month, onMonthChange, card, invoice, navigati
         <Card className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <YStack gap={12}><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }}><Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text><Button onPress={() => setHidden((value) => !value)} aria-label={hidden ? 'Mostrar saldo' : 'Ocultar saldo'} width={30} height={30} padding={0} borderRadius={9} borderWidth={0} backgroundColor="rgba(255,255,255,0.14)"><Icon name={hidden ? 'eyeOff' : 'eye'} size={15} color="#ffffff" /></Button></XStack><YStack gap={2}><Text color="#ffffff" fontSize={30} fontWeight="800">{hidden ? '••••••' : '€ 2.840,50'}</Text><Text color="#dbeafe" fontSize={12}>Todas as contas</Text></YStack><Separator borderColor="rgba(255,255,255,0.24)" /><XStack style={{ justifyContent: 'space-between' }}>{[['Receitas', period.income], ['Despesas', period.expenses], ['Resultado', '+ € 2.054,20']].map(([label, value]) => <YStack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{hidden ? '••••' : value}</Text></YStack>)}</XStack></YStack>
         </Card>
-        <YStack gap={9}><Text color="#101828" fontSize={16} fontWeight="800">Ações rápidas</Text><XStack gap={9}>{[['expense', 'Despesa'], ['income', 'Receita'], ['transfer', 'Transferência']].map(([icon, label]) => <Button key={label} onPress={() => openForm(icon as 'expense' | 'income' | 'transfer')} flex={1} height={72} padding={8} borderRadius={14} {...border} backgroundColor="#ffffff"><YStack gap={7} style={{ alignItems: 'center', justifyContent: 'center' }}><YStack width={28} height={28} borderRadius={10} backgroundColor="#e6f0ff" style={centered}><Icon name={icon as IconName} size={15} color="#175cd3" /></YStack><Text color="#101828" fontSize={11} fontWeight="700">{label}</Text></YStack></Button>)}</XStack></YStack>
         <Card {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}><Text color="#101828" fontSize={16} fontWeight="800">Despesas por categoria</Text><Button onPress={() => notify('A mostrar despesas por categoria')} borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontSize={12} fontWeight="700">Ver todas</Button></XStack><YStack gap={12}>{[['Casa', '€ 162,00', 82], ['Juros', '€ 1,00', 12]].map(([label, value, width]) => <YStack key={String(label)} gap={5}><XStack style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={12}>{label}</Text><Text color="#101828" fontSize={12} fontWeight="700">{value}</Text></XStack><YStack height={5} borderRadius={99} backgroundColor="#e6f0ff"><YStack width={`${width}%`} height={5} borderRadius={99} backgroundColor="#175cd3" /></YStack></YStack>)}</YStack></Card>
         <Card {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={10}><Text color="#101828" fontSize={16} fontWeight="800">Cartões</Text><Button onPress={() => setActiveKey('Cartões')} borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontSize={12} fontWeight="700">Ver todos</Button></XStack>{invoice ? <XStack padding={12} borderRadius={12} backgroundColor="#f7f9fc" style={{ justifyContent: 'space-between', alignItems: 'center' }}><YStack gap={3}><Text color="#667085" fontSize={11}>{card?.name ?? invoice.card?.name ?? 'Fatura do cartão'}</Text><Text color="#101828" fontSize={19} fontWeight="800">{formatMoney(invoice.summary.open_amount)}</Text></YStack><Text color="#087f70" backgroundColor="#e6f4f1" borderRadius={99} paddingHorizontal={9} paddingVertical={5} fontSize={11} fontWeight="700">{invoice.cycle_state}</Text></XStack> : card ? <Text color="#667085" fontSize={13}>{card.name} · sem faturas disponíveis.</Text> : <Text color="#667085" fontSize={13}>Sem cartões disponíveis.</Text>}</Card>
       </YStack>
@@ -260,6 +242,9 @@ export default function App() {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
   const [feedback, setFeedback] = useState('')
   const [activeForm, setActiveForm] = useState<'expense' | 'income' | 'transfer' | null>(null)
+  const [addMenuOpen, setAddMenuOpen] = useState(false)
+
+  useEffect(() => { setAddMenuOpen(false) }, [activeKey, movementTab])
 
   if (authLoading && user === null) {
     return <YStack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" style={{ justifyContent: 'center', alignItems: 'center' }}><Text color="#667085">A verificar a sessão…</Text></YStack>
@@ -302,6 +287,15 @@ export default function App() {
     setActiveForm(kind)
   }
 
+  function handleAddFabClick() {
+    if (activeKey === 'Contas' || activeKey === 'Cartões') return
+    if (activeKey === 'Movimentos' && movementTab === 'schedules') {
+      notify('O formulário de nova programação será adicionado na fase de formulários.')
+      return
+    }
+    setAddMenuOpen((value) => !value)
+  }
+
   function changeMovementMonth(value: string) {
     const nextIndex = value === '2026-12' ? 1 : 0
     setPeriodIndex(nextIndex)
@@ -318,7 +312,7 @@ export default function App() {
                 <Icon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} color="#667085" />
               </Button>
             </XStack>
-            <YStack gap={8} flex={1}>
+            <YStack className="desktop-sidebar-navigation" gap={8} flex={1}>
               {navigation.map((item) => (
                 <Button key={item.label} onPress={() => { setActiveKey(item.label === 'Mais' ? 'Cartões' : item.label) }} aria-label={item.label} aria-current={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#e6f4f1' : 'transparent'} color={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#087f70' : '#475467'}>
                   <XStack gap={10} style={{ alignItems: 'center', justifyContent: sidebarOpen ? 'flex-start' : 'center' }}><Icon name={item.icon} size={16} />{sidebarOpen ? <Text>{item.label}</Text> : null}</XStack>
@@ -330,10 +324,10 @@ export default function App() {
                 <XStack alignItems="center" gap={10}><Icon name="bell" size={17} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</XStack>
               </Button>
               <YStack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
-                <Button onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
-                  <XStack alignItems="center" gap={10}><Icon name="user" size={17} />{sidebarOpen ? <YStack gap={2} alignItems="flex-start"><Text fontSize={13} fontWeight="700">{user.name}</Text><Text fontSize={11} color="#667085">{user.email}</Text></YStack> : null}</XStack>
+                <Button className="sidebar-profile-button" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
+                  <XStack className="sidebar-profile-copy" alignItems="center" gap={10}><Icon name="user" size={17} />{sidebarOpen ? <YStack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></YStack> : null}</XStack>
                 </Button>
-                {accountMenuOpen ? <YStack className="account-dropdown sidebar-account-dropdown" gap={6}><Text color="#101828" fontSize={12} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError("Não foi possível terminar a sessão. Tenta novamente.")) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
+                {accountMenuOpen ? <YStack className="account-dropdown sidebar-account-dropdown" gap={6}><Text color="#101828" fontSize={12} fontWeight="700">{user.name}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError("Não foi possível terminar a sessão. Tenta novamente.")) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
               </YStack>
             </YStack>
           </YStack>
@@ -341,7 +335,7 @@ export default function App() {
           <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
-            {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} /> : null}
+            {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
             <XStack className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <YStack gap={4} flex={1} minWidth={0}>
                 <H1 fontSize={36} letterSpacing={-1.2}>Bom dia, {user.name.split(' ')[0]}</H1>
@@ -362,12 +356,6 @@ export default function App() {
               </Card>
               <SummaryCard label="Receitas" amount={period.income} detail={`Realizadas em ${period.label}`} tone="#16805b" />
               <SummaryCard label="Despesas" amount={period.expenses} detail={`Realizadas em ${period.label}`} tone="#c2415d" />
-            </XStack>
-
-            <XStack flexWrap="wrap" gap={16}>
-              <Button onPress={() => openForm('expense')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="expense" label="Despesa" detail="Registar despesa" color="#175cd3" /></Button>
-              <Button onPress={() => openForm('income')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="income" label="Receita" detail="Registar receita" color="#087f70" /></Button>
-              <Button onPress={() => openForm('transfer')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="transfer" label="Transferir" detail="Entre contas" color="#175cd3" /></Button>
             </XStack>
 
             <Card className="desktop-categories-card" {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
@@ -405,15 +393,23 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} /></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />}
+        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />}
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
-        {activeKey === 'Movimentos' || activeKey === 'Cartões' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
+        {activeKey === 'Movimentos' || activeKey === 'Cartões' || activeKey === 'Contas' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => (
             <Button key={item.label} onPress={() => { setActiveKey(item.label === 'Mais' ? 'Cartões' : item.label) }} aria-label={item.label} aria-current={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#e6f4f1' : 'transparent'} color={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#087f70' : '#667085'}>
               <YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon name={item.icon} size={18} /><Text fontSize={11} fontWeight={activeKey === item.label ? '700' : '500'}>{item.label}</Text></YStack>
             </Button>
           ))}
         </XStack> : null}
+        {addMenuOpen ? <><button className="add-fab-dismiss" type="button" aria-label="Fechar menu de criação" onClick={() => setAddMenuOpen(false)} /><div className="add-fab-menu" role="menu" aria-label="Criar novo">
+          <button className="add-fab-menu-item" type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); openForm('expense') }}><Icon name="expense" size={18} color="#c2415d" /><span>Nova despesa</span></button>
+          <button className="add-fab-menu-item" type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); openForm('income') }}><Icon name="income" size={18} color="#16805b" /><span>Nova receita</span></button>
+          <button className="add-fab-menu-item" type="button" role="menuitem" onClick={() => { setAddMenuOpen(false); openForm('transfer') }}><Icon name="transfer" size={18} color="#175cd3" /><span>Nova transferência</span></button>
+        </div></> : null}
+        <button className="app-add-fab" type="button" onClick={handleAddFabClick} disabled={activeKey === 'Contas' || activeKey === 'Cartões'} aria-label={activeKey === 'Contas' ? 'Adicionar conta — formulário ainda não disponível' : activeKey === 'Cartões' ? 'Adicionar cartão — formulário ainda não disponível' : 'Adicionar movimento'} aria-expanded={addMenuOpen} title={activeKey === 'Contas' || activeKey === 'Cartões' ? 'A criação estará disponível na fase de formulários' : 'Adicionar'}>
+          <Icon name="plus" size={26} color="#ffffff" strokeWidth={2.2} />
+        </button>
         {activeForm ? <MovementForm kind={activeForm} onClose={() => setActiveForm(null)} onUnavailable={(message) => { setActiveForm(null); notify(message) }} /> : null}
     </AppShell>
   )
