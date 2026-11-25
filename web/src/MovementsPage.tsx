@@ -16,9 +16,6 @@ type Props = {
   onMonthChange: (month: string) => void
   onNewMovement: () => void
   onNotify: (message: string) => void
-  userName?: string
-  userEmail?: string
-  onLogout?: () => void
 }
 
 const money = (value: string | number, sign = '') => `${sign}${new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(Number(value))}`
@@ -63,7 +60,7 @@ function ScheduleRow({ schedule, accounts, categories, expanded, occurrence, loa
   </div>
 }
 
-export function MovementsPage({ tab, setTab, operations, recurrences, accounts, categories, month, onMonthChange, onNewMovement, onNotify, userName, userEmail, onLogout }: Props) {
+export function MovementsPage({ tab, setTab, operations, recurrences, accounts, categories, month, onMonthChange, onNewMovement, onNotify }: Props) {
   const [filter, setFilter] = useState<MovementFilter>('ALL')
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
@@ -75,7 +72,6 @@ export function MovementsPage({ tab, setTab, operations, recurrences, accounts, 
   const [expandedSchedule, setExpandedSchedule] = useState<number | null>(null)
   const [occurrence, setOccurrence] = useState<RecurrenceOccurrence | undefined>()
   const [occurrenceLoading, setOccurrenceLoading] = useState(false)
-  const [accountOpen, setAccountOpen] = useState(false)
   const monthOperations = useMemo(() => operations.filter((operation) => monthValue(operation.effective_at ?? operation.planned_at) === month), [operations, month])
   const kpis = useMemo(() => monthOperations.reduce((summary, operation) => { if (operation.state !== 'REALIZED' || operation.operation_type === 'TRANSFER') return summary; if (operation.operation_type === 'INCOME') summary.income += Number(operation.amount); if (operation.operation_type === 'EXPENSE') summary.expenses += Number(operation.amount); return summary }, { income: 0, expenses: 0 }), [monthOperations])
   const visibleOperations = useMemo(() => monthOperations.filter((operation) => (filter === 'ALL' || operation.state === filter) && (typeFilter === 'ALL' || operation.operation_type === typeFilter) && (accountFilter === 'ALL' || String(operation.account?.id ?? operation.entries?.find((entry) => entry.account)?.account?.id) === accountFilter) && (categoryFilter === 'ALL' || String(operation.category?.id) === categoryFilter) && `${movementName(operation)} ${operation.category?.name ?? ''} ${movementAccount(operation)}`.toLowerCase().includes(search.toLowerCase())), [monthOperations, filter, search, typeFilter, accountFilter, categoryFilter])
@@ -89,7 +85,7 @@ export function MovementsPage({ tab, setTab, operations, recurrences, accounts, 
   }
 
   return <section className="movements-page">
-    <div className="movements-brand"><span className="brand-mark">▣</span><strong>Orbe</strong><div className="movements-account">{userName && userEmail ? <><button className="account-trigger" type="button" aria-label="Abrir menu da conta" aria-expanded={accountOpen} onClick={() => setAccountOpen((value) => !value)}><span className="account-avatar">◉</span></button>{accountOpen ? <div className="account-dropdown movements-account-dropdown"><strong>{userName}</strong><small>{userEmail}</small><button type="button" onClick={() => { setAccountOpen(false); onLogout?.() }}>Terminar sessão</button></div> : null}</> : null}</div></div>
+    <div className="movements-brand"><span className="brand-mark">▣</span><strong>Orbe</strong></div>
     <div className="movements-header"><div><h1>Movimentos</h1><div className="month-navigation"><button type="button" aria-label="Mês anterior" onClick={() => onMonthChange(month === '2026-12' ? '2026-11' : month)}>‹</button><span>{monthLabel(month)}</span><button type="button" aria-label="Mês seguinte" onClick={() => onMonthChange(month === '2026-11' ? '2026-12' : month)}>›</button></div></div>{tab === 'movements' ? <button className="primary-button desktop-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}</div>
     {tab === 'movements' ? <button className="primary-button mobile-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}
     <div className="movement-tabs" role="tablist"><button type="button" role="tab" aria-selected={tab === 'movements'} className={tab === 'movements' ? 'active' : ''} onClick={() => setTab('movements')}>Movimentos</button><button type="button" role="tab" aria-selected={tab === 'schedules'} className={tab === 'schedules' ? 'active' : ''} onClick={() => setTab('schedules')}>Programações</button></div>
