@@ -153,7 +153,7 @@ const centered = { alignItems: 'center' as const, justifyContent: 'center' as co
 
 function SummaryCard({ label, amount, detail, tone }: { label: string; amount: string; detail: string; tone?: string }) {
   return (
-    <Card {...border} borderRadius={20} padding={20} flex={1} minWidth={0} backgroundColor="#ffffff">
+    <Card {...border} borderRadius={16} padding={20} flex={1} minWidth={0} backgroundColor="#ffffff">
       <YStack gap={8}>
         <Text color="#667085" fontSize={16}>{label}</Text>
         <Text color={tone ?? '#101828'} fontSize={28} fontWeight="800">{amount}</Text>
@@ -355,7 +355,7 @@ export default function App() {
             {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
 
             <XStack className="dashboard-kpi-row" flexWrap="nowrap" gap={16}>
-              <Card {...border} borderRadius={20} padding={20} flex={1} minWidth={0} backgroundColor="#175cd3">
+              <Card {...border} borderRadius={16} padding={20} flex={1} minWidth={0} backgroundColor="#175cd3">
                 <YStack gap={8}>
                   <Text color="#dbeafe" fontSize={16}>Saldo disponível</Text>
                   <Text color="#ffffff" fontSize={34} fontWeight="800">€ 2.840,50</Text>
@@ -372,7 +372,7 @@ export default function App() {
               <Button onPress={() => openForm('transfer')} flex={1} minWidth={180} padding={0} borderWidth={0} backgroundColor="transparent"><QuickAction icon="transfer" label="Transferir" detail="Entre contas" color="#175cd3" /></Button>
             </XStack>
 
-            <Card className="desktop-categories-card" {...border} borderRadius={20} padding={20} backgroundColor="#ffffff">
+            <Card className="desktop-categories-card" {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
               <XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={16}>
                 <YStack gap={3}><Text fontSize={18} fontWeight="700">Despesas por categoria</Text><Text color="#667085" fontSize={13}>Distribuição das despesas em {period.label}</Text></YStack>
                 <Button onPress={() => notify('A mostrar despesas por categoria')} aria-label="Ver todas as despesas por categoria" borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontWeight="700">Ver todas →</Button>
@@ -382,7 +382,7 @@ export default function App() {
               </XStack>
             </Card>
 
-            <Card {...border} borderRadius={20} padding={20} backgroundColor="#ffffff">
+            <Card {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
               <XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={8}>
                 <Text fontSize={18} fontWeight="700">Últimos movimentos</Text>
                 <Button onPress={() => { setActiveKey('Movimentos') }} aria-label="Ver todos os movimentos" borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontWeight="700">Ver todos →</Button>
