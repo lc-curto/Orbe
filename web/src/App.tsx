@@ -209,6 +209,12 @@ function MobileDashboard({ period, month, onMonthChange, card, invoice, navigati
             <Button className="mobile-more-menu-item" onPress={() => { setMoreMenuOpen(false); setActiveKey('Dívidas') }} borderWidth={0} backgroundColor="transparent" justifyContent="flex-start" paddingHorizontal={10} height={40}>
               <XStack alignItems="center" gap={10}><Icon name="wallet" size={17} color="#475467" /><Text color="#101828" fontSize={13} fontWeight="700">Dívidas</Text></XStack>
             </Button>
+            <Button className="mobile-more-menu-item" onPress={() => { setMoreMenuOpen(false); setActiveKey('Relatórios') }} borderWidth={0} backgroundColor="transparent" justifyContent="flex-start" paddingHorizontal={10} height={40}>
+              <XStack alignItems="center" gap={10}><Icon name="activity" size={17} color="#475467" /><Text color="#101828" fontSize={13} fontWeight="700">Relatórios</Text></XStack>
+            </Button>
+            <Button className="mobile-more-menu-item" onPress={() => { setMoreMenuOpen(false); setActiveKey('Configurações') }} borderWidth={0} backgroundColor="transparent" justifyContent="flex-start" paddingHorizontal={10} height={40}>
+              <XStack alignItems="center" gap={10}><Icon name="wallet" size={17} color="#475467" /><Text color="#101828" fontSize={13} fontWeight="700">Configurações</Text></XStack>
+            </Button>
             <Button className="mobile-more-menu-item mobile-more-logout" onPress={() => { setMoreMenuOpen(false); onLogout() }} disabled={logoutDisabled} borderWidth={0} backgroundColor="transparent" justifyContent="flex-start" paddingHorizontal={10} height={40}>
               <XStack alignItems="center" gap={10}><Icon name="user" size={17} color="#c2415d" /><Text color="#c2415d" fontSize={13} fontWeight="700">Terminar sessão</Text></XStack>
             </Button>
