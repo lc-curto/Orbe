@@ -913,3 +913,90 @@ input[type="search"] {
     border-radius: 10px;
   }
 }
+
+
+/* Shared two-row search/filter layout for Movements and Schedules */
+.movements-page .movement-search-form {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.movements-page .movement-search-form .search-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+}
+.movements-page .movement-search-form .search-control input {
+  width: 100%;
+  min-width: 0;
+}
+.movements-page .movement-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0 0 14px;
+  overflow: hidden;
+}
+.movements-page .movement-filter-row > .toolbar-filter {
+  flex: 0 0 auto;
+  min-height: 40px;
+}
+.movements-page .movement-filter-row .filter-chips {
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: nowrap;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.movements-page .movement-filter-row .filter-chips::-webkit-scrollbar {
+  display: none;
+}
+.movements-page .movement-filter-row .filter-chips button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.movements-page .schedule-filter-row {
+  margin-bottom: 10px;
+}
+@media (max-width: 1023px) {
+  .movements-page .movement-search-form {
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+  .movements-page .movement-search-form .search-control input {
+    min-height: 40px;
+    border-radius: 10px;
+    padding: 0 11px;
+    font-size: 11px;
+  }
+  .movements-page .search-submit-button {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+  .movements-page .movement-filter-row {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .movements-page .movement-filter-row > .toolbar-filter {
+    min-height: 30px;
+    border-radius: 999px;
+    padding: 0 10px;
+    font-size: 9px;
+  }
+  .movements-page .movement-filter-row .filter-chips {
+    gap: 5px;
+  }
+  .movements-page .movement-filter-row .filter-chips button {
+    min-height: 30px;
+    border-radius: 999px;
+    padding: 0 9px;
+    font-size: 9px;
+  }
+}
