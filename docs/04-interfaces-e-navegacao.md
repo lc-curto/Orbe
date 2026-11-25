@@ -5,10 +5,12 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 ## Princípios e navegação
 - Mobile first; desktop complementar.
 - Listas compactas, hierarquia clara e sem informação repetida.
-- Ações indisponíveis não devem ser apresentadas.
+- Ações indisponíveis não devem ser apresentadas como ações executáveis. Quando a navegação ou ação já estiver aprovada mas depender de contrato/formulário, manter o acesso contextual e comunicar a indisponibilidade sem criar dados fictícios.
 - Projeções apenas na Rota Financeira.
-- Navegação inferior: Início, Movimentos, Rota, Contas, Mais.
-- Mais é ponto de entrada para Cartões, Dívidas, Relatórios e Configurações; não é uma página autónoma aprovada.
+- Navegação inferior fixa em todas as páginas mobile/tablet: Início, Movimentos, Rota, Contas e Mais.
+- Mais existe apenas na bottom bar; abre um painel inferior integrado com Cartões, Dívidas, Relatórios e Configurações, sempre nesta ordem.
+- O painel Mais não inclui perfil, notificações, logout nem opções dependentes da página. Fecha ao selecionar uma página, tocar novamente em Mais ou tocar fora.
+- No desktop, a sidebar contém todas as páginas agrupadas em Principal, Gestão financeira e Ferramentas; Mais não é item da sidebar.
 
 ## Dashboard — aprovado
 - Saudação dinâmica Bom dia/Boa tarde/Boa noite com primeiro nome.
@@ -16,7 +18,7 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Seletor mensal compacto (ex.: Nov/26).
 - Saldo total atual de todas as contas.
 - KPIs de receitas e despesas do mês.
-- Ações rápidas: Despesa, Receita, Transferir.
+- A criação é iniciada pelo botão flutuante global (+), contextual à página. No Dashboard oferece Despesa, Receita e Transferência; não existem cartões de ações rápidas separados no conteúdo do Dashboard.
 - Últimos movimentos e navegação inferior.
 - Sem projeções.
 - Seletor mensal filtra receitas, despesas e atividade histórica, mas não altera saldo atual.
@@ -32,7 +34,7 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Linha 2: categoria à esquerda, conta à direita, abaixo do valor.
 - Estado compacto abaixo quando necessário.
 - Parcial aparece apenas como badge, sem valores detalhados na lista.
-- Ícones e botão adicionar.
+- O botão flutuante global (+) é o ponto de entrada para ações de criação na página; não duplicar botão de criação no cabeçalho ou dentro da lista.
 - Operação com vários lançamentos não pode aparecer duplicada; detalhes completos na vista/modal de detalhes.
 - A aba Programações mostra as regras recorrentes, com natureza, valor, periodicidade, conta, categoria, estado e a data da primeira ocorrência; a próxima ocorrência é consultada através das ocorrências reais.
 - As ocorrências de uma programação são consultadas numa área de detalhe própria; uma ocorrência materializada também aparece em Movimentos como operação única, sem duplicação.
@@ -56,7 +58,7 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Exemplos numéricos devem ser matematicamente coerentes.
 
 ## Contas — aprovado
-- Cabeçalho Contas e botão +.
+- Cabeçalho Contas sem botão + local; a ação Nova conta é apresentada pelo botão flutuante global (+), contextual à página.
 - Card/KPI Saldo total imediatamente abaixo do cabeçalho, antes dos filtros e da lista.
 - Filtro de contas ativas/encerradas.
 - Secção **As minhas contas**, apresentada acima da lista.
@@ -69,7 +71,7 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 
 ## Cartões — aprovado
 Reutiliza estrutura de Contas.
-- Cabeçalho Cartões e botão +.
+- Cabeçalho Cartões sem botão + local; a ação Novo cartão é apresentada pelo botão flutuante global (+), contextual à página.
 - KPI TOTAL EM DÍVIDA e número de cartões.
 - Secção Os meus cartões.
 - Cada cartão: ícone/nome/chevron; Utilizado e Limite total; barra de utilização; Disponível e percentagem utilizada; linha discreta com fecho e vencimento.
@@ -99,3 +101,16 @@ Reutiliza estrutura de Contas e Cartões.
 
 ## Ordem de desenho aprovada
 Concluir páginas principais; desenhar subpáginas; definir modais; auditar consistência e reaproveitamento.
+
+
+## Navegação e criação — implementação remota em 2026-11-25
+
+Esta secção regista o comportamento atualmente implementado no frontend, após o PR #5. É um registo de implementação, não altera os requisitos financeiros nem autoriza fluxos de escrita ainda sem contrato.
+
+- Bottom bar fixa em mobile/tablet em todas as páginas: Início, Movimentos, Rota, Contas e Mais.
+- Painel Mais fixo e consistente: Cartões, Dívidas, Relatórios e Configurações; fecha por seleção, novo toque em Mais ou toque fora.
+- Sidebar desktop com páginas agrupadas em Principal, Gestão financeira e Ferramentas; Mais não aparece na sidebar.
+- FAB global (+) contextual: Dashboard/Movimentos oferecem despesa, receita e transferência; Contas oferece Nova conta; Cartões oferece Novo cartão; Dívidas oferece Nova dívida; Movimentos/Programações oferece Nova programação; Rota oferece Nova projeção, ainda indisponível por falta de contrato/read model; Relatórios e Configurações não mostram FAB.
+- Ações de criação sem formulário/contrato apenas informam indisponibilidade; não criam registos fictícios.
+- Rota, Dívidas, Relatórios e Configurações estão acessíveis, mas são placeholders. Contas e Cartões têm interfaces de leitura; as ações de criação permanecem indisponíveis.
+- O nome do utilizador é apresentado no perfil da sidebar, sem email. O Dashboard mobile não mantém um menu Mais próprio.
