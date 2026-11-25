@@ -543,3 +543,72 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   .movement-kpi { border-radius: 12px !important; }
   .mobile-dashboard-nav button[aria-expanded="true"] { background: #e6f4f1 !important; color: var(--orbe-teal) !important; }
 }
+
+
+/* Mobile More menu: overlay anchored above the bottom navigation, never in document flow. */
+@media (max-width: 1023px) {
+  .mobile-more-menu {
+    position: fixed !important;
+    left: 12px !important;
+    right: 12px !important;
+    bottom: calc(82px + env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    max-width: 360px;
+    margin: 0 auto !important;
+    z-index: 50 !important;
+    padding: 12px !important;
+    border: 1px solid #e4e7ec !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    box-shadow: 0 12px 32px rgba(16, 24, 40, .16) !important;
+  }
+
+  .mobile-more-menu-item {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+    transition: background-color .14s ease, color .14s ease !important;
+  }
+  .mobile-more-menu-item > div {
+    width: 100%;
+    justify-content: flex-start !important;
+    text-align: left !important;
+  }
+  .mobile-more-menu-item:focus-visible {
+    outline: 2px solid rgba(8, 127, 112, .55) !important;
+    outline-offset: -2px !important;
+  }
+  .mobile-more-logout { color: #c2415d !important; }
+  .mobile-more-logout:hover:not(:disabled) { background: #fff1f3 !important; }
+  .mobile-more-trigger:hover:not(:disabled),
+  .mobile-nav-item:hover:not(:disabled) {
+    background: #f2f4f7 !important;
+    box-shadow: none !important;
+  }
+  .mobile-more-trigger[aria-expanded="true"] {
+    background: #e6f4f1 !important;
+    color: #087f70 !important;
+  }
+  .mobile-more-trigger:focus-visible,
+  .mobile-nav-item:focus-visible {
+    outline: 2px solid rgba(8, 127, 112, .55) !important;
+    outline-offset: -2px !important;
+    box-shadow: none !important;
+  }
+}
+
+@media (hover: hover) and (max-width: 1023px) {
+  .mobile-more-menu-item:hover:not(:disabled) {
+    background: #f2f4f7 !important;
+    color: #101828 !important;
+    box-shadow: none !important;
+  }
+  .mobile-more-menu-item.mobile-more-logout:hover:not(:disabled) {
+    background: #fff1f3 !important;
+    color: #c2415d !important;
+  }
+}
