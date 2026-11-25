@@ -5,7 +5,7 @@
 
 ---
 
-<!-- Conteúdo consolidado de docs/05-arquitetura-e-uml.md -->
+<!-- Conteúdo consolidado de docs/04-arquitetura-modelo-e-auditoria.md -->
 
 
 **Estado:** stack, monorepo, ARC-001, modelo ER conceptual (ARC-002), UML complementar e modelo físico do núcleo financeiro estão aprovados. O modelo físico de módulos ainda não implementados permanece fora deste fecho.
@@ -45,7 +45,7 @@ Web e mobile terão interfaces próprias. Tipos, validações e módulos partilh
 
 ## 3. Modelo conceptual e ER
 
-O modelo ER conceptual e a sua fundamentação estão em [07 — Modelo ER](07-modelo-er.md).
+O modelo ER conceptual e a sua fundamentação estão em [07 — Modelo ER](04-arquitetura-modelo-e-auditoria.md).
 
 O documento detalha:
 - Operação como evento de negócio e lançamento como efeito financeiro.
@@ -182,7 +182,7 @@ MySQL/InnoDB; índices baseados em consultas reais; análise de planos de execu�
 3. A obrigação permanece vencida; a liquidação residual cobre apenas a parte não reservada.
 4. Sem regra de débito/reagendamento automático aprovada, não criar uma nova data futura.
 
-O ER conceptual está apresentado em [07 — Modelo ER](07-modelo-er.md). As vistas UML complementares e o modelo físico do núcleo financeiro estão fechados nas secções seguintes.
+O ER conceptual está apresentado em [07 — Modelo ER](04-arquitetura-modelo-e-auditoria.md). As vistas UML complementares e o modelo físico do núcleo financeiro estão fechados nas secções seguintes.
 
 ## 9.1 UML complementar de domínio
 
@@ -332,10 +332,10 @@ Para páginas React/TypeScript:
 
 ---
 
-<!-- Conteúdo consolidado de docs/07-modelo-er.md -->
+<!-- Conteúdo consolidado de docs/04-arquitetura-modelo-e-auditoria.md -->
 
 
-**Estado: APROVADO como modelo ER conceptual / especificação de domínio (ARC-002), com o modelo físico do núcleo financeiro fechado em `05-arquitetura-e-uml.md`.** O modelo incorpora as regras financeiras e os fluxos refinados de cartões, faturas, compras parceladas, pagamentos, planos vencidos, transferências e reembolsos. O fecho físico aplica-se às entidades já implementadas; módulos conceptuais ainda sem migrations continuam fora do núcleo aprovado.
+**Estado: APROVADO como modelo ER conceptual / especificação de domínio (ARC-002), com o modelo físico do núcleo financeiro fechado em `04-arquitetura-modelo-e-auditoria.md`.** O modelo incorpora as regras financeiras e os fluxos refinados de cartões, faturas, compras parceladas, pagamentos, planos vencidos, transferências e reembolsos. O fecho físico aplica-se às entidades já implementadas; módulos conceptuais ainda sem migrations continuam fora do núcleo aprovado.
 
 ## 1. Objetivo e princípio de desenho
 
@@ -351,7 +351,7 @@ Esta separação preserva a regra de que só lançamentos válidos e realizados 
 
 ## 2. Modelo conceptual ER
 
-O diagrama seguinte representa as entidades centrais e as relações aprovadas. A correspondência física do núcleo financeiro e as constraints implementadas estão fechadas em [05 — Arquitetura e UML](05-arquitetura-e-uml.md).
+O diagrama seguinte representa as entidades centrais e as relações aprovadas. A correspondência física do núcleo financeiro e as constraints implementadas estão fechadas em [05 — Arquitetura e UML](04-arquitetura-modelo-e-auditoria.md).
 
 ```mermaid
 erDiagram
@@ -778,12 +778,12 @@ A documentação técnica orienta os mecanismos; as relações e invariantes do 
 
 ## 10. Estado de aprovação
 
-O modelo ER conceptual está formalmente aprovado como especificação de domínio. O esquema físico do núcleo financeiro, migrations versionadas, tipos monetários `DECIMAL(19,4)` e constraints correspondentes estão aprovados conforme a secção 9.4 de [05 — Arquitetura e UML](05-arquitetura-e-uml.md). As decisões de produto ainda listadas na secção 7 e os módulos sem migrations não são considerados implementados.
+O modelo ER conceptual está formalmente aprovado como especificação de domínio. O esquema físico do núcleo financeiro, migrations versionadas, tipos monetários `DECIMAL(19,4)` e constraints correspondentes estão aprovados conforme a secção 9.4 de [05 — Arquitetura e UML](04-arquitetura-modelo-e-auditoria.md). As decisões de produto ainda listadas na secção 7 e os módulos sem migrations não são considerados implementados.
 
 
 ---
 
-<!-- Conteúdo consolidado de docs/09-auditoria-backend-e-nucleo.md -->
+<!-- Conteúdo consolidado de docs/04-arquitetura-modelo-e-auditoria.md -->
 
 
 > Auditoria realizada em 2026-11-24 após o fecho do modelo físico do núcleo financeiro.
