@@ -225,6 +225,17 @@ function MobileDashboard({ period, periodIndex, periodCount, onPeriodChange, car
             <Button onPress={() => { setMoreMenuOpen(false); onLogout() }} disabled={logoutDisabled} borderWidth={0} backgroundColor="transparent" justifyContent="flex-start" paddingHorizontal={10} height={40}>
               <XStack alignItems="center" gap={10}><Icon name="user" size={17} color="#c2415d" /><Text color="#c2415d" fontSize={13} fontWeight="700">Terminar sessão</Text></XStack>
             </Button>
+            <YStack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
+              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" borderWidth={0} backgroundColor="transparent" color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={42} justifyContent={sidebarOpen ? "flex-start" : "center"}>
+                <XStack alignItems="center" gap={10}><Icon name="bell" size={17} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</XStack>
+              </Button>
+              <YStack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
+                <Button onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
+                  <XStack alignItems="center" gap={10}><Icon name="user" size={17} />{sidebarOpen ? <YStack gap={2} alignItems="flex-start"><Text fontSize={13} fontWeight="700">{user.name}</Text><Text fontSize={11} color="#667085">{user.email}</Text></YStack> : null}</XStack>
+                </Button>
+                {accountMenuOpen ? <YStack className="account-dropdown sidebar-account-dropdown" gap={6}><Text color="#101828" fontSize={12} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError("Não foi possível terminar a sessão. Tenta novamente.")) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
+              </YStack>
+            </YStack>
           </YStack>
         ) : null}
         <Card className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
@@ -329,31 +340,19 @@ export default function App() {
 
           <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} /> : null}
-            <XStack style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <YStack gap={4}>
+            <XStack className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
+              <YStack gap={4} flex={1} minWidth={0}>
                 <H1 fontSize={36} letterSpacing={-1.2}>Bom dia, {user.name.split(' ')[0]}</H1>
-                <Paragraph color="#667085">{period.date}</Paragraph>
+                <Paragraph color="#667085" margin={0}>{period.date}</Paragraph>
               </YStack>
-              <XStack gap={12}>
-                <Button onPress={() => notify('Não existem notificações novas')} aria-label="Notificações" width={44} height={44} borderRadius={999} {...border} padding={0}><Icon name="bell" size={17} color="#344054" /></Button>
-                <YStack className="account-menu" style={{ alignItems: 'flex-end' }}>
-                  <Button aria-label="Abrir menu da conta" aria-expanded={accountMenuOpen} onPress={() => setAccountMenuOpen((value) => !value)} width={44} height={44} borderRadius={999} {...border} padding={0}>
-                    <Icon name="user" size={17} color="#344054" />
-                  </Button>
-                  {accountMenuOpen ? <YStack className="account-dropdown" gap={6}><Text fontSize={12} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
-                </YStack>
+              <XStack borderWidth={1} borderColor="#d0d5dd" borderRadius={999} backgroundColor="#ffffff" paddingHorizontal={12} paddingVertical={8} gap={16} style={centered} flexShrink={0}>
+                <Button onPress={() => setPeriodIndex(Math.max(0, periodIndex - 1))} aria-label="Período anterior" disabled={periodIndex === 0} width={36} height={36} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronLeft" size={17} color="#667085" /></Button>
+                <Text aria-label="Período selecionado" fontWeight="700">{period.shortLabel}</Text>
+                <Button onPress={() => setPeriodIndex(Math.min(periods.length - 1, periodIndex + 1))} aria-label="Período seguinte" disabled={periodIndex === periods.length - 1} width={36} height={36} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronRight" size={17} color="#667085" /></Button>
               </XStack>
             </XStack>
 
             {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
-
-            <XStack style={{ justifyContent: 'flex-end' }}>
-              <XStack borderWidth={1} borderColor="#d0d5dd" borderRadius={999} backgroundColor="#ffffff" paddingHorizontal={12} paddingVertical={8} gap={16} style={centered}>
-                <Button onPress={() => setPeriodIndex(Math.max(0, periodIndex - 1))} aria-label="Período anterior" disabled={periodIndex === 0} width={36} height={36} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronLeft" size={17} color="#667085" /></Button>
-                <Text aria-label={`Período selecionado: ${period.label}`} fontWeight="700">{period.shortLabel}</Text>
-                <Button onPress={() => setPeriodIndex(Math.min(periods.length - 1, periodIndex + 1))} aria-label="Período seguinte" disabled={periodIndex === periods.length - 1} width={36} height={36} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronRight" size={17} color="#667085" /></Button>
-              </XStack>
-            </XStack>
 
             <XStack className="dashboard-kpi-row" flexWrap="nowrap" gap={16}>
               <Card {...border} borderRadius={20} padding={20} flex={1} minWidth={0} backgroundColor="#175cd3">
