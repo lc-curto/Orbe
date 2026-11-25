@@ -195,36 +195,36 @@ function MobileDashboard({ period, card, invoice, navigation, activeKey, setActi
 }) {
   const [hidden, setHidden] = useState(false)
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
-  const userInitials = userName.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join('')
 
   return (
     <YStack className="mobile-dashboard" backgroundColor="#f7f9fc" minHeight="100vh">
       <YStack className="mobile-dashboard-content" gap={16}>
-        <XStack className="mobile-dashboard-header" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          <YStack flex={1} minWidth={0} gap={4}>
-            <Text color="#101828" fontSize={22} fontWeight="800" numberOfLines={1}>Bom dia, {userName.split(' ')[0]}</Text>
-            <Text color="#667085" fontSize={13}>{period.date}</Text>
+        <XStack className="mobile-dashboard-header" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <YStack className="mobile-dashboard-greeting" flex={1} minWidth={0} gap={4}>
+            <Text color="#101828" fontWeight="800" numberOfLines={1}>Bom dia, {userName.split(' ')[0]}</Text>
+            <Text className="mobile-dashboard-date" color="#667085" fontSize={13}>{period.date}</Text>
           </YStack>
-          <XStack gap={8} style={{ alignItems: 'center', flexShrink: 0 }}>
-            <Button onPress={() => notify('Seletor de mês')} aria-label="Selecionar mês" height={40} paddingHorizontal={12} borderRadius={12} {...border} backgroundColor="#ffffff">
-              <XStack gap={6} style={{ alignItems: 'center' }}>
-                <Text color="#101828" fontSize={12} fontWeight="700">{period.shortLabel}</Text>
-                <Icon name="chevronRight" size={15} color="#667085" />
-              </XStack>
+          <YStack className="account-menu" style={{ alignItems: 'flex-end', flexShrink: 0 }}>
+            <Button onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir menu do perfil" aria-expanded={accountMenuOpen} height={40} width={40} padding={0} borderRadius={999} {...border} backgroundColor="#ffffff">
+              <Icon name="user" size={17} color="#344054" />
             </Button>
-            <YStack className="account-menu" style={{ alignItems: 'flex-end' }}>
-              <Button onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir menu do perfil" aria-expanded={accountMenuOpen} height={40} width={40} padding={0} borderRadius={999} {...border} backgroundColor="#ffffff">
-                <Text color="#175cd3" fontSize={12} fontWeight="800">{userInitials || 'U'}</Text>
-              </Button>
-              {accountMenuOpen ? (
-                <YStack className="account-dropdown" gap={6}>
-                  <Text color="#101828" fontSize={12} fontWeight="700">{userName}</Text>
-                  <Text color="#667085" fontSize={11}>{userEmail}</Text>
-                  <Button className="logout-button" onPress={() => { setAccountMenuOpen(false); onLogout() }} disabled={logoutDisabled} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button>
-                </YStack>
-              ) : null}
-            </YStack>
-          </XStack>
+            {accountMenuOpen ? (
+              <YStack className="account-dropdown" gap={6}>
+                <Text color="#101828" fontSize={12} fontWeight="700">{userName}</Text>
+                <Text color="#667085" fontSize={11}>{userEmail}</Text>
+                <Button className="logout-button" onPress={() => { setAccountMenuOpen(false); onLogout() }} disabled={logoutDisabled} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button>
+              </YStack>
+            ) : null}
+          </YStack>
+        </XStack>
+        <XStack className="mobile-dashboard-period-row" style={{ justifyContent: 'flex-end' }}>
+          <Button onPress={() => notify('Seletor de mês')} aria-label="Selecionar mês" height={42} paddingHorizontal={14} borderRadius={999} {...border} backgroundColor="#ffffff">
+            <XStack gap={12} style={{ alignItems: 'center' }}>
+              <Icon name="chevronLeft" size={15} color="#667085" />
+              <Text color="#101828" fontSize={12} fontWeight="700">{period.shortLabel}</Text>
+              <Icon name="chevronRight" size={15} color="#667085" />
+            </XStack>
+          </Button>
         </XStack>
         <Card className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <YStack gap={12}><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }}><Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text><Button onPress={() => setHidden((value) => !value)} aria-label={hidden ? 'Mostrar saldo' : 'Ocultar saldo'} width={30} height={30} padding={0} borderRadius={9} borderWidth={0} backgroundColor="rgba(255,255,255,0.14)"><Icon name={hidden ? 'eyeOff' : 'eye'} size={15} color="#ffffff" /></Button></XStack><YStack gap={2}><Text color="#ffffff" fontSize={30} fontWeight="800">{hidden ? '••••••' : '€ 2.840,50'}</Text><Text color="#dbeafe" fontSize={12}>Todas as contas</Text></YStack><Separator borderColor="rgba(255,255,255,0.24)" /><XStack style={{ justifyContent: 'space-between' }}>{[['Receitas', period.income], ['Despesas', period.expenses], ['Resultado', '+ € 2.054,20']].map(([label, value]) => <YStack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{hidden ? '••••' : value}</Text></YStack>)}</XStack></YStack>
