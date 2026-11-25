@@ -4,7 +4,7 @@
 
 ---
 
-<!-- Conteúdo consolidado de docs/06-pendencias-e-plano.md -->
+<!-- Conteúdo consolidado de docs/05-estado-e-plano.md -->
 
 
 Registo central do que falta decidir ou especificar. Uma decisão só passa a aprovada após confirmação explícita.
@@ -46,10 +46,10 @@ Registo central do que falta decidir ou especificar. Uma decisão só passa a ap
 ## ARC-001 — decisão aprovada
 **Alternativa A: referências específicas.** Cada lançamento terá exatamente um destino, referenciado por uma FK específica para conta, fatura ou dívida/obrigação. A regra de destino único deverá ser protegida por `CHECK` constraint e testes. A decisão não fecha ainda todos os detalhes do modelo físico.
 
-A comparação e a fundamentação estão documentadas em [05 — Arquitetura e UML](05-arquitetura-e-uml.md), secção ARC-001.
+A comparação e a fundamentação estão documentadas em [05 — Arquitetura e UML](04-arquitetura-modelo-e-auditoria.md), secção ARC-001.
 
 ## ARC-002 — proposta de modelo ER
-Foi criado [07 — Modelo ER](07-modelo-er.md), que contém:
+Foi criado [07 — Modelo ER](04-arquitetura-modelo-e-auditoria.md), que contém:
 - Diagrama ER conceptual.
 - Entidades e responsabilidades.
 - Relações de operações, lançamentos, contas, cartões/faturas, dívidas/prestações, transferências, recorrências e conferências.
@@ -116,7 +116,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 
 ---
 
-<!-- Conteúdo consolidado de docs/08-cronograma-e-estado.md -->
+<!-- Conteúdo consolidado de docs/05-estado-e-plano.md -->
 
 
 > Documento de controlo do projeto. Atualizado em 2026-11-25.
@@ -154,10 +154,10 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Implementar idempotência nos fluxos financeiros implementados.
 - [x] Executar testes negativos de integridade.
 - [x] Executar testes positivos de compras, pagamentos e reversões.
-- [x] Completar a validação do modelo físico contra o núcleo financeiro implementado; cobertura e lacunas estão em [09 — Auditoria do backend e do núcleo](09-auditoria-backend-e-nucleo.md).
+- [x] Completar a validação do modelo físico contra o núcleo financeiro implementado; cobertura e lacunas estão em [09 — Auditoria do backend e do núcleo](04-arquitetura-modelo-e-auditoria.md).
 - [x] Definir e implementar o contrato mínimo de contas, categorias, despesas comuns e receitas — Fase 1.
 - [x] Definir e implementar o contrato mínimo de transferências com duas pernas — Fase 2.
-- [x] Implementar recorrências — Fase 3, conforme [12 — Contrato de recorrências](12-contrato-recorrencias.md).
+- [x] Implementar recorrências — Fase 3, conforme [12 — Contrato de recorrências](06-contratos-api.md).
 - [!] Implementar gestão completa de dívidas: depende do contrato específico e das fases seguintes.
 
 ## 3. Autenticação e API
@@ -352,8 +352,8 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 ## Publicação e validação — 2026-11-25
 
 - PR #5 foi integrado na `main` no merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`.
-- A navegação responsiva, o painel Mais e o FAB contextual estão implementados; os respetivos detalhes estão registados em `docs/04-interfaces-e-navegacao.md`.
-- A regra de entrada global de criação foi sincronizada com `docs/ESPECIFICACAO_FORMULARIOS.md`: o FAB pertence ao `AppShell`, não é duplicado dentro dos formulários, e opções sem suporte continuam indisponíveis.
+- A navegação responsiva, o painel Mais e o FAB contextual estão implementados; os respetivos detalhes estão registados em `docs/03-interface-e-formularios.md`.
+- A regra de entrada global de criação foi sincronizada com `docs/03-interface-e-formularios.md`: o FAB pertence ao `AppShell`, não é duplicado dentro dos formulários, e opções sem suporte continuam indisponíveis.
 - Build, lint e testes frontend não foram executados após o merge do PR #5. A validação visual/responsiva e a auditoria final permanecem pendentes.
 
 ## Regra de controlo
