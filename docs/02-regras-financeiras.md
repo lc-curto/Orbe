@@ -77,6 +77,15 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Valor e associação são coerentes; datas e estados podem ser independentes.
 - Transferência não é receita nem despesa.
 
+### Saldo inicial de conta
+- Ao criar uma conta no Orbe, o utilizador informa o saldo que essa conta já tinha no início da sua utilização no Orbe. O saldo inicial é uma posição de abertura, não uma receita ou despesa.
+- O saldo inicial é reconhecido por uma operação própria, de natureza `ACCOUNT_OPENING_BALANCE`, com um lançamento realizado dirigido à conta. A operação não participa na DRE nem nos KPIs de receitas/despesas.
+- A data efetiva da abertura corresponde à data de início de utilização da conta no Orbe. O saldo informado funciona como posição de partida; movimentos históricos anteriores não são importados nem somados automaticamente.
+- Valor positivo gera efeito `INCREASE`; valor negativo, quando permitido pelo tipo de conta, gera efeito `DECREASE`. O valor do lançamento permanece positivo e o efeito define a direção. Saldo inicial zero não gera lançamento nem operação de abertura.
+- Existe no máximo uma operação original de saldo inicial por conta. O saldo da conta é sempre reconstruído a partir dos lançamentos realizados válidos, incluindo o lançamento de abertura e os movimentos posteriores.
+- O saldo inicial não é um campo de saldo editável depois da criação. Qualquer correção posterior deve ser rastreável, preservar a abertura original e criar efeitos corretivos; não pode sobrescrever ou apagar o lançamento original.
+- A criação da conta, a operação de abertura e o lançamento correspondente devem ser atómicos e idempotentes: repetição não pode duplicar o saldo inicial.
+
 ## Dívidas e pagamentos
 - Dívida representa obrigação.
 - Pagamentos parciais são registos individuais ligados à obrigação.
