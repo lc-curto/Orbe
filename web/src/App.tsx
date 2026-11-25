@@ -292,9 +292,11 @@ export default function App() {
       ? [{ label: 'Novo cartão', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de cartões será disponibilizada na fase de formulários.' }]
       : activeKey === 'Dívidas'
         ? [{ label: 'Nova dívida', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de dívidas será disponibilizada na fase de formulários.' }]
-        : ['Rota', 'Relatórios', 'Configurações'].includes(activeKey)
-          ? [{ label: 'Sem ações de criação nesta página', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: activeKey === 'Rota' ? 'A Rota Financeira apresenta projeções e não cria movimentos diretamente.' : activeKey === 'Relatórios' ? 'A criação de relatórios ainda não está disponível.' : 'As Configurações não têm ações de criação.' }]
-          : activeKey === 'Movimentos' && movementTab === 'schedules'
+        : activeKey === 'Rota'
+          ? [{ label: 'Nova projeção', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de projeções ficará disponível quando o contrato da Rota Financeira estiver definido.' }]
+          : ['Relatórios', 'Configurações'].includes(activeKey)
+            ? [{ label: 'Sem ações de criação nesta página', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: activeKey === 'Relatórios' ? 'A criação de relatórios ainda não está disponível.' : 'As Configurações não têm ações de criação.' }]
+            : activeKey === 'Movimentos' && movementTab === 'schedules'
             ? [{ label: 'Nova programação', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de programações será disponibilizada na fase de formulários.' }]
             : [
                 { label: 'Nova despesa', icon: 'expense' as IconName, kind: 'expense' as const },
