@@ -98,8 +98,8 @@ Ordem de execução atualizada: validar a navegação e as páginas de leitura j
 4. Implementar páginas-placeholder e formulários apenas com contratos confirmados.
 5. Executar testes de aceitação e auditoria de consistência documentação/frontend/API/modelo de domínio.
 
-## Critério para iniciar implementação estrutural
-Não iniciar antes de aprovar arquitetura/UML, definir precisão monetária e integridade transacional, especificar fluxos críticos, concluir interfaces da primeira fase e definir critérios de aceitação/testes.
+## Critério para novas alterações estruturais
+A implementação estrutural do frontend e do núcleo já está em curso e tem entregas publicadas na `main`. Para novas alterações estruturais, continuam obrigatórios: arquitetura/UML aprovada, precisão monetária e integridade transacional definidas, fluxos críticos especificados e critérios de aceitação/testes identificados. Não interpretar uma entrega parcial como aprovação de contratos ou funcionalidades ainda pendentes.
 
 Protótipos ou experiências técnicas isoladas só devem avançar com autorização explícita e não constituem arquitetura aprovada.
 
