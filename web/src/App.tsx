@@ -179,7 +179,7 @@ function QuickAction({ icon, label, detail, color }: { icon: IconName; label: st
   )
 }
 
-function MobileDashboard({ period, card, invoice, navigation, activeKey, setActiveKey, notify, openForm, userName, userEmail, onLogout, logoutDisabled }: {
+function MobileDashboard({ period, periodIndex, periodCount, onPeriodChange, card, invoice, navigation, activeKey, setActiveKey, notify, openForm, userName, userEmail, onLogout, logoutDisabled }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   card?: FinancialCard
   invoice?: CardInvoice
@@ -218,13 +218,11 @@ function MobileDashboard({ period, card, invoice, navigation, activeKey, setActi
           </YStack>
         </XStack>
         <XStack className="mobile-dashboard-period-row" style={{ justifyContent: 'flex-end' }}>
-          <Button onPress={() => notify('Seletor de mês')} aria-label="Selecionar mês" height={42} paddingHorizontal={14} borderRadius={999} {...border} backgroundColor="#ffffff">
-            <XStack gap={12} style={{ alignItems: 'center' }}>
-              <Icon name="chevronLeft" size={15} color="#667085" />
-              <Text color="#101828" fontSize={12} fontWeight="700">{period.shortLabel}</Text>
-              <Icon name="chevronRight" size={15} color="#667085" />
-            </XStack>
-          </Button>
+          <XStack borderWidth={1} borderColor="#d0d5dd" borderRadius={999} backgroundColor="#ffffff" paddingHorizontal={8} paddingVertical={4} gap={8} style={centered}>
+            <Button onPress={() => onPeriodChange(Math.max(0, periodIndex - 1))} aria-label="Período anterior" disabled={periodIndex === 0} width={32} height={32} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronLeft" size={17} color="#667085" /></Button>
+            <Text aria-label={`Período selecionado: ${period.label}`} fontWeight="700" minWidth={44} textAlign="center">{period.shortLabel}</Text>
+            <Button onPress={() => onPeriodChange(Math.min(periodCount - 1, periodIndex + 1))} aria-label="Período seguinte" disabled={periodIndex === periodCount - 1} width={32} height={32} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronRight" size={17} color="#667085" /></Button>
+          </XStack>
         </XStack>
         <Card className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <YStack gap={12}><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }}><Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text><Button onPress={() => setHidden((value) => !value)} aria-label={hidden ? 'Mostrar saldo' : 'Ocultar saldo'} width={30} height={30} padding={0} borderRadius={9} borderWidth={0} backgroundColor="rgba(255,255,255,0.14)"><Icon name={hidden ? 'eyeOff' : 'eye'} size={15} color="#ffffff" /></Button></XStack><YStack gap={2}><Text color="#ffffff" fontSize={30} fontWeight="800">{hidden ? '••••••' : '€ 2.840,50'}</Text><Text color="#dbeafe" fontSize={12}>Todas as contas</Text></YStack><Separator borderColor="rgba(255,255,255,0.24)" /><XStack style={{ justifyContent: 'space-between' }}>{[['Receitas', period.income], ['Despesas', period.expenses], ['Resultado', '+ € 2.054,20']].map(([label, value]) => <YStack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{hidden ? '••••' : value}</Text></YStack>)}</XStack></YStack>
@@ -407,7 +405,7 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        {activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} /></div> : <MobileDashboard period={period} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão.')) }} logoutDisabled={authLoading} />}
+        {activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} /></div> : <MobileDashboard period={period} periodIndex={periodIndex} periodCount={periods.length} onPeriodChange={setPeriodIndex} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão.')) }} logoutDisabled={authLoading} />}
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         {activeKey === 'Movimentos' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => (
