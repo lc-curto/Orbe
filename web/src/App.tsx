@@ -311,10 +311,10 @@ export default function App() {
               <XStack gap={12}>
                 <Button onPress={() => notify('Não existem notificações novas')} aria-label="Notificações" width={44} height={44} borderRadius={999} {...border} padding={0}><Icon name="bell" size={17} color="#344054" /></Button>
                 <YStack className="account-menu" style={{ alignItems: 'flex-end' }}>
-                  <Button aria-label="Abrir menu da conta" aria-expanded={accountMenuOpen} onPress={() => setAccountMenuOpen((value) => !value)} borderWidth={0} backgroundColor="transparent" padding={0}>
-                    <XStack gap={8} style={{ alignItems: 'center' }}><YStack gap={1} style={{ alignItems: 'flex-end' }}><Text fontSize={13} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text></YStack><YStack width={44} height={44} borderRadius={999} {...border} style={centered}><Icon name="user" size={17} color="#344054" /></YStack></XStack>
+                  <Button aria-label="Abrir menu da conta" aria-expanded={accountMenuOpen} onPress={() => setAccountMenuOpen((value) => !value)} width={44} height={44} borderRadius={999} {...border} padding={0}>
+                    <Icon name="user" size={17} color="#344054" />
                   </Button>
-                  {accountMenuOpen ? <YStack className="account-dropdown" gap={4}><Text color="#667085" fontSize={11}>{user.email}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
+                  {accountMenuOpen ? <YStack className="account-dropdown" gap={6}><Text fontSize={12} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
                 </YStack>
               </XStack>
             </XStack>
