@@ -314,3 +314,25 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   .filter-panel label { min-width: 0; }
   .filter-panel select { min-height: 34px; font-size: 11px; }
 }
+
+/* Dashboard layout approved: desktop account controls in sidebar; mobile profile under More. */
+.sidebar-footer { flex-shrink: 0; }
+.sidebar-account-dropdown { top: auto; bottom: calc(100% + 8px); }
+.desktop-dashboard-header { width: 100%; min-height: 76px; }
+.mobile-dashboard-period-control { align-self: flex-start; }
+.mobile-more-menu { box-shadow: 0 8px 24px rgba(16, 24, 40, .06); }
+@media (min-width: 1024px) {
+  .dashboard-kpi-row { display: flex; flex-wrap: nowrap !important; }
+  .dashboard-kpi-row > * { flex: 1 1 0; min-width: 0; }
+}
+@media (max-width: 1023px) {
+  .mobile-dashboard-header { align-items: center !important; }
+  .mobile-dashboard-greeting-text { font-size: clamp(18px, 4.2vw, 26px); }
+  .mobile-dashboard-period-control { max-width: 46%; }
+  .mobile-more-menu { margin-top: -4px; }
+}
+@media (max-width: 380px) {
+  .mobile-dashboard-period-control { padding-left: 2px !important; padding-right: 2px !important; }
+  .mobile-dashboard-period-control button { width: 24px !important; }
+  .mobile-dashboard-period-control [aria-label^="Período selecionado"] { min-width: 36px !important; font-size: 11px !important; }
+}
