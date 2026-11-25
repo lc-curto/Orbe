@@ -27,7 +27,7 @@ A documentação é a referência para produto, design, desenvolvimento e valida
 | [02-regras-financeiras.md](docs/02-regras-financeiras.md) | Modelo financeiro, invariantes e cálculos |
 | [03-funcionalidades-e-operacoes.md](docs/03-funcionalidades-e-operacoes.md) | Operações, estados, ações e aceitação |
 | [04-interfaces-e-navegacao.md](docs/04-interfaces-e-navegacao.md) | Páginas aprovadas e navegação |
-| [05-arquitetura-e-uml.md](docs/05-arquitetura-e-uml.md) | Arquitetura, decisões e UML |
+| [05-arquitetura-e-uml.md](docs/05-arquitetura-e-uml.md) | Arquitetura, decisões, UML e padrão frontend |
 | [06-pendencias-e-plano.md](docs/06-pendencias-e-plano.md) | Decisões abertas e sequência de trabalho |
 | [07-modelo-er.md](docs/07-modelo-er.md) | Entidades, relações, regras de integridade e objetivos de leitura por página |
 | [08-cronograma-e-estado.md](docs/08-cronograma-e-estado.md) | Cronograma de implementação e checklist de estado |
@@ -53,5 +53,3 @@ Manter a documentação concisa, verificável e sem duplicação. Cada regra tem
 Fundamentos, modelo financeiro, comportamento das operações, páginas principais, stack, monorepo e ARC-001 estão aprovados. O modelo ER conceptual (ARC-002), o UML complementar e o modelo físico do núcleo financeiro estão aprovados; o núcleo usa migrations versionadas e `DECIMAL(19,4)`. Permanecem decisões de produto sobre estimativas variáveis, alguns estados/apresentações e módulos conceptuais ainda sem migrations.
 
 
-### Arquitetura frontend web
-Antes de implementar ou refatorar páginas React, consultar [12 — Arquitetura Frontend Web](docs/12-arquitetura-frontend-web.md). Este documento define a separação de responsabilidades, estrutura de features, uso do design system e critérios de revisão para impedir que páginas voltem a concentrar toda a lógica e UI num único componente.
