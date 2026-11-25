@@ -279,3 +279,96 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   .filter-panel label { min-width: 0; }
   .filter-panel select { min-height: 34px; font-size: 11px; }
 }
+
+
+/* Shared month selector: Dashboard and Movements use the same geometry and placement. */
+.orbe-month-selector {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 2px;
+  min-width: 104px;
+  height: 44px;
+  padding: 4px;
+  border: 1px solid #d0d5dd;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #101828;
+}
+.orbe-month-selector button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #667085;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .14s ease, color .14s ease;
+}
+.orbe-month-selector button:hover:not(:disabled) {
+  background: #f2f4f7;
+  color: #101828;
+  box-shadow: none;
+}
+.orbe-month-selector button:focus-visible {
+  outline: 2px solid rgba(8, 127, 112, .55);
+  outline-offset: -2px;
+}
+.orbe-month-selector button:disabled { opacity: .4; cursor: default; }
+.orbe-month-selector-label {
+  display: inline-block;
+  min-width: 40px;
+  text-align: center;
+  white-space: nowrap;
+  color: #101828;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+.movements-header {
+  align-items: center !important;
+  gap: 16px;
+}
+.movements-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+  gap: 12px;
+}
+.movements-header-actions .desktop-new-button { white-space: nowrap; }
+@media (max-width: 1023px) {
+  .mobile-page-shell .movements-header {
+    align-items: center !important;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 8px;
+  }
+  .mobile-page-shell .movements-header h1 {
+    margin: 0;
+    white-space: nowrap;
+  }
+  .mobile-page-shell .movements-header-actions {
+    gap: 8px;
+  }
+  .mobile-page-shell .movements-header-actions .desktop-new-button {
+    display: none !important;
+  }
+  .mobile-page-shell .mobile-new-button {
+    display: block;
+    width: 100%;
+    margin: 8px 0 14px;
+  }
+  .mobile-page-shell .movement-month-selector {
+    margin: 0 !important;
+  }
+}
