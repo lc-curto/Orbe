@@ -70,21 +70,33 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 **Contrato de saldo inicial de conta definido:** ao criar uma conta, informar o saldo existente no início da utilização no Orbe. O valor é reconhecido por operação `ACCOUNT_OPENING_BALANCE` e lançamento realizado dirigido à conta; não é receita/despesa. Saldo zero não gera lançamento; saldo negativo só é permitido quando compatível com o tipo de conta. Existe uma única abertura original por conta, não editável diretamente; correções preservam a origem e são rastreáveis. O saldo atual deriva dos lançamentos válidos.
 
 ## Trabalho funcional pendente
-- Desenhar subpáginas de Contas, Cartões e Dívidas.
-- Desenhar detalhes e faturas de cartão.
-- Desenhar detalhes de dívida e pagamentos.
-- Definir modais de adicionar, editar, cancelar, reverter e confirmar.
-- Definir formulários, validações e ações permitidas por estado/dependência.
+- Concluir/validar a interface de leitura de Contas e Cartões/faturas já implementada; os formulários de escrita continuam pendentes.
+- Implementar as páginas funcionais de Rota Financeira, Dívidas, Relatórios e Configurações, atualmente acessíveis como placeholders; a Rota depende do contrato/read model de projeção.
+- Definir detalhes de dívida e pagamentos, incluindo os contratos funcionais ainda pendentes.
+- Definir modais/formulários de adicionar, editar, cancelar, reverter e confirmar conforme os contratos disponíveis.
+- Definir validações e ações permitidas por estado/dependência.
+- Validar navegação responsiva, FAB contextual, painel Mais, safe areas e comportamento do `AppShell`.
 - Auditar consistência e reaproveitamento de componentes.
 
-Ordem aprovada: páginas principais; subpáginas; modais; auditoria final.
+Ordem de execução atualizada: validar a navegação e as páginas de leitura já implementadas; fechar contratos/read models pendentes; implementar páginas-placeholder e formulários; executar auditoria final.
+
+## Estado da implementação frontend — 2026-11-25
+
+- PR #3: página Contas em modo de leitura publicada na `main`.
+- PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
+- PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
+- Movimentos/Programações: leitura implementada; os formulários de programação continuam indisponíveis.
+- Rota Financeira, Dívidas, Relatórios e Configurações: rotas acessíveis, ainda placeholders; não representam implementação funcional concluída.
+- As opções Nova conta, Novo cartão, Nova dívida, Nova programação e Nova projeção no FAB comunicam indisponibilidade enquanto faltarem formulários/contratos; não criam registos fictícios.
+- Relatórios e Configurações não apresentam FAB porque não têm ação de criação.
+- O estado de implementação não equivale a validação final: os testes responsivos e a auditoria frontend permanecem pendentes no cronograma.
 
 ## Próxima sequência recomendada
-1. Fechar decisões de produto que condicionam cartões, faturas e estimativas da Rota.
-2. Desenhar subpáginas e modais sem alterar páginas principais aprovadas.
-3. Definir autenticação, alojamento, testes, segurança, deploy e recuperação.
-4. Executar a integração frontend/API e os testes de aceitação.
-5. Rever e aprovar a especificação e o plano de implementação.
+1. Validar navegação responsiva e `AppShell` em desktop, tablet e mobile.
+2. Validar páginas de leitura e consumo de dados reais, incluindo loading, erro, vazio e isolamento por utilizador.
+3. Fechar decisões/contratos de produto que condicionam cartões, faturas, Rota e Dívidas.
+4. Implementar páginas-placeholder e formulários apenas com contratos confirmados.
+5. Executar testes de aceitação e auditoria de consistência documentação/frontend/API/modelo de domínio.
 
 ## Critério para iniciar implementação estrutural
 Não iniciar antes de aprovar arquitetura/UML, definir precisão monetária e integridade transacional, especificar fluxos críticos, concluir interfaces da primeira fase e definir critérios de aceitação/testes.
