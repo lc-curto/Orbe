@@ -113,3 +113,10 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - Não implementado: cálculo de saldo diário, saldo projetado final, estimativa variável, classificação persistida de gastos fixos/variáveis e read model consolidado.
 - A interface apresenta indisponibilidade de saldo/projeção em vez de usar saldo fictício ou assumir saldo inicial.
 - Próximo passo técnico: definir e aprovar contrato de projeção e classificação; só depois ligar a célula Saldo e o cabeçalho aos valores do motor financeiro central.
+
+
+## Prevenção de regressão de arquitetura frontend
+- A arquitetura frontend web passa a ter norma explícita em [12 — Arquitetura Frontend Web](12-arquitetura-frontend-web.md), referenciada também no `AGENTS.md`.
+- A Rota Financeira foi escolhida como primeira página a corrigir: separar composição, lógica de dados, componentes de apresentação, tipos e utilitários sem alterar os requisitos de produto.
+- A correção deve preservar o escopo e comportamento aprovado e reutilizar o design system existente.
+- Critério de aceitação: a página principal não deve conter a implementação detalhada de tabela/modal/filtros e agregação de dados; a lógica derivada deve ser isolada e testável; a estrutura deve ser coerente com React/TypeScript; build e lint devem ser verificados ou explicitamente marcados como não executados.
