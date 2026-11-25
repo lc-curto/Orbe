@@ -15,7 +15,7 @@ function money(value: string | number): string {
 
 function date(value: string): string {
   if (!value) return '—'
-  const parsed = new Date(`${value}T00:00:00`)
+  const parsed = new Date(value.length === 10 ? `${value}T00:00:00` : value)
   return Number.isNaN(parsed.getTime()) ? value : new Intl.DateTimeFormat('pt-PT', { day: 'numeric', month: 'short' }).format(parsed)
 }
 
