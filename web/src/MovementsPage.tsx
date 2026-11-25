@@ -15,7 +15,6 @@ type Props = {
   categories: Category[]
   month: string
   onMonthChange: (month: string) => void
-  onNewMovement: () => void
   onNotify: (message: string) => void
 }
 
@@ -60,7 +59,7 @@ function ScheduleRow({ schedule, accounts, categories, expanded, occurrence, loa
   </div>
 }
 
-export function MovementsPage({ tab, setTab, operations, recurrences, accounts, categories, month, onMonthChange, onNewMovement, onNotify }: Props) {
+export function MovementsPage({ tab, setTab, operations, recurrences, accounts, categories, month, onMonthChange, onNotify }: Props) {
   const [filter, setFilter] = useState<MovementFilter>('ALL')
   const [search, setSearch] = useState('')
   const [showFilters, setShowFilters] = useState(false)
@@ -86,8 +85,7 @@ export function MovementsPage({ tab, setTab, operations, recurrences, accounts, 
   }
 
   return <section className="movements-page">
-    <div className="movements-header"><div className="movements-heading"><h1>Movimentos</h1></div><div className="movements-header-actions"><button className="primary-button desktop-new-button" type="button" onClick={tab === 'movements' ? onNewMovement : () => onNotify('O formulário de nova programação será adicionado na fase de formulários.')}>{tab === 'movements' ? '+ Novo movimento' : '+ Nova programação'}</button><MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="movement-month-selector" /></div></div>
-    <button className="primary-button mobile-new-button" type="button" onClick={tab === 'movements' ? onNewMovement : () => onNotify('O formulário de nova programação será adicionado na fase de formulários.')}>{tab === 'movements' ? '+ Novo movimento' : '+ Nova programação'}</button>
+    <div className="movements-header"><div className="movements-heading"><h1>Movimentos</h1></div><div className="movements-header-actions"><MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="movement-month-selector" /></div></div>
     <div className="movement-tabs" role="tablist"><button type="button" role="tab" aria-selected={tab === 'movements'} className={tab === 'movements' ? 'active' : ''} onClick={() => setTab('movements')}>Movimentos</button><button type="button" role="tab" aria-selected={tab === 'schedules'} className={tab === 'schedules' ? 'active' : ''} onClick={() => setTab('schedules')}>Programações</button></div>
     {tab === 'movements' ? <>
       <div className="movement-kpis"><Kpi label="Receitas" value={money(kpis.income, '+ ')} tone="#16805b" detail="Realizadas no período" /><Kpi label="Despesas" value={money(kpis.expenses, '− ')} tone="#c2415d" detail="Realizadas no período" /><Kpi label="Resultado" value={money(Math.abs(kpis.income - kpis.expenses), kpis.income - kpis.expenses >= 0 ? '+ ' : '− ')} tone={kpis.income - kpis.expenses >= 0 ? '#175cd3' : '#c2415d'} detail="Receitas − despesas" /></div>

@@ -75,10 +75,11 @@
 - [x] Implementar o Dashboard aprovado.
 - [x] Implementar as variantes desktop e mobile do Dashboard.
 - [x] Implementar sidebar recolhível no desktop.
-- [x] Implementar navegação inferior no mobile.
+- [x] Implementar navegação inferior fixa em todas as páginas mobile/tablet (Dashboard e subpáginas).
 - [x] Implementar seletor mensal.
 - [x] Implementar saldo, receitas, despesas e resultado.
-- [x] Implementar ações rápidas.
+- [x] Centralizar criação no botão flutuante global (+), fixo no viewport, com opções de despesa, receita e transferência.
+- [x] Corrigir contenção e overflow da sidebar; apresentar apenas o nome do utilizador no perfil.
 - [x] Implementar despesas por categoria em desktop e mobile.
 - [x] Preservar o Dashboard durante a implementação dos formulários.
 - [x] Criar tokens e componentes base reutilizáveis do Design System.
@@ -232,3 +233,21 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 ## Regra de controlo
 
 Este documento é um mapa de execução, não substitui as especificações funcionais, financeiras ou de arquitetura. Quando houver conflito, prevalecem `AGENTS.md`, as regras financeiras, a especificação funcional e as decisões aprovadas nos documentos de origem. Cada alteração relevante deve atualizar este estado no mesmo conjunto de alterações, sem marcar como concluído algo que apenas foi proposto.
+
+## Navegação responsiva — complemento 2026-11-25
+
+- A ação **Mais** existe exclusivamente na bottom bar; não aparece na sidebar.
+- A bottom bar é consistente em todas as páginas mobile/tablet e apresenta Início, Movimentos, Rota, Contas e Mais.
+- **Mais** abre sempre o mesmo painel inferior integrado, com as quatro opções fixas e na mesma ordem: Cartões, Dívidas, Relatórios e Configurações.
+- O painel Mais não apresenta perfil, notificações, logout ou opções dependentes da página atual. Ao selecionar uma página, navega e fecha; ao tocar novamente em Mais ou fora do painel, fecha.
+- A sidebar apresenta todas as páginas, agrupadas em Principal, Gestão financeira e Ferramentas.
+- O botão global (+) apresenta ações conforme a página ativa:
+  - Dashboard e Movimentos: despesa, receita e transferência.
+  - Contas: nova conta.
+  - Cartões: novo cartão.
+  - Dívidas: nova dívida.
+  - Movimentos/Programações: nova programação.
+  - Rota: permanece visível e apresenta a ação contextual **Nova projeção**; a criação informa indisponibilidade até existir contrato/read model de projeção, sem criar dados fictícios.
+  - Relatórios e Configurações: o botão (+) fica oculto, pois não existem ações de criação nestas páginas.
+- Ações cujos formulários ainda não existem informam a indisponibilidade; não criam registos fictícios.
+- Relatórios, Configurações e Dívidas estão acessíveis na navegação, mas permanecem páginas-placeholder até à implementação funcional.
