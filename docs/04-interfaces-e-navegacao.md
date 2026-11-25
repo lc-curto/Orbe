@@ -114,3 +114,14 @@ Esta secção regista o comportamento atualmente implementado no frontend, após
 - Ações de criação sem formulário/contrato apenas informam indisponibilidade; não criam registos fictícios.
 - Rota, Dívidas, Relatórios e Configurações estão acessíveis, mas são placeholders. Contas e Cartões têm interfaces de leitura; as ações de criação permanecem indisponíveis.
 - O nome do utilizador é apresentado no perfil da sidebar, sem email. O Dashboard mobile não mantém um menu Mais próprio.
+
+
+## Rota Financeira — implementação frontend inicial (2026-11-25)
+
+- A página frontend substitui o placeholder e está ligada à navegação desktop e mobile.
+- Seletor mensal anterior/seguinte, KPI de Entradas e Saídas e tabela diária com as quatro colunas aprovadas: Data, Entrada, Saída e Saldo.
+- A tabela apresenta todos os dias do mês; o switch **Só dias com movimento** filtra para dias com operações realizadas elegíveis.
+- Selecionar a data abre modal de detalhe com filtros numa linha e nesta ordem: Todos, Receitas, G. fixos, G. variáveis.
+- A lista usa operações realizadas de receita/despesa disponíveis no read model; transferências e estados não realizados são excluídos dos totais apresentados.
+- **Limitação explícita:** o frontend atual não calcula saldo diário nem projeção final. A célula Saldo e o saldo projetado mostram indisponibilidade, sem inventar valores. Os filtros G. fixos/variáveis informam que a classificação ainda não existe no contrato de leitura.
+- Esta entrega é uma implementação parcial da interface, não conclusão da Rota Financeira nem alteração das regras financeiras aprovadas.
