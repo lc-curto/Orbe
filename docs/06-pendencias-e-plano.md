@@ -71,7 +71,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 ## Trabalho funcional pendente
 - Concluir/validar a interface de leitura de Contas e Cartões/faturas já implementada; os formulários de escrita continuam pendentes.
-- Implementar as páginas funcionais de Rota Financeira, Dívidas, Relatórios e Configurações, atualmente acessíveis como placeholders; a Rota depende do contrato/read model de projeção.
+- Concluir a Rota Financeira: a interface frontend inicial já existe; falta contrato/read model de projeção, saldo diário e classificação fixa/variável. Dívidas, Relatórios e Configurações continuam placeholders.
 - Definir detalhes de dívida e pagamentos, incluindo os contratos funcionais ainda pendentes.
 - Definir modais/formulários de adicionar, editar, cancelar, reverter e confirmar conforme os contratos disponíveis.
 - Definir validações e ações permitidas por estado/dependência.
@@ -86,7 +86,7 @@ Ordem de execução atualizada: validar a navegação e as páginas de leitura j
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; os formulários de programação continuam indisponíveis.
-- Rota Financeira, Dívidas, Relatórios e Configurações: rotas acessíveis, ainda placeholders; não representam implementação funcional concluída.
+- Rota Financeira: interface frontend inicial implementada na branch `feature/financial-route-page`; dados realizados agregados a partir do read model atual. Saldo diário/projeção e classificação fixa/variável continuam indisponíveis. Dívidas, Relatórios e Configurações permanecem placeholders.
 - As opções Nova conta, Novo cartão, Nova dívida, Nova programação e Nova projeção no FAB comunicam indisponibilidade enquanto faltarem formulários/contratos; não criam registos fictícios.
 - Relatórios e Configurações não apresentam FAB porque não têm ação de criação.
 - O estado de implementação não equivale a validação final: os testes responsivos e a auditoria frontend permanecem pendentes no cronograma.
@@ -105,3 +105,11 @@ Protótipos ou experiências técnicas isoladas só devem avançar com autoriza�
 
 ## Atualização de decisões
 Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e os requisitos/diagramas afetados. Registar motivo e impacto quando substituir uma decisão. Não criar atas separadas por conversa.
+
+
+## Rota Financeira — estado após implementação inicial (2026-11-25)
+
+- Implementado: página responsiva desktop/mobile, seletor de mês, KPIs de entradas/saídas realizadas, grelha diária, switch de dias com movimento e modal de detalhe com filtros aprovados.
+- Não implementado: cálculo de saldo diário, saldo projetado final, estimativa variável, classificação persistida de gastos fixos/variáveis e read model consolidado.
+- A interface apresenta indisponibilidade de saldo/projeção em vez de usar saldo fictício ou assumir saldo inicial.
+- Próximo passo técnico: definir e aprovar contrato de projeção e classificação; só depois ligar a célula Saldo e o cabeçalho aos valores do motor financeiro central.
