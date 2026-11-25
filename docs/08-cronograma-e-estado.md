@@ -237,8 +237,9 @@ Este documento é um mapa de execução, não substitui as especificações func
 ## Navegação responsiva — complemento 2026-11-25
 
 - A ação **Mais** existe exclusivamente na bottom bar; não aparece na sidebar.
-- A bottom bar apresenta Início, Movimentos, Rota, Contas e Mais.
-- Mais abre as páginas secundárias: Cartões, Dívidas, Relatórios e Configurações.
+- A bottom bar é consistente em todas as páginas mobile/tablet e apresenta Início, Movimentos, Rota, Contas e Mais.
+- **Mais** abre sempre o mesmo painel inferior integrado, com as quatro opções fixas e na mesma ordem: Cartões, Dívidas, Relatórios e Configurações.
+- O painel Mais não apresenta perfil, notificações, logout ou opções dependentes da página atual. Ao selecionar uma página, navega e fecha; ao tocar novamente em Mais ou fora do painel, fecha.
 - A sidebar apresenta todas as páginas, agrupadas em Principal, Gestão financeira e Ferramentas.
 - O botão global (+) apresenta ações conforme a página ativa:
   - Dashboard e Movimentos: despesa, receita e transferência.
@@ -246,6 +247,7 @@ Este documento é um mapa de execução, não substitui as especificações func
   - Cartões: novo cartão.
   - Dívidas: nova dívida.
   - Movimentos/Programações: nova programação.
-  - Rota, Relatórios e Configurações: sem criação direta nesta fase.
+  - Rota: permanece visível, sem criação direta nesta fase; informa que a página apresenta projeções.
+  - Relatórios e Configurações: o botão (+) fica oculto, pois não existem ações de criação nestas páginas.
 - Ações cujos formulários ainda não existem informam a indisponibilidade; não criam registos fictícios.
 - Relatórios, Configurações e Dívidas estão acessíveis na navegação, mas permanecem páginas-placeholder até à implementação funcional.
