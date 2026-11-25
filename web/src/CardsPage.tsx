@@ -21,6 +21,13 @@ function date(value: string): string {
   return Number.isNaN(parsed.getTime()) ? value : new Intl.DateTimeFormat('pt-PT', { day: 'numeric', month: 'short' }).format(parsed)
 }
 
+function invoiceMonth(value: string): string {
+  if (!value) return 'Fatura'
+  const parsed = new Date(value.length === 10 ? `${value}T00:00:00` : value)
+  if (Number.isNaN(parsed.getTime())) return 'Fatura'
+  return new Intl.DateTimeFormat('pt-PT', { month: 'long', year: 'numeric' }).format(parsed)
+}
+
 function invoiceState(invoice: CardInvoice): string {
   const state = invoice.cycle_state.toUpperCase()
   if (state.includes('PAID') || state.includes('PAGA')) return 'Paga'
@@ -78,7 +85,7 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
     return <button className="cards-invoice-row cards-invoice-button" type="button" key={invoice.id} onClick={() => { setSelectedInvoiceId(invoice.id); setInvoiceSearch('') }}>
       <div className="cards-invoice-heading">
         <div>
-          <strong>Fatura</strong>
+          <strong>{invoiceMonth(invoice.period_start)}</strong>
           <span>{date(invoice.period_start)} – {date(invoice.period_end)}</span>
         </div>
         <span className={`cards-invoice-status ${state === 'Paga' ? 'is-paid' : state === 'Cancelada' ? 'is-cancelled' : 'is-open'}`}>{state}</span>
@@ -96,8 +103,8 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
     {selectedCard && selectedInvoice ? <>
       <header className="accounts-page-header cards-detail-header">
         <div>
-          <button className="cards-back-button" type="button" onClick={() => { setSelectedInvoiceId(null); setInvoiceSearch('') }}>‹ Voltar à fatura</button>
-          <h1 id="cards-page-title">Fatura de {date(selectedInvoice.period_start)}</h1>
+          <button className="cards-back-button" type="button" onClick={() => { setSelectedInvoiceId(null); setInvoiceSearch('') }}>‹ Voltar às faturas</button>
+          <h1 id="cards-page-title">Fatura de {invoiceMonth(selectedInvoice.period_start)}</h1>
           <p className="accounts-page-subtitle">{selectedCard.name} · Vence {date(selectedInvoice.due_date)}</p>
         </div>
       </header>
