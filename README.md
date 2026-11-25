@@ -51,3 +51,7 @@ Manter a documentação concisa, verificável e sem duplicação. Cada regra tem
 ## Estado atual
 
 Fundamentos, modelo financeiro, comportamento das operações, páginas principais, stack, monorepo e ARC-001 estão aprovados. O modelo ER conceptual (ARC-002), o UML complementar e o modelo físico do núcleo financeiro estão aprovados; o núcleo usa migrations versionadas e `DECIMAL(19,4)`. Permanecem decisões de produto sobre estimativas variáveis, alguns estados/apresentações e módulos conceptuais ainda sem migrations.
+
+
+### Arquitetura frontend web
+Antes de implementar ou refatorar páginas React, consultar [12 — Arquitetura Frontend Web](docs/12-arquitetura-frontend-web.md). Este documento define a separação de responsabilidades, estrutura de features, uso do design system e critérios de revisão para impedir que páginas voltem a concentrar toda a lógica e UI num único componente.
