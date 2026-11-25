@@ -258,3 +258,13 @@ Este documento é um mapa de execução, não substitui as especificações func
   - Relatórios e Configurações: o botão (+) fica oculto, pois não existem ações de criação nestas páginas.
 - Ações cujos formulários ainda não existem informam a indisponibilidade; não criam registos fictícios.
 - Relatórios, Configurações e Dívidas estão acessíveis na navegação, mas permanecem páginas-placeholder até à implementação funcional.
+
+## Correção de arquitetura frontend — Rota Financeira (2026-11-25)
+
+- [x] Documentar padrão de arquitetura React/TypeScript em `docs/12-arquitetura-frontend-web.md`.
+- [x] Referenciar a norma em `AGENTS.md`, `README.md`, documentação de interfaces e pendências.
+- [x] Refatorar Rota Financeira: page composition, componentes para projeção/KPIs/tabela/modal, hook de dados, tipos e utilitários.
+- [ ] Build e lint frontend após a refatoração.
+- [ ] Validar comportamento visual/responsivo e regressões.
+
+Esta etapa corrige a organização do código, mas não conclui o saldo diário, projeção final ou classificação fixa/variável, que dependem dos contratos financeiros pendentes.
