@@ -43,6 +43,7 @@ O documento detalha:
 - Operação como evento de negócio e lançamento como efeito financeiro.
 - Destinos específicos aprovados em ARC-001.
 - Saldo inicial de cartão distribuído integralmente por faturas, com histórico, correções e reversões rastreáveis.
+- Saldo inicial de conta reconhecido por operação original única e lançamento realizado na própria conta, sem natureza de receita/despesa; correções são rastreáveis.
 - Pagamentos multi-fatura com uma saída total e reduções por fatura.
 - Cartões, faturas, dívidas, prestações, transferências, recorrências e conferências.
 - A diferença entre os dados efetivos e os eventos usados em projeções.
@@ -100,6 +101,7 @@ O domínio não deve depender da interface. Regras financeiras não devem ser re
 - Pagamento multi-fatura: uma saída total na conta, reduções por fatura e respetivas alocações são atómicas; cada par redução/obrigação pertence à mesma fatura.
 - Compra parcelada: operação, alocações de compra e lançamentos de obrigação são confirmados em conjunto.
 - Saldo inicial de cartão: operação original única por cartão, distribuição integral por faturas e lançamentos de obrigação confirmados em conjunto.
+- Saldo inicial de conta: operação original única por conta e lançamento realizado dirigido à conta, confirmado atomicamente com a criação; não é receita/despesa nem saldo manual mutável.
 - Redistribuição e reversão: efeitos corretivos e relações de rastreabilidade são atómicos; não alteram lançamentos confirmados.
 - Validações que abrangem várias linhas (somas, saldos restantes e alocações) exigem lógica de domínio/transação; não podem ser delegadas a um `CHECK` de linha.
 - Bloquear o cartão e as linhas de obrigação/alvo numa ordem consistente antes de validar redistribuições e pagamentos concorrentes; recalcular os montantes disponíveis dentro da transação e tratar deadlocks com repetição segura.

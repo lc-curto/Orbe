@@ -33,6 +33,9 @@ erDiagram
     FINANCIAL_ACCOUNTS o|--o{ FINANCIAL_ENTRIES : destination
     CARDS ||--o{ CARD_INVOICES : issues
     CARD_INVOICES o|--o{ FINANCIAL_ENTRIES : destination
+    OPERATIONS ||--o| ACCOUNT_OPENING_BALANCES : opening_operation
+    FINANCIAL_ACCOUNTS ||--o| ACCOUNT_OPENING_BALANCES : opening_balance
+    ACCOUNT_OPENING_BALANCES ||--|| FINANCIAL_ENTRIES : recognizes
     OPERATIONS ||--o| CARD_OPENING_BALANCES : opening_operation
     CARDS ||--o| CARD_OPENING_BALANCES : opening_balance
     CARD_OPENING_BALANCES ||--|{ OPENING_BALANCE_DISTRIBUTIONS : distributes
@@ -89,6 +92,7 @@ erDiagram
 |---|---|---|
 | `users` | Utilizador e preferências centrais | id, moeda principal |
 | `financial_accounts` | Contas bancárias, dinheiro físico e carteiras digitais | id, user_id, tipo, nome, instituição/descrição, estado |
+| `account_opening_balances` | Registo da posição inicial da conta no início da utilização do Orbe | id, account_id, operation_id, declared_amount, opening_entry_id, effective_at |
 | `categories` | Classificação de receitas e despesas | id, user_id, nome, natureza, estado |
 | `operations` | Evento de negócio visível e manipulável pelo utilizador | id, user_id, category_id, tipo, descrição, valor, estado, data efetiva, data prevista, operação de origem |
 | `financial_entries` | Efeitos financeiros confirmados; fonte de verdade dos saldos/obrigações | id, operation_id, destino ARC-001, valor, efeito sobre o destino, data efetiva, purchase_allocation_id quando for obrigação de compra parcelada |
@@ -221,7 +225,19 @@ A reversão de uma distribuição ou correção cria novos efeitos contrários a
 
 A criação do saldo inicial, as distribuições e os respetivos lançamentos são atómicos e idempotentes. A repetição do mesmo comando não pode criar uma segunda operação original, duplicar distribuições ou duplicar lançamentos.
 
-### 3.4 Dívidas e prestações
+### 3.4 Saldo inicial de conta
+
+O saldo existente numa conta antes de começar a utilizá-la no Orbe é reconhecido por uma operação própria `ACCOUNT_OPENING_BALANCE`. A abertura representa a posição de partida na data de início de utilização no Orbe; não importa automaticamente movimentos históricos anteriores.
+
+- Uma conta tem zero ou uma operação original de abertura. Saldo inicial zero não cria operação nem lançamento.
+- A operação de abertura gera um lançamento realizado com destino à própria conta. O valor do lançamento é positivo; o efeito é `INCREASE` para saldo declarado positivo e `DECREASE` para saldo declarado negativo, quando permitido pelo tipo de conta.
+- A operação não é receita, despesa, transferência nem conferência; é excluída da DRE e dos KPIs de receitas/despesas.
+- A entidade conceptual `account_opening_balances` relaciona de forma única a conta, a operação original e o lançamento de abertura; `declared_amount` preserva o valor assinado informado e `effective_at` identifica a data de início de utilização.
+- A criação da conta, a operação e o lançamento são atómicos e idempotentes.
+- O valor e o lançamento originais são imutáveis por edição comum. Correções posteriores são operações/efeitos corretivos rastreáveis, não uma segunda abertura.
+- O saldo atual é derivado da soma dos efeitos dos lançamentos realizados válidos da conta, incluindo a abertura. Não existe saldo manual paralelo.
+
+### 3.5 Dívidas e prestações
 
 | Entidade | Responsabilidade | Campos conceptuais principais |
 |---|---|---|
@@ -289,6 +305,7 @@ Alterações a uma ocorrência ou à ocorrência selecionada e seguintes respeit
 19. Ciclos `PLANNED`, `OPEN` e `CLOSED` são estados operacionais; não representam diretamente o estado de liquidação da obrigação.
 20. Transferências têm uma perna `OUT` e uma `IN`; estados globais são derivados e não apagam efeitos realizados.
 21. Um cartão tem zero ou uma operação original de saldo inicial; o saldo inicial positivo é integralmente distribuído por faturas.
+21a. Uma conta tem zero ou uma operação original `ACCOUNT_OPENING_BALANCE`; a abertura é um lançamento realizado na conta, excluído de receitas/despesas, e não pode ser sobrescrita.
 22. A distribuição histórica inicial é imutável; correções e redistribuições são novos efeitos rastreáveis.
 23. A obrigação em aberto e o saldo utilizado são derivados de `financial_entries`, nunca das tabelas de distribuição isoladamente.
 24. Uma redistribuição só pode consumir obrigação ainda não liquidada e não comprometida por correções anteriores.

@@ -1,6 +1,6 @@
 # 08 — Cronograma e estado de implementação
 
-> Documento de controlo do projeto. Atualizado em 2026-11-24.
+> Documento de controlo do projeto. Atualizado em 2026-11-25.
 >
 > Este documento regista o estado conhecido no repositório e orienta a sequência de trabalho. Um item marcado como concluído significa que existe implementação ou decisão versionada; não significa que todos os fluxos relacionados estejam completos ou que a auditoria final tenha sido concluída.
 
@@ -13,7 +13,7 @@
 ## 1. Fundamentos e arquitetura
 
 - [x] Fechar os fundamentos do produto e as regras financeiras principais.
-- [x] Consolidar regras de cartões, faturas, pagamentos, reversões e saldo inicial.
+- [x] Consolidar regras de cartões, faturas, pagamentos, reversões, saldo inicial de cartão e saldo inicial de conta.
 - [x] Aprovar o modelo ER conceptual e a decisão ARC-001.
 - [x] Produzir e aprovar UML complementar de domínio, sequências e máquinas de estado do núcleo financeiro.
 - [x] Aprovar o modelo físico do núcleo financeiro, precisão monetária e arredondamento (`DECIMAL(19,4)`); extensões conceptuais ainda sem migrations permanecem delimitadas.
@@ -193,7 +193,7 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 
 - [x] Implementar Movimentos e a aba Programações em modo de leitura.
 - [!] Implementar Rota Financeira — aguarda contrato/read model de projeção diária.
-- [ ] Implementar Contas.
+- [ ] Implementar Contas (a especificação funcional inclui saldo inicial de abertura; a UI/UX da página e os contratos de leitura devem ser definidos antes da implementação).
 - [ ] Implementar Cartões e detalhe de faturas.
 - [ ] Implementar Dívidas e detalhe de pagamentos.
 - [ ] Implementar Relatórios.
