@@ -409,7 +409,7 @@ export default function App() {
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         {activeKey === 'Movimentos' || activeKey === 'Cartões' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => (
-            <Button key={item.label} onPress={() => { setActiveKey(item.label === 'Mais' ? 'Cartões' : item.label) }} aria-label={item.label} aria-current={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#667085'}>
+            <Button key={item.label} onPress={() => { setActiveKey(item.label === 'Mais' ? 'Cartões' : item.label) }} aria-label={item.label} aria-current={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#e6f4f1' : 'transparent'} color={activeKey === item.label || (item.label === 'Mais' && activeKey === 'Cartões') ? '#087f70' : '#667085'}>
               <YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon name={item.icon} size={18} /><Text fontSize={11} fontWeight={activeKey === item.label ? '700' : '500'}>{item.label}</Text></YStack>
             </Button>
           ))}
