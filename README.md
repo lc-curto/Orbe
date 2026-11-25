@@ -15,7 +15,7 @@ A documentação é a referência para produto, design, desenvolvimento e valida
 1. Ler [AGENTS.md](AGENTS.md) antes de executar trabalho neste projeto.
 2. Consultar as regras financeiras antes de alterar qualquer fluxo que afete dinheiro, saldos, cartões, dívidas ou projeções.
 3. Consultar interfaces antes de alterar páginas ou navegação.
-4. Consultar arquitetura/UML e o [modelo ER](docs/07-modelo-er.md) antes de alterar entidades, persistência ou serviços.
+4. Consultar arquitetura/UML e o [modelo ER](docs/04-arquitetura-modelo-e-auditoria.md) antes de alterar entidades, persistência ou serviços.
 5. Verificar pendências antes de assumir decisões ainda não aprovadas.
 
 ## Documentos
