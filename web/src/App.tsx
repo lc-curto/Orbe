@@ -284,10 +284,13 @@ export default function App() {
   const morePages = [
     { icon: 'wallet' as IconName, label: 'Cartões' },
     { icon: 'wallet' as IconName, label: 'Dívidas' },
+    { icon: 'activity' as IconName, label: 'Relatórios' },
+    { icon: 'wallet' as IconName, label: 'Configurações' },
   ]
   const sidebarGroups = [
     { title: 'Principal', pages: navigation.filter((item) => ['Início', 'Movimentos', 'Rota'].includes(item.label)) },
-    { title: 'Gestão financeira', pages: [{ icon: 'wallet' as IconName, label: 'Contas' }, ...morePages] },
+    { title: 'Gestão financeira', pages: [{ icon: 'wallet' as IconName, label: 'Contas' }, ...morePages.slice(0, 2)] },
+    { title: 'Ferramentas', pages: morePages.slice(2) },
   ]
 
   function notify(message: string) {
@@ -309,8 +312,8 @@ export default function App() {
       ? [{ label: 'Novo cartão', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de cartões será disponibilizada na fase de formulários.' }]
       : activeKey === 'Dívidas'
         ? [{ label: 'Nova dívida', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de dívidas será disponibilizada na fase de formulários.' }]
-        : activeKey === 'Rota'
-          ? [{ label: 'Criar programação', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de programações será disponibilizada na fase de formulários.' }]
+        : ['Rota', 'Relatórios', 'Configurações'].includes(activeKey)
+          ? [{ label: 'Sem ações de criação nesta página', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: activeKey === 'Rota' ? 'A Rota Financeira apresenta projeções e não cria movimentos diretamente.' : activeKey === 'Relatórios' ? 'A criação de relatórios ainda não está disponível.' : 'As Configurações não têm ações de criação.' }]
           : activeKey === 'Movimentos' && movementTab === 'schedules'
             ? [{ label: 'Nova programação', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de programações será disponibilizada na fase de formulários.' }]
             : [
@@ -359,7 +362,7 @@ export default function App() {
           <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
-            {activeKey === 'Dívidas' ? <YStack gap={12}><H1 fontSize={30}>Dívidas</H1><Paragraph color="#667085">Esta página está prevista na estrutura do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
+            {['Dívidas', 'Relatórios', 'Configurações'].includes(activeKey) ? <YStack gap={12}><H1 fontSize={30}>{activeKey}</H1><Paragraph color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
             <XStack className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <YStack gap={4} flex={1} minWidth={0}>
@@ -418,7 +421,7 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Dívidas' ? <div className="mobile-page-shell"><YStack className="main-content" gap={12}><Text color="#101828" fontSize={24} fontWeight="800">Dívidas</Text><Text color="#667085">Esta página está prevista na estrutura do Orbe e será implementada numa etapa posterior.</Text></YStack></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} userName={user.name} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />}
+        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : ['Dívidas', 'Relatórios', 'Configurações'].includes(activeKey) ? <div className="mobile-page-shell"><YStack className="main-content" gap={12}><Text color="#101828" fontSize={24} fontWeight="800">{activeKey}</Text><Text color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Text></YStack></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} userName={user.name} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />}
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         {activeKey !== 'Início' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } setMorePagesOpen(false); setActiveKey(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={activeKey === item.label || (item.label === 'Mais' && morePages.some((page) => page.label === activeKey)) ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#e6f4f1' : 'transparent'} color={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#087f70' : '#667085'}>
