@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { fetchRecurrenceOccurrences } from './api/finance'
+import { MonthSelector } from './MonthSelector'
 import type { Account, Category, Operation, RecurrenceOccurrence, RecurrenceSchedule } from './api/types'
 
 type Tab = 'movements' | 'schedules'
@@ -27,7 +28,6 @@ const monthValue = (value?: string | null) => value ? new Intl.DateTimeFormat('e
 const frequencyLabel = (frequency: RecurrenceSchedule['frequency']) => ({ DAILY: 'Diária', WEEKLY: 'Semanal', MONTHLY: 'Mensal' })[frequency]
 const stateLabel = (state: string) => ({ PENDING: 'Pendente', REALIZED: 'Realizada', CANCELLED: 'Cancelada', ACTIVE: 'Ativa', PAUSED: 'Pausada', ENDED: 'Terminada' }[state] ?? state)
 const typeLabel = (type: string) => ({ EXPENSE: 'Despesa', INCOME: 'Receita', TRANSFER: 'Transferência' }[type] ?? type)
-const monthLabel = (value: string) => new Intl.DateTimeFormat('pt-PT', { month: 'long', year: 'numeric' }).format(new Date(`${value}-01T12:00:00`))
 
 function Kpi({ label, value, tone, detail }: { label: string; value: string; tone: string; detail: string }) {
   return <div className="movement-kpi"><span>{label}</span><strong style={{ color: tone }}>{value}</strong><small>{detail}</small></div>
@@ -90,7 +90,7 @@ export function MovementsPage({ tab, setTab, operations, recurrences, accounts, 
 
   return <section className="movements-page">
     <div className="movements-brand"><span className="brand-mark">▣</span><strong>Orbe</strong><div className="movements-account">{userName && userEmail ? <><button className="account-trigger" type="button" aria-label="Abrir menu da conta" aria-expanded={accountOpen} onClick={() => setAccountOpen((value) => !value)}><span className="account-avatar">◉</span></button>{accountOpen ? <div className="account-dropdown movements-account-dropdown"><strong>{userName}</strong><small>{userEmail}</small><button type="button" onClick={() => { setAccountOpen(false); onLogout?.() }}>Terminar sessão</button></div> : null}</> : null}</div></div>
-    <div className="movements-header"><div><h1>Movimentos</h1><div className="month-navigation"><button type="button" aria-label="Mês anterior" onClick={() => onMonthChange(month === '2026-12' ? '2026-11' : month)}>‹</button><span>{monthLabel(month)}</span><button type="button" aria-label="Mês seguinte" onClick={() => onMonthChange(month === '2026-11' ? '2026-12' : month)}>›</button></div></div>{tab === 'movements' ? <button className="primary-button desktop-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}</div>
+    <div className="movements-header"><div><h1>Movimentos</h1></div><div className="movements-header-actions"><MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="movement-month-selector" />{tab === 'movements' ? <button className="primary-button desktop-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}</div></div>{tab === 'movements' ? <button className="primary-button mobile-new-button" type="button" onClick={onNewMovement>+ Novo movimento</button> : null}
     <div className="movement-tabs" role="tablist"><button type="button" role="tab" aria-selected={tab === 'movements'} className={tab === 'movements' ? 'active' : ''} onClick={() => setTab('movements')}>Movimentos</button><button type="button" role="tab" aria-selected={tab === 'schedules'} className={tab === 'schedules' ? 'active' : ''} onClick={() => setTab('schedules')}>Programações</button></div>
     {tab === 'movements' ? <>
       <div className="movement-kpis"><Kpi label="Receitas" value={money(kpis.income, '+ ')} tone="#16805b" detail="Realizadas no período" /><Kpi label="Despesas" value={money(kpis.expenses, '− ')} tone="#c2415d" detail="Realizadas no período" /><Kpi label="Resultado" value={money(kpis.income - kpis.expenses, kpis.income - kpis.expenses >= 0 ? '+ ' : '− ')} tone={kpis.income - kpis.expenses >= 0 ? '#175cd3' : '#c2415d'} detail="Receitas − despesas" /></div>
