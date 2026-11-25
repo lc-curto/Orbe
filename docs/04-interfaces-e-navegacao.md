@@ -56,14 +56,16 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Exemplos numéricos devem ser matematicamente coerentes.
 
 ## Contas — aprovado
-- Cabeçalho Contas e botão +; KPI saldo total.
-- Secção As minhas contas.
-- Linha: ícone, nome, instituição/descrição abaixo e saldo atual calculado à direita.
+- Cabeçalho Contas e botão +.
+- Card/KPI Saldo total imediatamente abaixo do cabeçalho, antes dos filtros e da lista.
+- Filtro de contas ativas/encerradas.
+- Secção **As minhas contas**, apresentada acima da lista.
+- Linha: ícone, nome, instituição/descrição abaixo, saldo atual calculado à direita e menu contextual `⋮`.
+- O menu contextual de cada conta inclui o acesso **Conferir saldo**. Não existe acesso global de conferência no fim da página.
+- A conferência abre a subpágina da conta selecionada: comparar saldo calculado e saldo real informado; mostrar diferença e histórico; registar comparação/data sem criar movimentos nem alterar saldo calculado.
 - O saldo atual inclui o saldo inicial da conta e todos os lançamentos realizados válidos posteriores; pendentes e projeções não entram.
 - Na criação, o utilizador informa o saldo existente no início da utilização da conta no Orbe. Esse valor é posição de abertura, não receita/despesa nem KPI separado.
 - O saldo inicial não pode ser sobrescrito no modal de edição; correções exigem ação rastreável própria, conforme regras financeiras.
-- Acesso separado a Conferência de saldos no fim da lista.
-- Conferência em subpágina: comparar saldo calculado e saldo real informado; mostrar diferença e histórico; registar comparação/data sem criar movimentos nem alterar saldo calculado.
 
 ## Cartões — aprovado
 Reutiliza estrutura de Contas.
