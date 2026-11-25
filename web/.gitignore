@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment configuration
+.env
+.env.*
+!.env.example
+
+# Tamagui generated metadata
+.tamagui/
