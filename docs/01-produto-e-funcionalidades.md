@@ -5,7 +5,7 @@
 
 ---
 
-<!-- Conteúdo consolidado de docs/01-visao-geral.md -->
+<!-- Conteúdo consolidado de docs/01-produto-e-funcionalidades.md -->
 
 
 ## Objetivo
@@ -71,7 +71,7 @@ Os saldos e resultados devem ser coerentes em todas as páginas e plataformas, s
 
 ---
 
-<!-- Conteúdo consolidado de docs/03-funcionalidades-e-operacoes.md -->
+<!-- Conteúdo consolidado de docs/01-produto-e-funcionalidades.md -->
 
 
 ## Estados
