@@ -37,12 +37,6 @@ Compilar não significa estar concluído. A tarefa deve cumprir critérios de ac
 Atualizar a documentação quando decisões aprovadas mudarem. Manter IDs estáveis e marcar decisões antigas como substituídas. Nunca versionar credenciais, tokens, dados bancários reais ou informação pessoal sensível. Usar dados fictícios nos exemplos.
 
 
-## Arquitetura frontend web — obrigatório
-Antes de criar ou alterar páginas em `web/`, consultar [docs/12-arquitetura-frontend-web.md](docs/12-arquitetura-frontend-web.md). A referência visual define aparência e comportamento aprovado, nunca autoriza copiar a organização monolítica de HTML/CSS/JS para React.
+## Frontend Web
 
-- Páginas devem compor componentes com responsabilidades delimitadas; não concentrar, sem justificação, estado de interação, transformação de dados, regras de negócio, formatação e toda a UI num único componente.
-- Separar lógica derivada/testável em hooks de domínio da página e utilitários puros; componentes visuais recebem props e não duplicam cálculos.
-- Reutilizar primeiro o design system Orbe/Tamagui, tokens e componentes existentes. Não introduzir padrões visuais ou estilos locais divergentes sem necessidade documentada.
-- Manter tipos explícitos, estado local no menor componente responsável e efeitos apenas para sincronização externa.
-- Não refatorar páginas adjacentes fora do escopo sem autorização; novas implementações devem seguir o padrão e páginas antigas serão corrigidas gradualmente.
-- Na conclusão, executar build e lint da aplicação web quando o ambiente permitir; reportar separadamente o que foi executado e o que ficou por validar.
+Seguir o padrão frontend definido em [docs/05-arquitetura-e-uml.md](docs/05-arquitetura-e-uml.md#frontend-web). A referência visual define UI e comportamento, não a estrutura do código. Novas páginas devem separar composição, apresentação e lógica derivada, reutilizar o design system e evitar refatorações fora do escopo.
