@@ -170,7 +170,7 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
   )
 }
 
-function MobileDashboard({ period, month, onMonthChange, card, invoice, navigation, activeKey, setActiveKey, notify, userName, onLogout, logoutDisabled }: {
+function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, notify, userName }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
