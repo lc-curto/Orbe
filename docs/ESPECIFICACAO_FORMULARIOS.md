@@ -72,7 +72,7 @@ Os valores acima são referências do sistema atual, não autorização para dup
 - A ação principal usa botão preenchido (filled), com a cor primary do Design System.
 - Ações secundárias usam o estilo secundário já existente no sistema.
 - A hierarquia deve ser inequívoca: uma ação principal por contexto de submissão.
-- Não criar botões flutuantes globais como padrão.
+- Os formulários não devem criar um FAB próprio nem duplicar o ponto de entrada de criação da aplicação. O Orbe já utiliza um botão flutuante global (+) no `AppShell`, contextual à página; os formulários são abertos por esse ponto de entrada quando a ação e o contrato estão disponíveis. A regra visual do FAB global pertence à navegação da aplicação, não ao recipiente ou ao desenho interno do formulário.
 - Estados de carregamento mantêm a identidade e a dimensão do botão.
 
 ---
@@ -736,6 +736,21 @@ A implementação só corresponde a esta especificação quando cumprir os crit�
 - [ ] Nenhuma integração/backend foi alterada sem pedido explícito.
 
 ---
+
+## 14.1 Entrada global de criação e estado atual da aplicação
+
+A implementação de navegação publicada na `main` em 2026-11-25 utiliza um FAB global (+), fixo no viewport e contextual à página. Esta decisão de navegação é uma exceção explícita à regra de não criar FABs dentro dos formulários: não criar outro FAB no formulário nem um botão de criação duplicado no cabeçalho/lista.
+
+Comportamento atualmente implementado:
+- Dashboard e Movimentos: despesa, receita e transferência.
+- Contas: Nova conta; formulário ainda indisponível.
+- Cartões: Novo cartão; formulário ainda indisponível.
+- Dívidas: Nova dívida; formulário ainda indisponível.
+- Movimentos/Programações: Nova programação; formulário ainda indisponível.
+- Rota: Nova projeção; indisponível até existir contrato/read model de projeção.
+- Relatórios e Configurações: FAB oculto, sem ação de criação.
+
+A existência de uma opção no FAB não significa que o formulário esteja implementado ou que exista autorização funcional para criar dados. Ações sem suporte devem informar a indisponibilidade e não podem criar dados fictícios. Quando um formulário estiver disponível, mantém os recipientes, campos, rodapé e comportamentos especificados neste documento.
 
 ## 15. Procedimento para a IA que vai implementar
 
