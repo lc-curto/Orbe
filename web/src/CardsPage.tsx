@@ -165,7 +165,6 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
           <h1 id="cards-page-title">Cartões</h1>
           <p className="accounts-page-subtitle">{activeCards.length} {activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}</p>
         </div>
-        <button className="accounts-new-button" type="button" disabled aria-label="Novo cartão — disponível na fase de formulários">＋ Novo</button>
       </header>
       <div className="accounts-total-card cards-total-card">
         <span className="accounts-total-label">TOTAL EM DÍVIDA</span>
