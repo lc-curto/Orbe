@@ -30,6 +30,41 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 .desktop-sidebar.expanded { width: 220px; }
 .desktop-sidebar.collapsed { width: 72px; padding-left: 12px; padding-right: 12px; }
 .mobile-bottom-bar { display: none; }
+
+/* Dashboard header: consistent hierarchy on tablet and mobile */
+.mobile-dashboard-header {
+  width: 100%;
+  gap: 12px;
+}
+.mobile-dashboard-greeting-text {
+  font-size: clamp(22px, 2.8vw, 30px);
+  line-height: 1.15;
+  letter-spacing: -0.6px;
+}
+.mobile-dashboard-date {
+  line-height: 1.4;
+}
+.mobile-dashboard-period-row {
+  width: 100%;
+}
+.account-menu {
+  position: relative;
+  z-index: 20;
+}
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  min-width: 220px;
+  max-width: calc(100vw - 28px);
+  padding: 14px;
+  border: 1px solid var(--orbe-border);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, 0.14);
+}
+
 .mobile-dashboard { display: none; }
 .feedback-toast {
   position: fixed;
