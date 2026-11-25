@@ -1,8 +1,17 @@
-# Orbe — Especificação do produto
+# Orbe — Aplicação de gestão financeira pessoal
 
-O Orbe é uma aplicação de gestão financeira pessoal. Este repositório é a referência funcional e técnica para produto, design, desenvolvimento e validação; não contém a implementação da aplicação.
+O Orbe é uma aplicação de gestão financeira pessoal. Este repositório contém o código da aplicação e a documentação funcional e técnica do projeto.
+
+## Estrutura do repositório
+
+- `backend/` — implementação do backend.
+- `web/` — implementação da aplicação web.
+- `docs/` — documentação funcional, financeira, de arquitetura, interfaces e desenvolvimento.
+
+A documentação é a referência para produto, design, desenvolvimento e validação. Antes de alterar funcionalidades, consultar os documentos relevantes e respeitar as decisões aprovadas.
 
 ## Como navegar
+
 1. Ler [AGENTS.md](AGENTS.md) antes de executar trabalho neste projeto.
 2. Consultar as regras financeiras antes de alterar qualquer fluxo que afete dinheiro, saldos, cartões, dívidas ou projeções.
 3. Consultar interfaces antes de alterar páginas ou navegação.
@@ -10,6 +19,7 @@ O Orbe é uma aplicação de gestão financeira pessoal. Este repositório é a 
 5. Verificar pendências antes de assumir decisões ainda não aprovadas.
 
 ## Documentos
+
 | Ficheiro | Conteúdo |
 |---|---|
 | [ESPECIFICACAO_FORMULARIOS.md](docs/ESPECIFICACAO_FORMULARIOS.md) | Formulários, modais, validações e interações frontend |
@@ -26,6 +36,7 @@ O Orbe é uma aplicação de gestão financeira pessoal. Este repositório é a 
 | [11-contrato-transferencias.md](docs/11-contrato-transferencias.md) | Contrato mínimo de transferências |
 
 ## Estado das decisões
+
 - **Aprovado:** confirmado pelo responsável do produto.
 - **Em análise:** proposta ainda não aprovada.
 - **Pendente:** decisão necessária.
@@ -34,7 +45,9 @@ O Orbe é uma aplicação de gestão financeira pessoal. Este repositório é a 
 Uma proposta técnica não se torna requisito aprovado apenas por estar documentada. Decisões pendentes devem permanecer identificadas.
 
 ## Manutenção
+
 Manter a documentação concisa, verificável e sem duplicação. Cada regra tem uma localização principal. Quando uma decisão mudar, atualizar o documento de origem e as referências afetadas no mesmo conjunto de alterações.
 
 ## Estado atual
+
 Fundamentos, modelo financeiro, comportamento das operações, páginas principais, stack, monorepo e ARC-001 estão aprovados. O modelo ER conceptual (ARC-002), o UML complementar e o modelo físico do núcleo financeiro estão aprovados; o núcleo usa migrations versionadas e `DECIMAL(19,4)`. Permanecem decisões de produto sobre estimativas variáveis, alguns estados/apresentações e módulos conceptuais ainda sem migrations.
