@@ -85,7 +85,7 @@ export function MovementsPage({ tab, setTab, operations, recurrences, accounts, 
   }
 
   return <section className="movements-page">
-    <div className="movements-header"><div><h1>Movimentos</h1><MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="movement-month-selector" /></div>{tab === 'movements' ? <button className="primary-button desktop-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}</div>
+    <div className="movements-header"><div className="movements-heading"><h1>Movimentos</h1></div><div className="movements-header-actions">{tab === 'movements' ? <button className="primary-button desktop-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}<MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="movement-month-selector" /></div></div>
     {tab === 'movements' ? <button className="primary-button mobile-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}
     <div className="movement-tabs" role="tablist"><button type="button" role="tab" aria-selected={tab === 'movements'} className={tab === 'movements' ? 'active' : ''} onClick={() => setTab('movements')}>Movimentos</button><button type="button" role="tab" aria-selected={tab === 'schedules'} className={tab === 'schedules' ? 'active' : ''} onClick={() => setTab('schedules')}>Programações</button></div>
     {tab === 'movements' ? <>
