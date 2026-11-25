@@ -195,7 +195,7 @@ function MobileDashboard({ period, card, invoice, navigation, activeKey, setActi
 }) {
   const [hidden, setHidden] = useState(false)
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
-  const userInitials = userName.trim().split(/\\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join('')
+  const userInitials = userName.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0].toUpperCase()).join('')
 
   return (
     <YStack className="mobile-dashboard" backgroundColor="#f7f9fc" minHeight="100vh">
