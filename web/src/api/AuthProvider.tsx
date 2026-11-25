@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
-import { ApiError } from './client'
+import { ApiError, getStoredToken } from './client'
 import { fetchCurrentUser, login as requestLogin, logout as requestLogout, register as requestRegister, requestPasswordReset as requestPasswordResetApi, resetPassword as resetPasswordApi } from './auth'
 import { AuthContext } from './auth-context'
 import type { AuthSession, AuthUser } from './types'
@@ -14,10 +14,14 @@ function errorMessage(error: unknown): string {
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<AuthUser | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(() => Boolean(getStoredToken()))
   const [error, setError] = useState<string | null>(null)
 
   const refresh = useCallback(async (): Promise<AuthUser | null> => {
+    if (!getStoredToken()) {
+      setUser(null)
+      return null
+    }
     try {
       const currentUser = await fetchCurrentUser()
       setUser(currentUser)
@@ -31,6 +35,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     let mounted = true
+    if (!getStoredToken()) {
+      return () => { mounted = false }
+    }
     void fetchCurrentUser()
       .then((currentUser) => {
         if (mounted) setUser(currentUser)
