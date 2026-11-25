@@ -1090,3 +1090,40 @@ input[type="search"] {
     margin: 0 0 12px;
   }
 }
+
+
+/* Keep quick filters on one line; allow horizontal scrolling on narrow screens */
+.movements-page .movement-filter-row {
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow: visible;
+}
+.movements-page .movement-filter-row .filter-chips {
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.movements-page .movement-filter-row .filter-chips::-webkit-scrollbar {
+  display: none;
+}
+.movements-page .movement-filter-row .filter-chips button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+@media (max-width: 1023px) {
+  .movements-page .movement-filter-row {
+    flex-wrap: nowrap;
+    overflow: visible;
+  }
+  .movements-page .movement-filter-row .filter-chips {
+    flex: 1 1 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+}
