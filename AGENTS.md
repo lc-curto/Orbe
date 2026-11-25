@@ -39,4 +39,4 @@ Atualizar a documentação quando decisões aprovadas mudarem. Manter IDs estáv
 
 ## Frontend Web
 
-Seguir o padrão frontend definido em [docs/05-arquitetura-e-uml.md](docs/05-arquitetura-e-uml.md#frontend-web). A referência visual define UI e comportamento, não a estrutura do código. Novas páginas devem separar composição, apresentação e lógica derivada, reutilizar o design system e evitar refatorações fora do escopo.
+Seguir o padrão frontend definido em [docs/04-arquitetura-modelo-e-auditoria.md](docs/05-arquitetura-e-uml.md#frontend-web). A referência visual define UI e comportamento, não a estrutura do código. Novas páginas devem separar composição, apresentação e lógica derivada, reutilizar o design system e evitar refatorações fora do escopo.
