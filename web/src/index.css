@@ -612,3 +612,70 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
     color: #c2415d !important;
   }
 }
+
+
+/* Single reusable month control used by Dashboard and Movements. */
+.orbe-month-selector {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 2px;
+  min-width: 104px;
+  height: 44px;
+  padding: 4px;
+  border: 1px solid #d0d5dd;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #101828;
+}
+.orbe-month-selector button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #667085;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color .14s ease, color .14s ease;
+}
+.orbe-month-selector button:hover:not(:disabled) {
+  background: #f2f4f7;
+  color: #101828;
+}
+.orbe-month-selector button:focus-visible {
+  outline: 2px solid rgba(8, 127, 112, .55);
+  outline-offset: -2px;
+}
+.orbe-month-selector button:disabled {
+  opacity: .4;
+  cursor: default;
+}
+.orbe-month-selector-label {
+  display: inline-block;
+  min-width: 40px;
+  text-align: center;
+  white-space: nowrap;
+  color: #101828;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+.dashboard-month-selector,
+.desktop-month-selector,
+.movement-month-selector { border-radius: 999px; }
+
+@media (max-width: 1023px) {
+  .orbe-month-selector { height: 44px; min-width: 104px; }
+  .orbe-month-selector button { flex-basis: 26px; width: 26px; height: 32px; }
+  .orbe-month-selector-label { min-width: 40px; font-size: 12px; }
+  .mobile-page-shell .movement-month-selector { margin-top: 8px; }
+}
