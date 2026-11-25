@@ -181,10 +181,18 @@ Enquanto estes contratos não existirem, o frontend não deve criar categorias, 
 - [ ] Implementar edição, cancelamento, eliminação e reversão conforme o estado.
 - [ ] Implementar menus contextuais adaptativos.
 
+## Decisão de execução — 2026-11-25
+
+Antes de implementar os formulários concretos, o produto deve completar as subpáginas principais em modo de leitura. Esta ordem reduz retrabalho, permite validar a navegação e o `AppShell` em todos os tamanhos de ecrã e garante que cada página é ligada apenas aos dados e contratos já existentes.
+
+A sequência de subpáginas é: Movimentos/Programações, Contas, Cartões e faturas, Rota Financeira, Dívidas, Relatórios e Configurações. Os formulários de escrita avançam depois desta ronda, respeitando os contratos backend confirmados.
+
+A Rota Financeira está especificada visualmente, mas não pode ser implementada com projeções fictícias nesta etapa. A API atual não expõe ainda um read model diário de projeção e faltam no frontend os dados de classificação fixa/variável/excluída e as regras completas de obrigações futuras. A sua implementação fica condicionada ao fecho desse contrato de leitura e projeção.
+
 ## 12. Subpáginas
 
 - [x] Implementar Movimentos e a aba Programações em modo de leitura.
-- [ ] Implementar Rota Financeira.
+- [!] Implementar Rota Financeira — aguarda contrato/read model de projeção diária.
 - [ ] Implementar Contas.
 - [ ] Implementar Cartões e detalhe de faturas.
 - [ ] Implementar Dívidas e detalhe de pagamentos.
@@ -213,12 +221,12 @@ Enquanto estes contratos não existirem, o frontend não deve criar categorias, 
 
 ## Próxima sequência de execução
 
-1. Implementar o cliente API e a autenticação do frontend.
-2. Ligar cartões, faturas e operações a dados reais.
-3. Implementar os quatro formulários suportados pelos contratos atuais.
-4. Validar os fluxos completos no frontend.
-5. Fechar os contratos de contas, categorias, despesas, receitas e transferências.
-6. Implementar os formulários comuns e as subpáginas.
+1. Completar as subpáginas em modo de leitura: Contas, Cartões/faturas, Rota Financeira, Dívidas, Relatórios e Configurações.
+2. Fechar os contratos de leitura e projeção necessários para a Rota Financeira, sem criar dados ou regras fictícias.
+3. Validar a navegação e o `AppShell` em desktop, tablet e mobile.
+4. Implementar os formulários suportados pelos contratos atuais.
+5. Validar os fluxos completos no frontend.
+6. Implementar os formulários comuns após o fecho dos contratos pendentes.
 7. Executar a auditoria final e publicar apenas após autorização explícita.
 
 ## Regra de controlo
