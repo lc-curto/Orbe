@@ -5,7 +5,7 @@
 
 ---
 
-<!-- Conteúdo consolidado de docs/10-contrato-operacoes-base.md -->
+<!-- Conteúdo consolidado de docs/06-contratos-api.md -->
 
 
 > Fase 1 autorizada em 2026-11-24. Este contrato cobre apenas contas, categorias, despesas comuns e receitas.
@@ -57,7 +57,7 @@ Esta fase não implementa edição, eliminação, cancelamento, transferências,
 
 ---
 
-<!-- Conteúdo consolidado de docs/11-contrato-transferencias.md -->
+<!-- Conteúdo consolidado de docs/06-contratos-api.md -->
 
 
 > Fase 2 autorizada em 2026-11-24.
@@ -80,7 +80,7 @@ O sistema rejeita a mesma conta nas duas pernas, contas de outro utilizador, con
 
 ---
 
-<!-- Conteúdo consolidado de docs/12-contrato-recorrencias.md -->
+<!-- Conteúdo consolidado de docs/06-contratos-api.md -->
 
 
 > Fase 3 autorizada em 2026-11-24.
