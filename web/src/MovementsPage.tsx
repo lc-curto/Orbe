@@ -85,7 +85,6 @@ export function MovementsPage({ tab, setTab, operations, recurrences, accounts, 
   }
 
   return <section className="movements-page">
-    <div className="movements-brand"><span className="brand-mark">▣</span><strong>Orbe</strong></div>
     <div className="movements-header"><div><h1>Movimentos</h1><div className="month-navigation"><button type="button" aria-label="Mês anterior" onClick={() => onMonthChange(month === '2026-12' ? '2026-11' : month)}>‹</button><span>{monthLabel(month)}</span><button type="button" aria-label="Mês seguinte" onClick={() => onMonthChange(month === '2026-11' ? '2026-12' : month)}>›</button></div></div>{tab === 'movements' ? <button className="primary-button desktop-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}</div>
     {tab === 'movements' ? <button className="primary-button mobile-new-button" type="button" onClick={onNewMovement}>+ Novo movimento</button> : null}
     <div className="movement-tabs" role="tablist"><button type="button" role="tab" aria-selected={tab === 'movements'} className={tab === 'movements' ? 'active' : ''} onClick={() => setTab('movements')}>Movimentos</button><button type="button" role="tab" aria-selected={tab === 'schedules'} className={tab === 'schedules' ? 'active' : ''} onClick={() => setTab('schedules')}>Programações</button></div>
