@@ -225,18 +225,6 @@ function MobileDashboard({ period, periodIndex, periodCount, onPeriodChange, car
             <Button onPress={() => { setMoreMenuOpen(false); onLogout() }} disabled={logoutDisabled} borderWidth={0} backgroundColor="transparent" justifyContent="flex-start" paddingHorizontal={10} height={40}>
               <XStack alignItems="center" gap={10}><Icon name="user" size={17} color="#c2415d" /><Text color="#c2415d" fontSize={13} fontWeight="700">Terminar sessão</Text></XStack>
             </Button>
-            <YStack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
-              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" borderWidth={0} backgroundColor="transparent" color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={42} justifyContent={sidebarOpen ? "flex-start" : "center"}>
-                <XStack alignItems="center" gap={10}><Icon name="bell" size={17} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</XStack>
-              </Button>
-              <YStack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
-                <Button onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
-                  <XStack alignItems="center" gap={10}><Icon name="user" size={17} />{sidebarOpen ? <YStack gap={2} alignItems="flex-start"><Text fontSize={13} fontWeight="700">{user.name}</Text><Text fontSize={11} color="#667085">{user.email}</Text></YStack> : null}</XStack>
-                </Button>
-                {accountMenuOpen ? <YStack className="account-dropdown sidebar-account-dropdown" gap={6}><Text color="#101828" fontSize={12} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError("Não foi possível terminar a sessão. Tenta novamente.")) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
-              </YStack>
-            </YStack>
-          </YStack>
         ) : null}
         <Card className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <YStack gap={12}><XStack style={{ justifyContent: 'space-between', alignItems: 'center' }}><Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text><Button onPress={() => setHidden((value) => !value)} aria-label={hidden ? 'Mostrar saldo' : 'Ocultar saldo'} width={30} height={30} padding={0} borderRadius={9} borderWidth={0} backgroundColor="rgba(255,255,255,0.14)"><Icon name={hidden ? 'eyeOff' : 'eye'} size={15} color="#ffffff" /></Button></XStack><YStack gap={2}><Text color="#ffffff" fontSize={30} fontWeight="800">{hidden ? '••••••' : '€ 2.840,50'}</Text><Text color="#dbeafe" fontSize={12}>Todas as contas</Text></YStack><Separator borderColor="rgba(255,255,255,0.24)" /><XStack style={{ justifyContent: 'space-between' }}>{[['Receitas', period.income], ['Despesas', period.expenses], ['Resultado', '+ € 2.054,20']].map(([label, value]) => <YStack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{hidden ? '••••' : value}</Text></YStack>)}</XStack></YStack>
@@ -335,6 +323,17 @@ export default function App() {
                   <XStack gap={10} style={{ alignItems: 'center', justifyContent: sidebarOpen ? 'flex-start' : 'center' }}><Icon name={item.icon} size={16} />{sidebarOpen ? <Text>{item.label}</Text> : null}</XStack>
                 </Button>
               ))}
+            </YStack>
+            <YStack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
+              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" borderWidth={0} backgroundColor="transparent" color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={42} justifyContent={sidebarOpen ? "flex-start" : "center"}>
+                <XStack alignItems="center" gap={10}><Icon name="bell" size={17} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</XStack>
+              </Button>
+              <YStack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
+                <Button onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
+                  <XStack alignItems="center" gap={10}><Icon name="user" size={17} />{sidebarOpen ? <YStack gap={2} alignItems="flex-start"><Text fontSize={13} fontWeight="700">{user.name}</Text><Text fontSize={11} color="#667085">{user.email}</Text></YStack> : null}</XStack>
+                </Button>
+                {accountMenuOpen ? <YStack className="account-dropdown sidebar-account-dropdown" gap={6}><Text color="#101828" fontSize={12} fontWeight="700">{user.name}</Text><Text color="#667085" fontSize={11}>{user.email}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError("Não foi possível terminar a sessão. Tenta novamente.")) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
+              </YStack>
             </YStack>
           </YStack>
 
