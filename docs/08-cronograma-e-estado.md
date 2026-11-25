@@ -194,7 +194,7 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 - [x] Implementar Movimentos e a aba Programações em modo de leitura.
 - [!] Implementar Rota Financeira — aguarda contrato/read model de projeção diária.
 - [ ] Validar e concluir Contas em modo de leitura (UI em `feature/accounts-page`: hierarquia do saldo total, secção As minhas contas e menu contextual por conta; os saldos reais continuam condicionados ao contrato/read model disponível).
-- [ ] Implementar Cartões e detalhe de faturas.
+- [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado).
 - [ ] Implementar Dívidas e detalhe de pagamentos.
 - [ ] Implementar Relatórios.
 - [ ] Implementar Configurações conforme a navegação aprovada.
