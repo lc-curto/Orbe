@@ -5,7 +5,7 @@
 
 ---
 
-<!-- Conteúdo consolidado de docs/04-interfaces-e-navegacao.md -->
+<!-- Conteúdo consolidado de docs/03-interface-e-formularios.md -->
 
 
 Regista decisões aprovadas das páginas principais. Não substitui os mockups visuais originais. Não inventar pormenores visuais não especificados nem redesenhar páginas aprovadas sem autorização.
@@ -136,14 +136,14 @@ Esta secção regista o comportamento atualmente implementado no frontend, após
 
 
 ## Regra de implementação frontend
-As especificações desta documentação definem comportamento e apresentação, não a estrutura do código. A implementação deve respeitar o padrão frontend em [05 — Arquitetura e UML](05-arquitetura-e-uml.md#frontend-web). Não reproduzir no código a estrutura monolítica de um protótipo HTML de referência.
+As especificações desta documentação definem comportamento e apresentação, não a estrutura do código. A implementação deve respeitar o padrão frontend em [05 — Arquitetura e UML](04-arquitetura-modelo-e-auditoria.md#frontend-web). Não reproduzir no código a estrutura monolítica de um protótipo HTML de referência.
 
 ## Rota Financeira — organização frontend (correção de arquitetura, 2026-11-25)
 
 
 ---
 
-<!-- Conteúdo consolidado de docs/ESPECIFICACAO_FORMULARIOS.md -->
+<!-- Conteúdo consolidado de docs/03-interface-e-formularios.md -->
 
 
 **Estado:** aprovado pelo utilizador  
@@ -943,7 +943,7 @@ Esses pontos devem ser obtidos na documentação funcional aprovada e no código
 
 ## 17. Correspondência obrigatória com as regras funcionais
 
-Esta secção confronta os padrões visuais anteriores com as regras de `docs/02-regras-financeiras.md`, `docs/03-funcionalidades-e-operacoes.md`, `docs/04-interfaces-e-navegacao.md`, `docs/06-pendencias-e-plano.md` e `docs/07-modelo-er.md`.
+Esta secção confronta os padrões visuais anteriores com as regras de `docs/02-regras-financeiras.md`, `docs/01-produto-e-funcionalidades.md`, `docs/03-interface-e-formularios.md`, `docs/05-estado-e-plano.md` e `docs/04-arquitetura-modelo-e-auditoria.md`.
 
 **Hierarquia documental:** as regras funcionais e o modelo de domínio prevalecem sobre qualquer wireframe deste ficheiro. Esta especificação apenas determina como apresentar e interagir com os fluxos já definidos. Um exemplo visual não cria um campo, método de pagamento, estado, associação ou ação nova.
 
@@ -1082,7 +1082,7 @@ A conferência é uma comparação, não um movimento:
 
 ### 17.11 Ações permitidas por estado e dependências
 
-A apresentação dos botões e menus deve obedecer a `docs/03-funcionalidades-e-operacoes.md` e `docs/04-interfaces-e-navegacao.md`:
+A apresentação dos botões e menus deve obedecer a `docs/01-produto-e-funcionalidades.md` e `docs/03-interface-e-formularios.md`:
 - Não mostrar ações indisponíveis. Não mostrar opções desativadas apenas para explicar que não podem ser usadas.
 - **Pendente:** pode permitir edição conforme natureza/dependências e confirmação explícita; não assumir que todos os campos continuam editáveis.
 - **Realizado:** alterações com efeitos financeiros confirmados exigem correção rastreável. Não disponibilizar eliminação destrutiva; apresentar Reverter apenas quando permitido.
