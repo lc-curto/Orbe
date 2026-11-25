@@ -181,6 +181,9 @@ function QuickAction({ icon, label, detail, color }: { icon: IconName; label: st
 
 function MobileDashboard({ period, periodIndex, periodCount, onPeriodChange, card, invoice, navigation, activeKey, setActiveKey, notify, openForm, userName, userEmail, onLogout, logoutDisabled }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
+  periodIndex: number
+  periodCount: number
+  onPeriodChange: (index: number) => void
   card?: FinancialCard
   invoice?: CardInvoice
   navigation: Array<{ icon: IconName; label: string }>
@@ -205,7 +208,7 @@ function MobileDashboard({ period, periodIndex, periodCount, onPeriodChange, car
             <Text className="mobile-dashboard-date" color="#667085" fontSize={13}>{period.date}</Text>
           </YStack>
           <YStack className="account-menu" style={{ alignItems: 'flex-end', flexShrink: 0 }}>
-            <Button onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir menu do perfil" aria-expanded={accountMenuOpen} height={40} width={40} padding={0} borderRadius={999} {...border} backgroundColor="#ffffff">
+            <Button onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir menu do perfil" aria-expanded={accountMenuOpen} height={40} width={40} padding={0} borderRadius={999} borderWidth={0} backgroundColor="#eaecf0">
               <Icon name="user" size={17} color="#344054" />
             </Button>
             {accountMenuOpen ? (
