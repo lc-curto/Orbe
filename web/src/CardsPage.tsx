@@ -126,7 +126,7 @@ export function CardsPage({ cards, loading, error }: Props) {
       <div className="accounts-total-card cards-total-card">
         <span className="accounts-total-label">TOTAL EM DÍVIDA</span>
         <strong className="accounts-total-value">{money(totalDebt)}</strong>
-        <p className="accounts-readonly-note">{activeCards.length} {activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}</p>
+        <p className="accounts-readonly-note">{cards.length} {cards.length === 1 ? 'cartão' : 'cartões'}</p>
       </div>
       <div className="accounts-filter-row">
         <label className="accounts-filter-label" htmlFor="cards-status-filter">Mostrar:</label>
