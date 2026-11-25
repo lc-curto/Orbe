@@ -55,7 +55,6 @@ export function AccountsPage({ accounts, loading, error }: Props) {
         <h1 id="accounts-page-title">Contas</h1>
         <p className="accounts-page-subtitle">{activeAccounts.length} {activeAccounts.length === 1 ? 'conta ativa' : 'contas ativas'}</p>
       </div>
-      <button className="accounts-new-button" type="button" disabled aria-label="Nova conta — disponível na fase de formulários">＋ Nova</button>
     </header>
 
     <div className="accounts-total-card">
