@@ -15,6 +15,7 @@ import { useAuth } from './api/useAuth'
 import { useFinanceData } from './api/useFinanceData'
 import type { Card as FinancialCard, CardInvoice, Operation } from './api/types'
 import { MovementsPage } from './MovementsPage'
+import { MonthSelector } from './MonthSelector'
 
 type IconName = 'home' | 'activity' | 'route' | 'wallet' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight'
 
@@ -179,11 +180,10 @@ function QuickAction({ icon, label, detail, color }: { icon: IconName; label: st
   )
 }
 
-function MobileDashboard({ period, periodIndex, periodCount, onPeriodChange, card, invoice, navigation, activeKey, setActiveKey, notify, openForm, userName, userEmail, onLogout, logoutDisabled }: {
+function MobileDashboard({ period, month, onMonthChange, card, invoice, navigation, activeKey, setActiveKey, notify, openForm, userName, userEmail, onLogout, logoutDisabled }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
-  periodIndex: number
-  periodCount: number
-  onPeriodChange: (index: number) => void
+  month: string
+  onMonthChange: (month: string) => void
   card?: FinancialCard
   invoice?: CardInvoice
   navigation: Array<{ icon: IconName; label: string }>
@@ -207,11 +207,7 @@ function MobileDashboard({ period, periodIndex, periodCount, onPeriodChange, car
             <Text className="mobile-dashboard-greeting-text" color="#101828" fontWeight="800" numberOfLines={1}>Bom dia, {userName.split(' ')[0]}</Text>
             <Text className="mobile-dashboard-date" color="#667085" fontSize={13}>{period.date}</Text>
           </YStack>
-          <XStack className="mobile-dashboard-period-control" borderWidth={1} borderColor="#d0d5dd" borderRadius={999} backgroundColor="#ffffff" paddingHorizontal={5} paddingVertical={3} gap={4} style={{ alignItems: "center", flexShrink: 0 }}>
-            <Button onPress={() => onPeriodChange(Math.max(0, periodIndex - 1))} aria-label="Período anterior" disabled={periodIndex === 0} width={28} height={30} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronLeft" size={15} color="#667085" /></Button>
-            <Text aria-label="Período selecionado" fontWeight="700" fontSize={12} minWidth={42} textAlign="center">{period.shortLabel}</Text>
-            <Button onPress={() => onPeriodChange(Math.min(periodCount - 1, periodIndex + 1))} aria-label="Período seguinte" disabled={periodIndex === periodCount - 1} width={28} height={30} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronRight" size={15} color="#667085" /></Button>
-          </XStack>
+          <MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="dashboard-month-selector" />
         </XStack>
         {moreMenuOpen ? (
           <YStack className="mobile-more-menu" borderWidth={1} borderColor="#e4e7ec" borderRadius={16} backgroundColor="#ffffff" padding={12} gap={4}>
@@ -345,11 +341,7 @@ export default function App() {
                 <H1 fontSize={36} letterSpacing={-1.2}>Bom dia, {user.name.split(' ')[0]}</H1>
                 <Paragraph color="#667085" margin={0}>{period.date}</Paragraph>
               </YStack>
-              <XStack borderWidth={1} borderColor="#d0d5dd" borderRadius={999} backgroundColor="#ffffff" paddingHorizontal={12} paddingVertical={8} gap={16} style={centered} flexShrink={0}>
-                <Button onPress={() => setPeriodIndex(Math.max(0, periodIndex - 1))} aria-label="Período anterior" disabled={periodIndex === 0} width={36} height={36} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronLeft" size={17} color="#667085" /></Button>
-                <Text aria-label="Período selecionado" fontWeight="700">{period.shortLabel}</Text>
-                <Button onPress={() => setPeriodIndex(Math.min(periods.length - 1, periodIndex + 1))} aria-label="Período seguinte" disabled={periodIndex === periods.length - 1} width={36} height={36} padding={0} borderWidth={0} backgroundColor="transparent"><Icon name="chevronRight" size={17} color="#667085" /></Button>
-              </XStack>
+              <MonthSelector month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} minMonth="2026-11" maxMonth="2026-12" className="desktop-month-selector" />
             </XStack>
 
             {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
@@ -407,7 +399,7 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        {activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} /></div> : <MobileDashboard period={period} periodIndex={periodIndex} periodCount={periods.length} onPeriodChange={setPeriodIndex} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />}
+        {activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNewMovement={() => openForm('expense')} onNotify={notify} /></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} navigation={navigation} activeKey={activeKey} setActiveKey={setActiveKey} notify={notify} openForm={openForm} userName={user.name} userEmail={user.email} onLogout={() => { setLogoutError(null); void logout().catch(() => setLogoutError('Não foi possível terminar a sessão. Tenta novamente.')) }} logoutDisabled={authLoading} />}
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         {activeKey === 'Movimentos' ? <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => (
