@@ -56,7 +56,7 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
   const selectedInvoice = selectedCard?.invoices?.find((invoice) => invoice.id === selectedInvoiceId) ?? null
   const invoiceOperations = selectedInvoice ? operations.filter((operation) => operation.entries?.some((entry) => entry.invoice?.id === selectedInvoice.id)) : []
   const filteredInvoiceOperations = invoiceOperations.filter((operation) => `${operation.description ?? ''} ${operation.category?.name ?? ''} ${operation.account?.name ?? ''} ${operation.entries?.map((entry) => entry.account?.name ?? '').join(' ') ?? ''}`.toLowerCase().includes(invoiceSearch.toLowerCase()))
-  const groupedInvoiceOperations = filteredInvoiceOperations.reduce<Record<string, Operation[]>>((groups, operation) => { const key = operation.effective_at ?? operation.planned_at ?? 'sem-data'; (groups[key] ??= []).push(operation); return groups }, {})
+  const groupedInvoiceOperations = filteredInvoiceOperations.reduce<Record<string, Operation[]>>((groups, operation) => { const dateValue = operation.effective_at ?? operation.planned_at; const key = dateValue ? dateValue.slice(0, 10) : 'sem-data'; (groups[key] ??= []).push(operation); return groups }, {})
   const totalDebt = activeCards.reduce((total, card) => total + Number(card.summary.used_amount || 0), 0)
 
   useEffect(() => {
