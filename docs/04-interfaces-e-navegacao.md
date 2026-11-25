@@ -129,3 +129,7 @@ Esta secção regista o comportamento atualmente implementado no frontend, após
 
 ## Regra de implementação frontend
 As especificações desta documentação definem comportamento e apresentação, não a estrutura do código. A implementação deve respeitar a arquitetura React documentada em [12 — Arquitetura Frontend Web](12-arquitetura-frontend-web.md): página como composição, componentes por responsabilidade, lógica derivada em hooks/utilitários e reutilização do design system. Não reproduzir no código a estrutura monolítica de um protótipo HTML de referência.
+
+## Rota Financeira — organização frontend (correção de arquitetura, 2026-11-25)
+
+A implementação inicial foi refatorada para separar a página de composição dos componentes de projeção, KPIs, tabela diária e modal; a agregação dos dados foi isolada num hook da feature e os tipos/formatação em módulos próprios. Esta alteração é estrutural: não conclui os contratos de saldo diário/projeção nem a classificação fixa/variável. A referência visual continua a orientar a interface, não a estrutura React. Norma aplicável: `docs/12-arquitetura-frontend-web.md`.
