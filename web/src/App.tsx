@@ -201,7 +201,7 @@ function MobileDashboard({ period, card, invoice, navigation, activeKey, setActi
       <YStack className="mobile-dashboard-content" gap={16}>
         <XStack className="mobile-dashboard-header" style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <YStack className="mobile-dashboard-greeting" flex={1} minWidth={0} gap={4}>
-            <Text color="#101828" fontWeight="800" numberOfLines={1}>Bom dia, {userName.split(' ')[0]}</Text>
+            <Text className="mobile-dashboard-greeting-text" color="#101828" fontWeight="800" numberOfLines={1}>Bom dia, {userName.split(' ')[0]}</Text>
             <Text className="mobile-dashboard-date" color="#667085" fontSize={13}>{period.date}</Text>
           </YStack>
           <YStack className="account-menu" style={{ alignItems: 'flex-end', flexShrink: 0 }}>
