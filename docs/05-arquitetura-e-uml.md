@@ -308,3 +308,15 @@ Testar domínio sem interface, persistência/constraints, transações/concorrê
 - Testes, CI/CD, backup e recuperação (ARC-008).
 - Decisões de produto sobre débito/reagendamento automático de planos vencidos, apresentação de faturas antigas, compras no dia do fecho e crédito negativo de fatura.
 - Fonte, janela, cálculo e apresentação das estimativas de despesas variáveis na Rota.
+
+
+## Frontend Web
+
+Para páginas React/TypeScript:
+- A página compõe a interface; componentes visuais recebem dados e callbacks por props.
+- Colocar lógica derivada em hook da feature ou função pura; não duplicar regras financeiras na UI.
+- Manter estado no menor âmbito adequado e não guardar estado que possa ser derivado.
+- Reutilizar design system, tokens e componentes existentes; CSS local só para necessidades específicas.
+- Organizar por feature quando houver responsabilidades distintas; criar apenas os módulos necessários.
+- Adaptar referências visuais ao padrão React; não copiar protótipos monolíticos.
+- Não refatorar páginas fora do escopo. Validar build, lint e estados responsivos relevantes; declarar o que não foi testado.
