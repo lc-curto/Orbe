@@ -75,10 +75,11 @@
 - [x] Implementar o Dashboard aprovado.
 - [x] Implementar as variantes desktop e mobile do Dashboard.
 - [x] Implementar sidebar recolhível no desktop.
-- [x] Implementar navegação inferior no mobile.
+- [x] Implementar navegação inferior fixa em todas as páginas mobile/tablet (Dashboard e subpáginas).
 - [x] Implementar seletor mensal.
 - [x] Implementar saldo, receitas, despesas e resultado.
-- [x] Implementar ações rápidas.
+- [x] Centralizar criação no botão flutuante global (+), fixo no viewport, com opções de despesa, receita e transferência.
+- [x] Corrigir contenção e overflow da sidebar; apresentar apenas o nome do utilizador no perfil.
 - [x] Implementar despesas por categoria em desktop e mobile.
 - [x] Preservar o Dashboard durante a implementação dos formulários.
 - [x] Criar tokens e componentes base reutilizáveis do Design System.
