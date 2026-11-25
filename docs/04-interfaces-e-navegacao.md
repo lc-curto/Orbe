@@ -58,7 +58,10 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 ## Contas — aprovado
 - Cabeçalho Contas e botão +; KPI saldo total.
 - Secção As minhas contas.
-- Linha: ícone, nome, instituição/descrição abaixo e saldo à direita.
+- Linha: ícone, nome, instituição/descrição abaixo e saldo atual calculado à direita.
+- O saldo atual inclui o saldo inicial da conta e todos os lançamentos realizados válidos posteriores; pendentes e projeções não entram.
+- Na criação, o utilizador informa o saldo existente no início da utilização da conta no Orbe. Esse valor é posição de abertura, não receita/despesa nem KPI separado.
+- O saldo inicial não pode ser sobrescrito no modal de edição; correções exigem ação rastreável própria, conforme regras financeiras.
 - Acesso separado a Conferência de saldos no fim da lista.
 - Conferência em subpágina: comparar saldo calculado e saldo real informado; mostrar diferença e histórico; registar comparação/data sem criar movimentos nem alterar saldo calculado.
 
