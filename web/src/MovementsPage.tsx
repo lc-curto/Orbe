@@ -39,7 +39,7 @@ function movementAccount(operation: Operation) {
   return operation.account?.name ?? operation.entries?.find((entry) => entry.account)?.account?.name ?? 'Conta não identificada'
 }
 
-function MovementRow({ operation }: { operation: Operation }) {
+export function MovementRow({ operation }: { operation: Operation }) {
   const isExpense = operation.operation_type === 'EXPENSE'
   const isIncome = operation.operation_type === 'INCOME'
   const sign = isExpense ? '− ' : isIncome ? '+ ' : ''

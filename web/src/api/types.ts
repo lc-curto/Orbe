@@ -107,6 +107,8 @@ export type Card = {
   id: number
   name: string
   credit_limit: string
+  closing_day?: number | null
+  due_day?: number | null
   status: string
   summary: {
     used_amount: string
