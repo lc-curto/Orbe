@@ -31,6 +31,15 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 .desktop-sidebar.collapsed { width: 72px; padding-left: 12px; padding-right: 12px; }
 .mobile-bottom-bar { display: none; }
 
+.mobile-more-pages-menu {
+  position: fixed; right: calc(12px + env(safe-area-inset-right));
+  bottom: calc(var(--orbe-nav-height) + 14px + env(safe-area-inset-bottom));
+  z-index: 56; width: 220px; max-width: calc(100vw - 24px);
+  padding: 8px; border: 1px solid var(--orbe-border); border-radius: 16px;
+  background: #fff; box-shadow: 0 12px 32px rgba(16, 24, 40, .16);
+}
+.sidebar-group-title { display: block; padding: 4px 10px; }
+
 /* Dashboard header: consistent hierarchy on tablet and mobile */
 .mobile-dashboard-header {
   width: 100%;
