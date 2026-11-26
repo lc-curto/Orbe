@@ -157,3 +157,74 @@
 [data-theme="dark"] .settings-category-chip { background: var(--orbe-surface); }
 [data-theme="dark"] .auth-screen { background: var(--orbe-bg) !important; }
 [data-theme="dark"] .auth-card { background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
+
+/* Page-specific surfaces that still use legacy light-only declarations. */
+[data-theme="dark"] .mobile-dashboard { background: var(--orbe-bg) !important; }
+[data-theme="dark"] .mobile-dashboard-greeting-text,
+[data-theme="dark"] .desktop-dashboard-header h1 { color: var(--orbe-text) !important; }
+[data-theme="dark"] .mobile-dashboard-date { color: var(--orbe-muted) !important; }
+[data-theme="dark"] .desktop-categories-card,
+[data-theme="dark"] .mobile-more-menu { background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; }
+[data-theme="dark"] .desktop-categories-card [class*="Text"],
+[data-theme="dark"] .main-content .tamagui-card:not(.mobile-balance-card) [class*="Text"],
+[data-theme="dark"] .main-content [class*="Card"]:not(.mobile-balance-card) [class*="Text"] { color: var(--orbe-text) !important; }
+
+[data-theme="dark"] .movement-kpi,
+[data-theme="dark"] .movement-list,
+[data-theme="dark"] .schedule-list,
+[data-theme="dark"] .filter-panel,
+[data-theme="dark"] .movement-toolbar,
+[data-theme="dark"] .movement-tabs,
+[data-theme="dark"] .filter-chips button,
+[data-theme="dark"] .secondary-button,
+[data-theme="dark"] .toolbar-filter,
+[data-theme="dark"] .filter-icon-button,
+[data-theme="dark"] .icon-action,
+[data-theme="dark"] .month-navigation button,
+[data-theme="dark"] .search-control input,
+[data-theme="dark"] .movement-search-form input,
+[data-theme="dark"] .movement-group h2,
+[data-theme="dark"] .occurrence-panel {
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .movement-group h2 { border-bottom-color: var(--orbe-border) !important; }
+[data-theme="dark"] .filter-chips button.selected,
+[data-theme="dark"] .movement-filter-row .filter-chips button.selected {
+  background: #25354c !important;
+  border-color: #3b5479 !important;
+  color: #a9c4ff !important;
+}
+[data-theme="dark"] .movement-tabs { background: #202b39 !important; }
+[data-theme="dark"] .movement-tabs button.active { background: var(--orbe-surface) !important; color: var(--orbe-teal) !important; }
+[data-theme="dark"] .movement-icon.expense { background: #442a37 !important; }
+[data-theme="dark"] .movement-icon.income { background: #203b38 !important; }
+[data-theme="dark"] .movement-icon.transfer { background: #25354c !important; }
+[data-theme="dark"] .state-badge.pending { background: #44391f !important; color: #f4c76b !important; }
+[data-theme="dark"] .state-badge.realized,
+[data-theme="dark"] .state-badge.active { background: #203b38 !important; color: var(--orbe-success) !important; }
+[data-theme="dark"] .state-badge.cancelled,
+[data-theme="dark"] .state-badge.ended { background: #263445 !important; color: var(--orbe-muted) !important; }
+[data-theme="dark"] .state-badge.paused { background: #452a35 !important; color: var(--orbe-danger) !important; }
+
+[data-theme="dark"] .route-table-wrap,
+[data-theme="dark"] .route-month-card,
+[data-theme="dark"] .route-day-modal,
+[data-theme="dark"] .route-mobile-summary { background: var(--orbe-surface) !important; }
+[data-theme="dark"] .route-table th { background: #202c3a !important; color: var(--orbe-muted) !important; }
+[data-theme="dark"] .route-table td { background: var(--orbe-surface) !important; border-top-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
+[data-theme="dark"] .route-table tbody tr:nth-child(even) { background: #1c2937 !important; }
+[data-theme="dark"] .route-flow-filters button { background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
+[data-theme="dark"] .route-flow-filters button.active { background: var(--orbe-text) !important; color: var(--orbe-bg) !important; }
+[data-theme="dark"] .route-detail-filters button.active { background: #2c3150 !important; border-color: #535c91 !important; color: #b6c2ff !important; }
+[data-theme="dark"] .route-detail-icon.income { background: #203b38 !important; }
+[data-theme="dark"] .route-detail-icon.expense { background: #442a37 !important; }
+[data-theme="dark"] .route-detail-icon.transfer { background: #263445 !important; }
+
+[data-theme="dark"] .cards-usage-track { background: #303d4d !important; }
+[data-theme="dark"] .cards-invoice-button:hover { background: #202c3a !important; }
+[data-theme="dark"] .accounts-menu-button:hover,
+[data-theme="dark"] .accounts-menu-button[aria-expanded="true"] { background: #263445 !important; }
+[data-theme="dark"] .accounts-action-notice { background: #202c3a !important; border-color: #334b68 !important; color: var(--orbe-text) !important; }
+[data-theme="dark"] .feedback-toast { background: #e7edf5 !important; color: #101720 !important; }
