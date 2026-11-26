@@ -2,6 +2,26 @@ import type { Operation } from '../../api/types'
 
 export type PeriodTotals = { income: number; expenses: number }
 
+export type DailyTotals = { day: number; income: number; expenses: number }
+
+export function dailyTotalsForMonth(operations: Operation[], month: string): DailyTotals[] {
+  const [year, monthNumber] = month.split('-').map(Number)
+  const daysInMonth = new Date(year, monthNumber, 0).getDate()
+  const daily = Array.from({ length: daysInMonth }, (_, index) => ({ day: index + 1, income: 0, expenses: 0 }))
+
+  operations.forEach((operation) => {
+    if (!isRealizedOperation(operation) || operationMonth(operation) !== month) return
+    if (operation.operation_type !== 'INCOME' && operation.operation_type !== 'EXPENSE') return
+    const day = Number(operation.effective_at?.slice(8, 10))
+    const amount = Number(operation.amount)
+    if (!Number.isInteger(day) || day < 1 || day > daysInMonth || !Number.isFinite(amount)) return
+    if (operation.operation_type === 'INCOME') daily[day - 1].income += amount
+    else daily[day - 1].expenses += amount
+  })
+
+  return daily
+}
+
 export function monthOf(value?: string | null) {
   return value ? value.slice(0, 7) : ''
 }
