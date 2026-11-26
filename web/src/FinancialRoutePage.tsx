@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { MonthSelector } from '../../MonthSelector'
-import type { Operation } from '../../api/types'
+import { MonthSelector } from './MonthSelector'
+import type { Operation } from './api/types'
 import { RouteDailyTable } from './components/RouteDailyTable'
 import { RouteDayModal } from './components/RouteDayModal'
 import { RouteKpis } from './components/RouteKpis'
