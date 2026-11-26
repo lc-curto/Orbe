@@ -1,4 +1,116 @@
-# Orbe — Especificação visual e de interação dos formulários
+# 03 — Interface e formulários
+
+> Documento consolidado. Cada tema tem aqui a sua fonte principal; não criar documentos separados para páginas, casos ou etapas individuais.
+
+---
+
+Regista decisões aprovadas das páginas principais. Não substitui os mockups visuais originais. Não inventar pormenores visuais não especificados nem redesenhar páginas aprovadas sem autorização.
+
+## Princípios e navegação
+- Mobile first; desktop complementar.
+- Listas compactas, hierarquia clara e sem informação repetida.
+- Ações indisponíveis não devem ser apresentadas como ações executáveis. Quando a navegação ou ação já estiver aprovada mas depender de contrato/formulário, manter o acesso contextual e comunicar a indisponibilidade sem criar dados fictícios.
+- Projeções apenas na Rota Financeira.
+- Navegação inferior fixa em todas as páginas mobile/tablet: Início, Movimentos, Rota, Contas e Mais.
+- Mais existe apenas na bottom bar; abre um painel inferior integrado com Cartões, Dívidas, Relatórios e Configurações, sempre nesta ordem.
+- O painel Mais não inclui perfil, notificações, logout nem opções dependentes da página. Fecha ao selecionar uma página, tocar novamente em Mais ou tocar fora.
+- No desktop, a sidebar contém todas as páginas agrupadas em Principal, Gestão financeira e Ferramentas; Mais não é item da sidebar.
+
+## Dashboard — aprovado
+- Saudação dinâmica Bom dia/Boa tarde/Boa noite com primeiro nome.
+- Data resumida (ex.: Seg, 23 Nov); ícones de notificações e perfil.
+- Seletor mensal compacto (ex.: Nov/26).
+- Saldo total atual de todas as contas.
+- KPIs de receitas e despesas do mês.
+- A criação é iniciada pelo botão flutuante global (+), contextual à página. No Dashboard oferece Despesa, Receita e Transferência; não existem cartões de ações rápidas separados no conteúdo do Dashboard.
+- Últimos movimentos e navegação inferior.
+- Sem projeções.
+- Seletor mensal filtra receitas, despesas e atividade histórica, mas não altera saldo atual.
+
+## Movimentos — aprovado
+- Abas Movimentos e Programações; seletor mensal compacto.
+- Em Movimentos, apresentar três KPIs compactos do mês selecionado: Receitas, Despesas e Resultado (Receitas − Despesas).
+- Os KPIs de Movimentos consideram apenas operações realizadas, excluem canceladas, pendentes e transferências, e não substituem o saldo atual do Dashboard.
+- Lista única, uma linha por operação.
+- Filtros horizontais: Todos, Pendentes, Realizados, Cancelados; acessos a Filtros e ordenação/Recentes.
+- Pesquisa e filtros por tipo, estado, período, conta e categoria.
+- Linha 1: nome à esquerda, valor à direita.
+- Linha 2: categoria à esquerda, conta à direita, abaixo do valor.
+- Estado compacto abaixo quando necessário.
+- Parcial aparece apenas como badge, sem valores detalhados na lista.
+- O botão flutuante global (+) é o ponto de entrada para ações de criação na página; não duplicar botão de criação no cabeçalho ou dentro da lista.
+- Operação com vários lançamentos não pode aparecer duplicada; detalhes completos na vista/modal de detalhes.
+- A aba Programações mostra as regras recorrentes, com natureza, valor, periodicidade, conta, categoria, estado e a data da primeira ocorrência; a próxima ocorrência é consultada através das ocorrências reais.
+- As ocorrências de uma programação são consultadas numa área de detalhe própria; uma ocorrência materializada também aparece em Movimentos como operação única, sem duplicação.
+- A edição e as ações sobre programações/ocorrências usam botões dedicados e não permitem edição inline.
+
+## Rota Financeira — aprovado
+- Desktop: mostrar pelo menos três meses consecutivos lado a lado; navegação anterior/seguinte desloca o período um mês.
+- Cada mês apresenta título, totais de entradas/saídas, indicação do saldo final e tabela diária.
+- Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura. A lista cresce com a página (sem scroll interno) e termina junto da área reservada à bottom bar; o FAB global fica fixo no viewport e sobrepõe a lista.
+- Cabeçalho mobile segue o padrão de Movimentos: título alinhado à esquerda e seletor mensal partilhado alinhado à direita; ocultar subtítulo neste breakpoint.
+- Tabela diária: Dia, Entradas, Saídas, Saldo; incluir todos os dias do mês quando o switch está desligado.
+- O switch ligado mostra apenas dias com movimentos realizados elegíveis.
+- Selecionar a data abre modal de detalhe; filtros numa linha e nesta ordem: Todos, Receitas, G. fixos, G. variáveis.
+- KPIs/totais apenas Entradas e Saídas; sem KPI de saldo inicial.
+- Sem gráfico e sem distinção fixa/variável na tabela principal.
+- Entradas e saídas realizadas são agregadas; transferências não alteram esses totais, mas aparecem no detalhe diário como operação neutra. Estados não realizados não entram na tabela nem nos totais.
+- Saldo diário e saldo final/projeção só são apresentados quando o contrato financeiro fornecer valores válidos. Até lá, indicar indisponibilidade, sem inventar números.
+- Cor só na célula/valor Saldo quando houver cálculo fiável, nunca na linha. Sem badges, legendas ou etiquetas coloridas.
+- Saldo projetado final recebe cor apenas quando negativo.
+- O FAB global é o único ponto de criação; não adicionar botão + local.
+
+## Contas — aprovado
+- Cabeçalho Contas sem botão + local; a ação Nova conta é apresentada pelo botão flutuante global (+), contextual à página.
+- Card/KPI Saldo total imediatamente abaixo do cabeçalho, antes dos filtros e da lista.
+- Filtro de contas ativas/encerradas.
+- Secção **As minhas contas**, apresentada acima da lista.
+- Linha: ícone, nome, instituição/descrição abaixo, saldo atual calculado à direita e menu contextual `⋮`.
+- O menu contextual de cada conta inclui o acesso **Conferir saldo**. Não existe acesso global de conferência no fim da página.
+- A conferência abre a subpágina da conta selecionada: comparar saldo calculado e saldo real informado; mostrar diferença e histórico; registar comparação/data sem criar movimentos nem alterar saldo calculado.
+- O saldo atual inclui o saldo inicial da conta e todos os lançamentos realizados válidos posteriores; pendentes e projeções não entram.
+- Na criação, o utilizador informa o saldo existente no início da utilização da conta no Orbe. Esse valor é posição de abertura, não receita/despesa nem KPI separado.
+- O saldo inicial não pode ser sobrescrito no modal de edição; correções exigem ação rastreável própria, conforme regras financeiras.
+
+## Cartões — aprovado
+Reutiliza estrutura de Contas.
+- Cabeçalho Cartões sem botão + local; a ação Novo cartão é apresentada pelo botão flutuante global (+), contextual à página.
+- KPI TOTAL EM DÍVIDA e número de cartões.
+- Secção Os meus cartões.
+- Cada cartão: ícone/nome/chevron; Utilizado e Limite total; barra de utilização; Disponível e percentagem utilizada; linha discreta com fecho e vencimento.
+- Fatura só aparece ao entrar no cartão.
+- Não mostrar banco nem últimos dígitos.
+
+## Dívidas — aprovado
+Reutiliza estrutura de Contas e Cartões.
+- KPI TOTAL EM ABERTO.
+- Número de dívidas ativas e total de prestações mensais.
+- Lista As minhas dívidas.
+- Item: ícone, nome, tipo/descrição, valor em aberto, prestação mensal, barra de liquidação e valor liquidado.
+- Toque abre detalhes.
+
+## Relatórios — aprovado
+- Cabeçalho Relatórios e seletor mês/ano.
+- KPIs Receitas e Despesas; resultado do mês.
+- Visualização simples da composição receitas/despesas.
+- Análise financeira: evolução mensal; despesas por categoria; atividade por conta; compras/faturas/pagamentos de cartões; pagamentos/evolução das dívidas.
+- Apenas operações realizadas; sem projeções.
+
+## Configurações — aprovado
+- Preferências: Perfil, Moeda, Categorias, Aparência e preferências.
+- Segurança e Dados: Segurança, Dados e cópias de segurança.
+- Sobre o Orbe.
+- Não editar movimentos, contas, cartões ou dívidas diretamente nesta página.
+
+## Ordem de desenho aprovada
+Concluir páginas principais; desenhar subpáginas; definir modais; auditar consistência e reaproveitamento.
+
+## Regra de implementação frontend
+As especificações desta documentação definem comportamento e apresentação, não a estrutura do código. A implementação deve respeitar o padrão frontend em [04 — Arquitetura, modelo e auditoria](04-arquitetura-modelo-e-auditoria.md#frontend-web). Não reproduzir no código a estrutura monolítica de um protótipo HTML de referência.
+
+## Rota Financeira — organização frontend (correção de arquitetura, 2026-11-25)
+
+---
 
 **Estado:** aprovado pelo utilizador  
 **Data da aprovação:** 24/11/2026  
@@ -742,12 +854,12 @@ A implementação só corresponde a esta especificação quando cumprir os crit�
 A implementação de navegação publicada na `main` em 2026-11-25 utiliza um FAB global (+), fixo no viewport e contextual à página. Esta decisão de navegação é uma exceção explícita à regra de não criar FABs dentro dos formulários: não criar outro FAB no formulário nem um botão de criação duplicado no cabeçalho/lista.
 
 Comportamento atualmente implementado:
-- Dashboard e Movimentos: despesa, receita e transferência.
+- Dashboard, Movimentos e Rota Financeira: as mesmas três operações — despesa, receita e transferência. A Rota é uma visualização alternativa dos mesmos dados, não um módulo de operações separado.
 - Contas: Nova conta; formulário ainda indisponível.
 - Cartões: Novo cartão; formulário ainda indisponível.
 - Dívidas: Nova dívida; formulário ainda indisponível.
 - Movimentos/Programações: Nova programação; formulário ainda indisponível.
-- Rota: Nova projeção; indisponível até existir contrato/read model de projeção.
+- Rota: não possui ação exclusiva de projeção no FAB; mantém despesa, receita e transferência, iguais a Movimentos.
 - Relatórios e Configurações: FAB oculto, sem ação de criação.
 
 A existência de uma opção no FAB não significa que o formulário esteja implementado ou que exista autorização funcional para criar dados. Ações sem suporte devem informar a indisponibilidade e não podem criar dados fictícios. Quando um formulário estiver disponível, mantém os recipientes, campos, rodapé e comportamentos especificados neste documento.
@@ -792,12 +904,11 @@ Esses pontos devem ser obtidos na documentação funcional aprovada e no código
 
 **Resultado esperado:** formulários visualmente consistentes, responsivos e fiéis às decisões aprovadas, sem invenção de requisitos funcionais ou alterações fora do âmbito.
 
-
 ---
 
 ## 17. Correspondência obrigatória com as regras funcionais
 
-Esta secção confronta os padrões visuais anteriores com as regras de `docs/02-regras-financeiras.md`, `docs/03-funcionalidades-e-operacoes.md`, `docs/04-interfaces-e-navegacao.md`, `docs/06-pendencias-e-plano.md` e `docs/07-modelo-er.md`.
+Esta secção confronta os padrões visuais anteriores com as regras de `docs/02-regras-financeiras.md`, `docs/01-produto-e-funcionalidades.md`, `docs/03-interface-e-formularios.md`, `docs/05-estado-e-plano.md` e `docs/04-arquitetura-modelo-e-auditoria.md`.
 
 **Hierarquia documental:** as regras funcionais e o modelo de domínio prevalecem sobre qualquer wireframe deste ficheiro. Esta especificação apenas determina como apresentar e interagir com os fluxos já definidos. Um exemplo visual não cria um campo, método de pagamento, estado, associação ou ação nova.
 
@@ -936,7 +1047,7 @@ A conferência é uma comparação, não um movimento:
 
 ### 17.11 Ações permitidas por estado e dependências
 
-A apresentação dos botões e menus deve obedecer a `docs/03-funcionalidades-e-operacoes.md` e `docs/04-interfaces-e-navegacao.md`:
+A apresentação dos botões e menus deve obedecer a `docs/01-produto-e-funcionalidades.md` e `docs/03-interface-e-formularios.md`:
 - Não mostrar ações indisponíveis. Não mostrar opções desativadas apenas para explicar que não podem ser usadas.
 - **Pendente:** pode permitir edição conforme natureza/dependências e confirmação explícita; não assumir que todos os campos continuam editáveis.
 - **Realizado:** alterações com efeitos financeiros confirmados exigem correção rastreável. Não disponibilizar eliminação destrutiva; apresentar Reverter apenas quando permitido.
