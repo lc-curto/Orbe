@@ -45,6 +45,10 @@ final class RecurrenceApiTest extends TestCase
         $schedule = $this->createSchedule($account, $category, 'INCOME');
         $occurrence = RecurrenceOccurrence::query()->firstOrFail();
 
+        $this->postJson('/api/recurrence-occurrences/'.$occurrence->id.'/materialize', ['effective_at' => '2026-12-01 10:00:00'])
+            ->assertUnprocessable()->assertJsonValidationErrors('account_id');
+        $this->assertDatabaseHas('recurrence_occurrences', ['id' => $occurrence->id, 'state' => 'PENDING', 'account_id' => null]);
+
         $payload = ['account_id' => $account->id, 'effective_at' => '2026-12-01 10:00:00'];
         $this->postJson('/api/recurrence-occurrences/'.$occurrence->id.'/materialize', $payload)->assertOk();
         $this->postJson('/api/recurrence-occurrences/'.$occurrence->id.'/materialize', $payload)->assertOk();
