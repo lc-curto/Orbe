@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Button, Text, XStack, YStack } from '../design-system/primitives'
+import { Button, Text, Row, Stack } from '../design-system/primitives'
 import { MovementForm } from '../features/movements/components/MovementForm'
 import { AppShell } from './AppShell'
 import { AppIcon, type AppIconName } from '../shared/components/AppIcon'
@@ -150,7 +150,7 @@ export default function App() {
   }, [accountMenuOpen, sidebarOpen])
 
   if (authLoading && user === null) {
-    return <YStack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" style={{ justifyContent: 'center', alignItems: 'center' }}><Text color="#667085">A verificar a sessão…</Text></YStack>
+    return <Stack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" style={{ justifyContent: 'center', alignItems: 'center' }}><Text color="#667085">A verificar a sessão…</Text></Stack>
   }
 
   if (user === null) return <LoginScreen />
@@ -225,30 +225,30 @@ export default function App() {
   return (
     <AppShell>
         <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
-        <XStack className="desktop-layout" flex={1}>
-          <YStack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} padding={20} borderRightWidth={1} borderColor="#eaecf0" backgroundColor="#ffffff">
-            <XStack style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom={40}>
+        <Row className="desktop-layout" flex={1}>
+          <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} padding={20} borderRightWidth={1} borderColor="#eaecf0" backgroundColor="#ffffff">
+            <Row style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom={40}>
               {sidebarOpen ? <Text fontSize={28} fontWeight="800" color="#101828">Orbe</Text> : null}
               <Button onPress={toggleSidebar} aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'} width={40} height={40} borderRadius={10} padding={0} borderWidth={1} borderColor="#e4e7ec" backgroundColor={sidebarOpen ? 'transparent' : '#f7f9fc'}>
                 <AppIcon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} color="#667085" />
               </Button>
-            </XStack>
-            <YStack className="desktop-sidebar-navigation" gap={18} flex={1}>
-              {sidebarGroups.map((group) => <YStack key={group.title} gap={7}>
+            </Row>
+            <Stack className="desktop-sidebar-navigation" gap={18} flex={1}>
+              {sidebarGroups.map((group) => <Stack key={group.title} gap={7}>
                 {sidebarOpen ? <Text color="#98a2b3" fontSize={10} fontWeight="800" letterSpacing={1}>{group.title.toUpperCase()}</Text> : null}
                 {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
-                  <XStack gap={10} style={{ alignItems: 'center', justifyContent: sidebarOpen ? 'flex-start' : 'center' }}><AppIcon name={item.icon} size={16} />{sidebarOpen ? <Text>{item.label}</Text> : null}</XStack>
+                  <Row gap={10} style={{ alignItems: 'center', justifyContent: sidebarOpen ? 'flex-start' : 'center' }}><AppIcon name={item.icon} size={16} />{sidebarOpen ? <Text>{item.label}</Text> : null}</Row>
                 </Button>)}
-              </YStack>)}
-            </YStack>
-            <YStack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
+              </Stack>)}
+            </Stack>
+            <Stack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
               <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" borderWidth={0} backgroundColor="transparent" color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={42} justifyContent={sidebarOpen ? "flex-start" : "center"}>
-                <XStack alignItems="center" gap={10}><AppIcon name="bell" size={17} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</XStack>
+                <Row alignItems="center" gap={10}><AppIcon name="bell" size={17} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</Row>
               </Button>
-              <YStack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
+              <Stack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
                 <span ref={accountMenuAnchorRef} className="account-menu-anchor">
                   <Button className="sidebar-profile-button" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
-                    <XStack className="sidebar-profile-copy" alignItems="center" gap={10}><AppIcon name="user" size={17} />{sidebarOpen ? <YStack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></YStack> : null}</XStack>
+                    <Row className="sidebar-profile-copy" alignItems="center" gap={10}><AppIcon name="user" size={17} />{sidebarOpen ? <Stack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></Stack> : null}</Row>
                   </Button>
                 </span>
                 {accountMenuOpen && typeof document !== 'undefined' ? createPortal(
@@ -283,26 +283,26 @@ export default function App() {
                   </div>,
                   document.body,
                 ) : null}
-              </YStack>
-            </YStack>
-          </YStack>
+              </Stack>
+            </Stack>
+          </Stack>
 
-          <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Rota' ? 'route-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''} ${activeKey === 'Relatórios' ? 'reports-mode' : ''} ${activeKey === 'Configurações' ? 'settings-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
+          <Stack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Rota' ? 'route-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''} ${activeKey === 'Relatórios' ? 'reports-mode' : ''} ${activeKey === 'Configurações' ? 'settings-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}            {activeKey === 'Relatórios' ? <ReportsPage operations={finance.data.operations} invoices={finance.data.invoices} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /> : null}
             {activeKey === 'Configurações' ? <SettingsPage user={user} categories={finance.data.categories} /> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
             {activeKey === 'Início' ? <DashboardPage period={period} userName={user.name} displayPeriod={displayPeriod} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} currencySymbol={currencySymbol} movements={movements} setActiveKey={navigateTo} notify={notify} authError={authError} logoutError={logoutError} /> : null}
-          </YStack>
-        </XStack>
+          </Stack>
+        </Row>
         {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Rota' ? <div className="mobile-page-shell route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></div> : activeKey === 'Relatórios' ? <div className="mobile-page-shell"><ReportsPage operations={finance.data.operations} invoices={finance.data.invoices} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /></div> : activeKey === 'Configurações' ? <div className="mobile-page-shell"><SettingsPage user={user} categories={finance.data.categories} /></div> : <MobileDashboard period={displayPeriod} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={navigateTo} notify={notify} userName={user.name} currencySymbol={currencySymbol} />}
-        {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
-        <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
+        {feedback ? <Row className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></Row> : null}
+        <Row className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } navigateTo(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={activeKey === item.label || (item.label === 'Mais' && morePages.some((page) => page.label === activeKey)) ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#e6f4f1' : 'transparent'} color={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#087f70' : '#667085'}>
-            <YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><AppIcon name={item.icon} size={18} /><Text fontSize={11} fontWeight="700">{item.label}</Text></YStack>
+            <Stack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><AppIcon name={item.icon} size={18} /><Text fontSize={11} fontWeight="700">{item.label}</Text></Stack>
           </Button>)}
-        </XStack>
+        </Row>
         {morePagesOpen ? <>
           <button className="mobile-more-panel-dismiss" type="button" aria-label="Fechar menu Mais" onClick={() => setMorePagesOpen(false)} />
           <section className="mobile-more-pages-panel" role="menu" aria-label="Páginas secundárias">
