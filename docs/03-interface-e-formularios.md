@@ -2,11 +2,7 @@
 
 > Documento consolidado. Cada tema tem aqui a sua fonte principal; não criar documentos separados para páginas, casos ou etapas individuais.
 
-
 ---
-
-<!-- Conteúdo consolidado de docs/03-interface-e-formularios.md -->
-
 
 Regista decisões aprovadas das páginas principais. Não substitui os mockups visuais originais. Não inventar pormenores visuais não especificados nem redesenhar páginas aprovadas sem autorização.
 
@@ -109,17 +105,12 @@ Reutiliza estrutura de Contas e Cartões.
 ## Ordem de desenho aprovada
 Concluir páginas principais; desenhar subpáginas; definir modais; auditar consistência e reaproveitamento.
 
-
 ## Regra de implementação frontend
-As especificações desta documentação definem comportamento e apresentação, não a estrutura do código. A implementação deve respeitar o padrão frontend em [05 — Arquitetura e UML](04-arquitetura-modelo-e-auditoria.md#frontend-web). Não reproduzir no código a estrutura monolítica de um protótipo HTML de referência.
+As especificações desta documentação definem comportamento e apresentação, não a estrutura do código. A implementação deve respeitar o padrão frontend em [04 — Arquitetura, modelo e auditoria](04-arquitetura-modelo-e-auditoria.md#frontend-web). Não reproduzir no código a estrutura monolítica de um protótipo HTML de referência.
 
 ## Rota Financeira — organização frontend (correção de arquitetura, 2026-11-25)
 
-
 ---
-
-<!-- Conteúdo consolidado de docs/03-interface-e-formularios.md -->
-
 
 **Estado:** aprovado pelo utilizador  
 **Data da aprovação:** 24/11/2026  
@@ -912,7 +903,6 @@ Este documento não define:
 Esses pontos devem ser obtidos na documentação funcional aprovada e no código existente. Se houver conflito ou ausência de informação, assinalar antes de implementar.
 
 **Resultado esperado:** formulários visualmente consistentes, responsivos e fiéis às decisões aprovadas, sem invenção de requisitos funcionais ou alterações fora do âmbito.
-
 
 ---
 
