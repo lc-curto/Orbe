@@ -21,7 +21,7 @@ import { CardsPage } from './CardsPage'
 import { FinancialRoutePage } from './FinancialRoutePage'
 import { MonthSelector } from './MonthSelector'
 
-type IconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'creditCard' | 'debt' | 'settings' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight' | 'logout'
+type IconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'creditCard' | 'settings' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight' | 'logout'
 
 const iconPaths: Record<IconName, string> = {
   plus: 'M12 5v14M5 12h14',
@@ -30,7 +30,6 @@ const iconPaths: Record<IconName, string> = {
   route: 'M5 19c2.5 0 3.5-2 3.5-4.5S7.5 10 10 10s3.5 2 3.5 4.5S12.5 19 15 19s3.5-2 4-4',
   wallet: 'M4 6.5A2.5 2.5 0 0 1 6.5 4H19a1 1 0 0 1 1 1v15H6.5A2.5 2.5 0 0 1 4 17.5v-11ZM4 8h16m-5 5h2',
   creditCard: 'M3 5h18v14H3zM3 10h18M7 15h3',
-  debt: 'M12 3v18M5 8h14M5 16h14',
   settings: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-5v2m0 14v2m9-9h-2M5 12H3m15.36-6.36-1.42 1.42M7.06 16.94l-1.42 1.42m12.72 0-1.42-1.42M7.06 7.06 5.64 5.64',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
   bell: 'M6 17h12l-1.2-1.8V10a4.8 4.8 0 0 0-9.6 0v5.2L6 17Zm4 3h4',
