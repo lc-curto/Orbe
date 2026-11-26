@@ -74,31 +74,31 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 **Contrato de saldo inicial de conta definido:** ao criar uma conta, informar o saldo existente no início da utilização no Orbe. O valor é reconhecido por operação `ACCOUNT_OPENING_BALANCE` e lançamento realizado dirigido à conta; não é receita/despesa. Saldo zero não gera lançamento; saldo negativo só é permitido quando compatível com o tipo de conta. Existe uma única abertura original por conta, não editável diretamente; correções preservam a origem e são rastreáveis. O saldo atual deriva dos lançamentos válidos.
 
 ## Trabalho funcional pendente
-- Contas, Cartões/faturas e Rota Financeira: páginas primárias implementadas; utilizador confirmou QA local do `AppShell` e das páginas principais. Os contratos de saldos/projeções e os formulários de escrita continuam pendentes.
-- Dívidas: não haverá página principal autónoma. O código da página de Dívidas foi removido da branch `feature/debts-primary-page`; o PR #7 mantém a remoção da navegação/placeholder e o alinhamento do FAB, juntamente com a alteração backend de destinos pendentes. Obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados, conforme os contratos. Nenhum valor ou dívida é simulado.
+- Contratos/read models de saldos e projeções continuam pendentes, especialmente saldo diário/final e projeção na Rota Financeira.
+- Formularios de escrita ainda não estão todos integrados; implementar apenas os fluxos cobertos por contratos aprovados.
+- Dívidas: não haverá página principal autónoma. O código da página de Dívidas foi removido da branch `feature/debts-primary-page`; o PR #7 remove a navegação/placeholder e alinha o FAB, juntamente com a alteração backend de destinos pendentes. Obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados. Nenhum valor ou dívida é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
-- Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global nem bloquear páginas primárias.
+- Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global.
 - Definir validações e ações por estado/dependência quando os contratos forem tratados.
-
-Ordem de execução: concluir e validar as páginas de leitura ainda necessárias; desenhar os detalhes/modais dos movimentos e faturas; fazer auditoria/refatoração frontend direcionada; fechar read models/contratos financeiros e implementar os formulários suportados.
 
 ## Estado da implementação frontend — 2026-11-26
 
 - PR #3: página Contas em modo de leitura publicada na `main`.
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
-- Movimentos/Programações: leitura implementada; os formulários de programação continuam indisponíveis.
-- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; dados realizados agregados a partir do read model atual. O utilizador confirmou QA local das páginas principais. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis; build/lint devem ser reexecutados após alterações futuras.
-- As ações Nova conta e Novo cartão permanecem no contexto das respetivas páginas e comunicam indisponibilidade enquanto faltarem formulários/contratos. O FAB das páginas Dashboard, Movimentos e Rota Financeira não oferece Nova dívida, Nova programação ou Nova projeção: recorrência configura-se no fluxo de gasto/rendimento; projeções são calculadas; criação de financiamento ou dívida preexistente exige fluxo específico ainda por definir.
-- Regra aprovada para gasto/ganho: pendente não apresenta nem exige conta, cartão, fatura ou outro destino financeiro; realizado exige destino/instrumento adequado antes de guardar. A associação é recolhida ao confirmar um pendente como realizado.
-- Relatórios e Configurações não apresentam FAB porque não têm ação de criação.
-- O estado de implementação não equivale a validação final: QA local das páginas principais foi confirmado pelo utilizador; auditoria frontend direcionada e validações de cada nova branch continuam necessárias.
+- Movimentos/Programações: leitura implementada; formulários de programação continuam indisponíveis.
+- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; os dados realizados são agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis.
+- PR #7, branch `feature/debts-primary-page`: remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
+- Backend da branch: gasto/rendimento pendente sem destino financeiro; realizado exige conta ativa; confirmação recolhe conta e cria lançamento; recorrências pendentes não guardam destino até à materialização.
+- Validação local reportada pelo utilizador: **52 testes backend passaram (217 assertions)** e Pint `--test` passou nos 7 ficheiros PHP alterados. O Pint global reporta 63 problemas de estilo em 98 ficheiros preexistentes/abrangidos; não foi aplicada formatação global.
+- Build, lint e QA visual/responsivo frontend do PR #7 ainda não foram executados. O status Vercel do commit atual falhou por limite de deploy (rate limit), não por um resultado de build confirmado.
+- Formulários de escrita, consulta/liquidação contextual de obrigações e projeções reais permanecem por implementar/validar. A ausência de página autónoma de Dívidas é uma decisão aprovada, não uma funcionalidade em falta.
 
 ## Próxima sequência recomendada
-1. Validar localmente a build, lint e QA visual/responsivo da branch atual, incluindo ausência de Dívidas na navegação e FAB idêntico nas páginas/abas aprovadas.
-2. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta e liquidação de obrigações associadas.
-3. Auditar e refatorar gradualmente Movimentos e `App.tsx` segundo React/TypeScript/Tamagui; limitar cada alteração ao escopo e validar build/lint/QA.
-4. Fechar read models/contratos financeiros pendentes, sobretudo projeção diária, e implementar formulários/ações suportados.
+1. Executar build e lint frontend e QA visual/responsivo em desktop/tablet/mobile, incluindo navegação sem Dívidas e consistência do FAB nas páginas/abas.
+2. Validar no frontend a regra pendente→realizado: sem destino no pendente; conta obrigatória na confirmação.
+3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta/liquidação de obrigações associadas.
+4. Fechar contratos/read models financeiros pendentes, sobretudo projeção diária, e implementar os formulários suportados.
 5. Executar auditoria final de consistência entre documentação, API, frontend e modelo ER.
 
 ## Critério para novas alterações estruturais
