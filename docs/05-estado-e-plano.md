@@ -90,6 +90,7 @@ Ordem de execução: concluir e validar as páginas de leitura ainda necessária
 - Movimentos/Programações: leitura implementada; os formulários de programação continuam indisponíveis.
 - Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; dados realizados agregados a partir do read model atual. O utilizador confirmou QA local das páginas principais. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis; build/lint devem ser reexecutados após alterações futuras.
 - As ações Nova conta e Novo cartão permanecem no contexto das respetivas páginas e comunicam indisponibilidade enquanto faltarem formulários/contratos. O FAB das páginas Dashboard, Movimentos e Rota Financeira não oferece Nova dívida, Nova programação ou Nova projeção: recorrência configura-se no fluxo de gasto/rendimento; projeções são calculadas; criação de financiamento ou dívida preexistente exige fluxo específico ainda por definir.
+- Regra aprovada para gasto/ganho: pendente não apresenta nem exige conta, cartão, fatura ou outro destino financeiro; realizado exige destino/instrumento adequado antes de guardar. A associação é recolhida ao confirmar um pendente como realizado.
 - Relatórios e Configurações não apresentam FAB porque não têm ação de criação.
 - O estado de implementação não equivale a validação final: QA local das páginas principais foi confirmado pelo utilizador; auditoria frontend direcionada e validações de cada nova branch continuam necessárias.
 
