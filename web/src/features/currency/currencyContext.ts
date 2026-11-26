@@ -12,8 +12,4 @@ export const CurrencyContext = createContext<CurrencyContextValue>({
 })
 
 export const CURRENCY_STORAGE_KEY = 'orbe.currency.symbol'
-export const ALLOWED_CURRENCY_SYMBOLS: readonly CurrencySymbol[] = ['€', '
-, '£', '¥', 'CN¥', 'CHF', 'CA
-, 'A
-, 'R
-, '₹']
+export const ALLOWED_CURRENCY_SYMBOLS: readonly CurrencySymbol[] = ['€', '$', '£', '¥', 'CN¥', 'CHF', 'CA$', 'A$', 'R$', '₹']
