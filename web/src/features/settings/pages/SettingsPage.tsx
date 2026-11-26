@@ -9,8 +9,8 @@ type Props = { user: AuthUser; categories: Category[] }
 const currencyOptions: Array<{ value: CurrencySymbol; label: string }> = [
   { value: '$', label: 'Dólar americano (USD · $)' },
   { value: '€', label: 'Euro (EUR · €)' },
-  { value: '£', label: 'Libra esterlina (GBP · £)' },
   { value: '¥', label: 'Iene japonês (JPY · ¥)' },
+  { value: '£', label: 'Libra esterlina (GBP · £)' },
   { value: 'CN¥', label: 'Yuan chinês (CNY · CN¥)' },
   { value: 'CHF', label: 'Franco suíço (CHF)' },
   { value: 'CA$', label: 'Dólar canadiano (CAD · CA$)' },
