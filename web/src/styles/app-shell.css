@@ -92,7 +92,7 @@
 .dashboard-kpi-row .tamagui-card,
 .dashboard-kpi-row [class*="Card"] { border-radius: var(--orbe-radius-card) !important; }
 .desktop-categories-card { border-radius: var(--orbe-radius-card) !important; }
-.main-content > .tamagui-card,
+.main-content > .orbe-card,
 .main-content > [class*="Card"] { border-radius: var(--orbe-radius-card) !important; }
 
 .movements-page { max-width: 100% !important; }
