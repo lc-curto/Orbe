@@ -1,11 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import {
-  Button,
-  Text,
-  XStack,
-  YStack,
-} from 'tamagui'
+import { Button, Text, XStack, YStack } from '../design-system/primitives'
 import { MovementForm } from '../features/movements/components/MovementForm'
 import { AppShell } from './AppShell'
 import { AppIcon, type AppIconName } from '../shared/components/AppIcon'
