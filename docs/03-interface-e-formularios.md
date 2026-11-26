@@ -12,7 +12,7 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Ações indisponíveis não devem ser apresentadas como ações executáveis. Quando a navegação ou ação já estiver aprovada mas depender de contrato/formulário, manter o acesso contextual e comunicar a indisponibilidade sem criar dados fictícios.
 - Projeções apenas na Rota Financeira.
 - Navegação inferior fixa em todas as páginas mobile/tablet: Início, Movimentos, Rota, Contas e Mais.
-- Mais existe apenas na bottom bar; abre um painel inferior integrado com Cartões, Dívidas, Relatórios e Configurações, sempre nesta ordem.
+- Mais existe apenas na bottom bar; abre um painel inferior integrado com Cartões, Relatórios e Configurações, sempre nesta ordem.
 - O painel Mais não inclui perfil, notificações, logout nem opções dependentes da página. Fecha ao selecionar uma página, tocar novamente em Mais ou tocar fora.
 - No desktop, a sidebar contém todas as páginas agrupadas em Principal, Gestão financeira e Ferramentas; Mais não é item da sidebar.
 
@@ -83,13 +83,12 @@ Reutiliza estrutura de Contas.
 - Fatura só aparece ao entrar no cartão.
 - Não mostrar banco nem últimos dígitos.
 
-## Dívidas — aprovado
-Reutiliza estrutura de Contas e Cartões.
-- KPI TOTAL EM ABERTO.
-- Número de dívidas ativas e total de prestações mensais.
-- Lista As minhas dívidas.
-- Item: ícone, nome, tipo/descrição, valor em aberto, prestação mensal, barra de liquidação e valor liquidado.
-- Toque abre detalhes.
+## Obrigações — sem página principal
+- Não existe página autónoma de Dívidas na navegação principal.
+- A obrigação continua a ser uma entidade/efeito financeiro do modelo, não um tipo de operação independente.
+- Consultar uma obrigação a partir do movimento, fatura ou detalhe que a originou, conforme a relação disponível.
+- Pagamentos/liquidações são ações sobre a obrigação associada e não criam um segundo gasto.
+- Gestão avançada de financiamento ou dívida preexistente exige fluxo próprio, ainda por especificar; não reintroduzir uma página autónoma sem decisão explícita.
 
 ## Relatórios — aprovado
 - Cabeçalho Relatórios e seletor mês/ano.
@@ -102,7 +101,7 @@ Reutiliza estrutura de Contas e Cartões.
 - Preferências: Perfil, Moeda, Categorias, Aparência e preferências.
 - Segurança e Dados: Segurança, Dados e cópias de segurança.
 - Sobre o Orbe.
-- Não editar movimentos, contas, cartões ou dívidas diretamente nesta página.
+- Não editar movimentos, contas, cartões ou obrigações diretamente nesta página.
 
 ## Ordem de desenho aprovada
 Concluir páginas principais; desenhar subpáginas; definir modais; auditar consistência e reaproveitamento.
@@ -864,7 +863,7 @@ A navegação publicada na `main` em 2026-11-25 utiliza um FAB global (+), fixo 
 - Movimentos/Programações: a recorrência é configurada dentro do fluxo de Novo gasto ou Novo rendimento; não existe uma opção adicional **Nova programação** no conjunto fixo do FAB.
 - Contas: a ação **Nova conta** permanece no contexto da página; formulário ainda indisponível.
 - Cartões: a ação **Novo cartão** permanece no contexto da página; formulário ainda indisponível.
-- Dívidas: não apresentar **Nova dívida** como opção genérica de criação. A gestão/consulta de obrigações mantém-se; a criação de financiamento/entrada de empréstimo ou registo de dívida preexistente exige um fluxo específico, ainda por definir. Esta nota não decide se Dívidas permanece página principal.
+- Obrigações: não apresentar **Nova dívida** como opção genérica de criação nem manter página autónoma de Dívidas. Consultar/liquidar obrigações a partir dos movimentos/faturas associados. Financiamento recebido ou registo de obrigação preexistente exige fluxo específico, ainda por definir.
 - Não apresentar **Nova projeção** no FAB. Projeções são calculadas na Rota, não criadas como operações financeiras.
 - Relatórios e Configurações: FAB oculto quando não existe ação de criação aprovada.
 
