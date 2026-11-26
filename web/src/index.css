@@ -345,7 +345,6 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 
 /* Dashboard layout approved: desktop account controls in sidebar; mobile profile under More. */
 .sidebar-footer { flex-shrink: 0; }
-.sidebar-account-dropdown { top: auto; bottom: calc(100% + 8px); }
 .desktop-dashboard-header { width: 100%; min-height: 76px; }
 .mobile-dashboard-period-control { align-self: flex-start; }
 .mobile-more-menu { box-shadow: 0 8px 24px rgba(16, 24, 40, .06); }
@@ -395,11 +394,13 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 .desktop-sidebar > :first-child { margin-bottom: 28px !important; }
 .desktop-sidebar .sidebar-footer { margin-top: auto; }
 .sidebar-footer .account-menu { width: 100%; }
-.sidebar-footer .account-menu > button { width: 100%; max-width: 100%; overflow: hidden; }
-.sidebar-footer .account-menu > button > div { min-width: 0; max-width: 100%; }
-.sidebar-footer .account-menu > button > div > div { min-width: 0; max-width: 100%; }
-.sidebar-footer .account-menu > button > div > div > span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sidebar-footer .account-menu > button > div > div > span:last-child { color: var(--orbe-muted); }
+.sidebar-footer .account-menu-anchor { display: flex; width: 100%; min-width: 0; }
+.sidebar-footer .account-menu .sidebar-profile-button { width: 100%; max-width: 100%; overflow: hidden; }
+.sidebar-footer .sidebar-profile-button:focus:not(:focus-visible) { outline: none; box-shadow: none; }
+.sidebar-footer .sidebar-profile-button > div { min-width: 0; max-width: 100%; }
+.sidebar-footer .sidebar-profile-button > div > div { min-width: 0; max-width: 100%; }
+.sidebar-footer .sidebar-profile-button > div > div > span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 
 .desktop-dashboard-header { min-height: 72px; align-items: center !important; margin-bottom: 0; }
 .desktop-dashboard-header h1 { margin: 0; font-size: clamp(28px, 2.5vw, 36px) !important; line-height: 1.15; }
@@ -1535,3 +1536,73 @@ input[type="search"] {
     padding-bottom: calc(84px + env(safe-area-inset-bottom)) !important;
   }
 }
+
+/* Account popover is portalled to body so the collapsed sidebar cannot clip it. */
+.account-menu-anchor { display: flex; width: 100%; min-width: 0; }
+.desktop-sidebar.collapsed .account-menu-anchor { justify-content: center; }
+.sidebar-account-popover {
+  position: fixed;
+  z-index: 1000;
+  min-width: 0;
+  max-width: calc(100vw - 24px);
+  padding: 12px;
+  border: 1px solid var(--orbe-border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, .16);
+  color: var(--orbe-text);
+}
+.sidebar-account-popover-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 2px 2px 12px;
+}
+.sidebar-account-avatar {
+  display: grid;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--orbe-border);
+  border-radius: 10px;
+  background: #f8fafc;
+  color: var(--orbe-muted);
+}
+.sidebar-account-identity { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 3px; }
+.sidebar-account-identity strong {
+  overflow: hidden;
+  color: var(--orbe-text);
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar-account-identity small { color: var(--orbe-muted); font-size: 11px; }
+.sidebar-account-menu-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #344054;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.sidebar-account-menu-action:hover:not(:disabled) {
+  background: #f2f4f7;
+  box-shadow: none;
+}
+.sidebar-account-menu-action:focus-visible {
+  outline: 2px solid rgba(8, 127, 112, .55);
+  outline-offset: -2px;
+}
+.sidebar-account-menu-action:disabled { cursor: not-allowed; opacity: .5; }
