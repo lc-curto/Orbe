@@ -167,8 +167,8 @@
 [data-theme="dark"] .mobile-dashboard-greeting-text,
 [data-theme="dark"] .desktop-dashboard-header h1 { color: var(--orbe-text) !important; }
 [data-theme="dark"] .mobile-dashboard-date { color: var(--orbe-muted) !important; }
-[data-theme="dark"] .desktop-categories-card,
-[data-theme="dark"] .desktop-categories-card [class*="Text"] { background: var(--orbe-surface) !important; color: var(--orbe-text) !important; border-color: var(--orbe-border) !important; }
+[data-theme="dark"] .desktop-categories-card { background: var(--orbe-surface) !important; color: var(--orbe-text) !important; border-color: var(--orbe-border) !important; }
+[data-theme="dark"] .desktop-categories-card [class*="Text"] { color: var(--orbe-text) !important; }
 [data-theme="dark"] .accounts-row-icon,
 [data-theme="dark"] .cards-row-icon { background: #25354c !important; }
 [data-theme="dark"] .accounts-status-badge.is-active,
