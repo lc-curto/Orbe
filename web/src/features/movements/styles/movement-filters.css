@@ -1,0 +1,392 @@
+/* Movements and schedules: consistent search/filter composition */
+.movements-page .movement-toolbar {
+  align-items: center;
+  justify-content: stretch;
+  gap: 10px;
+  margin: 0 0 14px;
+}
+.movements-page .movement-toolbar .search-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+  gap: 6px;
+}
+.movements-page .movement-toolbar .search-control input {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  border-radius: 12px;
+  padding: 0 14px;
+  background: #fff;
+  border-color: #e4e7ec;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.movements-page .movement-toolbar .search-control input:focus {
+  outline: none;
+  border-color: #84adff;
+  box-shadow: 0 0 0 3px rgba(23, 92, 211, .12);
+}
+.movements-page .toolbar-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 12px;
+  padding: 0 16px;
+  border-color: #e4e7ec;
+  white-space: nowrap;
+  transition: background .15s ease, border-color .15s ease;
+}
+.movements-page .toolbar-filter:hover,
+.movements-page .toolbar-filter[aria-expanded="true"] {
+  background: #f2f4ff;
+  border-color: #c7d2fe;
+  color: #5145cd;
+}
+.movements-page .filter-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: -4px 0 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #fbfcff;
+  border-color: #e4e7ec;
+}
+.movements-page .filter-panel label {
+  min-width: 0;
+  gap: 7px;
+  font-size: 12px;
+}
+.movements-page .filter-panel select {
+  width: 100%;
+  min-height: 40px;
+  border-radius: 10px;
+  padding: 0 11px;
+  font-size: 13px;
+}
+.movements-page .schedule-list-header {
+  margin: 2px 2px 10px;
+}
+@media (max-width: 1023px) {
+  .movements-page .movement-toolbar {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .movements-page .movement-toolbar .search-control {
+    flex: 1 1 0;
+  }
+  .movements-page .movement-toolbar .search-control input {
+    min-height: 40px;
+    border-radius: 10px;
+    padding: 0 11px;
+    font-size: 12px;
+  }
+  .movements-page .toolbar-filter {
+    min-height: 40px;
+    border-radius: 10px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+  .movements-page .filter-panel {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+    margin: 0 0 12px;
+    padding: 12px;
+  }
+  .movements-page .filter-panel select {
+    min-height: 38px;
+  }
+}
+@media (max-width: 420px) {
+  .movements-page .movement-toolbar {
+    gap: 7px;
+  }
+  .movements-page .movement-toolbar .search-control input {
+    font-size: 11px;
+  }
+  .movements-page .toolbar-filter {
+    padding: 0 10px;
+  }
+}
+
+/* Search fields use a separate, accessible, clickable submit icon */
+.search-control input,
+input.search-input,
+input[type="search"] {
+  background-image: none !important;
+  padding-left: 12px !important;
+}
+.movement-search-form {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+  width: 100%;
+}
+.movement-search-form .search-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+}
+.movement-search-form .search-control input {
+  width: 100%;
+  min-width: 0;
+}
+.search-submit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 0;
+  border: 1px solid var(--orbe-border);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--orbe-muted);
+  cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.search-submit-button:hover,
+.search-submit-button:focus-visible {
+  color: #5145cd;
+  border-color: #c7d2fe;
+  background: #f2f4ff;
+}
+.search-submit-button:focus-visible {
+  outline: 3px solid rgba(23, 92, 211, .18);
+  outline-offset: 1px;
+}
+@media (max-width: 1023px) {
+  .movement-search-form {
+    gap: 7px;
+  }
+  .movement-search-form .search-control input {
+    min-height: 40px;
+  }
+  .search-submit-button {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+}
+
+
+/* Shared two-row search/filter layout for Movements and Schedules */
+.movements-page .movement-search-form {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+.movements-page .movement-search-form .search-control {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+}
+.movements-page .movement-search-form .search-control input {
+  width: 100%;
+  min-width: 0;
+}
+.movements-page .movement-filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0 0 14px;
+  overflow: hidden;
+}
+.movements-page .movement-filter-row > .toolbar-filter {
+  flex: 0 0 auto;
+  min-height: 40px;
+}
+.movements-page .movement-filter-row .filter-chips {
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-wrap: nowrap;
+  gap: 7px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.movements-page .movement-filter-row .filter-chips::-webkit-scrollbar {
+  display: none;
+}
+.movements-page .movement-filter-row .filter-chips button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+.movements-page .schedule-filter-row {
+  margin-bottom: 10px;
+}
+@media (max-width: 1023px) {
+  .movements-page .movement-search-form {
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+  .movements-page .movement-search-form .search-control input {
+    min-height: 40px;
+    border-radius: 10px;
+    padding: 0 11px;
+    font-size: 11px;
+  }
+  .movements-page .search-submit-button {
+    flex-basis: 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+  .movements-page .movement-filter-row {
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .movements-page .movement-filter-row > .toolbar-filter {
+    min-height: 30px;
+    border-radius: 999px;
+    padding: 0 10px;
+    font-size: 9px;
+  }
+  .movements-page .movement-filter-row .filter-chips {
+    gap: 5px;
+  }
+  .movements-page .movement-filter-row .filter-chips button {
+    min-height: 30px;
+    border-radius: 999px;
+    padding: 0 9px;
+    font-size: 9px;
+  }
+}
+
+
+/* Refined filter row: icon control, wrapping chips, no clipped content */
+.movements-page .movement-filter-row {
+  align-items: flex-start;
+  flex-wrap: wrap;
+  overflow: visible;
+  gap: 8px;
+}
+.movements-page .movement-filter-row > .filter-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 40px;
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 0;
+  color: #667085;
+  background: #fff;
+  border: 1px solid #e4e7ec;
+}
+.movements-page .movement-filter-row > .filter-icon-button:hover,
+.movements-page .movement-filter-row > .filter-icon-button[aria-expanded="true"] {
+  color: #5145cd;
+  background: #f2f4ff;
+  border-color: #c7d2fe;
+}
+.movements-page .movement-filter-row > .filter-icon-button:focus {
+  outline: none;
+}
+.movements-page .movement-filter-row > .filter-icon-button:focus-visible {
+  outline: 2px solid #84adff;
+  outline-offset: 2px;
+}
+.movements-page .movement-filter-row .filter-chips {
+  display: flex;
+  flex: 1 1 220px;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 7px;
+  overflow: visible;
+}
+.movements-page .movement-filter-row .filter-chips button {
+  flex: 0 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+.movements-page .filter-panel {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 12px;
+}
+.movements-page .schedule-list-header {
+  margin-top: 4px;
+}
+@media (max-width: 1023px) {
+  .movements-page .movement-filter-row {
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    overflow: visible;
+    margin-bottom: 12px;
+  }
+  .movements-page .movement-filter-row > .filter-icon-button {
+    flex: 0 0 40px;
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+  }
+  .movements-page .movement-filter-row .filter-chips {
+    flex: 1 1 calc(100% - 48px);
+    flex-wrap: wrap;
+    overflow: visible;
+    gap: 6px;
+  }
+  .movements-page .movement-filter-row .filter-chips button {
+    min-height: 36px;
+    padding: 0 11px;
+    font-size: 11px;
+  }
+  .movements-page .filter-panel {
+    margin: 0 0 12px;
+  }
+}
+
+
+/* Keep quick filters on one line; allow horizontal scrolling on narrow screens */
+.movements-page .movement-filter-row {
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow: visible;
+}
+.movements-page .movement-filter-row .filter-chips {
+  flex: 1 1 auto;
+  flex-wrap: nowrap;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.movements-page .movement-filter-row .filter-chips::-webkit-scrollbar {
+  display: none;
+}
+.movements-page .movement-filter-row .filter-chips button {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+@media (max-width: 1023px) {
+  .movements-page .movement-filter-row {
+    flex-wrap: nowrap;
+    overflow: visible;
+  }
+  .movements-page .movement-filter-row .filter-chips {
+    flex: 1 1 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+}
+
+

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Account } from './api/types'
+import type { Account } from '../../../api/types'
 
 type Props = {
   accounts: Account[]

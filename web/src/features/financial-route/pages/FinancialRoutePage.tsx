@@ -1,17 +1,19 @@
 import { useState } from 'react'
-import type { Operation } from './api/types'
-import { MonthSelector } from './MonthSelector'
-import { RouteDayModal } from './features/financial-route/components/RouteDayModal'
-import { RouteMonthCard } from './features/financial-route/components/RouteMonthCard'
-import { useFinancialRouteData } from './features/financial-route/hooks/useFinancialRouteData'
-import type { RouteDay, RouteFlowFilter } from './features/financial-route/types'
-import { formatAmount, formatMonthRange, shiftMonth } from './features/financial-route/utils'
+import type { Operation } from '../../../api/types'
+import { MonthSelector } from '../../../shared/components/MonthSelector'
+import { RouteDayModal } from '../components/RouteDayModal'
+import { RouteMonthCard } from '../components/RouteMonthCard'
+import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
+import type { RouteDay, RouteFlowFilter } from '../types'
+import { formatAmount, formatMonthRange, shiftMonth } from '../utils'
+import { useCurrency } from '../../currency/useCurrency'
 
 export function FinancialRoutePage({ operations, month, onMonthChange }: {
   operations: Operation[]
   month: string
   onMonthChange: (month: string) => void
 }) {
+  const { symbol } = useCurrency()
   const firstMonth = month
   const [onlyMovementDays, setOnlyMovementDays] = useState(false)
   const [flowFilter, setFlowFilter] = useState<RouteFlowFilter>('ALL')
@@ -70,8 +72,8 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
       <div className="route-mobile-summary">
         <div className="route-mobile-ending"><span>Saldo final</span><strong>Indisponível</strong></div>
         <div className="route-mobile-totals">
-          <span className="route-month-income">+ {mobileMonth ? formatAmount(mobileMonth.totals.income) : '0,00'} entradas</span>
-          <span className="route-month-expenses">− {mobileMonth ? formatAmount(mobileMonth.totals.expenses) : '0,00'} saídas</span>
+          <span className="route-month-income">+ {mobileMonth ? formatAmount(mobileMonth.totals.income) : '0,00'} {symbol} entradas</span>
+          <span className="route-month-expenses">− {mobileMonth ? formatAmount(mobileMonth.totals.expenses) : '0,00'} {symbol} saídas</span>
         </div>
       </div>
       <div className="route-mobile-toolbar">

@@ -1,6 +1,7 @@
 import type { Operation } from '../../../api/types'
 import { routeFilterOptions, type RouteFilter } from '../types'
 import { formatFullDate, formatMoney, operationLabel } from '../utils'
+import { useCurrency } from '../../currency/useCurrency'
 
 export function RouteDayModal({ date, operations, filter, onFilterChange, onClose }: {
   date: string
@@ -9,6 +10,7 @@ export function RouteDayModal({ date, operations, filter, onFilterChange, onClos
   onFilterChange: (filter: RouteFilter) => void
   onClose: () => void
 }) {
+  const { symbol } = useCurrency()
   const detailOperations = operations.filter((operation) => {
     if (filter === 'INCOME') return operation.operation_type === 'INCOME'
     if (filter === 'FIXED' || filter === 'VARIABLE') return false
@@ -21,7 +23,7 @@ export function RouteDayModal({ date, operations, filter, onFilterChange, onClos
       <nav className="route-detail-filters" aria-label="Filtrar movimentos">
         {routeFilterOptions.map((option) => <button key={option.value} type="button" className={filter === option.value ? 'active' : ''} aria-pressed={filter === option.value} onClick={() => onFilterChange(option.value)}>{option.label}</button>)}
       </nav>
-      {filter === 'FIXED' || filter === 'VARIABLE' ? <div className="route-detail-notice">A classificação entre gastos fixos e variáveis ainda não está disponível nos dados financeiros.</div> : detailOperations.length ? <div className="route-detail-list">{detailOperations.map((operation) => <article className="route-detail-row" key={operation.id}><div className={`route-detail-icon ${operation.operation_type === 'INCOME' ? 'income' : operation.operation_type === 'TRANSFER' ? 'transfer' : 'expense'}`}>{operation.operation_type === 'INCOME' ? '↑' : operation.operation_type === 'TRANSFER' ? '↔' : '↓'}</div><div className="route-detail-description"><strong>{operationLabel(operation)}</strong><span>{operation.operation_type === 'TRANSFER' ? 'Transferência entre contas' : `${operation.category?.name ?? 'Sem categoria'} · ${operation.account?.name ?? 'Conta não identificada'}`}</span></div><strong className={operation.operation_type === 'INCOME' ? 'route-detail-income' : operation.operation_type === 'TRANSFER' ? 'route-detail-transfer' : 'route-detail-expense'}>{operation.operation_type === 'TRANSFER' ? '' : operation.operation_type === 'INCOME' ? '+' : '−'} {formatMoney(Number(operation.amount))}</strong></article>)}</div> : <div className="route-detail-empty">Não existem movimentos para este filtro.</div>}
+      {filter === 'FIXED' || filter === 'VARIABLE' ? <div className="route-detail-notice">A classificação entre gastos fixos e variáveis ainda não está disponível nos dados financeiros.</div> : detailOperations.length ? <div className="route-detail-list">{detailOperations.map((operation) => <article className="route-detail-row" key={operation.id}><div className={`route-detail-icon ${operation.operation_type === 'INCOME' ? 'income' : operation.operation_type === 'TRANSFER' ? 'transfer' : 'expense'}`}>{operation.operation_type === 'INCOME' ? '↑' : operation.operation_type === 'TRANSFER' ? '↔' : '↓'}</div><div className="route-detail-description"><strong>{operationLabel(operation)}</strong><span>{operation.operation_type === 'TRANSFER' ? 'Transferência entre contas' : `${operation.category?.name ?? 'Sem categoria'} · ${operation.account?.name ?? 'Conta não identificada'}`}</span></div><strong className={operation.operation_type === 'INCOME' ? 'route-detail-income' : operation.operation_type === 'TRANSFER' ? 'route-detail-transfer' : 'route-detail-expense'}>{operation.operation_type === 'TRANSFER' ? '' : operation.operation_type === 'INCOME' ? '+' : '−'} {formatMoney(Number(operation.amount), symbol)}</strong></article>)}</div> : <div className="route-detail-empty">Não existem movimentos para este filtro.</div>}
     </section>
   </div>
 }

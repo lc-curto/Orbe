@@ -91,12 +91,12 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 - PR #7 foi integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`): remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
 - Backend da branch: gasto/rendimento pendente sem destino financeiro; realizado exige conta ativa; confirmação recolhe conta e cria lançamento; recorrências pendentes não guardam destino até à materialização.
 - Validação local reportada pelo utilizador: **52 testes backend passaram (217 assertions)** e Pint `--test` passou nos 7 ficheiros PHP alterados. O Pint global reporta 63 problemas de estilo em 98 ficheiros preexistentes/abrangidos; não foi aplicada formatação global.
-- Build, lint e QA visual/responsivo frontend do PR #7 ainda não foram executados. O status Vercel do commit atual falhou por limite de deploy (rate limit), não por um resultado de build confirmado.
+- Após o PR #7, a workflow `Web CI` passou lint e build de produção na branch `feature/reports-settings-ui` (run 45877403801, commit `7eaf5c2`). A QA visual/responsiva em desktop/tablet/mobile continua pendente. O rate limit da Vercel é um limite de deploy e não invalida o CI concluído.
 - Formulários de escrita, consulta/liquidação contextual de obrigações e projeções reais permanecem por implementar/validar. A ausência de página autónoma de Dívidas é uma decisão aprovada, não uma funcionalidade em falta.
 
 ## Próxima sequência recomendada
-1. Executar build e lint frontend e QA visual/responsivo em desktop/tablet/mobile, incluindo navegação sem Dívidas e consistência do FAB nas páginas/abas.
-2. Validar no frontend a regra pendente→realizado: sem destino no pendente; conta obrigatória na confirmação.
+1. QA visual/responsiva de Relatórios e Configurações em desktop/tablet/mobile, incluindo loading, erro, vazio, navegação, seletor mensal e preferência de símbolo.
+2. Validar a regra pendente→realizado no frontend: sem destino no pendente; conta obrigatória na confirmação.
 3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta/liquidação de obrigações associadas.
 4. Fechar contratos/read models financeiros pendentes, sobretudo projeção diária, e implementar os formulários suportados.
 5. Executar auditoria final de consistência entre documentação, API, frontend e modelo ER.
@@ -309,8 +309,8 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 - [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado; detalhe da fatura lista os movimentos associados, agrupados por dia e reutilizando a linha de Movimentos, sem filtros de estado).
 - [x] Decisão de produto: descontinuar a página autónoma de Dívidas.
 - [ ] Implementar consulta e liquidação de obrigações nos detalhes de movimentos/faturas, conforme os contratos aprovados.
-- [ ] Implementar Relatórios.
-- [ ] Implementar Configurações conforme a navegação aprovada.
+- [x] Implementar a interface de Relatórios em feature/reports-settings-ui, com agregação baseada em operações realizadas e faturas disponíveis; QA/build ainda pendentes.
+- [x] Implementar a interface de Configurações conforme a navegação aprovada, incluindo preferência local de símbolo de moeda (apenas apresentação); QA/build ainda pendentes.
 - [ ] Garantir que operações com vários lançamentos aparecem uma única vez.
 
 ## 13. Testes e auditoria final
@@ -334,11 +334,24 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 
 ## Próxima sequência de execução
 
-1. Executar build e lint frontend e QA visual em desktop/tablet/mobile da branch atual.
-2. Validar a regra pendente→realizado no frontend: sem destino no pendente; conta obrigatória na confirmação.
-3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta/liquidação de obrigações associadas.
-4. Fechar contratos/read models financeiros pendentes (incluindo projeções) e implementar os formulários suportados.
-5. Executar auditoria final e publicar a versão validada.
+1. Concluir CI da branch atual (lint + TypeScript/Vite build) e corrigir todos os erros antes de abrir PR.
+2. Fazer QA visual/responsivo de Relatórios e Configurações em desktop, tablet e mobile; verificar loading, erro e vazio, navegação, seletor mensal e persistência local do símbolo.
+3. Validar a regra pendente→realizado no frontend: sem destino no pendente; conta obrigatória na confirmação.
+4. Implementar detalhes/ações de Movimentos e Cartões/faturas apenas depois de os contratos/read models associados estarem fechados, incluindo consulta/liquidação de obrigações.
+5. Fechar contratos/read models financeiros pendentes (incluindo projeções) e implementar os formulários suportados.
+6. Executar auditoria final e publicar a versão validada.
+
+## Ordem de refatoração incremental das páginas
+
+A refatoração é oportunista e acompanha a implementação de cada funcionalidade; não fazer uma refatoração transversal de todas as páginas de uma vez. Quando uma página for tocada por uma feature, aproveitar para melhorar a sua separação interna sem alterar comportamento, contratos API ou regras financeiras. Ordem de prioridade:
+
+1. **Movimentos** — separar a orquestração da página, filtros/Programações e lógica de apresentação; manter `MovementRow` como componente partilhado e extrair lógica pura para `utils`/hooks quando houver ganho claro.
+2. **Cartões** — separar lista de cartões, consulta/detalhe de faturas e seletores derivados; reutilizar `MovementRow` e não importar componentes diretamente de páginas de Movimentos.
+3. **Contas** — separar lista, detalhe e conferência por conta quando os fluxos forem implementados; manter saldo e movimentos derivados dos read models/API, sem duplicar cálculos financeiros.
+4. **Rota Financeira** — preservar os componentes/tipos/hooks/utilities já extraídos; ao implementar novos dados, isolar consultas e cálculo de projeção num serviço/read model testável, conforme contratos aprovados.
+5. **Dashboard** — desktop e mobile já estão separados; ao ligar dados reais, retirar valores de apresentação hardcoded e dividir secções apenas quando houver responsabilidade independente, mantendo Dashboard como fotografia atual e sem projeções.
+
+Em cada refatoração: confirmar comportamento atual, definir ficheiros afetados, fazer alteração pequena, reutilizar componentes existentes, executar lint/build e testes disponíveis, e comparar desktop/mobile. Não introduzir abstrações genéricas ou dependências sem necessidade demonstrável.
 
 ## Publicação e validação — 2026-11-26
 
@@ -347,7 +360,7 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 - Validação backend local reportada pelo utilizador: **52 testes passaram, 217 assertions**; Pint `--test` nos 7 ficheiros PHP alterados passou.
 - O Pint global continua a reportar **63 problemas de estilo em 98 ficheiros**; não foi aplicado formatting global para evitar alterações fora do escopo.
 - Pós-merge: a referência global `RuntimeException` da migration foi corrigida e foi aplicada formatação nos controllers em commits `68ed3ea`, `eb2ecb3`, `9f67bb0` e `efe8df3`. Estes ajustes não alteram as regras de domínio; a suite não foi reexecutada após os commits remotos.
-- Build, lint e QA visual/responsivo do frontend ainda não foram executados após as alterações do PR #7; permanecem obrigatórios antes de considerar a entrega frontend validada. O status Vercel falhou por limite de deploy (rate limit), sem indicar falha de build.
+- CI após as alterações do PR #7 passou lint e build de produção na branch feature/reports-settings-ui (run 45877403801, commit `7eaf5c2`). A QA visual/responsiva continua pendente. O status Vercel anterior falhou por rate limit de deploy, não por falha de build.
 
 ## Regra de controlo
 
@@ -370,4 +383,24 @@ Este documento é um mapa de execução, não substitui as especificações func
 - O menu contextual `⋮` dos movimentos tem composição aprovada em `docs/03-interface-e-formularios.md`; a implementação e as ações por estado dependem dos contratos API pendentes.
 - A linha de uma compra parcelada apresenta o valor da prestação do período; o valor total da compra só é mostrado ao abrir o detalhe. A indicação de prestações pagas é secundária/discreta.
 - O menu contextual `⋮` dos movimentos tem hierarquia aprovada: Editar, Duplicar, ação de estado, ações específicas do tipo, separador e ação destrutiva final (Eliminar se elegível; Estornar para operação realizada). A composição está aprovada; contratos de permissões, transições, endpoints e fluxos de pagamento/estorno continuam pendentes.
-- Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios e Configurações permanecem páginas-placeholder até à implementação funcional. A página autónoma de Dívidas está descontinuada.
+- Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios e Configurações têm interface implementada na branch feature/reports-settings-ui; lint e build passam no CI (run 45877403801), enquanto QA responsivo continua pendente. A página autónoma de Dívidas está descontinuada.
+
+
+## Implementação frontend — Relatórios e Configurações (branch feature/reports-settings-ui, 2026-11-26)
+- Criadas páginas React/TypeScript dedicadas e integradas nas variantes desktop e mobile do shell existente.
+- Relatórios usa o componente MonthSelector existente; a agregação de operações realizadas foi isolada em `features/reports/utils.ts`. Apresenta apenas dimensões suportadas pelos dados atuais. A análise de obrigações sem read model disponível é explicitamente indisponível; não há valores fictícios.
+- Configurações apresenta os grupos aprovados. A preferência de símbolo é funcional e guardada no navegador; as opções sem contratos/painéis próprios são informativas, não ações simuladas.
+- Regra aprovada: a alteração de símbolo não converte nem altera valores, dados, saldos, cálculos, escala ou precisão.
+- Lint e build de produção passaram no CI da branch (run 45877403801, commit `7eaf5c2`). A QA visual/responsiva e a revisão final continuam pendentes antes de integrar na main.
+
+
+## Organização frontend — branch `feature/reports-settings-ui` (2026-11-26)
+- Mantida a funcionalidade de Relatórios, Configurações e preferência de símbolo; a reorganização é estrutural, sem alterar contratos financeiros.
+- `app/`: composição da aplicação, shell e estado/navegação global.
+- `features/dashboard/`: Dashboard desktop (`pages/DashboardPage.tsx`), Dashboard mobile (`components/MobileDashboard.tsx`) e especificação visual (`specs/`).
+- `features/`: páginas e componentes por domínio (auth, dashboard, movements, accounts, cards, financial-route, reports, settings, currency).
+- `shared/components/`: seletor mensal reutilizável e componentes comuns.
+- `features/movements/components/`: formulário de movimentos e linha de movimento partilhada com Cartões.
+- `styles/` e `features/*/styles/`: CSS transversal e estilos separados por área; `index.css` apenas agrega os imports ordenados.
+- `MobileDashboardSpec.tsx` foi movido para `features/dashboard/specs/` para separar a especificação visual da interface executada.
+- Lint e build passaram no CI da branch (run 45877403801, commit `7eaf5c2`); QA visual/responsiva continua pendente. Não integrar na `main` antes da QA e revisão.

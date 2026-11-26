@@ -103,6 +103,13 @@ Reutiliza estrutura de Contas.
 - Sobre o Orbe.
 - Não editar movimentos, contas, cartões ou obrigações diretamente nesta página.
 
+### Comportamento aprovado — Relatórios e moeda (2026-11-26)
+- O seletor de mês/ano de Relatórios reutiliza o componente e o padrão responsivo de posicionamento/alinhamento já adotado em Movimentos. Não criar um novo padrão de cabeçalho ou deslocar o seletor.
+- Relatórios apresenta apenas operações realizadas no período selecionado; não inclui pendentes, canceladas ou projeções.
+- As análises são calculadas a partir dos dados reais disponíveis na API. Quando um read model ainda não expõe uma dimensão (por exemplo, histórico de pagamentos/evolução de obrigações), apresentar um estado informativo e não estimar nem inventar valores.
+- A preferência de moeda altera exclusivamente o símbolo apresentado na interface. Não efetua câmbio, conversão, alteração de valores guardados, saldos, cálculos, precisão ou escala. É uma preferência de apresentação, não uma alteração da denominação financeira dos movimentos.
+- A implementação frontend deve centralizar a preferência e a formatação para evitar formatadores divergentes entre páginas. A escolha persistida no navegador não altera os dados da API nem implica sincronização entre dispositivos.
+
 ## Ordem de desenho aprovada
 Concluir páginas principais; desenhar subpáginas; definir modais; auditar consistência e reaproveitamento.
 

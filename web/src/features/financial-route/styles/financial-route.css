@@ -1,0 +1,197 @@
+/* Rota Financeira — desktop trimestral e mobile mensal */
+.main-content.route-mode { max-width: 1480px; }
+.main-content.route-mode > *:not(.financial-route-page) { display: none; }
+.financial-route-page { width: 100%; max-width: 1480px; margin: 0 auto; color: var(--orbe-text); }
+.financial-route-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 8px 0 18px; }
+.financial-route-title h1 { margin: 0; font-size: clamp(27px, 3vw, 36px); letter-spacing: -1px; }
+.financial-route-title p { margin: 6px 0 0; color: var(--orbe-muted); font-size: 13px; }
+.route-period-selector { display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 3px 8px; border: 1px solid #d8dce5; border-radius: 999px; background: #fff; }
+.route-period-selector button { display: grid; width: 28px; height: 30px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--orbe-text); font-size: 22px; cursor: pointer; }
+.route-period-selector button:hover { background: #f2f4f7; box-shadow: none !important; }
+.route-period-selector span { min-width: 128px; color: var(--orbe-text); font-size: 12px; font-weight: 750; text-align: center; white-space: nowrap; }
+.route-month-selector-mobile { display: none !important; }
+.route-desktop-controls { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0 0 14px; }
+.route-flow-filters { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.route-flow-filters button { min-height: 36px; padding: 0 15px; border: 1px solid #d8dce5; border-radius: 999px; background: #fff; color: #344054; font: inherit; font-size: 12px; cursor: pointer; }
+.route-flow-filters button.active { border-color: #171717; background: #171717; color: #fff; }
+.route-flow-filters button:hover { box-shadow: none !important; }
+.route-switch { display: inline-flex; align-items: center; gap: 10px; min-height: 42px; color: var(--orbe-text); font-size: 12px; font-weight: 650; cursor: pointer; white-space: nowrap; }
+.route-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.route-switch-track { position: relative; width: 40px; height: 24px; flex: 0 0 40px; border-radius: 999px; background: #d0d5dd; transition: background 150ms ease; }
+.route-switch-track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(16,24,40,.2); transition: transform 150ms ease; }
+.route-switch input:checked + .route-switch-track { background: var(--orbe-teal); }
+.route-switch input:checked + .route-switch-track::after { transform: translateX(16px); }
+.route-switch input:focus-visible + .route-switch-track { outline: 3px solid var(--orbe-focus); outline-offset: 3px; }
+.route-desktop-months { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 12px; }
+.route-month-card { min-width: 0; overflow: hidden; border: 1px solid var(--orbe-border); border-radius: 15px; background: #fff; }
+.route-month-card-header { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 86px; padding: 14px 14px 12px; border-bottom: 1px solid var(--orbe-border); }
+.route-month-heading { min-width: 0; }
+.route-month-heading h2 { margin: 0 0 10px; color: var(--orbe-text); font-size: 17px; font-weight: 750; }
+.route-month-totals { display: flex; flex-wrap: wrap; gap: 5px 10px; font-size: 10px; white-space: nowrap; }
+.route-month-income { color: #087f70; }
+.route-month-expenses { color: #c24135; }
+.route-month-ending { display: flex; min-width: 82px; flex-direction: column; align-items: flex-end; gap: 5px; text-align: right; }
+.route-month-ending span, .route-mobile-ending span { color: var(--orbe-muted); font-size: 10px; }
+.route-month-ending strong { color: var(--orbe-muted); font-size: 12px; font-weight: 700; white-space: nowrap; }
+.route-table-wrap { overflow: hidden; background: #fff; }
+.route-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 11px; font-variant-numeric: tabular-nums; }
+.route-table th { padding: 10px 8px; background: #f5f5f2; color: #475467; font-size: 9px; font-weight: 800; text-align: right; text-transform: uppercase; letter-spacing: .03em; }
+.route-table th:first-child, .route-table td:first-child { width: 25%; text-align: left; }
+.route-table th:last-child, .route-table td:last-child { width: 19%; }
+.route-table td { height: 29px; padding: 5px 8px; border-top: 1px solid #efefeb; color: #344054; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: clip; }
+.route-table tbody tr:nth-child(even) { background: #fafaf8; }
+.route-table tbody tr.has-movements { background: #fff; }
+.route-day-button { border: 0; background: transparent; color: var(--orbe-text); font: inherit; font-size: 10px; font-weight: 600; padding: 2px 0; cursor: pointer; text-align: left; }
+.route-day-button:hover { color: var(--orbe-primary); box-shadow: none !important; }
+.route-income-cell { color: #087f70 !important; }
+.route-expense-cell { color: #c24135 !important; }
+.route-balance-unavailable { color: #98a2b3 !important; font-weight: 600; }
+.route-empty { padding: 28px 12px; color: var(--orbe-muted); text-align: center; font-size: 12px; }
+.route-mobile-month { display: none; }
+.route-days-count { color: var(--orbe-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.route-modal-backdrop { position: fixed; z-index: 100; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; background: rgba(16,24,40,.42); }
+.route-day-modal { width: min(620px, 100%); max-height: min(80vh, 720px); overflow: auto; border: 1px solid var(--orbe-border); border-radius: 22px; background: #fff; box-shadow: 0 24px 70px rgba(16,24,40,.22); }
+.route-modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 22px 18px; }
+.route-modal-header span { color: var(--orbe-muted); font-size: 12px; font-weight: 700; }
+.route-modal-header h2 { margin: 6px 0 0; color: var(--orbe-text); font-size: 19px; line-height: 1.3; text-transform: capitalize; }
+.route-modal-close { display: grid; width: 40px; height: 40px; flex: 0 0 40px; place-items: center; border: 1px solid var(--orbe-border); border-radius: 12px; background: #fff; color: var(--orbe-muted); cursor: pointer; font-size: 26px; line-height: 1; }
+.route-detail-filters { display: flex; gap: 6px; margin: 0 22px 14px; padding-bottom: 12px; border-bottom: 1px solid var(--orbe-border); }
+.route-detail-filters button { min-height: 36px; flex: 1; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--orbe-muted); font: inherit; font-size: 12px; font-weight: 700; white-space: nowrap; cursor: pointer; }
+.route-detail-filters button.active { border-color: #d9d5ff; background: #f2f0ff; color: #5044d8; }
+.route-detail-list { padding: 0 22px 18px; }
+.route-detail-row { display: flex; align-items: center; gap: 12px; padding: 13px 0; border-bottom: 1px solid #f0f2f5; }
+.route-detail-row:last-child { border-bottom: 0; }
+.route-detail-icon { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border-radius: 12px; font-size: 18px; font-weight: 800; }
+.route-detail-icon.income { background: #e5f7ed; color: #31855b; }
+.route-detail-icon.expense { background: #fff0f3; color: #bd4963; }
+.route-detail-icon.transfer { background: #f2f4f7; color: #667085; }
+.route-detail-description { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 4px; }
+.route-detail-description strong { overflow: hidden; color: var(--orbe-text); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.route-detail-description span { overflow: hidden; color: var(--orbe-muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.route-detail-row > strong { white-space: nowrap; font-size: 13px; font-variant-numeric: tabular-nums; }
+.route-detail-income { color: #31855b; }
+.route-detail-expense { color: #bd4963; }
+.route-detail-transfer { color: #667085; }
+.route-detail-notice, .route-detail-empty { padding: 26px 22px 30px; color: var(--orbe-muted); font-size: 13px; line-height: 1.5; text-align: center; }
+.route-mobile-shell { padding-top: 0 !important; }
+@media (max-width: 1023px) {
+  .route-mobile-shell .financial-route-page { max-width: 680px; padding: 12px 18px 0; }
+  .route-mobile-shell .financial-route-header { align-items: flex-start; justify-content: space-between; gap: 10px; margin: 0 0 16px; padding: 4px 0 0; }
+  .route-mobile-shell .financial-route-title { display: block; min-width: 0; }
+  .route-mobile-shell .financial-route-title h1 { font-size: 28px; line-height: 1.2; letter-spacing: -1px; }
+  .route-mobile-shell .financial-route-title p { display: none; }
+  .route-mobile-shell .route-desktop-period { display: none; }
+  .route-mobile-shell .route-month-selector-mobile { display: inline-flex !important; margin-top: 0; }
+  .route-mobile-shell .route-month-selector-mobile .orbe-month-selector-label { min-width: 40px; }
+  .route-mobile-shell .route-desktop-controls, .route-mobile-shell .route-desktop-months { display: none; }
+  .route-mobile-shell .route-mobile-month { display: block; }
+  .route-mobile-summary { margin-bottom: 14px; padding: 13px 14px; border: 1px solid var(--orbe-border); border-radius: 13px; background: #fff; }
+  .route-mobile-ending { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
+  .route-mobile-ending strong { color: var(--orbe-text); font-size: 23px; font-weight: 800; }
+  .route-mobile-totals { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 11px; }
+  .route-mobile-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 0 8px; }
+  .route-mobile-toolbar .route-switch { font-size: 12px; }
+  .route-month-card-mobile { border-radius: 12px; }
+  .route-month-card-mobile .route-month-card-header { display: none; }
+  .route-month-card-mobile .route-table-wrap { max-height: none; overflow: visible; overscroll-behavior: auto; }
+  .route-month-card-mobile .route-table thead { position: sticky; top: 0; z-index: 2; }
+  .route-month-card-mobile .route-table th { padding: 10px 8px; font-size: 10px; }
+  .route-month-card-mobile .route-table td { height: 38px; padding: 7px 8px; font-size: 11px; }
+  .route-month-card-mobile .route-table th:first-child, .route-month-card-mobile .route-table td:first-child { width: 25%; }
+  .route-month-card-mobile .route-day-button { font-size: 11px; }
+  .route-mobile-shell .route-modal-backdrop { align-items: flex-end; padding: 0; }
+  .route-mobile-shell .route-day-modal { width: 100%; max-height: min(86vh, 760px); border-radius: 22px 22px 0 0; padding-bottom: env(safe-area-inset-bottom); }
+}
+@media (max-width: 480px) {
+  .route-mobile-shell .financial-route-page { padding-left: 14px; padding-right: 14px; }
+  .route-mobile-summary { padding: 12px; }
+  .route-mobile-ending strong { font-size: 21px; }
+  .route-mobile-totals { font-size: 10px; }
+  .route-month-card-mobile .route-table th, .route-month-card-mobile .route-table td { padding-left: 6px; padding-right: 6px; font-size: 10px; }
+  .route-month-card-mobile .route-table th:first-child, .route-month-card-mobile .route-table td:first-child { width: 24%; }
+  .route-month-card-mobile .route-table th:last-child, .route-month-card-mobile .route-table td:last-child { width: 17%; }
+  .route-detail-filters { margin-left: 14px; margin-right: 14px; gap: 2px; }
+  .route-detail-filters button { padding: 0 5px; font-size: 11px; }
+  .route-modal-header { padding: 18px 14px 14px; }
+  .route-detail-list { padding-left: 14px; padding-right: 14px; }
+}
+
+
+/* Rota mobile: reservar o espaço da bottom bar, sem o padding extra usado por Movimentos. */
+@media (max-width: 1023px) {
+  .mobile-page-shell.route-mobile-shell {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom)) !important;
+  }
+}
+
+/* Account popover is portalled to body so the collapsed sidebar cannot clip it. */
+.account-menu-anchor { display: flex; width: 100%; min-width: 0; }
+.desktop-sidebar.collapsed .account-menu-anchor { justify-content: center; }
+.sidebar-account-popover {
+  position: fixed;
+  z-index: 1000;
+  min-width: 0;
+  max-width: calc(100vw - 24px);
+  padding: 12px;
+  border: 1px solid var(--orbe-border);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, .16);
+  color: var(--orbe-text);
+}
+.sidebar-account-popover-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 2px 2px 12px;
+}
+.sidebar-account-avatar {
+  display: grid;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1px solid var(--orbe-border);
+  border-radius: 10px;
+  background: #f8fafc;
+  color: var(--orbe-muted);
+}
+.sidebar-account-identity { display: flex; flex: 1; min-width: 0; flex-direction: column; gap: 3px; }
+.sidebar-account-identity strong {
+  overflow: hidden;
+  color: var(--orbe-text);
+  font-size: 13px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sidebar-account-identity small { color: var(--orbe-muted); font-size: 11px; }
+.sidebar-account-menu-action {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #344054;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.sidebar-account-menu-action:hover:not(:disabled) {
+  background: #f2f4f7;
+  box-shadow: none;
+}
+.sidebar-account-menu-action:focus-visible {
+  outline: 2px solid rgba(8, 127, 112, .55);
+  outline-offset: -2px;
+}
+.sidebar-account-menu-action:disabled { cursor: not-allowed; opacity: .5; }
+
+
