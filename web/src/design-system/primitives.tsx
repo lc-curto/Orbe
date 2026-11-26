@@ -125,7 +125,7 @@ function classNames(...values: Array<string | undefined>) {
 
 export const YStack = forwardRef<HTMLDivElement, PrimitiveProps>(function YStack(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'column', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-stack', className as string | undefined)} style={getStyle(rest, { display: 'flex', flexDirection: 'column', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })} >{children as ReactNode}</div>
 })
 
 export const XStack = forwardRef<HTMLDivElement, PrimitiveProps>(function XStack(props, ref) {
@@ -135,30 +135,30 @@ export const XStack = forwardRef<HTMLDivElement, PrimitiveProps>(function XStack
 
 export const Text = forwardRef<HTMLSpanElement, PrimitiveProps>(function Text(props, ref) {
   const { children, className, ...rest } = props
-  return <span ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLSpanElement>)} className={classNames('orbe-text', className)} style={getStyle(rest, { display: 'block', margin: 0 })}>{children}</span>
+  return <span ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLSpanElement>)} className={classNames('orbe-text', className as string | undefined)} style={getStyle(rest, { display: 'block', margin: 0 })} >{children as ReactNode}</span>
 })
 
 export const Button = forwardRef<HTMLButtonElement, PrimitiveProps>(function Button(props, ref) {
   const { children, className, onPress, onClick, type = 'button', ...rest } = props
-  return <button ref={ref} type={type as 'button' | 'submit' | 'reset'} {...(getRestProps(rest) as ButtonHTMLAttributes<HTMLButtonElement>)} onClick={(onClick ?? onPress) as MouseEventHandler<HTMLButtonElement> | undefined} className={classNames('orbe-button', className)} style={getStyle(rest, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', font: 'inherit', cursor: rest.disabled === true ? 'not-allowed' : 'pointer', backgroundColor: 'transparent', borderStyle: 'solid', borderWidth: 0 })}>{children}</button>
+  return <button ref={ref} type={type as 'button' | 'submit' | 'reset'} {...(getRestProps(rest) as ButtonHTMLAttributes<HTMLButtonElement>)} onClick={(onClick ?? onPress) as MouseEventHandler<HTMLButtonElement> | undefined} className={classNames('orbe-button', className as string | undefined)} style={getStyle(rest, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', font: 'inherit', cursor: rest.disabled === true ? 'not-allowed' : 'pointer', backgroundColor: 'transparent', borderStyle: 'solid', borderWidth: 0 })} >{children as ReactNode}</button>
 })
 
 export const Card = forwardRef<HTMLDivElement, PrimitiveProps>(function Card(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-card', className)} style={getStyle(rest, { boxSizing: 'border-box', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-card', className as string | undefined)} style={getStyle(rest, { boxSizing: 'border-box', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
 })
 
 export const Separator = forwardRef<HTMLHRElement, PrimitiveProps>(function Separator(props, ref) {
   const { className, ...rest } = props
-  return <hr ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLHRElement>)} className={classNames('orbe-separator', className)} style={getStyle(rest, { border: 0, borderTop: '1px solid #e4e7ec', margin: 0, width: '100%' })} />
+  return <hr ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLHRElement>)} className={classNames('orbe-separator', className as string | undefined)} style={getStyle(rest, { border: 0, borderTop: '1px solid #e4e7ec', margin: 0, width: '100%' })} />
 })
 
 export const H1 = forwardRef<HTMLHeadingElement, PrimitiveProps>(function H1(props, ref) {
   const { children, className, ...rest } = props
-  return <h1 ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLHeadingElement>)} className={classNames('orbe-heading', className)} style={getStyle(rest, { margin: 0, fontSize: 36, fontWeight: 800 })}>{children}</h1>
+  return <h1 ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLHeadingElement>)} className={classNames('orbe-heading', className as string | undefined)} style={getStyle(rest, { margin: 0, fontSize: 36, fontWeight: 800 })} >{children as ReactNode}</h1>
 })
 
 export const Paragraph = forwardRef<HTMLParagraphElement, PrimitiveProps>(function Paragraph(props, ref) {
   const { children, className, ...rest } = props
-  return <p ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLParagraphElement>)} className={classNames('orbe-paragraph', className)} style={getStyle(rest, { margin: 0 })}>{children}</p>
+  return <p ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLParagraphElement>)} className={classNames('orbe-paragraph', className as string | undefined)} style={getStyle(rest, { margin: 0 })} >{children as ReactNode}</p>
 })
