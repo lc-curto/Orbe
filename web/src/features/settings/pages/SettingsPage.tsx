@@ -15,8 +15,8 @@ const currencyOptions: Array<{ value: CurrencySymbol; label: string }> = [
   { value: 'CHF', label: 'Franco suíço (CHF)' },
   { value: 'CA$', label: 'Dólar canadiano (CAD · CA$)' },
   { value: 'A$', label: 'Dólar australiano (AUD · A$)' },
-  { value: 'R$', label: 'Real brasileiro (BRL · R$)' },
   { value: 'HK$', label: 'Dólar de Hong Kong (HKD · HK$)' },
+  { value: 'R$', label: 'Real brasileiro (BRL · R$)' },
 ]
 
 function SettingsSection({ title, children }: { title: string; children: ReactNode }) {
