@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { MonthSelector } from './MonthSelector'
 import type { Operation } from './api/types'
-import { RouteDailyTable } from './components/RouteDailyTable'
-import { RouteDayModal } from './components/RouteDayModal'
-import { RouteKpis } from './components/RouteKpis'
-import { RouteProjectionCard } from './components/RouteProjectionCard'
-import { useFinancialRouteData } from './hooks/useFinancialRouteData'
-import type { RouteFilter } from './types'
+import { RouteDailyTable } from './features/financial-route/components/RouteDailyTable'
+import { RouteDayModal } from './features/financial-route/components/RouteDayModal'
+import { RouteKpis } from './features/financial-route/components/RouteKpis'
+import { RouteProjectionCard } from './features/financial-route/components/RouteProjectionCard'
+import { useFinancialRouteData } from './features/financial-route/hooks/useFinancialRouteData'
+import type { RouteFilter } from './features/financial-route/types'
 
 export function FinancialRoutePage({ operations, month, onMonthChange }: {
   operations: Operation[]
