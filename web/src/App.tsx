@@ -18,7 +18,6 @@ import type { Card as FinancialCard, CardInvoice, Operation } from './api/types'
 import { MovementsPage } from './MovementsPage'
 import { AccountsPage } from './AccountsPage'
 import { CardsPage } from './CardsPage'
-import { DebtPage } from './DebtPage'
 import { FinancialRoutePage } from './FinancialRoutePage'
 import { MonthSelector } from './MonthSelector'
 
@@ -233,17 +232,10 @@ export default function App() {
   const [addMenuOpen, setAddMenuOpen] = useState(false)
   const [morePagesOpen, setMorePagesOpen] = useState(false)
 
-  function navigateTo(value: string) {
+  useEffect(() => {
     setAddMenuOpen(false)
     setMorePagesOpen(false)
-    setActiveKey(value)
-  }
-
-  function changeMovementTab(value: 'movements' | 'schedules') {
-    setAddMenuOpen(false)
-    setMorePagesOpen(false)
-    setMovementTab(value)
-  }
+  }, [activeKey, movementTab])
 
   useEffect(() => {
     if (!accountMenuOpen) return
@@ -393,7 +385,7 @@ export default function App() {
             <YStack className="desktop-sidebar-navigation" gap={18} flex={1}>
               {sidebarGroups.map((group) => <YStack key={group.title} gap={7}>
                 {sidebarOpen ? <Text color="#98a2b3" fontSize={10} fontWeight="800" letterSpacing={1}>{group.title.toUpperCase()}</Text> : null}
-                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
+                {group.pages.map((item) => <Button key={item.label} onPress={() => setActiveKey(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
                   <XStack gap={10} style={{ alignItems: 'center', justifyContent: sidebarOpen ? 'flex-start' : 'center' }}><Icon name={item.icon} size={16} />{sidebarOpen ? <Text>{item.label}</Text> : null}</XStack>
                 </Button>)}
               </YStack>)}
@@ -444,13 +436,11 @@ export default function App() {
             </YStack>
           </YStack>
 
-          <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Rota' ? 'route-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''} ${activeKey === 'Dívidas' ? 'debts-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
+          <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Rota' ? 'route-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
-            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}
-            {activeKey === 'Dívidas' ? <DebtPage /> : null}
-            {['Relatórios', 'Configurações'].includes(activeKey) ? <YStack gap={12}><H1 fontSize={30}>{activeKey}</H1><Paragraph color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
-            {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
+            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}            {['Dívidas', 'Relatórios', 'Configurações'].includes(activeKey) ? <YStack gap={12}><H1 fontSize={30}>{activeKey}</H1><Paragraph color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
+            {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
             <XStack className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <YStack gap={4} flex={1} minWidth={0}>
                 <H1 fontSize={36} letterSpacing={-1.2}>Bom dia, {user.name.split(' ')[0]}</H1>
@@ -486,7 +476,7 @@ export default function App() {
             <Card {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
               <XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={8}>
                 <Text fontSize={18} fontWeight="700">Últimos movimentos</Text>
-                <Button onPress={() => { navigateTo('Movimentos') }} aria-label="Ver todos os movimentos" borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontWeight="700">Ver todos →</Button>
+                <Button onPress={() => { setActiveKey('Movimentos') }} aria-label="Ver todos os movimentos" borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontWeight="700">Ver todos →</Button>
               </XStack>
               <YStack>
                 {movements.length === 0 ? <Text color="#667085" paddingVertical={16}>Sem movimentos disponíveis.</Text> : movements.map((movement, index) => (
@@ -508,10 +498,10 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Rota' ? <div className="mobile-page-shell route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></div> : activeKey === 'Dívidas' ? <div className="mobile-page-shell debts-mobile-shell"><DebtPage /></div> : ['Relatórios', 'Configurações'].includes(activeKey) ? <div className="mobile-page-shell"><YStack className="main-content" gap={12}><Text color="#101828" fontSize={24} fontWeight="800">{activeKey}</Text><Text color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Text></YStack></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={setActiveKey} notify={notify} userName={user.name} />}
+        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Rota' ? <div className="mobile-page-shell route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></div> : ['Dívidas', 'Relatórios', 'Configurações'].includes(activeKey) ? <div className="mobile-page-shell"><YStack className="main-content" gap={12}><Text color="#101828" fontSize={24} fontWeight="800">{activeKey}</Text><Text color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Text></YStack></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={setActiveKey} notify={notify} userName={user.name} />}
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
-          {navigation.map((item) => <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } setMorePagesOpen(false); navigateTo(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={activeKey === item.label || (item.label === 'Mais' && morePages.some((page) => page.label === activeKey)) ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#e6f4f1' : 'transparent'} color={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#087f70' : '#667085'}>
+          {navigation.map((item) => <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } setMorePagesOpen(false); setActiveKey(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={activeKey === item.label || (item.label === 'Mais' && morePages.some((page) => page.label === activeKey)) ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#e6f4f1' : 'transparent'} color={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#087f70' : '#667085'}>
             <YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><Icon name={item.icon} size={18} /><Text fontSize={11} fontWeight="700">{item.label}</Text></YStack>
           </Button>)}
         </XStack>
@@ -519,7 +509,7 @@ export default function App() {
           <button className="mobile-more-panel-dismiss" type="button" aria-label="Fechar menu Mais" onClick={() => setMorePagesOpen(false)} />
           <section className="mobile-more-pages-panel" role="menu" aria-label="Páginas secundárias">
             <h2>Mais páginas</h2>
-            {morePages.map((page) => <button key={page.label} className="mobile-more-page-item" type="button" role="menuitem" onClick={() => { setMorePagesOpen(false); navigateTo(page.label) }}><Icon name={page.icon} size={18} /><span>{page.label}</span></button>)}
+            {morePages.map((page) => <button key={page.label} className="mobile-more-page-item" type="button" role="menuitem" onClick={() => { setMorePagesOpen(false); setActiveKey(page.label) }}><Icon name={page.icon} size={18} /><span>{page.label}</span></button>)}
           </section>
         </> : null}
         {addMenuOpen ? <><button className="add-fab-dismiss" type="button" aria-label="Fechar opções de criação" onClick={() => setAddMenuOpen(false)} /><div className="add-fab-menu" role="menu" aria-label={`Criar na página ${activeKey}`}>
