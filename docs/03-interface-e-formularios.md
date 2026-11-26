@@ -384,43 +384,47 @@ Data
 
 Os campos efetivos e a sua obrigatoriedade devem vir da documentação funcional aprovada. Esta secção define a composição visual, não uma lista nova de campos.
 
-### 6.1 Despesa
+### 6.1 Gasto (natureza técnica: `EXPENSE`)
 
 **Recipiente:** modal centralizado em desktop/tablet; bottom sheet em mobile, salvo se o formulário for classificado como extenso pela especificação funcional.
 
 **Composição:**
-1. Título que identifique a criação de despesa.
-2. Campo de valor em destaque.
-3. Campos funcionais da despesa, com etiquetas superiores e contorno.
+1. Título de interface **Novo gasto**.
+2. Campo de valor em destaque, correspondente ao valor total do gasto.
+3. Campos funcionais do gasto, com etiquetas superiores e contorno.
 4. Seletor de categoria em lista simples com ícones.
-5. Apresentação do destino/meio financeiro apenas conforme o tipo e o estado funcional: conta para despesa realizada paga por conta; cartão de crédito para compra realizada com cartão. A seleção antecipada numa despesa pendente continua por decidir.
+5. Campo de meio de pagamento/liquidação, que determina os efeitos financeiros da operação conforme o contrato: conta (pagamento imediato), cartão/fatura, por pagar (obrigação) ou prestações. A obrigação, quando aplicável, deriva do gasto; não se cria uma segunda despesa nem se exige uma ação genérica paralela **Nova dívida**.
 6. Controlo de data com atalhos rápidos.
 7. Rodapé fixo com ação secundária e ação principal.
 
-**Regras visuais:**
-- Valor deve ser o primeiro foco visual do conteúdo.
+**Regras visuais e de apresentação:**
+- Valor total do gasto é o primeiro foco visual no formulário.
 - Campos restantes devem ter hierarquia mais discreta.
 - Não transformar cada campo num cartão independente.
 - A ordem funcional definitiva dos campos deve ser respeitada; não inventar campos adicionais.
+- Na listagem mensal, uma compra parcelada mostra apenas o valor da prestação do período. O valor total fica oculto até abrir o detalhe; a indicação de prestações pagas é secundária e discreta.
+- O pagamento posterior de fatura/obrigação é uma liquidação, não um novo gasto.
 
 Wireframe conceptual:
 
 ```text
-Nova despesa                           [X]
-Valor
+Novo gasto                             [X]
+Valor total
 ┌──────────────────────────────────────┐
 │ €                         0,00       │
 └──────────────────────────────────────┘
 [Campos definidos pela especificação funcional]
 Categoria
 [Lista simples com ícones]
-Conta
-[Seletor compacto]
+Meio de pagamento
+[Conta / Cartão / Por pagar / Prestações]
 Data
 [Hoje] [Ontem] [Escolher data]
 ────────────────────────────────────────
 [Cancelar]                 [Guardar]
 ```
+
+**Limite funcional:** esta composição aprova a intenção de interface, não cria endpoints nem fecha todos os campos/regras de obrigações genéricas, financiamento, pagamento parcial ou seleção antecipada em operações pendentes. Estes continuam sujeitos aos contratos financeiros/API.
 
 ### 6.2 Receita
 
