@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Card as UiCard, Separator, Text, XStack, YStack } from 'tamagui'
+import { Button, Card as UiCard, Separator, Text, XStack, YStack } from '../../../design-system/primitives'
 import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { AppIcon } from '../../../shared/components/AppIcon'
