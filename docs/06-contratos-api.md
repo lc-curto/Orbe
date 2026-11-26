@@ -99,6 +99,10 @@ Ocorrências `PENDING` não têm destino financeiro e não criam `financial_entr
 
 Ocorrências realizadas ou passadas não podem ser reescritas. Todas as operações exigem Sanctum e respeitam o isolamento por utilizador.
 
+## Payloads de recorrência — destino na materialização
+
+`POST /api/recurrences` cria uma programação pendente e não recebe `account_id`; as ocorrências geradas também ficam sem destino e sem lançamentos financeiros. `POST /api/recurrence-occurrences/{occurrence}/materialize` recebe `account_id` e `effective_at`; a conta é validada como pertencente ao utilizador e ativa antes de criar a operação realizada e o lançamento. O destino é gravado na ocorrência realizada para manter o histórico. As alterações de ocorrência pendente não permitem atribuir conta.
+
 ## Endpoints — recorrências
 
 - `POST /api/recurrences`
