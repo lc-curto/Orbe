@@ -1,0 +1,43 @@
+.orbe-stack,
+.orbe-card,
+.orbe-text,
+.orbe-button,
+.orbe-separator,
+.orbe-heading,
+.orbe-paragraph {
+  box-sizing: border-box;
+}
+
+.orbe-stack {
+  min-width: 0;
+}
+
+.orbe-text {
+  margin: 0;
+  min-width: 0;
+}
+
+.orbe-button {
+  font-family: inherit;
+  line-height: inherit;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.orbe-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.orbe-button:focus-visible {
+  outline: 2px solid var(--orbe-focus, #8ab4f8);
+  outline-offset: 2px;
+}
+
+.orbe-card {
+  min-width: 0;
+}
+
+.orbe-separator {
+  flex-shrink: 0;
+}
