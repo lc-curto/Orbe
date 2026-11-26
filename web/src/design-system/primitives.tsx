@@ -130,7 +130,7 @@ export const YStack = forwardRef<HTMLDivElement, PrimitiveProps>(function YStack
 
 export const XStack = forwardRef<HTMLDivElement, PrimitiveProps>(function XStack(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'row', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-stack', className as string | undefined)} style={getStyle(rest, { display: 'flex', flexDirection: 'row', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })} >{children as ReactNode}</div>
 })
 
 export const Text = forwardRef<HTMLSpanElement, PrimitiveProps>(function Text(props, ref) {
@@ -145,7 +145,7 @@ export const Button = forwardRef<HTMLButtonElement, PrimitiveProps>(function But
 
 export const Card = forwardRef<HTMLDivElement, PrimitiveProps>(function Card(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-card', className as string | undefined)} style={getStyle(rest, { boxSizing: 'border-box', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-card', className as string | undefined)} style={getStyle(rest, { boxSizing: 'border-box', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })} >{children as ReactNode}</div>
 })
 
 export const Separator = forwardRef<HTMLHRElement, PrimitiveProps>(function Separator(props, ref) {
