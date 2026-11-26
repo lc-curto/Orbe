@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Operation } from './api/types'
+import { MonthSelector } from './MonthSelector'
 import { RouteDayModal } from './features/financial-route/components/RouteDayModal'
 import { RouteMonthCard } from './features/financial-route/components/RouteMonthCard'
 import { useFinancialRouteData } from './features/financial-route/hooks/useFinancialRouteData'
@@ -51,11 +52,7 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
         <span>{formatMonthRange(firstMonth, shiftMonth(firstMonth, 2))}</span>
         <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
       </div>
-      <div className="route-period-selector route-mobile-period">
-        <button type="button" aria-label="Mês anterior" onClick={() => changePeriod(-1)}>‹</button>
-        <span>{formatMonthRange(firstMonth, firstMonth)}</span>
-        <button type="button" aria-label="Mês seguinte" onClick={() => changePeriod(1)}>›</button>
-      </div>
+      <MonthSelector month={firstMonth} onMonthChange={onMonthChange} className="route-month-selector-mobile" />
     </header>
 
     <div className="route-desktop-controls">
