@@ -410,4 +410,4 @@ Este documento é um mapa de execução, não substitui as especificações func
 
 Tamagui foi removido da stack web. A interface utiliza React, TypeScript, HTML semântico, CSS e primitives próprias do design system em `web/src/design-system/primitives.tsx`. O tema global permanece baseado em `data-theme` e tokens CSS. Foram removidos Tamagui Provider/configuração/plugin, alias React Native Web e dependências Tamagui/react-native-web. A página de Configurações foi restaurada ao commit anterior à migração Tamagui; os restantes componentes que dependiam da biblioteca foram desacoplados de forma explícita.
 
-**Validação pendente:** executar `npm ci`, lint, build TypeScript/Vite e QA visual desktop/mobile após a remoção das dependências.
+**Validação CI:** `npm ci`, ESLint e build TypeScript/Vite passaram no run [45886814005](https://github.com/lc-curto/Orbe/actions/runs/45886814005). **QA visual desktop/mobile permanece pendente**.
