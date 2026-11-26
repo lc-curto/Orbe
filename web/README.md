@@ -1,6 +1,6 @@
 # Orbe — Web
 
-Aplicação web do Orbe em React + TypeScript + Vite, com Tamagui e `react-native-web` para a camada de compatibilidade de componentes.
+Aplicação web do Orbe em React + TypeScript + Vite. A camada visual usa primitives nativas React/HTML e CSS, centralizadas em `src/design-system/`; não depende de Tamagui nem de `react-native-web`.
 
 ## Requisitos
 
