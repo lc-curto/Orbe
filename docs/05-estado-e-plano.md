@@ -75,7 +75,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 ## Trabalho funcional pendente
 - Concluir/validar a interface de leitura de Contas e Cartões/faturas já implementada; os formulários de escrita continuam pendentes.
-- Rota Financeira: frontend atualizado nesta branch com três meses lado a lado no desktop e um mês por vez no mobile. Saldo diário/final e projeção continuam dependentes do read model; classificação fixa/variável também não está disponível. Build, lint e validação visual local ainda pendentes.
+- Rota Financeira: interface em `main`; três meses lado a lado no desktop e um mês por vez no mobile. Saldo diário/final e projeção dependem do read model; classificação fixa/variável também não está disponível. Build e QA visual local aguardam validação.
 - Definir detalhes de dívida e pagamentos, incluindo os contratos funcionais ainda pendentes.
 - Definir modais/formulários de adicionar, editar, cancelar, reverter e confirmar conforme os contratos disponíveis.
 - Definir validações e ações permitidas por estado/dependência.
@@ -90,17 +90,17 @@ Ordem de execução atualizada: validar a navegação e as páginas de leitura j
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; os formulários de programação continuam indisponíveis.
-- Rota Financeira: interface trimestral desktop e mensal mobile implementada na branch `feature/financial-route-page`; dados realizados agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis. Build/lint e QA visual local pendentes.
+- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; dados realizados agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis. Build/lint e QA visual local pendentes.
 - As opções Nova conta, Novo cartão, Nova dívida, Nova programação e Nova projeção no FAB comunicam indisponibilidade enquanto faltarem formulários/contratos; não criam registos fictícios.
 - Relatórios e Configurações não apresentam FAB porque não têm ação de criação.
 - O estado de implementação não equivale a validação final: os testes responsivos e a auditoria frontend permanecem pendentes no cronograma.
 
 ## Próxima sequência recomendada
-1. Validar navegação responsiva e `AppShell` em desktop, tablet e mobile.
-2. Validar páginas de leitura e consumo de dados reais, incluindo loading, erro, vazio e isolamento por utilizador.
-3. Fechar decisões/contratos de produto que condicionam cartões, faturas, Rota e Dívidas.
-4. Implementar páginas-placeholder e formulários apenas com contratos confirmados.
-5. Executar testes de aceitação e auditoria de consistência documentação/frontend/API/modelo de domínio.
+1. Validar localmente o build da `main` e corrigir qualquer erro antes de novas funcionalidades.
+2. Fazer QA responsivo do `AppShell`: sidebar expandida/recolhida, popover de utilizador, bottom bar, painel Mais e FAB.
+3. Validar páginas de leitura e estados loading/erro/vazio com dados reais.
+4. Fechar o read model diário da Rota e as decisões pendentes de cartões/faturas e Dívidas.
+5. Implementar formulários apenas quando os contratos correspondentes estiverem definidos; depois executar testes de aceitação.
 
 ## Critério para novas alterações estruturais
 A implementação estrutural do frontend e do núcleo já está em curso e tem entregas publicadas na `main`. Para novas alterações estruturais, continuam obrigatórios: arquitetura/UML aprovada, precisão monetária e integridade transacional definidas, fluxos críticos especificados e critérios de aceitação/testes identificados. Não interpretar uma entrega parcial como aprovação de contratos ou funcionalidades ainda pendentes.
@@ -112,7 +112,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 
 ---
 
-> Documento de controlo do projeto. Atualizado em 2026-11-25.
+> Documento de controlo do projeto. Atualizado em 2026-11-26.
 >
 > Este documento regista o estado conhecido no repositório e orienta a sequência de trabalho. Um item marcado como concluído significa que existe implementação ou decisão versionada; não significa que todos os fluxos relacionados estejam completos ou que a auditoria final tenha sido concluída.
 
