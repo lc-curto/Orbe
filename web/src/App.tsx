@@ -327,14 +327,13 @@ export default function App() {
   ]
   const morePages = [
     { icon: 'creditCard' as IconName, label: 'Cartões' },
-    { icon: 'debt' as IconName, label: 'Dívidas' },
     { icon: 'activity' as IconName, label: 'Relatórios' },
     { icon: 'settings' as IconName, label: 'Configurações' },
   ]
   const sidebarGroups = [
     { title: 'Principal', pages: navigation.filter((item) => ['Início', 'Movimentos', 'Rota'].includes(item.label)) },
-    { title: 'Gestão financeira', pages: [{ icon: 'wallet' as IconName, label: 'Contas' }, ...morePages.slice(0, 2)] },
-    { title: 'Ferramentas', pages: morePages.slice(2) },
+    { title: 'Gestão financeira', pages: [{ icon: 'wallet' as IconName, label: 'Contas' }, ...morePages.slice(0, 1)] },
+    { title: 'Ferramentas', pages: morePages.slice(1) },
   ]
 
   function notify(message: string) {
@@ -354,15 +353,13 @@ export default function App() {
     ? [{ label: 'Nova conta', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de contas será disponibilizada na fase de formulários.' }]
     : activeKey === 'Cartões'
       ? [{ label: 'Novo cartão', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de cartões será disponibilizada na fase de formulários.' }]
-      : activeKey === 'Dívidas'
-        ? [{ label: 'Nova dívida', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de dívidas será disponibilizada na fase de formulários.' }]
-        : ['Relatórios', 'Configurações'].includes(activeKey)
+      : ['Relatórios', 'Configurações'].includes(activeKey)
             ? [{ label: 'Sem ações de criação nesta página', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: activeKey === 'Relatórios' ? 'A criação de relatórios ainda não está disponível.' : 'As Configurações não têm ações de criação.' }]
             : activeKey === 'Movimentos' && movementTab === 'schedules'
             ? [{ label: 'Nova programação', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de programações será disponibilizada na fase de formulários.' }]
             : [
-                { label: 'Nova despesa', icon: 'expense' as IconName, kind: 'expense' as const },
-                { label: 'Nova receita', icon: 'income' as IconName, kind: 'income' as const },
+                { label: 'Novo gasto', icon: 'expense' as IconName, kind: 'expense' as const },
+                { label: 'Novo rendimento', icon: 'income' as IconName, kind: 'income' as const },
                 { label: 'Nova transferência', icon: 'transfer' as IconName, kind: 'transfer' as const },
               ]
 
@@ -439,7 +436,7 @@ export default function App() {
           <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Rota' ? 'route-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
-            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}            {['Dívidas', 'Relatórios', 'Configurações'].includes(activeKey) ? <YStack gap={12}><H1 fontSize={30}>{activeKey}</H1><Paragraph color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
+            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}            {['Relatórios', 'Configurações'].includes(activeKey) ? <YStack gap={12}><H1 fontSize={30}>{activeKey}</H1><Paragraph color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
             <XStack className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <YStack gap={4} flex={1} minWidth={0}>
