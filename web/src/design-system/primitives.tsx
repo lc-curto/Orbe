@@ -123,12 +123,12 @@ function classNames(...values: Array<string | undefined>) {
   return values.filter(Boolean).join(' ')
 }
 
-export const YStack = forwardRef<HTMLDivElement, PrimitiveProps>(function YStack(props, ref) {
+export const Stack = forwardRef<HTMLDivElement, PrimitiveProps>(function Stack(props, ref) {
   const { children, className, ...rest } = props
   return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-stack', className as string | undefined)} style={getStyle(rest, { display: 'flex', flexDirection: 'column', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })} >{children as ReactNode}</div>
 })
 
-export const XStack = forwardRef<HTMLDivElement, PrimitiveProps>(function XStack(props, ref) {
+export const Row = forwardRef<HTMLDivElement, PrimitiveProps>(function Row(props, ref) {
   const { children, className, ...rest } = props
   return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-stack', className as string | undefined)} style={getStyle(rest, { display: 'flex', flexDirection: 'row', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })} >{children as ReactNode}</div>
 })
@@ -153,7 +153,7 @@ export const Separator = forwardRef<HTMLHRElement, PrimitiveProps>(function Sepa
   return <hr ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLHRElement>)} className={classNames('orbe-separator', className as string | undefined)} style={getStyle(rest, { border: 0, borderTop: '1px solid #e4e7ec', margin: 0, width: '100%' })} />
 })
 
-export const H1 = forwardRef<HTMLHeadingElement, PrimitiveProps>(function H1(props, ref) {
+export const Heading = forwardRef<HTMLHeadingElement, PrimitiveProps>(function Heading(props, ref) {
   const { children, className, ...rest } = props
   return <h1 ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLHeadingElement>)} className={classNames('orbe-heading', className as string | undefined)} style={getStyle(rest, { margin: 0, fontSize: 36, fontWeight: 800 })} >{children as ReactNode}</h1>
 })
