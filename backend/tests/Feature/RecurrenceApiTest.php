@@ -87,7 +87,7 @@ final class RecurrenceApiTest extends TestCase
         [$user, $account, $category] = $this->context('EXPENSE');
         $other = User::factory()->create();
         Sanctum::actingAs($user);
-        $schedule = $this->createSchedule($account, $category, 'EXPENSE');
+        $schedule = $this->createSchedule($category, 'EXPENSE');
         $occurrence = RecurrenceOccurrence::query()->firstOrFail();
 
         Sanctum::actingAs($other);
