@@ -46,11 +46,11 @@ export function SettingsPage({ user, categories }: Props) {
         </div>
         <div className="settings-row settings-currency-row">
           <div className="settings-row-copy">
-            <strong>Moeda principal</strong>
+            <strong>Moeda de apresentação</strong>
             <span>Altera apenas o símbolo apresentado; não converte valores.</span>
           </div>
           <label className="settings-select-label" htmlFor="settings-currency">
-            <span>Moeda</span>
+            <span>Símbolo</span>
             <select id="settings-currency" value={symbol} onChange={(event) => setSymbol(event.target.value as CurrencySymbol)}>
               {currencyOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
