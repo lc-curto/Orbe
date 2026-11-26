@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { H1, Paragraph, Text, YStack } from 'tamagui'
+import { H1, Paragraph, Text, YStack } from '../../../design-system/primitives'
 import { useAuth } from '../../../api/useAuth'
 
 type AuthMode = 'login' | 'register' | 'forgot' | 'reset'
