@@ -11,7 +11,7 @@ function buildMonth(operations: Operation[], month: string): RouteMonth {
   const grouped = new Map<string, Operation[]>()
 
   operations.forEach((operation) => {
-    if (operation.state !== 'REALIZED' || operation.operation_type === 'TRANSFER') return
+    if (operation.state !== 'REALIZED') return
     const key = operationDate(operation)
     if (!key || key < first || key > last) return
     const dayOperations = grouped.get(key) ?? []
