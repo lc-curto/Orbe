@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Exceptions\FinancialInvariantViolation;
 use App\Models\Category;
-use App\Models\FinancialAccount;
 use App\Models\RecurrenceOccurrence;
 use App\Models\RecurrenceSchedule;
 use Illuminate\Support\Carbon;
@@ -19,7 +18,6 @@ final class RecurrenceService
         int $userId,
         string $nature,
         string $amount,
-        int $accountId,
         int $categoryId,
         ?string $description,
         string $frequency,
@@ -30,7 +28,7 @@ final class RecurrenceService
         $this->assertAmount($amount);
         $this->assertFrequency($frequency);
 
-        return DB::transaction(function () use ($userId, $nature, $amount, $accountId, $categoryId, $description, $frequency, $firstOccurrenceAt, $endAt, $idempotencyKey): RecurrenceSchedule {
+        return DB::transaction(function () use ($userId, $nature, $amount, $categoryId, $description, $frequency, $firstOccurrenceAt, $endAt, $idempotencyKey): RecurrenceSchedule {
             if ($idempotencyKey !== null) {
                 $existing = RecurrenceSchedule::query()
                     ->where('user_id', $userId)
@@ -41,7 +39,6 @@ final class RecurrenceService
                 }
             }
 
-            $account = $this->accountForUser($userId, $accountId);
             $category = $this->categoryForUser($userId, $categoryId, $nature);
             $first = Carbon::parse($firstOccurrenceAt);
             $end = $endAt !== null ? Carbon::parse($endAt) : null;
@@ -53,7 +50,7 @@ final class RecurrenceService
                 'user_id' => $userId,
                 'nature' => $nature,
                 'amount' => $amount,
-                'account_id' => $account->id,
+                'account_id' => null,
                 'category_id' => $category->id,
                 'description' => $description,
                 'frequency' => $frequency,
@@ -78,6 +75,7 @@ final class RecurrenceService
                 throw new FinancialInvariantViolation('A data limite não pode ser anterior à primeira ocorrência.');
             }
             $this->generateUntilLocked($schedule, $limit);
+
             return $schedule->fresh()->load('occurrences');
         });
     }
@@ -88,6 +86,7 @@ final class RecurrenceService
         if ($until !== null) {
             $this->generate($userId, $schedule, $until);
         }
+
         return RecurrenceOccurrence::query()
             ->where('user_id', $userId)
             ->where('recurrence_schedule_id', $schedule->id)
@@ -95,9 +94,9 @@ final class RecurrenceService
             ->get();
     }
 
-    public function materialize(int $userId, RecurrenceOccurrence $occurrence, string $effectiveAt): RecurrenceOccurrence
+    public function materialize(int $userId, RecurrenceOccurrence $occurrence, int $accountId, string $effectiveAt): RecurrenceOccurrence
     {
-        return DB::transaction(function () use ($userId, $occurrence, $effectiveAt): RecurrenceOccurrence {
+        return DB::transaction(function () use ($userId, $occurrence, $accountId, $effectiveAt): RecurrenceOccurrence {
             $occurrence = RecurrenceOccurrence::query()->lockForUpdate()->findOrFail($occurrence->id);
             if ($occurrence->user_id !== $userId) {
                 throw new FinancialInvariantViolation('A ocorrência não pertence ao utilizador.');
@@ -118,7 +117,7 @@ final class RecurrenceService
                 $userId,
                 $schedule->nature,
                 (string) $occurrence->amount,
-                (int) $occurrence->account_id,
+                $accountId,
                 (int) $occurrence->category_id,
                 $occurrence->description,
                 'REALIZED',
@@ -127,7 +126,8 @@ final class RecurrenceService
                 'recurrence-occurrence-'.$occurrence->id,
             );
 
-            $occurrence->update(['state' => 'REALIZED', 'operation_id' => $operation->id, 'effective_at' => $effectiveAt]);
+            $occurrence->update(['state' => 'REALIZED', 'operation_id' => $operation->id, 'account_id' => $accountId, 'effective_at' => $effectiveAt]);
+
             return $occurrence->fresh()->load('operation.entries');
         });
     }
@@ -139,6 +139,7 @@ final class RecurrenceService
             $this->assertEditable($occurrence);
             $this->validateOverride($userId, $data, $occurrence->schedule->nature);
             $occurrence->update($this->editableFields($data));
+
             return $occurrence->fresh();
         });
     }
@@ -171,6 +172,7 @@ final class RecurrenceService
                 throw new FinancialInvariantViolation('Apenas ocorrências pendentes podem ser canceladas.');
             }
             $occurrence->update(['state' => 'CANCELLED']);
+
             return $occurrence->fresh();
         });
     }
@@ -191,7 +193,7 @@ final class RecurrenceService
                     'user_id' => $schedule->user_id,
                     'amount' => $schedule->amount,
                     'state' => 'PENDING',
-                    'account_id' => $schedule->account_id,
+                    'account_id' => null,
                     'category_id' => $schedule->category_id,
                     'description' => $schedule->description,
                 ],
@@ -214,7 +216,6 @@ final class RecurrenceService
     {
         return array_filter([
             'amount' => $data['amount'] ?? null,
-            'account_id' => isset($data['account_id']) ? (int) $data['account_id'] : null,
             'category_id' => isset($data['category_id']) ? (int) $data['category_id'] : null,
             'description' => array_key_exists('description', $data) ? $data['description'] : null,
         ], static fn ($value): bool => $value !== null);
@@ -224,9 +225,6 @@ final class RecurrenceService
     {
         if (isset($data['amount'])) {
             $this->assertAmount((string) $data['amount']);
-        }
-        if (isset($data['account_id'])) {
-            $this->accountForUser($userId, (int) $data['account_id']);
         }
         if (isset($data['category_id'])) {
             $this->categoryForUser($userId, (int) $data['category_id'], $nature);
@@ -243,21 +241,13 @@ final class RecurrenceService
         }
     }
 
-    private function accountForUser(int $userId, int $accountId): FinancialAccount
-    {
-        $account = FinancialAccount::query()->find($accountId);
-        if ($account === null || $account->user_id !== $userId || $account->status !== 'ACTIVE') {
-            throw new FinancialInvariantViolation('A conta não pertence ao utilizador ou não está ativa.');
-        }
-        return $account;
-    }
-
     private function categoryForUser(int $userId, int $categoryId, string $nature): Category
     {
         $category = Category::query()->find($categoryId);
         if ($category === null || $category->user_id !== $userId || $category->status !== 'ACTIVE' || $category->nature !== $nature) {
             throw new FinancialInvariantViolation('A categoria não pertence ao utilizador, não está ativa ou tem natureza incompatível.');
         }
+
         return $category;
     }
 
@@ -265,6 +255,7 @@ final class RecurrenceService
     {
         $schedule = RecurrenceSchedule::query()->lockForUpdate()->findOrFail($schedule->id);
         $this->assertScheduleOwner($userId, $schedule);
+
         return $schedule;
     }
 
@@ -274,6 +265,7 @@ final class RecurrenceService
         if ($occurrence->user_id !== $userId) {
             throw new FinancialInvariantViolation('A ocorrência não pertence ao utilizador.');
         }
+
         return $occurrence->load('schedule');
     }
 

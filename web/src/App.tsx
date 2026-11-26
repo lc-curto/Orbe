@@ -21,7 +21,7 @@ import { CardsPage } from './CardsPage'
 import { FinancialRoutePage } from './FinancialRoutePage'
 import { MonthSelector } from './MonthSelector'
 
-type IconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'creditCard' | 'debt' | 'settings' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight' | 'logout'
+type IconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'creditCard' | 'settings' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight' | 'logout'
 
 const iconPaths: Record<IconName, string> = {
   plus: 'M12 5v14M5 12h14',
@@ -30,7 +30,6 @@ const iconPaths: Record<IconName, string> = {
   route: 'M5 19c2.5 0 3.5-2 3.5-4.5S7.5 10 10 10s3.5 2 3.5 4.5S12.5 19 15 19s3.5-2 4-4',
   wallet: 'M4 6.5A2.5 2.5 0 0 1 6.5 4H19a1 1 0 0 1 1 1v15H6.5A2.5 2.5 0 0 1 4 17.5v-11ZM4 8h16m-5 5h2',
   creditCard: 'M3 5h18v14H3zM3 10h18M7 15h3',
-  debt: 'M12 3v18M5 8h14M5 16h14',
   settings: 'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-5v2m0 14v2m9-9h-2M5 12H3m15.36-6.36-1.42 1.42M7.06 16.94l-1.42 1.42m12.72 0-1.42-1.42M7.06 7.06 5.64 5.64',
   more: 'M5 12h.01M12 12h.01M19 12h.01',
   bell: 'M6 17h12l-1.2-1.8V10a4.8 4.8 0 0 0-9.6 0v5.2L6 17Zm4 3h4',
@@ -327,14 +326,13 @@ export default function App() {
   ]
   const morePages = [
     { icon: 'creditCard' as IconName, label: 'Cartões' },
-    { icon: 'debt' as IconName, label: 'Dívidas' },
     { icon: 'activity' as IconName, label: 'Relatórios' },
     { icon: 'settings' as IconName, label: 'Configurações' },
   ]
   const sidebarGroups = [
     { title: 'Principal', pages: navigation.filter((item) => ['Início', 'Movimentos', 'Rota'].includes(item.label)) },
-    { title: 'Gestão financeira', pages: [{ icon: 'wallet' as IconName, label: 'Contas' }, ...morePages.slice(0, 2)] },
-    { title: 'Ferramentas', pages: morePages.slice(2) },
+    { title: 'Gestão financeira', pages: [{ icon: 'wallet' as IconName, label: 'Contas' }, ...morePages.slice(0, 1)] },
+    { title: 'Ferramentas', pages: morePages.slice(1) },
   ]
 
   function notify(message: string) {
@@ -354,15 +352,11 @@ export default function App() {
     ? [{ label: 'Nova conta', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de contas será disponibilizada na fase de formulários.' }]
     : activeKey === 'Cartões'
       ? [{ label: 'Novo cartão', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de cartões será disponibilizada na fase de formulários.' }]
-      : activeKey === 'Dívidas'
-        ? [{ label: 'Nova dívida', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de dívidas será disponibilizada na fase de formulários.' }]
-        : ['Relatórios', 'Configurações'].includes(activeKey)
+      : ['Relatórios', 'Configurações'].includes(activeKey)
             ? [{ label: 'Sem ações de criação nesta página', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: activeKey === 'Relatórios' ? 'A criação de relatórios ainda não está disponível.' : 'As Configurações não têm ações de criação.' }]
-            : activeKey === 'Movimentos' && movementTab === 'schedules'
-            ? [{ label: 'Nova programação', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de programações será disponibilizada na fase de formulários.' }]
             : [
-                { label: 'Nova despesa', icon: 'expense' as IconName, kind: 'expense' as const },
-                { label: 'Nova receita', icon: 'income' as IconName, kind: 'income' as const },
+                { label: 'Novo gasto', icon: 'expense' as IconName, kind: 'expense' as const },
+                { label: 'Novo rendimento', icon: 'income' as IconName, kind: 'income' as const },
                 { label: 'Nova transferência', icon: 'transfer' as IconName, kind: 'transfer' as const },
               ]
 
@@ -439,7 +433,7 @@ export default function App() {
           <YStack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Rota' ? 'route-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''}`} flex={1} padding={20} gap={20} maxWidth={1280} marginHorizontal="auto" width="100%">
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
-            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}            {['Dívidas', 'Relatórios', 'Configurações'].includes(activeKey) ? <YStack gap={12}><H1 fontSize={30}>{activeKey}</H1><Paragraph color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
+            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}            {['Relatórios', 'Configurações'].includes(activeKey) ? <YStack gap={12}><H1 fontSize={30}>{activeKey}</H1><Paragraph color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Paragraph></YStack> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
             <XStack className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <YStack gap={4} flex={1} minWidth={0}>
@@ -498,7 +492,7 @@ export default function App() {
             </Card>
           </YStack>
         </XStack>
-        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Rota' ? <div className="mobile-page-shell route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></div> : ['Dívidas', 'Relatórios', 'Configurações'].includes(activeKey) ? <div className="mobile-page-shell"><YStack className="main-content" gap={12}><Text color="#101828" fontSize={24} fontWeight="800">{activeKey}</Text><Text color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Text></YStack></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={setActiveKey} notify={notify} userName={user.name} />}
+        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={setMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Rota' ? <div className="mobile-page-shell route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></div> : ['Relatórios', 'Configurações'].includes(activeKey) ? <div className="mobile-page-shell"><YStack className="main-content" gap={12}><Text color="#101828" fontSize={24} fontWeight="800">{activeKey}</Text><Text color="#667085">Esta página está prevista na navegação do Orbe e será implementada numa etapa posterior.</Text></YStack></div> : <MobileDashboard period={period} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={setActiveKey} notify={notify} userName={user.name} />}
         {feedback ? <XStack className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></XStack> : null}
         <XStack className="mobile-bottom-bar" backgroundColor="#ffffff" borderTopWidth={1} borderColor="#eaecf0" paddingHorizontal={8} paddingTop={8} paddingBottom={8}>
           {navigation.map((item) => <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } setMorePagesOpen(false); setActiveKey(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={activeKey === item.label || (item.label === 'Mais' && morePages.some((page) => page.label === activeKey)) ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#e6f4f1' : 'transparent'} color={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#087f70' : '#667085'}>

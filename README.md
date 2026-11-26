@@ -1,26 +1,104 @@
-# Orbe — Aplicação de gestão financeira pessoal
+# Orbe — Gestão financeira pessoal
 
-O Orbe é uma aplicação de gestão financeira pessoal. Este repositório contém o código da aplicação e a documentação funcional e técnica do projeto.
+O Orbe é uma aplicação de gestão financeira pessoal, organizada num monorepo. Este repositório contém atualmente o backend Laravel, a aplicação web React e a documentação funcional e técnica. A aplicação mobile está prevista na arquitetura aprovada, mas ainda não faz parte do código disponível neste repositório.
 
-## Estrutura do repositório
+## Estrutura
 
-- `backend/` — implementação do backend.
-- `web/` — implementação da aplicação web.
-- `docs/` — documentação funcional, financeira, de arquitetura, interfaces e desenvolvimento.
+- `backend/` — API Laravel, domínio financeiro, persistência e testes.
+- `web/` — aplicação React + TypeScript + Vite, com Tamagui.
+- `docs/` — decisões de produto, regras financeiras, interface, arquitetura, estado e contratos API.
+- `AGENTS.md` — regras de trabalho e desenvolvimento do projeto.
 
-A documentação é a referência para produto, design, desenvolvimento e validação. Antes de alterar funcionalidades, consultar os documentos relevantes e respeitar as decisões aprovadas.
+## Estado funcional
 
-## Como navegar
+- Backend: autenticação Sanctum, contas e categorias, operações comuns pendentes/realizadas, transferências, cartões/faturas, pagamentos/reversões e recorrências nos contratos implementados.
+- Web: Dashboard, Movimentos/Programações, Contas, Cartões/faturas e interface da Rota Financeira. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados.
+- Criação de operações: FAB global com **Novo gasto**, **Novo rendimento** e **Nova transferência** nas páginas aprovadas.
+- Dívidas/obrigações: permanecem no modelo financeiro, mas não existe página principal autónoma de Dívidas. Obrigações são relacionadas com os movimentos/faturas que lhes dão origem.
+- Mobile: stack aprovada (React Native + Expo), implementação ainda não presente.
 
-1. Ler [AGENTS.md](AGENTS.md) antes de executar trabalho neste projeto.
-2. Consultar as regras financeiras antes de alterar qualquer fluxo que afete dinheiro, saldos, cartões, dívidas ou projeções.
-3. Consultar interfaces antes de alterar páginas ou navegação.
-4. Consultar arquitetura/UML e o [modelo ER](docs/04-arquitetura-modelo-e-auditoria.md) antes de alterar entidades, persistência ou serviços.
-5. Verificar pendências antes de assumir decisões ainda não aprovadas.
+A interface não deve criar dados fictícios nem apresentar projeções como saldos realizados. Consultar [docs/05 — Estado e plano](docs/05-estado-e-plano.md) para o estado detalhado e as pendências.
 
-## Documentos
+## Requisitos de desenvolvimento
 
-A documentação está organizada por domínio. Consultar o documento correspondente e atualizar a fonte existente; **não criar ficheiros para cada página, contrato, caso ou etapa**.
+- PHP `^8.3` e Composer.
+- Node.js e npm compatíveis com as dependências Vite/TypeScript do projeto.
+- Base de dados suportada pela configuração Laravel. O `.env.example` do backend usa SQLite por omissão; também é possível configurar MySQL.
+
+## Executar localmente
+
+### 1. Backend
+
+No PowerShell, a partir da raiz do repositório:
+
+```powershell
+cd backend
+composer install
+
+if (-not (Test-Path .env)) {
+    Copy-Item .env.example .env
+}
+
+php artisan key:generate
+```
+
+Confirma a configuração de base de dados em `backend/.env`. Com a configuração SQLite por omissão, cria o ficheiro se ainda não existir (a partir de `backend/`):
+
+```powershell
+if (-not (Test-Path database/database.sqlite)) {
+    New-Item -ItemType File database/database.sqlite | Out-Null
+}
+```
+
+Se usares MySQL, define `DB_CONNECTION=mysql`, host, porta, nome da base de dados, utilizador e palavra-passe.
+
+Executa as migrations e inicia a API:
+
+```powershell
+php artisan migrate
+php artisan serve
+```
+
+A API fica normalmente disponível em `http://127.0.0.1:8000/api`.
+
+### 2. Aplicação web
+
+Abre outro terminal na raiz do repositório:
+
+```powershell
+cd web
+
+if (-not (Test-Path .env)) {
+    Copy-Item .env.example .env
+}
+
+npm install
+npm run dev
+```
+
+O `web/.env.example` define `VITE_API_BASE_URL=http://127.0.0.1:8000/api`. Ajusta-o se a API estiver noutro endereço. A aplicação Vite fica normalmente em `http://localhost:5173`.
+
+## Testes e validação
+
+Backend, a partir de `backend/`:
+
+```powershell
+php artisan test
+./vendor/bin/pint --test
+```
+
+Web, a partir de `web/`:
+
+```powershell
+npm run lint
+npm run build
+```
+
+O Pint global pode identificar problemas de estilo preexistentes fora dos ficheiros de uma alteração. Para validar um conjunto de alterações sem formatar código não relacionado, executa `pint --test` apenas nos ficheiros modificados.
+
+## Documentação
+
+Ler [AGENTS.md](AGENTS.md) antes de trabalhar no projeto e consultar os documentos por domínio:
 
 | Documento | Conteúdo |
 |---|---|
@@ -31,21 +109,4 @@ A documentação está organizada por domínio. Consultar o documento correspond
 | [05 — Estado e plano](docs/05-estado-e-plano.md) | Implementação, pendências, decisões abertas, validações e sequência de trabalho |
 | [06 — Contratos da API](docs/06-contratos-api.md) | Contratos de operações, transferências e recorrências |
 
-## Estado das decisões
-
-- **Aprovado:** confirmado pelo responsável do produto.
-- **Em análise:** proposta ainda não aprovada.
-- **Pendente:** decisão necessária.
-- **Substituído:** decisão anterior que deixou de vigorar.
-
-Uma proposta técnica não se torna requisito aprovado apenas por estar documentada. Decisões pendentes devem permanecer identificadas.
-
-## Manutenção
-
-Manter a documentação concisa, verificável e sem duplicação. Cada regra tem uma localização principal. Quando uma decisão mudar, atualizar o documento de origem e as referências afetadas no mesmo conjunto de alterações.
-
-## Estado atual
-
-Fundamentos, modelo financeiro, comportamento das operações, páginas principais, stack, monorepo e ARC-001 estão aprovados. O modelo ER conceptual (ARC-002), o UML complementar e o modelo físico do núcleo financeiro estão aprovados; o núcleo usa migrations versionadas e `DECIMAL(19,4)`. Permanecem decisões de produto sobre estimativas variáveis, alguns estados/apresentações e módulos conceptuais ainda sem migrations.
-
-
+A documentação é a referência para produto, design, desenvolvimento e validação. Atualizar o documento de origem e as referências afetadas quando uma decisão ou implementação mudar; não criar documentos paralelos para cada página, contrato ou etapa.

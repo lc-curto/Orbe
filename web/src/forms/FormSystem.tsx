@@ -253,7 +253,7 @@ export function MovementForm({ kind, onClose, onUnavailable }: { kind: FormKind;
   const [submitting, setSubmitting] = useState(false)
   const dirty = Boolean(description || amount || category || account || destination)
   const isTransfer = kind === 'transfer'
-  const title = kind === 'expense' ? 'Nova despesa' : kind === 'income' ? 'Nova receita' : 'Nova transferência'
+  const title = kind === 'expense' ? 'Novo gasto' : kind === 'income' ? 'Novo rendimento' : 'Nova transferência'
   const categories: SelectOption[] = useMemo(() => [], [])
   const accounts: SelectOption[] = useMemo(() => [], [])
 

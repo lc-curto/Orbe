@@ -6,7 +6,6 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\FinancialAccount;
-use App\Models\Operation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -33,17 +32,65 @@ final class BasicOperationsApiTest extends TestCase
     }
 
     #[Test]
-    public function pending_income_has_no_entry_until_explicit_confirmation(): void
+    public function pending_income_has_no_destination_or_entry_until_explicit_confirmation(): void
     {
         $user = User::factory()->create();
         $account = FinancialAccount::query()->create(['user_id' => $user->id, 'name' => 'Conta', 'account_type' => 'BANK', 'status' => 'ACTIVE']);
         $category = Category::query()->create(['user_id' => $user->id, 'name' => 'Salário', 'nature' => 'INCOME', 'status' => 'ACTIVE']);
         Sanctum::actingAs($user);
-        $pending = $this->postJson('/api/incomes', ['amount' => '1000.0000', 'account_id' => $account->id, 'category_id' => $category->id, 'state' => 'PENDING', 'planned_at' => '2026-12-01 09:00:00'])->assertCreated();
+        $pending = $this->postJson('/api/incomes', ['amount' => '1000.0000', 'category_id' => $category->id, 'state' => 'PENDING', 'planned_at' => '2026-12-01 09:00:00'])
+            ->assertCreated()->assertJsonPath('data.account_id', null)->assertJsonCount(0, 'data.entries');
         $this->assertDatabaseCount('financial_entries', 0);
         $this->postJson('/api/operations/'.$pending->json('data.id').'/confirm', ['account_id' => $account->id, 'effective_at' => '2026-12-01 09:00:00'])->assertOk();
         $this->assertDatabaseCount('financial_entries', 1);
-        $this->assertDatabaseHas('financial_entries', ['effect' => 'INCREASE', 'state' => 'REALIZED']);
+        $this->assertDatabaseHas('financial_entries', ['account_id' => $account->id, 'effect' => 'INCREASE', 'state' => 'REALIZED']);
+    }
+
+    #[Test]
+    public function pending_expense_can_be_created_without_account_and_requires_account_when_confirmed(): void
+    {
+        $user = User::factory()->create();
+        $account = FinancialAccount::query()->create(['user_id' => $user->id, 'name' => 'Conta', 'account_type' => 'BANK', 'status' => 'ACTIVE']);
+        $category = Category::query()->create(['user_id' => $user->id, 'name' => 'Casa', 'nature' => 'EXPENSE', 'status' => 'ACTIVE']);
+        Sanctum::actingAs($user);
+
+        $pending = $this->postJson('/api/expenses', [
+            'amount' => '50.0000', 'category_id' => $category->id, 'state' => 'PENDING',
+            'planned_at' => '2026-12-02 10:00:00',
+        ])->assertCreated()->assertJsonPath('data.account_id', null)->assertJsonCount(0, 'data.entries');
+
+        $this->postJson('/api/operations/'.$pending->json('data.id').'/confirm', [
+            'effective_at' => '2026-12-02 10:00:00',
+        ])->assertUnprocessable()->assertJsonValidationErrors('account_id');
+
+        $other = User::factory()->create();
+        $otherAccount = FinancialAccount::query()->create(['user_id' => $other->id, 'name' => 'Conta alheia', 'account_type' => 'BANK', 'status' => 'ACTIVE']);
+        $this->postJson('/api/operations/'.$pending->json('data.id').'/confirm', [
+            'account_id' => $otherAccount->id, 'effective_at' => '2026-12-02 10:00:00',
+        ])->assertUnprocessable()->assertJsonValidationErrors('financial');
+
+        $this->assertDatabaseHas('operations', ['id' => $pending->json('data.id'), 'state' => 'PENDING', 'account_id' => null]);
+        $this->assertDatabaseCount('financial_entries', 0);
+
+        $this->postJson('/api/operations/'.$pending->json('data.id').'/confirm', [
+            'account_id' => $account->id, 'effective_at' => '2026-12-02 10:00:00',
+        ])->assertOk()->assertJsonPath('data.account_id', $account->id);
+        $this->assertDatabaseHas('financial_entries', ['operation_id' => $pending->json('data.id'), 'account_id' => $account->id, 'effect' => 'DECREASE', 'state' => 'REALIZED']);
+    }
+
+    #[Test]
+    public function realized_expense_requires_account_before_creation(): void
+    {
+        $user = User::factory()->create();
+        $category = Category::query()->create(['user_id' => $user->id, 'name' => 'Casa', 'nature' => 'EXPENSE', 'status' => 'ACTIVE']);
+        Sanctum::actingAs($user);
+
+        $this->postJson('/api/expenses', [
+            'amount' => '50.0000', 'category_id' => $category->id, 'state' => 'REALIZED',
+            'effective_at' => '2026-12-02 10:00:00',
+        ])->assertUnprocessable()->assertJsonValidationErrors('account_id');
+        $this->assertDatabaseCount('operations', 0);
+        $this->assertDatabaseCount('financial_entries', 0);
     }
 
     #[Test]

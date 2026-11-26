@@ -398,7 +398,8 @@ erDiagram
 ```
 
 **Leitura do diagrama:**
-- Uma operação pode ainda não ter lançamentos (pendente) ou gerar um ou vários lançamentos quando confirmada.
+- Uma operação de gasto/ganho pendente pode existir sem destino financeiro e sem lançamentos. O destino/instrumento não é selecionado nem apresentado enquanto permanece pendente.
+- Ao realizar/confirmar gasto ou ganho, a operação tem de receber o destino/instrumento financeiro adequado antes de gerar os lançamentos efetivos; a operação realizada não pode persistir sem essa associação.
 - Cada lançamento aponta para exatamente um destino: conta, fatura ou dívida. É a decisão ARC-001 já aprovada.
 - Uma fatura/período pertence a um cartão. Pode estar `PLANNED`, `OPEN` ou `CLOSED`; o estado do ciclo é distinto do valor em dívida.
 - Uma compra parcelada cria alocações e lançamentos de obrigação na confirmação, mesmo para períodos `PLANNED`. A abertura do ciclo não cria novos lançamentos.
@@ -593,7 +594,7 @@ No modelo físico será necessário impor exatamente uma perna `OUT` e uma `IN`,
 | `recurrence_schedules` | Regra de repetição e configuração da programação |
 | `recurrence_occurrences` | Ocorrências individualizadas, com data/valor/estado próprios e chave de unicidade |
 
-Cada ocorrência pode materializar uma operação. Quando isso acontece, a projeção deve utilizar a operação gerada, e não contar também a ocorrência como outro evento. A unicidade da ocorrência e a geração idempotente impedem duplicações.
+Cada ocorrência pode materializar uma operação. Enquanto a ocorrência de gasto/ganho estiver pendente, não exige nem mantém conta, cartão ou outro destino financeiro. Ao materializar/confirmar como realizado, o destino adequado deve ser fornecido e validado antes dos efeitos. Quando isso acontece, a projeção deve utilizar a operação gerada, e não contar também a ocorrência como outro evento. A unicidade da ocorrência e a geração idempotente impedem duplicações.
 
 A classificação para estimativas da Rota tem precedência: operação → ocorrência → programação → categoria → `UNCLASSIFIED`. A classificação resolvida deve ficar materializada na operação para preservar histórico. `EXCLUDED` significa excluída apenas da estimativa variável; `UNCLASSIFIED` não pode ser silenciosamente tratada como zero ou como variável. A categoria fornece o padrão; programação, ocorrência e operação podem substituí-lo nessa ordem de especificidade.
 
