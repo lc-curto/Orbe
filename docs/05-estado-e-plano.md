@@ -346,6 +346,7 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 - O PR #7 (`feature/debts-primary-page`) atualiza o backend para destinos financeiros pendentes/realizados e corrige a UI: remove Dívidas como página/destino, elimina o placeholder, e fixa o FAB em **Novo gasto**, **Novo rendimento**, **Nova transferência** também na aba Programações.
 - Validação backend local reportada pelo utilizador: **52 testes passaram, 217 assertions**; Pint `--test` nos 7 ficheiros PHP alterados passou.
 - O Pint global continua a reportar **63 problemas de estilo em 98 ficheiros**; não foi aplicado formatting global para evitar alterações fora do escopo.
+- Pós-merge: a referência global `RuntimeException` da migration foi corrigida e foi aplicada formatação nos controllers em commits `68ed3ea`, `eb2ecb3` e `9f67bb0`. Estes ajustes não alteram as regras de domínio; a suite não foi reexecutada após os commits remotos.
 - Build, lint e QA visual/responsivo do frontend ainda não foram executados após as alterações do PR #7; permanecem obrigatórios antes de considerar a entrega frontend validada. O status Vercel falhou por limite de deploy (rate limit), sem indicar falha de build.
 
 ## Regra de controlo
