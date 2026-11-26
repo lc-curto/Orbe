@@ -1526,3 +1526,22 @@ input[type="search"] {
   .route-modal-header { padding: 18px 14px 14px; }
   .route-detail-list { padding-left: 14px; padding-right: 14px; }
 }
+
+
+/* Rota mobile: a página rola; a tabela não cria scroll interno e o FAB global permanece fixo. */
+@media (max-width: 1023px) {
+  .route-mobile-shell .route-month-card-mobile .route-table-wrap {
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto;
+  }
+  .route-mobile-shell .route-month-card-mobile {
+    overflow: visible;
+  }
+  .route-mobile-shell .route-mobile-month {
+    padding-bottom: 0;
+  }
+  .route-mobile-shell .financial-route-page {
+    padding-bottom: 0;
+  }
+}
