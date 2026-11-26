@@ -6,7 +6,7 @@
 
 > Fase 1 autorizada em 2026-11-24. Este contrato cobre apenas contas, categorias, despesas comuns e receitas.
 
-## Entidades
+## Entidades — operações base
 
 ### Conta financeira
 
@@ -32,7 +32,7 @@ Uma operação de despesa ou receita mantém:
 
 Uma operação `REALIZED` cria exatamente um `financial_entry` dirigido à conta. Despesa usa efeito `DECREASE`; receita usa `INCREASE`. Uma operação `PENDING` não cria lançamento efetivo. A confirmação é explícita e cria o lançamento uma única vez.
 
-## Endpoints
+## Endpoints — operações base
 
 Todos exigem Sanctum e isolamento pelo utilizador autenticado:
 
@@ -60,7 +60,7 @@ Cada perna mantém `account_id`, `direction`, `amount`, `state`, `planned_at` e 
 
 O estado da operação é derivado das duas pernas: ambas pendentes resultam em `PENDING`, ambas realizadas em `REALIZED`, ambas canceladas em `CANCELLED` e qualquer combinação intermédia em `PARTIAL`. Transferências parciais não são convertidas em receita ou despesa.
 
-## Endpoints
+## Endpoints — transferências
 
 - `POST /api/transfers` cria a operação e as duas pernas.
 - `POST /api/operations/{operation}/transfer-legs/{leg}/confirm` confirma uma perna pendente.
@@ -73,7 +73,7 @@ O sistema rejeita a mesma conta nas duas pernas, contas de outro utilizador, con
 
 > Fase 3 autorizada em 2026-11-24.
 
-## Entidades
+## Entidades — recorrências
 
 `recurrence_schedules` representa a programação. Mantém utilizador, natureza (`EXPENSE` ou `INCOME`), valor `DECIMAL(19,4)`, conta, categoria, descrição, periodicidade, primeira ocorrência, estado, data de fim opcional e chave de idempotência.
 
@@ -99,7 +99,7 @@ Ocorrências `PENDING` não criam `financial_entries`. A materialização é exp
 
 Ocorrências realizadas ou passadas não podem ser reescritas. Todas as operações exigem Sanctum e respeitam o isolamento por utilizador.
 
-## Endpoints
+## Endpoints — recorrências
 
 - `POST /api/recurrences`
 - `GET /api/recurrences`
