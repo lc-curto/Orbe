@@ -852,8 +852,6 @@ A implementação só corresponde a esta especificação quando cumprir os crit�
 
 ## 14.1 Entrada global de criação e estado atual da aplicação
 
-## 14.1 Entrada global de criação e estado atual da aplicação
-
 A navegação publicada na `main` em 2026-11-25 utiliza um FAB global (+), fixo no viewport. A regra abaixo consolida e substitui descrições anteriores de FAB contextual nas páginas principais de operações. Não criar FAB próprio dentro de formulários nem duplicar criação no cabeçalho/lista.
 
 - Dashboard, Movimentos e Rota Financeira: opções fixas e na mesma ordem — **Novo gasto**, **Novo rendimento**, **Nova transferência**. A Rota é uma vista temporal dos mesmos dados, não um módulo separado.
