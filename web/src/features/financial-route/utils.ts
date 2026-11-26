@@ -49,7 +49,7 @@ export function formatFullDate(value: string) {
 }
 
 export function operationLabel(operation: Operation) {
-  return operation.description?.trim() || (operation.operation_type === 'INCOME' ? 'Receita' : 'Despesa')
+  return operation.description?.trim() || (operation.operation_type === 'INCOME' ? 'Receita' : operation.operation_type === 'TRANSFER' ? 'Transferência' : 'Despesa')
 }
 
 export function operationDate(operation: Operation) {
