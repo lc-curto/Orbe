@@ -95,7 +95,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 - Formulários de escrita, consulta/liquidação contextual de obrigações e projeções reais permanecem por implementar/validar. A ausência de página autónoma de Dívidas é uma decisão aprovada, não uma funcionalidade em falta.
 
 ## Próxima sequência recomendada
-1. QA visual/responsiva de Relatórios e Configurações em desktop/tablet/mobile, incluindo loading, erro, vazio, navegação, seletor mensal e preferência de símbolo.
+1. QA visual/responsiva de Relatórios e Configurações em desktop/tablet/mobile, incluindo gráfico diário, cabeçalho/seletor, estados loading/erro/vazio, layout de Perfil sem quebra artificial, lista de 10 moedas, persistência do símbolo e alternância/persistência do tema claro/escuro.
 2. Validar a regra pendente→realizado no frontend: sem destino no pendente; conta obrigatória na confirmação.
 3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta/liquidação de obrigações associadas.
 4. Fechar contratos/read models financeiros pendentes, sobretudo projeção diária, e implementar os formulários suportados.
@@ -309,8 +309,8 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 - [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado; detalhe da fatura lista os movimentos associados, agrupados por dia e reutilizando a linha de Movimentos, sem filtros de estado).
 - [x] Decisão de produto: descontinuar a página autónoma de Dívidas.
 - [ ] Implementar consulta e liquidação de obrigações nos detalhes de movimentos/faturas, conforme os contratos aprovados.
-- [x] Implementar a interface de Relatórios na branch `feature/reports-settings-ui-clean`, com agregação baseada em operações realizadas e faturas disponíveis; lint e build passaram, QA visual/responsiva pendente.
-- [x] Implementar a interface de Configurações na branch `feature/reports-settings-ui-clean` conforme a navegação aprovada, incluindo preferência local de símbolo de moeda (apenas apresentação); lint e build passaram, QA visual/responsiva pendente.
+- [x] Implementar Relatórios na branch `feature/reports-settings-ui-clean`: gráfico de evolução diária do mês sem KPIs, composição, categorias, contas e faturas a partir dos dados disponíveis; excluir transferências e operações não realizadas do gráfico. QA visual/responsiva pendente.
+- [x] Implementar Configurações na branch `feature/reports-settings-ui-clean`: layout de Perfil responsivo, 10 opções de moeda incluindo BRL (símbolo apenas) e preferência global de tema claro/escuro persistida localmente. QA visual/responsiva pendente.
 - [ ] Garantir que operações com vários lançamentos aparecem uma única vez.
 
 ## 13. Testes e auditoria final
