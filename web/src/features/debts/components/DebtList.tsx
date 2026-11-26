@@ -1,4 +1,3 @@
-import { Text } from 'tamagui'
 import { OrbeIcon } from '../../../design-system/Icon'
 import { orbe } from '../../../design-system/tokens'
 import type { DebtListItem } from '../types'
