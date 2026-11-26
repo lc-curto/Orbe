@@ -119,12 +119,12 @@ function classNames(...values: Array<string | undefined>) {
 
 export const YStack = forwardRef<HTMLDivElement, PrimitiveProps>(function YStack(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'column', minWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'column', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
 })
 
 export const XStack = forwardRef<HTMLDivElement, PrimitiveProps>(function XStack(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'row', minWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'row', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
 })
 
 export const Text = forwardRef<HTMLSpanElement, PrimitiveProps>(function Text(props, ref) {
@@ -134,12 +134,12 @@ export const Text = forwardRef<HTMLSpanElement, PrimitiveProps>(function Text(pr
 
 export const Button = forwardRef<HTMLButtonElement, PrimitiveProps>(function Button(props, ref) {
   const { children, className, onPress, onClick, type = 'button', ...rest } = props
-  return <button ref={ref} type={type} {...getRestProps(rest)} onClick={onClick ?? onPress} className={classNames('orbe-button', className)} style={getStyle(rest, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', font: 'inherit', cursor: rest.disabled ? 'not-allowed' : 'pointer', backgroundColor: 'transparent', border: 0 })}>{children}</button>
+  return <button ref={ref} type={type} {...getRestProps(rest)} onClick={onClick ?? onPress} className={classNames('orbe-button', className)} style={getStyle(rest, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', font: 'inherit', cursor: rest.disabled ? 'not-allowed' : 'pointer', backgroundColor: 'transparent', borderStyle: 'solid', borderWidth: 0 })}>{children}</button>
 })
 
 export const Card = forwardRef<HTMLDivElement, PrimitiveProps>(function Card(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-card', className)} style={getStyle(rest, { boxSizing: 'border-box', minWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-card', className)} style={getStyle(rest, { boxSizing: 'border-box', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
 })
 
 export const Separator = forwardRef<HTMLHRElement, PrimitiveProps>(function Separator(props, ref) {
