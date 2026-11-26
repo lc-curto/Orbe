@@ -50,7 +50,7 @@ A workflow `Web CI` executa `npm ci`, ESLint e `npm run build` (TypeScript + Vit
 
 ## Estado funcional
 
-A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. Build, lint e QA responsivo das últimas alterações ainda pendentes. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
+A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. CI de lint e build TypeScript/Vite passou após a remoção de Tamagui; QA visual responsivo desktop/mobile permanece pendente. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
 
 Não criar dados fictícios nem apresentar projeções como valores realizados. A página principal autónoma de Dívidas foi descontinuada; obrigações permanecem ligadas aos movimentos/faturas associados.
 
