@@ -1503,7 +1503,7 @@ input[type="search"] {
   .route-mobile-toolbar .route-switch { font-size: 12px; }
   .route-month-card-mobile { border-radius: 12px; }
   .route-month-card-mobile .route-month-card-header { display: none; }
-  .route-month-card-mobile .route-table-wrap { max-height: calc(100vh - 390px); overflow: auto; overscroll-behavior: contain; }
+  .route-month-card-mobile .route-table-wrap { max-height: none; overflow: visible; overscroll-behavior: auto; }
   .route-month-card-mobile .route-table thead { position: sticky; top: 0; z-index: 2; }
   .route-month-card-mobile .route-table th { padding: 10px 8px; font-size: 10px; }
   .route-month-card-mobile .route-table td { height: 38px; padding: 7px 8px; font-size: 11px; }
@@ -1520,7 +1520,7 @@ input[type="search"] {
   .route-month-card-mobile .route-table th, .route-month-card-mobile .route-table td { padding-left: 6px; padding-right: 6px; font-size: 10px; }
   .route-month-card-mobile .route-table th:first-child, .route-month-card-mobile .route-table td:first-child { width: 24%; }
   .route-month-card-mobile .route-table th:last-child, .route-month-card-mobile .route-table td:last-child { width: 17%; }
-  .route-mobile-shell .route-month-card-mobile .route-table-wrap { max-height: calc(100vh - 360px); }
+  .route-mobile-shell .route-month-card-mobile .route-table-wrap { max-height: none; }
   .route-detail-filters { margin-left: 14px; margin-right: 14px; gap: 2px; }
   .route-detail-filters button { padding: 0 5px; font-size: 11px; }
   .route-modal-header { padding: 18px 14px 14px; }
@@ -1539,27 +1539,10 @@ input[type="search"] {
     overflow: visible !important;
     overscroll-behavior: auto;
   }
-  .route-mobile-shell .route-month-card-mobile {
-    overflow: visible;
-  }
+  .route-mobile-shell .route-month-card-mobile,
   .route-mobile-shell .route-mobile-month,
   .route-mobile-shell .financial-route-page {
-    padding-bottom: 0 !important;
-  }
-}
-@media (max-width: 1023px) {
-  .route-mobile-shell .route-month-card-mobile .route-table-wrap {
-    max-height: none !important;
-    overflow: visible !important;
-    overscroll-behavior: auto;
-  }
-  .route-mobile-shell .route-month-card-mobile {
     overflow: visible;
-  }
-  .route-mobile-shell .route-mobile-month {
-    padding-bottom: 0;
-  }
-  .route-mobile-shell .financial-route-page {
-    padding-bottom: 0;
+    padding-bottom: 0 !important;
   }
 }
