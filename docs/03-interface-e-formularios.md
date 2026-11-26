@@ -111,7 +111,7 @@ Reutiliza estrutura de Contas.
 - As análises são calculadas a partir dos dados reais disponíveis na API. Quando um read model ainda não expõe uma dimensão (por exemplo, histórico de pagamentos/evolução de obrigações), apresentar um estado informativo e não estimar nem inventar valores.
 - A preferência de moeda altera exclusivamente o símbolo apresentado na interface. Não efetua câmbio, conversão, alteração de valores guardados, saldos, cálculos, precisão ou escala. É uma preferência de apresentação, não uma alteração da denominação financeira dos movimentos.
 - A implementação frontend deve centralizar a preferência e a formatação para evitar formatadores divergentes entre páginas. A escolha persistida no navegador não altera os dados da API nem implica sincronização entre dispositivos.
-- A lista de moedas inclui USD, EUR, GBP, JPY, CNY, CHF, CAD, AUD, BRL e INR. O BRL é incluído explicitamente por preferência do produto; a lista é uma seleção prática de moedas amplamente utilizadas, não um ranking estatístico de volume de negociação cambial.
+- A lista de moedas inclui USD, EUR, JPY, GBP, CNY, CHF, AUD, CAD, HKD e BRL. O BRL é incluído explicitamente por preferência do produto; a lista é uma seleção prática de moedas amplamente utilizadas, não um ranking estatístico de volume de negociação cambial.
 - O tema claro/escuro é uma preferência visual global, persistida no navegador. Não altera dados nem regras financeiras.
 
 ## Ordem de desenho aprovada
