@@ -88,10 +88,10 @@ Ordem de execução: concluir a interface primária de Dívidas; desenhar subpá
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; os formulários de programação continuam indisponíveis.
-- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; dados realizados agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis. Build/lint e QA visual local pendentes.
+- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; dados realizados agregados a partir do read model atual. O utilizador confirmou QA local das páginas principais. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis; build/lint devem ser reexecutados após alterações futuras.
 - As opções Nova conta, Novo cartão, Nova dívida, Nova programação e Nova projeção no FAB comunicam indisponibilidade enquanto faltarem formulários/contratos; não criam registos fictícios.
 - Relatórios e Configurações não apresentam FAB porque não têm ação de criação.
-- O estado de implementação não equivale a validação final: os testes responsivos e a auditoria frontend permanecem pendentes no cronograma.
+- O estado de implementação não equivale a validação final: QA local das páginas principais foi confirmado pelo utilizador; auditoria frontend direcionada e validações de cada nova branch continuam necessárias.
 
 ## Próxima sequência recomendada
 1. Concluir e validar a página principal de Dívidas na branch atual, sem depender de contratos.
