@@ -22,7 +22,7 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Seletor mensal compacto (ex.: Nov/26).
 - Saldo total atual de todas as contas.
 - KPIs de receitas e despesas do mês.
-- A criação é iniciada pelo botão flutuante global (+), contextual à página. No Dashboard oferece Despesa, Receita e Transferência; não existem cartões de ações rápidas separados no conteúdo do Dashboard.
+- A criação de operações começa no FAB global (+). No Dashboard, Movimentos e Rota Financeira apresenta sempre as mesmas três opções: **Novo gasto**, **Novo rendimento** e **Nova transferência**. Não existem cartões de ações rápidas separados no conteúdo do Dashboard.
 - Últimos movimentos e navegação inferior.
 - Sem projeções.
 - Seletor mensal filtra receitas, despesas e atividade histórica, mas não altera saldo atual.
@@ -40,6 +40,8 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Parcial aparece apenas como badge, sem valores detalhados na lista.
 - O botão flutuante global (+) é o ponto de entrada para ações de criação na página; não duplicar botão de criação no cabeçalho ou dentro da lista.
 - Operação com vários lançamentos não pode aparecer duplicada; detalhes completos na vista/modal de detalhes.
+- Cada movimento tem menu contextual `⋮` com ações permitidas pelo tipo e estado, conforme a secção 14.2.
+- Em compras parceladas, a linha mostra apenas o valor da prestação correspondente ao período; o valor total da compra fica oculto na listagem e só aparece ao abrir o detalhe. A indicação de prestações pagas é secundária e discreta.
 - A aba Programações mostra as regras recorrentes, com natureza, valor, periodicidade, conta, categoria, estado e a data da primeira ocorrência; a próxima ocorrência é consultada através das ocorrências reais.
 - As ocorrências de uma programação são consultadas numa área de detalhe própria; uma ocorrência materializada também aparece em Movimentos como operação única, sem duplicação.
 - A edição e as ações sobre programações/ocorrências usam botões dedicados e não permitem edição inline.
@@ -184,7 +186,7 @@ Os valores acima são referências do sistema atual, não autorização para dup
 - A ação principal usa botão preenchido (filled), com a cor primary do Design System.
 - Ações secundárias usam o estilo secundário já existente no sistema.
 - A hierarquia deve ser inequívoca: uma ação principal por contexto de submissão.
-- Os formulários não devem criar um FAB próprio nem duplicar o ponto de entrada de criação da aplicação. O Orbe já utiliza um botão flutuante global (+) no `AppShell`, contextual à página; os formulários são abertos por esse ponto de entrada quando a ação e o contrato estão disponíveis. A regra visual do FAB global pertence à navegação da aplicação, não ao recipiente ou ao desenho interno do formulário.
+- Os formulários não devem criar um FAB próprio nem duplicar o ponto de entrada de criação da aplicação. O FAB global pertence ao `AppShell`. Em Dashboard, Movimentos e Rota Financeira mantém as três opções fixas (Novo gasto, Novo rendimento e Nova transferência); nas páginas de gestão de entidades, as ações próprias permanecem no contexto aprovado da página. O formulário só abre quando a ação e o contrato estão disponíveis.
 - Estados de carregamento mantêm a identidade e a dimensão do botão.
 
 ---
@@ -382,43 +384,47 @@ Data
 
 Os campos efetivos e a sua obrigatoriedade devem vir da documentação funcional aprovada. Esta secção define a composição visual, não uma lista nova de campos.
 
-### 6.1 Despesa
+### 6.1 Gasto (natureza técnica: `EXPENSE`)
 
 **Recipiente:** modal centralizado em desktop/tablet; bottom sheet em mobile, salvo se o formulário for classificado como extenso pela especificação funcional.
 
 **Composição:**
-1. Título que identifique a criação de despesa.
-2. Campo de valor em destaque.
-3. Campos funcionais da despesa, com etiquetas superiores e contorno.
+1. Título de interface **Novo gasto**.
+2. Campo de valor em destaque, correspondente ao valor total do gasto.
+3. Campos funcionais do gasto, com etiquetas superiores e contorno.
 4. Seletor de categoria em lista simples com ícones.
-5. Apresentação do destino/meio financeiro apenas conforme o tipo e o estado funcional: conta para despesa realizada paga por conta; cartão de crédito para compra realizada com cartão. A seleção antecipada numa despesa pendente continua por decidir.
+5. Campo de meio de pagamento/liquidação, que determina os efeitos financeiros da operação conforme o contrato: conta (pagamento imediato), cartão/fatura, por pagar (obrigação) ou prestações. A obrigação, quando aplicável, deriva do gasto; não se cria uma segunda despesa nem se exige uma ação genérica paralela **Nova dívida**.
 6. Controlo de data com atalhos rápidos.
 7. Rodapé fixo com ação secundária e ação principal.
 
-**Regras visuais:**
-- Valor deve ser o primeiro foco visual do conteúdo.
+**Regras visuais e de apresentação:**
+- Valor total do gasto é o primeiro foco visual no formulário.
 - Campos restantes devem ter hierarquia mais discreta.
 - Não transformar cada campo num cartão independente.
 - A ordem funcional definitiva dos campos deve ser respeitada; não inventar campos adicionais.
+- Na listagem mensal, uma compra parcelada mostra apenas o valor da prestação do período. O valor total fica oculto até abrir o detalhe; a indicação de prestações pagas é secundária e discreta.
+- O pagamento posterior de fatura/obrigação é uma liquidação, não um novo gasto.
 
 Wireframe conceptual:
 
 ```text
-Nova despesa                           [X]
-Valor
+Novo gasto                             [X]
+Valor total
 ┌──────────────────────────────────────┐
 │ €                         0,00       │
 └──────────────────────────────────────┘
 [Campos definidos pela especificação funcional]
 Categoria
 [Lista simples com ícones]
-Conta
-[Seletor compacto]
+Meio de pagamento
+[Conta / Cartão / Por pagar / Prestações]
 Data
 [Hoje] [Ontem] [Escolher data]
 ────────────────────────────────────────
 [Cancelar]                 [Guardar]
 ```
+
+**Limite funcional:** esta composição aprova a intenção de interface, não cria endpoints nem fecha todos os campos/regras de obrigações genéricas, financiamento, pagamento parcial ou seleção antecipada em operações pendentes. Estes continuam sujeitos aos contratos financeiros/API.
 
 ### 6.2 Receita
 
@@ -602,15 +608,14 @@ O número de etapas, títulos e campos dependem do formulário funcional. Não c
 
 ## 8. Abertura dos formulários
 
-**Decisão aprovada: quick.**
+**Decisão aprovada: FAB global para criação de operações.**
 
-- Os formulários são abertos por ações rápidas e botões nos cabeçalhos das páginas.
-- O botão deve estar no contexto da página à qual a operação pertence.
-- A ação deve ter rótulo claro e, quando adequado, ícone consistente com o Design System.
-- Não adicionar FAB (floating action button) global em todas as páginas.
-- Não duplicar ações no cabeçalho e num botão flutuante sem necessidade aprovada.
-- Não expor ações que não sejam permitidas no estado atual do registo.
-- Não alterar a navegação global aprovada para acomodar formulários.
+- Nas páginas Dashboard, Movimentos e Rota Financeira, o FAB global (+) apresenta sempre as mesmas opções, pela mesma ordem: **Novo gasto**, **Novo rendimento**, **Nova transferência**.
+- O contexto da página não altera nem substitui estas três opções. A Rota Financeira é uma vista temporal dos mesmos dados, não um módulo separado de criação.
+- As ações de gestão de entidades (por exemplo, criar conta ou cartão) permanecem no contexto da respetiva página, conforme a navegação aprovada.
+- Não duplicar o ponto de entrada de criação no cabeçalho, lista ou formulário.
+- Não expor ações indisponíveis como executáveis; a existência de uma opção não confirma que o formulário/contrato esteja implementado.
+- O FAB e a navegação global são definidos no `AppShell`; os formulários não criam FAB próprio.
 
 ---
 
@@ -788,7 +793,7 @@ Não criar novos estados de negócio a partir desta tabela.
 | Reversão | Confirmação com detalhes da operação original |
 | Menu contextual | Adaptativo |
 | Menu mobile | Bottom sheet |
-| Abertura | Ações rápidas e botões nos cabeçalhos |
+| Abertura | FAB global nas páginas principais de operações; ações de entidade no contexto próprio |
 | Formulários extensos | Divididos em etapas |
 | Ações | Rodapé fixo |
 | Fecho com alterações | Avisar e preservar os dados |
@@ -831,7 +836,7 @@ A implementação só corresponde a esta especificação quando cumprir os crit�
 - [ ] Edição reutiliza a estrutura de criação.
 
 ### Navegação e feedback
-- [ ] Abertura é feita por ações rápidas/cabeçalhos contextuais, sem FAB global.
+- [ ] O FAB global apresenta as mesmas três opções em Dashboard, Movimentos e Rota Financeira; não existem botões de criação duplicados no cabeçalho/lista.
 - [ ] Formulários extensos têm etapas, progresso, voltar e avançar.
 - [ ] Valores são preservados entre etapas.
 - [ ] Ações ficam num rodapé fixo.
@@ -851,18 +856,44 @@ A implementação só corresponde a esta especificação quando cumprir os crit�
 
 ## 14.1 Entrada global de criação e estado atual da aplicação
 
-A implementação de navegação publicada na `main` em 2026-11-25 utiliza um FAB global (+), fixo no viewport e contextual à página. Esta decisão de navegação é uma exceção explícita à regra de não criar FABs dentro dos formulários: não criar outro FAB no formulário nem um botão de criação duplicado no cabeçalho/lista.
+A navegação publicada na `main` em 2026-11-25 utiliza um FAB global (+), fixo no viewport. A regra abaixo consolida e substitui descrições anteriores de FAB contextual nas páginas principais de operações. Não criar FAB próprio dentro de formulários nem duplicar criação no cabeçalho/lista.
 
-Comportamento atualmente implementado:
-- Dashboard, Movimentos e Rota Financeira: as mesmas três operações — despesa, receita e transferência. A Rota é uma visualização alternativa dos mesmos dados, não um módulo de operações separado.
-- Contas: Nova conta; formulário ainda indisponível.
-- Cartões: Novo cartão; formulário ainda indisponível.
-- Dívidas: Nova dívida; formulário ainda indisponível.
-- Movimentos/Programações: Nova programação; formulário ainda indisponível.
-- Rota: não possui ação exclusiva de projeção no FAB; mantém despesa, receita e transferência, iguais a Movimentos.
-- Relatórios e Configurações: FAB oculto, sem ação de criação.
+- Dashboard, Movimentos e Rota Financeira: opções fixas e na mesma ordem — **Novo gasto**, **Novo rendimento**, **Nova transferência**. A Rota é uma vista temporal dos mesmos dados, não um módulo separado.
+- **Gasto** é o termo de interface; `EXPENSE`/despesa mantém-se como natureza/tipo técnico e financeiro. O gasto descreve o consumo/compra; o meio de pagamento determina os efeitos (conta, fatura/cartão ou obrigação por pagar) conforme os contratos financeiros.
+- Uma obrigação criada como consequência de um gasto não é uma ação paralela genérica no FAB. O gasto é o ponto de entrada; a obrigação é um efeito financeiro da operação quando aplicável.
+- Movimentos/Programações: a recorrência é configurada dentro do fluxo de Novo gasto ou Novo rendimento; não existe uma opção adicional **Nova programação** no conjunto fixo do FAB.
+- Contas: a ação **Nova conta** permanece no contexto da página; formulário ainda indisponível.
+- Cartões: a ação **Novo cartão** permanece no contexto da página; formulário ainda indisponível.
+- Dívidas: não apresentar **Nova dívida** como opção genérica de criação. A gestão/consulta de obrigações mantém-se; a criação de financiamento/entrada de empréstimo ou registo de dívida preexistente exige um fluxo específico, ainda por definir. Esta nota não decide se Dívidas permanece página principal.
+- Não apresentar **Nova projeção** no FAB. Projeções são calculadas na Rota, não criadas como operações financeiras.
+- Relatórios e Configurações: FAB oculto quando não existe ação de criação aprovada.
 
-A existência de uma opção no FAB não significa que o formulário esteja implementado ou que exista autorização funcional para criar dados. Ações sem suporte devem informar a indisponibilidade e não podem criar dados fictícios. Quando um formulário estiver disponível, mantém os recipientes, campos, rodapé e comportamentos especificados neste documento.
+A presença de uma opção não confirma que o formulário ou contrato esteja implementado. Ações sem suporte devem comunicar indisponibilidade e não criar dados fictícios.
+
+## 14.2 Menu contextual dos movimentos (`⋮`) — aprovado
+
+O toque na linha abre o detalhe do movimento. O menu `⋮` é um ponto de ação separado, curto e previsível; não substitui o detalhe e não deve repetir a ação de abrir o movimento.
+
+**Ordem e agrupamento:**
+1. **Editar movimento** — apenas quando a edição é permitida para o tipo e estado.
+2. **Duplicar movimento** — prepara um novo registo com os dados copiados; não duplica efeitos financeiros nem guarda/confirma automaticamente.
+3. **Ação de estado** — uma ação principal adequada ao estado e natureza (por exemplo, confirmar gasto pendente, registar recebimento ou cancelar uma ocorrência futura), apenas quando suportada pelo contrato.
+4. **Ações específicas do tipo**, quando aplicáveis:
+   - Compra parcelada: **Ver plano de prestações**; **Gerir prestações** quando o fluxo estiver implementado.
+   - Fatura do cartão: **Ver movimentos incluídos**; **Registar pagamento** quando o contrato de pagamento estiver disponível.
+   - Programação/ocorrência: **Editar recorrência** ou **Suspender recorrência** apenas no contexto e estado permitidos pelo contrato.
+5. Separador.
+6. **Eliminar** apenas registos não realizados e elegíveis para eliminação; para operações realizadas, usar **Estornar**, nunca apagar o histórico.
+
+**Regras de estado e integridade:**
+- Mostrar apenas ações válidas para aquele movimento; ocultar ações indisponíveis, não as apresentar desativadas como decoração.
+- Operação realizada mantém histórico. Estorno cria operação/efeitos compensatórios ligados à origem, com confirmação que identifica o movimento original; não altera nem elimina lançamentos confirmados.
+- Cancelamento é distinto de estorno e só se aplica a estados/ocorrências canceláveis antes da realização.
+- Ações de pagamento/liquidação não podem criar uma segunda despesa: liquidam a obrigação associada e geram os efeitos financeiros definidos no contrato.
+- Uma operação materializada a partir de recorrência aparece uma única vez em Movimentos; a gestão da programação/ocorrência mantém o seu contexto próprio.
+- Desktop/tablet: menu ancorado ao movimento. Mobile: bottom sheet. Reutilizar o padrão de menu contextual existente.
+
+A composição do menu está aprovada como decisão de interface. Permissões, transições, endpoints e implementação de cada ação continuam subordinados aos contratos de domínio/API; esta secção não autoriza novas regras financeiras nem endpoints.
 
 ## 15. Procedimento para a IA que vai implementar
 
