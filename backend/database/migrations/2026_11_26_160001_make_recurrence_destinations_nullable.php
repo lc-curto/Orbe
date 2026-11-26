@@ -24,7 +24,7 @@ return new class extends Migration
     {
         if (DB::table('recurrence_schedules')->whereNull('account_id')->exists()
             || DB::table('recurrence_occurrences')->whereNull('account_id')->exists()) {
-            throw new RuntimeException(
+            throw new \RuntimeException(
                 'Cannot restore non-null recurrence destinations while null values exist.'
             );
         }
