@@ -21,6 +21,7 @@ export function formatMonth(value: string, includeYear = true) {
 }
 
 export function formatMonthRange(first: string, last: string) {
+  if (first === last) return formatMonth(first, true)
   const firstDate = new Date(`${first}-01T12:00:00`)
   const lastDate = new Date(`${last}-01T12:00:00`)
   const firstLabel = formatMonth(first, firstDate.getFullYear() !== lastDate.getFullYear())
