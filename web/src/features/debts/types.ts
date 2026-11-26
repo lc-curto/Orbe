@@ -11,5 +11,5 @@ export type DebtListItem = {
   monthlyPayment: string | number
   paidAmount: string | number
   totalAmount: string | number
-  status: 'ACTIVE' | 'SETTLED' | string
+  status: string
 }
