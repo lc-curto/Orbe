@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Button, Card, Text, XStack, YStack } from 'tamagui'
+import { Button, Card, Text, XStack, YStack } from './primitives'
 import { OrbeIcon } from './Icon'
 import type { OrbeIconName } from './Icon'
 import { movementTone, orbe } from './tokens'
