@@ -91,14 +91,16 @@ Reutiliza estrutura de Contas.
 - Gestão avançada de financiamento ou dívida preexistente exige fluxo próprio, ainda por especificar; não reintroduzir uma página autónoma sem decisão explícita.
 
 ## Relatórios — aprovado
-- Cabeçalho Relatórios e seletor mês/ano.
-- KPIs Receitas e Despesas; resultado do mês.
-- Visualização simples da composição receitas/despesas.
-- Análise financeira: evolução mensal; despesas por categoria; atividade por conta; compras/faturas/pagamentos de cartões; pagamentos/evolução das dívidas.
-- Apenas operações realizadas; sem projeções.
+- Cabeçalho Relatórios e seletor mês/ano, alinhado pelo mesmo padrão responsivo de Movimentos.
+- Não apresentar cartões KPI. O primeiro bloco é um gráfico de evolução diária do mês selecionado, com receitas e despesas realizadas por dia.
+- Apresentar composição receitas/despesas do mês e análise financeira: despesas por categoria; atividade por conta; compras/faturas/pagamentos de cartões; pagamentos/evolução das obrigações quando a API disponibilizar histórico.
+- Apenas operações realizadas; excluir pendentes, canceladas e transferências do gráfico de receitas/despesas. Sem projeções.
+- Usar exclusivamente dados reais disponíveis. Se faltar read model, apresentar estado informativo sem estimativas.
 
 ## Configurações — aprovado
 - Preferências: Perfil, Moeda, Categorias, Aparência e preferências.
+- Moeda: lista de 10 moedas internacionais principais, incluindo Real brasileiro (BRL, R$); a seleção altera apenas o símbolo apresentado, sem conversão nem alteração de valor.
+- Aparência: alternar entre tema claro e escuro; preferência guardada localmente e aplicada à interface.
 - Segurança e Dados: Segurança, Dados e cópias de segurança.
 - Sobre o Orbe.
 - Não editar movimentos, contas, cartões ou obrigações diretamente nesta página.
@@ -109,6 +111,8 @@ Reutiliza estrutura de Contas.
 - As análises são calculadas a partir dos dados reais disponíveis na API. Quando um read model ainda não expõe uma dimensão (por exemplo, histórico de pagamentos/evolução de obrigações), apresentar um estado informativo e não estimar nem inventar valores.
 - A preferência de moeda altera exclusivamente o símbolo apresentado na interface. Não efetua câmbio, conversão, alteração de valores guardados, saldos, cálculos, precisão ou escala. É uma preferência de apresentação, não uma alteração da denominação financeira dos movimentos.
 - A implementação frontend deve centralizar a preferência e a formatação para evitar formatadores divergentes entre páginas. A escolha persistida no navegador não altera os dados da API nem implica sincronização entre dispositivos.
+- A lista de moedas inclui USD, EUR, GBP, JPY, CNY, CHF, CAD, AUD, BRL e INR. O BRL é incluído explicitamente por preferência do produto; a lista é uma seleção prática de moedas amplamente utilizadas, não um ranking estatístico de volume de negociação cambial.
+- O tema claro/escuro é uma preferência visual global, persistida no navegador. Não altera dados nem regras financeiras.
 
 ## Ordem de desenho aprovada
 Concluir páginas principais; desenhar subpáginas; definir modais; auditar consistência e reaproveitamento.
