@@ -2,11 +2,7 @@
 
 > Contratos de escrita e leitura da API agrupados por domínio. Um contrato novo deve ser acrescentado aqui, não num ficheiro isolado.
 
-
 ---
-
-<!-- Conteúdo consolidado de docs/06-contratos-api.md -->
-
 
 > Fase 1 autorizada em 2026-11-24. Este contrato cobre apenas contas, categorias, despesas comuns e receitas.
 
@@ -54,11 +50,7 @@ O payload de despesa/receita contém `amount`, `account_id`, `category_id`, `sta
 
 Esta fase não implementa edição, eliminação, cancelamento, transferências, recorrências, cartões, pagamentos ou gestão de dívidas. Esses fluxos mantêm os contratos próprios e serão implementados nas fases seguintes.
 
-
 ---
-
-<!-- Conteúdo consolidado de docs/06-contratos-api.md -->
-
 
 > Fase 2 autorizada em 2026-11-24.
 
@@ -77,11 +69,7 @@ O payload de criação contém `amount`, opcionalmente `description` e `idempote
 
 O sistema rejeita a mesma conta nas duas pernas, contas de outro utilizador, contas inativas, estados sem a data correspondente e valores não positivos. A repetição da mesma chave de idempotência devolve a operação original.
 
-
 ---
-
-<!-- Conteúdo consolidado de docs/06-contratos-api.md -->
-
 
 > Fase 3 autorizada em 2026-11-24.
 
