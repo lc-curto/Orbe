@@ -89,7 +89,7 @@
 .desktop-dashboard-header h1 { margin: 0; font-size: clamp(28px, 2.5vw, 36px) !important; line-height: 1.15; }
 .dashboard-kpi-row { align-items: stretch; gap: 16px !important; }
 .dashboard-kpi-row > * { min-height: 144px; }
-.dashboard-kpi-row .tamagui-card,
+.dashboard-kpi-row .orbe-card,
 .dashboard-kpi-row [class*="Card"] { border-radius: var(--orbe-radius-card) !important; }
 .desktop-categories-card { border-radius: var(--orbe-radius-card) !important; }
 .main-content > .orbe-card,
