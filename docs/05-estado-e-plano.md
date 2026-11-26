@@ -4,9 +4,6 @@
 
 ---
 
-<!-- Conteúdo consolidado de docs/05-estado-e-plano.md -->
-
-
 Registo central do que falta decidir ou especificar. Uma decisão só passa a aprovada após confirmação explícita.
 
 ## Estado das etapas
@@ -113,11 +110,7 @@ Protótipos ou experiências técnicas isoladas só devem avançar com autoriza�
 ## Atualização de decisões
 Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e os requisitos/diagramas afetados. Registar motivo e impacto quando substituir uma decisão. Não criar atas separadas por conversa.
 
-
 ---
-
-<!-- Conteúdo consolidado de docs/05-estado-e-plano.md -->
-
 
 > Documento de controlo do projeto. Atualizado em 2026-11-25.
 >
