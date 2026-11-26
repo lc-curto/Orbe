@@ -6,7 +6,6 @@ namespace App\Services;
 
 use App\Exceptions\FinancialInvariantViolation;
 use App\Models\Category;
-use App\Models\FinancialAccount;
 use App\Models\RecurrenceOccurrence;
 use App\Models\RecurrenceSchedule;
 use Illuminate\Support\Carbon;
