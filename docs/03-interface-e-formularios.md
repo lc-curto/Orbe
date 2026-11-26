@@ -863,12 +863,12 @@ A implementação só corresponde a esta especificação quando cumprir os crit�
 A implementação de navegação publicada na `main` em 2026-11-25 utiliza um FAB global (+), fixo no viewport e contextual à página. Esta decisão de navegação é uma exceção explícita à regra de não criar FABs dentro dos formulários: não criar outro FAB no formulário nem um botão de criação duplicado no cabeçalho/lista.
 
 Comportamento atualmente implementado:
-- Dashboard e Movimentos: despesa, receita e transferência.
+- Dashboard, Movimentos e Rota Financeira: as mesmas três operações — despesa, receita e transferência. A Rota é uma visualização alternativa dos mesmos dados, não um módulo de operações separado.
 - Contas: Nova conta; formulário ainda indisponível.
 - Cartões: Novo cartão; formulário ainda indisponível.
 - Dívidas: Nova dívida; formulário ainda indisponível.
 - Movimentos/Programações: Nova programação; formulário ainda indisponível.
-- Rota: Nova projeção; indisponível até existir contrato/read model de projeção.
+- Rota: não possui ação exclusiva de projeção no FAB; mantém despesa, receita e transferência, iguais a Movimentos.
 - Relatórios e Configurações: FAB oculto, sem ação de criação.
 
 A existência de uma opção no FAB não significa que o formulário esteja implementado ou que exista autorização funcional para criar dados. Ações sem suporte devem informar a indisponibilidade e não podem criar dados fictícios. Quando um formulário estiver disponível, mantém os recipientes, campos, rodapé e comportamentos especificados neste documento.
