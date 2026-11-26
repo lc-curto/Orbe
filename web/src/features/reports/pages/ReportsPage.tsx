@@ -67,6 +67,7 @@ export function ReportsPage({ operations, invoices, loading, error, month, onMon
   const totals = useMemo(() => totalsFor(monthOperations), [monthOperations])
   const daily = useMemo(() => dailyTotalsForMonth(monthOperations, month), [monthOperations, month])
   const hasDailyActivity = daily.some((item) => item.income > 0 || item.expenses > 0)
+  const hasReportableOperations = monthOperations.some((operation) => operation.operation_type === 'INCOME' || operation.operation_type === 'EXPENSE')
   const categories = useMemo(() => expensesByCategory(monthOperations), [monthOperations])
   const accounts = useMemo(() => activityByAccount(monthOperations), [monthOperations])
   const monthInvoices = invoices.filter((invoice) => monthOf(invoice.period_start) === month)
@@ -85,7 +86,7 @@ export function ReportsPage({ operations, invoices, loading, error, month, onMon
         </section>
         <section className="report-panel">
           <header className="report-panel-header"><h2>Composição do mês</h2><span>{monthLabel(month, 'long')}</span></header>
-          {monthOperations.length ? <ReportBars income={totals.income} expenses={totals.expenses} symbol={symbol} /> : <p className="report-empty">Sem operações realizadas neste mês.</p>}
+          {hasReportableOperations ? <ReportBars income={totals.income} expenses={totals.expenses} symbol={symbol} /> : <p className="report-empty">Sem operações realizadas neste mês.</p>}
         </section>
         <section className="report-panel">
           <header className="report-panel-header"><h2>Despesas por categoria</h2><span>Realizadas</span></header>
