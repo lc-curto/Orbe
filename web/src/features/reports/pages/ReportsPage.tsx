@@ -4,7 +4,7 @@ import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { formatCurrency } from '../../currency/formatCurrency'
 import { useCurrency } from '../../currency/useCurrency'
 import type { CurrencySymbol } from '../../currency/types'
-import { activityByAccount, expensesByCategory, isRealizedOperation, monthLabel, monthOf, operationMonth, shiftMonth, totalsFor, type PeriodTotals } from '../utils'
+import { activityByAccount, dailyTotalsForMonth, expensesByCategory, isRealizedOperation, monthLabel, monthOf, operationMonth, totalsFor, type DailyTotals, type PeriodTotals } from '../utils'
 
 type Props = {
   operations: Operation[]
@@ -13,10 +13,6 @@ type Props = {
   error: string | null
   month: string
   onMonthChange: (month: string) => void
-}
-
-function ReportKpi({ label, value, tone, note }: { label: string; value: string; tone?: string; note: string }) {
-  return <article className="report-kpi"><span>{label}</span><strong style={tone ? { color: tone } : undefined}>{value}</strong><small>{note}</small></article>
 }
 
 function ReportBars({ income, expenses, symbol }: PeriodTotals & { symbol: CurrencySymbol }) {
@@ -29,6 +25,39 @@ function ReportBars({ income, expenses, symbol }: PeriodTotals & { symbol: Curre
   </div>
 }
 
+function chartX(index: number, count: number) {
+  return count <= 1 ? 500 : 28 + index / (count - 1) * 944
+}
+
+function chartY(value: number, max: number) {
+  return 138 - value / max * 116
+}
+
+function DailyEvolutionChart({ daily, symbol }: { daily: DailyTotals[]; symbol: CurrencySymbol }) {
+  const max = Math.max(1, ...daily.map((item) => Math.max(item.income, item.expenses)))
+  const incomePoints = daily.map((item, index) => `${chartX(index, daily.length)},${chartY(item.income, max)}`).join(' ')
+  const expensePoints = daily.map((item, index) => `${chartX(index, daily.length)},${chartY(item.expenses, max)}`).join(' ')
+  const tickDays = daily.filter((item) => item.day === 1 || item.day % 5 === 0 || item.day === daily.length)
+
+  return <div className="report-daily-chart-wrap">
+    <div className="report-chart-scale">Escala diária até {formatCurrency(max, symbol)}</div>
+    <svg className="report-daily-chart" viewBox="0 0 1000 180" preserveAspectRatio="none" role="img" aria-label="Evolução diária das receitas e despesas realizadas">
+      <title>Evolução diária do mês selecionado</title>
+      <desc>Receitas e despesas realizadas por dia. Transferências e operações não realizadas são excluídas.</desc>
+      {[22, 51, 80, 109, 138].map((y) => <line key={y} className="report-chart-grid" x1="28" y1={y} x2="972" y2={y} />)}
+      <polyline className="report-chart-income" points={incomePoints} />
+      <polyline className="report-chart-expense" points={expensePoints} />
+      {daily.map((item, index) => <g key={item.day}>
+        <circle className="report-chart-income-point" cx={chartX(index, daily.length)} cy={chartY(item.income, max)} r="2.8"><title>{`Dia ${item.day}: receitas ${formatCurrency(item.income, symbol)}`}</title></circle>
+        <circle className="report-chart-expense-point" cx={chartX(index, daily.length)} cy={chartY(item.expenses, max)} r="2.8"><title>{`Dia ${item.day}: despesas ${formatCurrency(item.expenses, symbol)}`}</title></circle>
+      </g>)}
+      {tickDays.map((item) => <text key={item.day} className="report-chart-day" x={chartX(item.day - 1, daily.length)} y="166" textAnchor="middle">{item.day}</text>)}
+    </svg>
+    <div className="report-legend"><span><i className="income-dot" />Receitas</span><span><i className="expense-dot" />Despesas</span></div>
+    <p className="report-chart-note">Valores diários realizados. Transferências não entram no gráfico.</p>
+  </div>
+}
+
 export function ReportsPage({ operations, invoices, loading, error, month, onMonthChange }: Props) {
   const { symbol } = useCurrency()
   const monthOperations = useMemo(
@@ -36,44 +65,27 @@ export function ReportsPage({ operations, invoices, loading, error, month, onMon
     [operations, month],
   )
   const totals = useMemo(() => totalsFor(monthOperations), [monthOperations])
-  const result = totals.income - totals.expenses
-  const monthly = useMemo(() => {
-    const months = Array.from({ length: 6 }, (_, index) => shiftMonth(month, index - 5))
-    return months.map((period) => ({ month: period, ...totalsFor(operations.filter((operation) => operationMonth(operation) === period && isRealizedOperation(operation))) }))
-  }, [operations, month])
-  const maxMonthly = Math.max(1, ...monthly.flatMap((item) => [item.income, item.expenses]))
+  const daily = useMemo(() => dailyTotalsForMonth(monthOperations, month), [monthOperations, month])
+  const hasDailyActivity = daily.some((item) => item.income > 0 || item.expenses > 0)
   const categories = useMemo(() => expensesByCategory(monthOperations), [monthOperations])
   const accounts = useMemo(() => activityByAccount(monthOperations), [monthOperations])
   const monthInvoices = invoices.filter((invoice) => monthOf(invoice.period_start) === month)
-  const hasOperations = monthOperations.length > 0
 
   return <section className="reports-page" aria-labelledby="reports-page-title">
     <header className="movements-header reports-header">
-      <div className="movements-heading"><h1 id="reports-page-title">Relatórios</h1><p>Resumo da atividade financeira realizada</p></div>
+      <div className="movements-heading"><h1 id="reports-page-title">Relatórios</h1><p>Atividade financeira realizada</p></div>
       <div className="movements-header-actions"><MonthSelector month={month} onMonthChange={onMonthChange} className="movement-month-selector" /></div>
     </header>
 
     {loading ? <div className="report-state" role="status">A carregar dados financeiros…</div> : error ? <div className="report-state report-state-error" role="alert">{error}</div> : <>
-      <div className="reports-kpis">
-        <ReportKpi label="Receitas" value={formatCurrency(totals.income, symbol)} tone="var(--orbe-success)" note="Realizadas no mês" />
-        <ReportKpi label="Despesas" value={formatCurrency(totals.expenses, symbol)} tone="var(--orbe-danger)" note="Realizadas no mês" />
-        <ReportKpi label="Resultado" value={`${result >= 0 ? '+ ' : '− '}${formatCurrency(Math.abs(result), symbol)}`} tone={result >= 0 ? 'var(--orbe-primary)' : 'var(--orbe-danger)'} note="Receitas − despesas" />
-      </div>
-
       <div className="reports-grid">
-        <section className="report-panel">
-          <header className="report-panel-header"><h2>Composição do mês</h2><span>{monthLabel(month, 'long')}</span></header>
-          {hasOperations ? <ReportBars income={totals.income} expenses={totals.expenses} symbol={symbol} /> : <p className="report-empty">Sem operações realizadas neste mês.</p>}
+        <section className="report-panel report-panel-wide report-panel-evolution">
+          <header className="report-panel-header"><h2>Evolução do mês</h2><span>{monthLabel(month, 'long')}</span></header>
+          {hasDailyActivity ? <DailyEvolutionChart daily={daily} symbol={symbol} /> : <p className="report-empty">Sem operações realizadas neste mês.</p>}
         </section>
         <section className="report-panel">
-          <header className="report-panel-header"><h2>Evolução mensal</h2><span>Últimos 6 meses</span></header>
-          {monthly.some((item) => item.income > 0 || item.expenses > 0) ? <div className="report-month-chart">
-            {monthly.map((item) => <div className="report-month-column" key={item.month} aria-label={`${monthLabel(item.month)}: receitas ${formatCurrency(item.income, symbol)}, despesas ${formatCurrency(item.expenses, symbol)}`}>
-              <div className="report-month-bars"><span className="report-month-income" style={{ height: `${item.income / maxMonthly * 100}%` }} /><span className="report-month-expense" style={{ height: `${item.expenses / maxMonthly * 100}%` }} /></div>
-              <small>{monthLabel(item.month)}</small>
-            </div>)}
-          </div> : <p className="report-empty">Ainda não existem dados realizados para comparar.</p>}
-          <div className="report-legend"><span><i className="income-dot" />Receitas</span><span><i className="expense-dot" />Despesas</span></div>
+          <header className="report-panel-header"><h2>Composição do mês</h2><span>{monthLabel(month, 'long')}</span></header>
+          {monthOperations.length ? <ReportBars income={totals.income} expenses={totals.expenses} symbol={symbol} /> : <p className="report-empty">Sem operações realizadas neste mês.</p>}
         </section>
         <section className="report-panel">
           <header className="report-panel-header"><h2>Despesas por categoria</h2><span>Realizadas</span></header>
