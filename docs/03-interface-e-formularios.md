@@ -1033,7 +1033,7 @@ O formulário próprio referido na secção 6.6 deve respeitar o contrato funcio
 
 ### 17.7 Dívidas e pagamentos parciais
 
-Embora o formulário detalhado de Dívidas ainda dependa do desenho da subpágina, qualquer formulário de pagamento deve respeitar:
+Embora não exista página autónoma de Dívidas, qualquer fluxo de pagamento de obrigação deve respeitar:
 - Cada pagamento parcial é uma operação individual ligada à dívida/obrigação.
 - Cada pagamento identifica a conta de origem; pagamentos da mesma dívida podem partir de contas diferentes.
 - O pagamento cria efeito na conta de origem e redução da obrigação. Não criar uma segunda despesa.
