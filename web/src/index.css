@@ -9,3 +9,4 @@
 @import './features/financial-route/styles/financial-route.css';
 @import './features/reports/styles/reports.css';
 @import './features/settings/styles/settings.css';
+@import './styles/theme.css';
