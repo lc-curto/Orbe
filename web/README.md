@@ -1,75 +1,52 @@
-# React + TypeScript + Vite
+# Orbe — Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação web do Orbe em React + TypeScript + Vite, com Tamagui e `react-native-web` para a camada de compatibilidade de componentes.
 
-Currently, two official plugins are available:
+## Requisitos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Node.js e npm compatíveis com as dependências declaradas em `package.json`.
 
-## React Compiler
+## Configuração local (PowerShell)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+A partir da raiz do repositório:
 
-## Expanding the ESLint configuration
+```powershell
+cd web
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+if (-not (Test-Path .env)) {
+    Copy-Item .env.example .env
+}
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+A aplicação Vite fica normalmente em `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+O `.env.example` define `VITE_API_BASE_URL=http://127.0.0.1:8000/api`. Ajusta o valor se o backend estiver noutro endereço. Inicia o backend em paralelo; o proxy de desenvolvimento Vite encaminha pedidos `/api` para `http://127.0.0.1:8000`.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Comandos
 
+```powershell
+npm run lint
+npm run build
+npm run preview
 ```
+
+- `dev`: servidor Vite com hot reload.
+- `lint`: ESLint.
+- `build`: verificação TypeScript e build de produção.
+- `preview`: serve localmente o build produzido.
+
+## Estado funcional
+
+A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas e interface da Rota Financeira. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
+
+Não criar dados fictícios nem apresentar projeções como valores realizados. A página principal autónoma de Dívidas foi descontinuada; obrigações permanecem ligadas aos movimentos/faturas associados.
+
+## Documentação
+
+- [README principal](../README.md)
+- [Interface e formulários](../docs/03-interface-e-formularios.md)
+- [Estado e plano](../docs/05-estado-e-plano.md)
+- [Arquitetura frontend](../docs/04-arquitetura-modelo-e-auditoria.md)
