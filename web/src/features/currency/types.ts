@@ -1,1 +1,1 @@
-export type CurrencySymbol = '€' | '$' | '£' | '¥' | 'CN¥' | 'CHF' | 'CA$' | 'A$' | 'R$' | '₹'
+export type CurrencySymbol = '€' | '$' | '£' | '¥' | 'CN¥' | 'CHF' | 'CA$' | 'A$' | 'HK$' | 'R$'
