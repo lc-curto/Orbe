@@ -1,4 +1,5 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { createPortal } from 'react-dom'
 import {
   Button,
   Card,
@@ -20,7 +21,7 @@ import { CardsPage } from './CardsPage'
 import { FinancialRoutePage } from './FinancialRoutePage'
 import { MonthSelector } from './MonthSelector'
 
-type IconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'creditCard' | 'debt' | 'settings' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight'
+type IconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'creditCard' | 'debt' | 'settings' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight' | 'logout'
 
 const iconPaths: Record<IconName, string> = {
   plus: 'M12 5v14M5 12h14',
@@ -44,6 +45,7 @@ const iconPaths: Record<IconName, string> = {
   house: 'm4 11 8-7 8 7v9H4v-9Zm5 9v-5h6v5',
   chevronLeft: 'm15 18-6-6 6-6',
   chevronRight: 'm9 18 6-6-6-6',
+  logout: 'M10 17l5-5-5-5m5 5H3m9-9h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6',
 }
 
 function Icon({ name, size = 18, color = 'currentColor', strokeWidth = 1.8 }: { name: IconName; size?: number; color?: string; strokeWidth?: number }) {
@@ -222,6 +224,9 @@ export default function App() {
   const [periodIndex, setPeriodIndex] = useState(0)
   const [routeMonth, setRouteMonth] = useState('2026-11')
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  const accountMenuAnchorRef = useRef<HTMLSpanElement>(null)
+  const accountMenuPopoverRef = useRef<HTMLDivElement>(null)
+  const [accountMenuPosition, setAccountMenuPosition] = useState({ top: 12, left: 84, width: 240 })
   const [feedback, setFeedback] = useState('')
   const [activeForm, setActiveForm] = useState<'expense' | 'income' | 'transfer' | null>(null)
   const [addMenuOpen, setAddMenuOpen] = useState(false)
@@ -231,6 +236,63 @@ export default function App() {
     setAddMenuOpen(false)
     setMorePagesOpen(false)
   }, [activeKey, movementTab])
+
+  useEffect(() => {
+    if (!accountMenuOpen) return
+
+    const updatePosition = () => {
+      const anchor = accountMenuAnchorRef.current
+      if (!anchor) return
+
+      const viewportWidth = window.innerWidth
+      const viewportHeight = window.innerHeight
+      const width = Math.min(240, viewportWidth - 24)
+      const height = accountMenuPopoverRef.current?.getBoundingClientRect().height ?? 112
+      const rect = anchor.getBoundingClientRect()
+      let left: number
+      let top: number
+
+      if (sidebarOpen) {
+        left = rect.left
+        top = rect.top - height - 8
+        if (top < 12) top = rect.bottom + 8
+      } else {
+        left = rect.right + 12
+        if (left + width > viewportWidth - 12) left = rect.left - width - 12
+        top = rect.bottom - height
+      }
+
+      left = Math.max(12, Math.min(left, viewportWidth - width - 12))
+      top = Math.max(12, Math.min(top, viewportHeight - height - 12))
+      setAccountMenuPosition({ top, left, width })
+    }
+
+    const handleOutsidePointer = (event: PointerEvent) => {
+      const target = event.target
+      if (!(target instanceof Node)) return
+      if (accountMenuAnchorRef.current?.contains(target) || accountMenuPopoverRef.current?.contains(target)) return
+      setAccountMenuOpen(false)
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setAccountMenuOpen(false)
+        accountMenuAnchorRef.current?.querySelector('button')?.focus()
+      }
+    }
+
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    window.addEventListener('scroll', updatePosition, true)
+    document.addEventListener('pointerdown', handleOutsidePointer)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('scroll', updatePosition, true)
+      document.removeEventListener('pointerdown', handleOutsidePointer)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [accountMenuOpen, sidebarOpen])
 
   if (authLoading && user === null) {
     return <YStack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" style={{ justifyContent: 'center', alignItems: 'center' }}><Text color="#667085">A verificar a sessão…</Text></YStack>
@@ -323,7 +385,7 @@ export default function App() {
             <YStack className="desktop-sidebar-navigation" gap={18} flex={1}>
               {sidebarGroups.map((group) => <YStack key={group.title} gap={7}>
                 {sidebarOpen ? <Text color="#98a2b3" fontSize={10} fontWeight="800" letterSpacing={1}>{group.title.toUpperCase()}</Text> : null}
-                {group.pages.map((item) => <Button key={item.label} onPress={() => setActiveKey(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
+                {group.pages.map((item) => <Button key={item.label} onPress={() => setActiveKey(item.label)} aria-label={item.label} title={!sidebarOpen ? item.label : undefined} aria-current={activeKey === item.label ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
                   <XStack gap={10} style={{ alignItems: 'center', justifyContent: sidebarOpen ? 'flex-start' : 'center' }}><Icon name={item.icon} size={16} />{sidebarOpen ? <Text>{item.label}</Text> : null}</XStack>
                 </Button>)}
               </YStack>)}
@@ -333,10 +395,43 @@ export default function App() {
                 <XStack alignItems="center" gap={10}><Icon name="bell" size={17} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</XStack>
               </Button>
               <YStack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
-                <Button className="sidebar-profile-button" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
-                  <XStack className="sidebar-profile-copy" alignItems="center" gap={10}><Icon name="user" size={17} />{sidebarOpen ? <YStack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></YStack> : null}</XStack>
-                </Button>
-                {accountMenuOpen ? <YStack className="account-dropdown sidebar-account-dropdown" gap={6}><Text color="#101828" fontSize={12} fontWeight="700">{user.name}</Text><Button className="logout-button" onPress={() => { setAccountMenuOpen(false); setLogoutError(null); void logout().catch(() => setLogoutError("Não foi possível terminar a sessão. Tenta novamente.")) }} disabled={authLoading} borderWidth={0} backgroundColor="transparent" padding={10} color="#c2415d" fontSize={12}>Terminar sessão</Button></YStack> : null}
+                <span ref={accountMenuAnchorRef} className="account-menu-anchor">
+                  <Button className="sidebar-profile-button" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" title={!sidebarOpen ? user.name : undefined} aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
+                    <XStack className="sidebar-profile-copy" alignItems="center" gap={10}><Icon name="user" size={17} />{sidebarOpen ? <YStack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></YStack> : null}</XStack>
+                  </Button>
+                </span>
+                {accountMenuOpen && typeof document !== 'undefined' ? createPortal(
+                  <div
+                    ref={accountMenuPopoverRef}
+                    className="sidebar-account-popover"
+                    role="menu"
+                    aria-label="Menu da conta"
+                    style={{ top: accountMenuPosition.top, left: accountMenuPosition.left, width: accountMenuPosition.width }}
+                  >
+                    <div className="sidebar-account-popover-header">
+                      <span className="sidebar-account-avatar"><Icon name="user" size={18} /></span>
+                      <span className="sidebar-account-identity">
+                        <strong title={user.name}>{user.name}</strong>
+                        <small>Conta Orbe</small>
+                      </span>
+                    </div>
+                    <button
+                      className="sidebar-account-menu-action"
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setAccountMenuOpen(false)
+                        setLogoutError(null)
+                        void logout().catch(() => setLogoutError("Não foi possível terminar a sessão. Tenta novamente."))
+                      }}
+                      disabled={authLoading}
+                    >
+                      <Icon name="logout" size={17} />
+                      <span>Terminar sessão</span>
+                    </button>
+                  </div>,
+                  document.body,
+                ) : null}
               </YStack>
             </YStack>
           </YStack>
