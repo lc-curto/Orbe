@@ -69,8 +69,8 @@ Os saldos e resultados devem ser coerentes em todas as páginas e plataformas, s
 
 ## Estados
 O sistema controla os estados e transições conforme a natureza e os factos confirmados.
-- **Realizado:** pagamento/recebimento confirmado.
-- **Pendente:** obrigação ou recebimento esperado ainda não confirmado.
+- **Realizado:** pagamento/recebimento confirmado; antes de guardar, exige a associação ao destino/instrumento financeiro adequado ao fluxo.
+- **Pendente:** gasto ou ganho esperado ainda não efetivado; não exige nem apresenta conta, cartão ou outro meio de liquidação. A associação financeira é recolhida apenas ao confirmar como realizado.
 - **Cancelado:** preservado no histórico e excluído da projeção.
 - **Parcial:** indicador de apresentação de obrigação parcialmente liquidada; na lista mostrar apenas “Parcial”, sem valores detalhados.
 
@@ -96,6 +96,7 @@ Estados específicos de faturas, obrigações, cartões e ocorrências serão de
 | OP-015 | Dependências e operações relacionadas são protegidas | Aprovado |
 | OP-016 | Projeções recalculam após alterações relevantes | Aprovado |
 | OP-017 | Saldo inicial de conta é reconhecido uma única vez por operação própria, sem natureza de receita/despesa, e integra o saldo efetivo por lançamento realizado | Aprovado |
+| OP-018 | Gasto/ganho pendente não apresenta nem exige destino financeiro; ao guardar como realizado, exige destino/instrumento adequado antes de persistir | Aprovado |
 
 ## Ações
 - **Criar:** estado inicial decorre dos dados; não permitir estado incoerente.
