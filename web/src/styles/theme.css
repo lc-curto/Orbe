@@ -1,0 +1,159 @@
+/* Global theme tokens and cross-page dark-mode surfaces. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --orbe-bg: #101720;
+  --orbe-surface: #182230;
+  --orbe-border: #303d4d;
+  --orbe-text: #e7edf5;
+  --orbe-muted: #a4b0c0;
+  --orbe-primary: #91aaff;
+  --orbe-teal: #4fd1b5;
+  --orbe-focus: #a9c6ff;
+  --orbe-success: #58c99c;
+  --orbe-danger: #f28b9b;
+}
+
+[data-theme="dark"] body,
+[data-theme="dark"] #root { background: var(--orbe-bg); color: var(--orbe-text); }
+[data-theme="dark"] .app-shell { background: var(--orbe-bg) !important; color: var(--orbe-text); }
+[data-theme="dark"] .main-content { color: var(--orbe-text); }
+
+[data-theme="dark"] .desktop-sidebar {
+  background: var(--orbe-surface) !important;
+  border-right-color: var(--orbe-border) !important;
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .desktop-sidebar button,
+[data-theme="dark"] .desktop-sidebar span,
+[data-theme="dark"] .desktop-sidebar strong { color: var(--orbe-text) !important; }
+[data-theme="dark"] .desktop-sidebar button[aria-current="page"] {
+  background: #203b38 !important;
+  color: var(--orbe-teal) !important;
+}
+[data-theme="dark"] .desktop-sidebar button[aria-current="page"] span { color: var(--orbe-teal) !important; }
+[data-theme="dark"] .desktop-sidebar button[aria-label="Recolher menu"],
+[data-theme="dark"] .desktop-sidebar button[aria-label="Expandir menu"] {
+  border-color: var(--orbe-border) !important;
+  background: var(--orbe-bg) !important;
+}
+[data-theme="dark"] .mobile-dashboard-nav,
+[data-theme="dark"] .mobile-bottom-bar {
+  background: var(--orbe-surface) !important;
+  border-top-color: var(--orbe-border) !important;
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .mobile-dashboard-nav button,
+[data-theme="dark"] .mobile-bottom-bar button { color: var(--orbe-text) !important; }
+[data-theme="dark"] .mobile-dashboard-nav button[aria-current="page"],
+[data-theme="dark"] .mobile-dashboard-nav button[aria-expanded="true"],
+[data-theme="dark"] .mobile-bottom-bar button[aria-current="page"] {
+  background: #203b38 !important;
+  color: var(--orbe-teal) !important;
+}
+[data-theme="dark"] .mobile-dashboard-nav button[aria-current="page"] *,
+[data-theme="dark"] .mobile-dashboard-nav button[aria-expanded="true"] *,
+[data-theme="dark"] .mobile-bottom-bar button[aria-current="page"] * { color: var(--orbe-teal) !important; }
+
+[data-theme="dark"] .mobile-page-shell,
+[data-theme="dark"] .mobile-dashboard-content,
+[data-theme="dark"] .accounts-mobile-shell,
+[data-theme="dark"] .cards-mobile-shell { background: var(--orbe-bg) !important; color: var(--orbe-text); }
+
+[data-theme="dark"] .main-content .tamagui-card,
+[data-theme="dark"] .main-content [class*="Card"],
+[data-theme="dark"] .main-content [class*="-card"],
+[data-theme="dark"] .main-content .movement-list,
+[data-theme="dark"] .main-content .schedule-list,
+[data-theme="dark"] .main-content .accounts-list,
+[data-theme="dark"] .main-content .cards-invoices-list,
+[data-theme="dark"] .main-content .cards-invoice-day-list,
+[data-theme="dark"] .main-content .report-panel,
+[data-theme="dark"] .main-content .settings-section,
+[data-theme="dark"] .main-content .filter-panel,
+[data-theme="dark"] .main-content .movement-toolbar,
+[data-theme="dark"] .main-content .route-month-card,
+[data-theme="dark"] .main-content .route-table-wrap,
+[data-theme="dark"] .main-content .route-day-modal,
+[data-theme="dark"] .main-content .route-mobile-summary {
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .main-content .movement-row,
+[data-theme="dark"] .main-content .accounts-row,
+[data-theme="dark"] .main-content .cards-invoice-row,
+[data-theme="dark"] .main-content .report-invoice-row {
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .main-content .movement-row + .movement-row,
+[data-theme="dark"] .main-content .accounts-row + .accounts-row,
+[data-theme="dark"] .main-content .cards-invoice-row + .cards-invoice-row,
+[data-theme="dark"] .main-content .cards-invoice-day-list .movement-row + .movement-row { border-top-color: var(--orbe-border) !important; }
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .auth-input,
+[data-theme="dark"] .filter-panel select,
+[data-theme="dark"] .accounts-status-filter,
+[data-theme="dark"] .cards-invoice-search {
+  background: var(--orbe-surface) !important;
+  color: var(--orbe-text) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color: var(--orbe-muted) !important; }
+
+[data-theme="dark"] .orbe-month-selector,
+[data-theme="dark"] .route-period-selector {
+  background: var(--orbe-surface) !important;
+  color: var(--orbe-text) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .orbe-month-selector button,
+[data-theme="dark"] .orbe-month-selector-label,
+[data-theme="dark"] .route-period-selector button,
+[data-theme="dark"] .route-period-selector span { color: var(--orbe-text) !important; }
+[data-theme="dark"] .orbe-month-selector button:hover:not(:disabled),
+[data-theme="dark"] .route-period-selector button:hover { background: #263445 !important; }
+
+[data-theme="dark"] .mobile-more-pages-panel,
+[data-theme="dark"] .mobile-more-menu,
+[data-theme="dark"] .add-fab-menu,
+[data-theme="dark"] .account-dropdown,
+[data-theme="dark"] .sidebar-account-popover,
+[data-theme="dark"] .accounts-menu-panel,
+[data-theme="dark"] .route-modal-close {
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .mobile-more-page-item,
+[data-theme="dark"] .add-fab-menu-item,
+[data-theme="dark"] .accounts-menu-item { color: var(--orbe-text) !important; }
+[data-theme="dark"] .mobile-more-page-item:hover,
+[data-theme="dark"] .add-fab-menu-item:hover,
+[data-theme="dark"] .accounts-menu-item:hover { background: #263445 !important; }
+[data-theme="dark"] .mobile-more-pages-panel h2 { color: var(--orbe-muted); }
+
+[data-theme="dark"] .route-table th { background: #202c3a !important; color: var(--orbe-muted) !important; }
+[data-theme="dark"] .route-table td { background: var(--orbe-surface) !important; border-top-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
+[data-theme="dark"] .route-table tbody tr:nth-child(even) { background: #1c2937 !important; }
+[data-theme="dark"] .route-flow-filters button { background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
+[data-theme="dark"] .route-flow-filters button.active { background: var(--orbe-text) !important; color: var(--orbe-bg) !important; }
+[data-theme="dark"] .route-detail-filters button.active { background: #2c3150 !important; border-color: #535c91 !important; color: #b6c2ff !important; }
+
+[data-theme="dark"] .accounts-row-icon,
+[data-theme="dark"] .cards-row-icon { background: #25354c !important; }
+[data-theme="dark"] .accounts-status-badge.is-active,
+[data-theme="dark"] .cards-invoice-status.is-paid { background: #203b38 !important; color: var(--orbe-success) !important; }
+[data-theme="dark"] .accounts-status-badge.is-closed,
+[data-theme="dark"] .cards-invoice-status.is-open { background: #263445 !important; color: var(--orbe-muted) !important; }
+[data-theme="dark"] .cards-invoice-status.is-cancelled { background: #452a35 !important; color: var(--orbe-danger) !important; }
+
+[data-theme="dark"] .settings-theme-switch-track > span { background: #f5f7fa; }
+[data-theme="dark"] .settings-theme-toggle { color: var(--orbe-text); }
+[data-theme="dark"] .settings-category-chip { background: var(--orbe-surface); }
+[data-theme="dark"] .auth-screen { background: var(--orbe-bg) !important; }
+[data-theme="dark"] .auth-card { background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
