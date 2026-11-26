@@ -21,7 +21,9 @@ if (-not (Test-Path .env)) {
     Copy-Item .env.example .env
 }
 
-php artisan key:generate
+if (-not (Select-String -Path .env -Pattern '^APP_KEY=base64:.+' -Quiet)) {
+    php artisan key:generate
+}
 
 if (-not (Test-Path database/database.sqlite)) {
     New-Item -ItemType File database/database.sqlite | Out-Null
