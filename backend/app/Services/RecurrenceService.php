@@ -104,6 +104,7 @@ final class RecurrenceService
             if ($occurrence->state === 'REALIZED') {
                 return $occurrence->fresh()->load('operation.entries');
             }
+
             if ($occurrence->state !== 'PENDING') {
                 throw new FinancialInvariantViolation('Apenas ocorrências pendentes podem ser materializadas.');
             }
@@ -182,6 +183,7 @@ final class RecurrenceService
         if ($schedule->status !== 'ACTIVE') {
             return;
         }
+
         $date = Carbon::parse($schedule->first_occurrence_at);
         $end = $schedule->end_at !== null && Carbon::parse($schedule->end_at)->lt($until)
             ? Carbon::parse($schedule->end_at) : $until;
@@ -236,6 +238,7 @@ final class RecurrenceService
         if ($occurrence->state !== 'PENDING') {
             throw new FinancialInvariantViolation('Apenas ocorrências pendentes podem ser alteradas.');
         }
+
         if ($occurrence->scheduled_at->isPast()) {
             throw new FinancialInvariantViolation('Ocorrências passadas não podem ser reescritas.');
         }
