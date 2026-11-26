@@ -232,10 +232,6 @@ export default function App() {
     setMorePagesOpen(false)
   }, [activeKey, movementTab])
 
-  useEffect(() => {
-    setRouteMonth(`2026-${String(periodIndex + 11).padStart(2, '0')}`)
-  }, [periodIndex])
-
   if (authLoading && user === null) {
     return <YStack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" style={{ justifyContent: 'center', alignItems: 'center' }}><Text color="#667085">A verificar a sessão…</Text></YStack>
   }
