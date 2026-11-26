@@ -21,7 +21,7 @@ export function DebtPage({ debts = null, loading = false, error = null }: Props)
 
     <DebtKpis debts={debts} />
 
-    <section className="debts-section" aria-labelledby="debts-list-title">
+    <section className="debts-section" aria-label="As minhas dívidas">
       <OrbeSectionHeader title="As minhas dívidas" />
       <DebtList debts={debts} loading={loading} error={error} />
     </section>
