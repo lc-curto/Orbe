@@ -73,7 +73,7 @@ export function ReportsPage({ operations, invoices, loading, error, month, onMon
 
   return <section className="reports-page" aria-labelledby="reports-page-title">
     <header className="movements-header reports-header">
-      <div className="movements-heading"><h1 id="reports-page-title">Relatórios</h1><p>Atividade financeira realizada</p></div>
+      <div className="movements-heading"><h1 id="reports-page-title">Relatórios</h1></div>
       <div className="movements-header-actions"><MonthSelector month={month} onMonthChange={onMonthChange} className="movement-month-selector" /></div>
     </header>
 
