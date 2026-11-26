@@ -91,7 +91,7 @@ Ordem de execução atualizada: validar a navegação e as páginas de leitura j
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; os formulários de programação continuam indisponíveis.
 - Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; dados realizados agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis. Build/lint e QA visual local pendentes.
-- As opções Nova conta, Novo cartão, Nova dívida, Nova programação e Nova projeção no FAB comunicam indisponibilidade enquanto faltarem formulários/contratos; não criam registos fictícios.
+- As ações Nova conta e Novo cartão permanecem no contexto das respetivas páginas e comunicam indisponibilidade enquanto faltarem formulários/contratos. O FAB das páginas Dashboard, Movimentos e Rota Financeira não oferece Nova dívida, Nova programação ou Nova projeção: recorrência configura-se no fluxo de gasto/rendimento; projeções são calculadas; criação de financiamento ou dívida preexistente exige fluxo específico ainda por definir.
 - Relatórios e Configurações não apresentam FAB porque não têm ação de criação.
 - O estado de implementação não equivale a validação final: os testes responsivos e a auditoria frontend permanecem pendentes no cronograma.
 
@@ -111,6 +111,12 @@ Protótipos ou experiências técnicas isoladas só devem avançar com autoriza�
 Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e os requisitos/diagramas afetados. Registar motivo e impacto quando substituir uma decisão. Não criar atas separadas por conversa.
 
 ---
+
+## Decisões de interface aprovadas — 2026-11-26
+
+- A linha de uma compra parcelada apresenta o valor da prestação do período; o valor total da compra só é mostrado ao abrir o detalhe. A informação de prestações pagas é secundária/discreta.
+- O menu contextual `⋮` dos movimentos tem hierarquia aprovada: Editar, Duplicar, ação de estado, ações específicas do tipo, separador e ação destrutiva final (Eliminar se elegível; Estornar para operação realizada).
+- O desenho do menu está aprovado; contratos de permissões, transições, endpoints e fluxos de pagamento/estorno continuam pendentes e não foram declarados implementados.
 
 > Documento de controlo do projeto. Atualizado em 2026-11-26.
 >
@@ -190,7 +196,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Implementar navegação inferior fixa em todas as páginas mobile/tablet (Dashboard e subpáginas).
 - [x] Implementar seletor mensal.
 - [x] Implementar saldo, receitas, despesas e resultado.
-- [x] Centralizar criação no botão flutuante global (+), fixo no viewport, com opções de despesa, receita e transferência.
+- [x] Centralizar criação no botão flutuante global (+), fixo no viewport; nas páginas Dashboard, Movimentos e Rota Financeira, apresentar sempre **Novo gasto**, **Novo rendimento** e **Nova transferência**.
 - [x] Corrigir contenção e overflow da sidebar; apresentar apenas o nome do utilizador no perfil.
 - [x] Implementar despesas por categoria em desktop e mobile.
 - [x] Preservar o Dashboard durante a implementação dos formulários.
@@ -274,7 +280,8 @@ Estes são os únicos fluxos de escrita que têm contratos backend confirmados n
 - [ ] Definir campos e endpoints de despesas.
 - [ ] Definir campos e endpoints de receitas.
 - [ ] Definir campos e endpoints de transferências.
-- [ ] Definir permissões e ações por estado.
+- [x] Aprovar a hierarquia e a apresentação das ações no menu contextual de movimentos.
+- [ ] Definir permissões, transições e contratos API das ações por estado.
 - [ ] Definir edição, cancelamento, eliminação e reversão contextual.
 - [ ] Definir pagamento completo de faturas.
 - [ ] Fechar políticas de faturas vencidas, ciclos anteriores e crédito negativo.
@@ -292,7 +299,8 @@ Enquanto estes contratos não existirem, o frontend não deve criar categorias, 
 - [ ] Integrar o saldo inicial à criação do cartão.
 - [ ] Implementar pagamento de fatura.
 - [ ] Implementar edição, cancelamento, eliminação e reversão conforme o estado.
-- [ ] Implementar menus contextuais adaptativos.
+- [x] Definir a composição e as regras de estado do menu contextual `⋮` dos movimentos em `docs/03-interface-e-formularios.md`.
+- [ ] Implementar menus contextuais adaptativos e ações conforme os contratos de estado/API.
 
 ## Decisão de execução — 2026-11-25
 
@@ -345,28 +353,27 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 ## Publicação e validação — 2026-11-25
 
 - PR #5 foi integrado na `main` no merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`.
-- A navegação responsiva, o painel Mais e o FAB contextual estão implementados; os respetivos detalhes estão registados em `docs/03-interface-e-formularios.md`.
-- A regra de entrada global de criação foi sincronizada com `docs/03-interface-e-formularios.md`: o FAB pertence ao `AppShell`, não é duplicado dentro dos formulários, e opções sem suporte continuam indisponíveis.
+- A navegação responsiva, o painel Mais e o FAB global estão implementados; a decisão de opções fixas nas páginas principais de operações e as regras do menu contextual estão registadas em `docs/03-interface-e-formularios.md`.
+- A regra de entrada global de criação foi sincronizada com `docs/03-interface-e-formularios.md`: o FAB pertence ao `AppShell`, mantém três opções fixas em Dashboard/Movimentos/Rota, não é duplicado dentro dos formulários e opções sem suporte continuam indisponíveis.
 - Build, lint e testes frontend não foram executados após o merge do PR #5. A validação visual/responsiva e a auditoria final permanecem pendentes.
 
 ## Regra de controlo
 
 Este documento é um mapa de execução, não substitui as especificações funcionais, financeiras ou de arquitetura. Quando houver conflito, prevalecem `AGENTS.md`, as regras financeiras, a especificação funcional e as decisões aprovadas nos documentos de origem. Cada alteração relevante deve atualizar este estado no mesmo conjunto de alterações, sem marcar como concluído algo que apenas foi proposto.
 
-## Navegação responsiva — complemento 2026-11-25
+## Navegação responsiva e entrada de criação — complemento 2026-11-26
 
 - A ação **Mais** existe exclusivamente na bottom bar; não aparece na sidebar.
 - A bottom bar é consistente em todas as páginas mobile/tablet e apresenta Início, Movimentos, Rota, Contas e Mais.
 - **Mais** abre sempre o mesmo painel inferior integrado, com as quatro opções fixas e na mesma ordem: Cartões, Dívidas, Relatórios e Configurações.
 - O painel Mais não apresenta perfil, notificações, logout ou opções dependentes da página atual. Ao selecionar uma página, navega e fecha; ao tocar novamente em Mais ou fora do painel, fecha.
 - A sidebar apresenta todas as páginas, agrupadas em Principal, Gestão financeira e Ferramentas.
-- O botão global (+) apresenta ações conforme a página ativa:
-  - Dashboard e Movimentos: despesa, receita e transferência.
-  - Contas: nova conta.
-  - Cartões: novo cartão.
-  - Dívidas: nova dívida.
-  - Movimentos/Programações: nova programação.
-  - Rota: permanece visível e apresenta a ação contextual **Nova projeção**; a criação informa indisponibilidade até existir contrato/read model de projeção, sem criar dados fictícios.
-  - Relatórios e Configurações: o botão (+) fica oculto, pois não existem ações de criação nestas páginas.
-- Ações cujos formulários ainda não existem informam a indisponibilidade; não criam registos fictícios.
-- Relatórios, Configurações e Dívidas estão acessíveis na navegação, mas permanecem páginas-placeholder até à implementação funcional.
+- Dashboard, Movimentos e Rota Financeira: FAB global (+) com as mesmas três opções, sempre na mesma ordem: **Novo gasto**, **Novo rendimento**, **Nova transferência**. Não varia conforme a página nem apresenta ações adicionais de dívida, programação ou projeção.
+- **Gasto** é o termo de interface; a natureza técnica/financeira mantém `EXPENSE`/despesa. O meio de pagamento define se a operação gera efeito numa conta, fatura/cartão ou obrigação em aberto, conforme os contratos financeiros.
+- Recorrência é uma configuração do fluxo de gasto/rendimento; não é uma quarta opção independente no FAB.
+- Contas e Cartões mantêm ações de criação de entidade no contexto das respetivas páginas. Os formulários ainda indisponíveis devem comunicar isso sem criar dados fictícios.
+- Não existe ação genérica **Nova dívida** no FAB. Financiamento recebido ou registo de obrigação preexistente exige fluxo próprio ainda por especificar; a decisão sobre manter Dívidas como página principal não é reaberta por esta atualização.
+- Não existe ação **Nova projeção** no FAB: a projeção é calculada na Rota Financeira.
+- Relatórios e Configurações não apresentam FAB quando não há ação de criação aprovada.
+- O menu contextual `⋮` dos movimentos tem composição aprovada em `docs/03-interface-e-formularios.md`; a implementação e as ações por estado dependem dos contratos API pendentes.
+- Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios, Configurações e Dívidas permanecem páginas-placeholder até à implementação funcional.
