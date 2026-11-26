@@ -1476,12 +1476,14 @@ input[type="search"] {
 .route-detail-icon { display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; border-radius: 12px; font-size: 18px; font-weight: 800; }
 .route-detail-icon.income { background: #e5f7ed; color: #31855b; }
 .route-detail-icon.expense { background: #fff0f3; color: #bd4963; }
+.route-detail-icon.transfer { background: #f2f4f7; color: #667085; }
 .route-detail-description { display: flex; min-width: 0; flex: 1; flex-direction: column; gap: 4px; }
 .route-detail-description strong { overflow: hidden; color: var(--orbe-text); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
 .route-detail-description span { overflow: hidden; color: var(--orbe-muted); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .route-detail-row > strong { white-space: nowrap; font-size: 13px; font-variant-numeric: tabular-nums; }
 .route-detail-income { color: #31855b; }
 .route-detail-expense { color: #bd4963; }
+.route-detail-transfer { color: #667085; }
 .route-detail-notice, .route-detail-empty { padding: 26px 22px 30px; color: var(--orbe-muted); font-size: 13px; line-height: 1.5; text-align: center; }
 .route-mobile-shell { padding-top: 0 !important; }
 @media (max-width: 1023px) {
