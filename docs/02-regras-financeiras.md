@@ -16,6 +16,8 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 
 ## Realizado, pendente e projetado
 - Pago/recebido é realizado; por pagar/receber é pendente.
+- Gasto ou ganho pendente pode ser guardado sem destino financeiro: não exige nem apresenta conta, cartão, fatura ou outro meio de liquidação.
+- Gasto ou ganho realizado exige selecionar o destino/instrumento adequado ao fluxo antes de guardar. Se a operação estava pendente, essa associação é recolhida ao confirmá-la como realizado.
 - Data prevista não confirma pagamento ou recebimento.
 - Pendentes e projeções não alteram saldos efetivos.
 - Cancelamento preserva histórico e retira a operação da projeção.
