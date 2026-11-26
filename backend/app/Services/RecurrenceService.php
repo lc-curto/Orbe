@@ -75,6 +75,7 @@ final class RecurrenceService
                 throw new FinancialInvariantViolation('A data limite não pode ser anterior à primeira ocorrência.');
             }
             $this->generateUntilLocked($schedule, $limit);
+
             return $schedule->fresh()->load('occurrences');
         });
     }
@@ -85,6 +86,7 @@ final class RecurrenceService
         if ($until !== null) {
             $this->generate($userId, $schedule, $until);
         }
+
         return RecurrenceOccurrence::query()
             ->where('user_id', $userId)
             ->where('recurrence_schedule_id', $schedule->id)
@@ -125,6 +127,7 @@ final class RecurrenceService
             );
 
             $occurrence->update(['state' => 'REALIZED', 'operation_id' => $operation->id, 'account_id' => $accountId, 'effective_at' => $effectiveAt]);
+
             return $occurrence->fresh()->load('operation.entries');
         });
     }
@@ -136,6 +139,7 @@ final class RecurrenceService
             $this->assertEditable($occurrence);
             $this->validateOverride($userId, $data, $occurrence->schedule->nature);
             $occurrence->update($this->editableFields($data));
+
             return $occurrence->fresh();
         });
     }
@@ -168,6 +172,7 @@ final class RecurrenceService
                 throw new FinancialInvariantViolation('Apenas ocorrências pendentes podem ser canceladas.');
             }
             $occurrence->update(['state' => 'CANCELLED']);
+
             return $occurrence->fresh();
         });
     }
@@ -242,6 +247,7 @@ final class RecurrenceService
         if ($category === null || $category->user_id !== $userId || $category->status !== 'ACTIVE' || $category->nature !== $nature) {
             throw new FinancialInvariantViolation('A categoria não pertence ao utilizador, não está ativa ou tem natureza incompatível.');
         }
+
         return $category;
     }
 
@@ -249,6 +255,7 @@ final class RecurrenceService
     {
         $schedule = RecurrenceSchedule::query()->lockForUpdate()->findOrFail($schedule->id);
         $this->assertScheduleOwner($userId, $schedule);
+
         return $schedule;
     }
 
@@ -258,6 +265,7 @@ final class RecurrenceService
         if ($occurrence->user_id !== $userId) {
             throw new FinancialInvariantViolation('A ocorrência não pertence ao utilizador.');
         }
+
         return $occurrence->load('schedule');
     }
 

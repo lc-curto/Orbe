@@ -25,13 +25,17 @@ final class BasicOperationsController extends Controller
     {
         $data = $request->validate(['name' => ['required', 'string', 'max:120'], 'account_type' => ['required', 'in:BANK,CASH,WALLET']]);
         $account = FinancialAccount::query()->create(['user_id' => $request->user()->id, 'name' => $data['name'], 'account_type' => $data['account_type'], 'status' => 'ACTIVE']);
+
         return response()->json(['data' => $account], 201);
     }
 
     public function categories(Request $request): JsonResponse
     {
         $query = Category::query()->where('user_id', $request->user()->id)->where('status', 'ACTIVE')->orderBy('name');
-        if ($request->filled('nature')) $query->where('nature', $request->string('nature')->toString());
+        if ($request->filled('nature')) {
+            $query->where('nature', $request->string('nature')->toString());
+        }
+
         return response()->json(['data' => $query->get()]);
     }
 
@@ -39,6 +43,7 @@ final class BasicOperationsController extends Controller
     {
         $data = $request->validate(['name' => ['required', 'string', 'max:120'], 'nature' => ['required', 'in:INCOME,EXPENSE']]);
         $category = Category::query()->create(['user_id' => $request->user()->id, 'name' => $data['name'], 'nature' => $data['nature'], 'status' => 'ACTIVE']);
+
         return response()->json(['data' => $category], 201);
     }
 
@@ -57,6 +62,7 @@ final class BasicOperationsController extends Controller
         ]);
         try {
             $operation = $service->create((int) $request->user()->id, $nature, (string) $data['amount'], isset($data['account_id']) ? (int) $data['account_id'] : null, (int) $data['category_id'], $data['description'] ?? null, $data['state'], $data['effective_at'] ?? null, $data['planned_at'] ?? null, $data['idempotency_key'] ?? null);
+
             return response()->json(['data' => $operation], 201);
         } catch (FinancialInvariantViolation $exception) {
             throw ValidationException::withMessages(['financial' => $exception->getMessage()]);

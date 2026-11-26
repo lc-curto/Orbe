@@ -105,6 +105,7 @@ final class RecurrenceApiTest extends TestCase
         $user = User::factory()->create();
         $account = FinancialAccount::query()->create(['user_id' => $user->id, 'name' => 'Conta', 'account_type' => 'BANK', 'status' => 'ACTIVE']);
         $category = Category::query()->create(['user_id' => $user->id, 'name' => 'Categoria', 'nature' => $nature, 'status' => 'ACTIVE']);
+
         return [$user, $account, $category];
     }
 

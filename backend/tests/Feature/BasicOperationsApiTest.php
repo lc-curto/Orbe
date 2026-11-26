@@ -6,7 +6,6 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\FinancialAccount;
-use App\Models\Operation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;

@@ -6,9 +6,9 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use RuntimeException;
 
-return new class extends Migration {
+return new class extends Migration
+{
     public function up(): void
     {
         Schema::table('recurrence_schedules', function (Blueprint $table): void {
@@ -24,7 +24,9 @@ return new class extends Migration {
     {
         if (DB::table('recurrence_schedules')->whereNull('account_id')->exists()
             || DB::table('recurrence_occurrences')->whereNull('account_id')->exists()) {
-            throw new RuntimeException('Não é possível reverter: existem programações ou ocorrências sem destino financeiro.');
+            throw new RuntimeException(
+                'Cannot restore non-null recurrence destinations while null values exist.'
+            );
         }
 
         Schema::table('recurrence_occurrences', function (Blueprint $table): void {

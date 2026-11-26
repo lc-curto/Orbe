@@ -41,6 +41,7 @@ final class RecurrenceController extends Controller
                 $data['end_at'] ?? null,
                 $data['idempotency_key'] ?? null,
             );
+
             return response()->json(['data' => $schedule], 201);
         } catch (FinancialInvariantViolation|InvalidArgumentException $exception) {
             throw ValidationException::withMessages(['financial' => $exception->getMessage()]);
@@ -54,6 +55,7 @@ final class RecurrenceController extends Controller
             ->with(['account', 'category'])
             ->orderByDesc('created_at')
             ->get();
+
         return response()->json(['data' => $data]);
     }
 
