@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Card, Separator, Text, Theme, XStack, YStack } from 'tamagui'
+import { Button, Card, Separator, Text, XStack, YStack } from '../../../design-system/primitives'
 
 type MobileIconName = 'download' | 'eye' | 'eyeOff' | 'minus' | 'plus' | 'exchange' | 'grid' | 'moves' | 'wallet' | 'more' | 'chevronRight'
 
@@ -34,7 +34,6 @@ export default function MobileDashboardSpec() {
   }
 
   return (
-    <Theme name="light">
       <YStack className="mobile-spec-shell" backgroundColor="#f7f8fc" minHeight="100vh">
         <YStack className="mobile-spec-content" width="100%" maxWidth={480} marginHorizontal="auto" padding={20} gap={20}>
           <XStack style={{ justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -91,6 +90,5 @@ export default function MobileDashboardSpec() {
           {[['Início', 'grid'], ['Movimentos', 'moves'], ['Novo', 'plus'], ['Contas', 'wallet'], ['Mais', 'more']].map(([label, icon]) => <Button key={label} onPress={() => { setActive(label); notify(label === 'Novo' ? 'Criar novo movimento' : `${label} selecionado`) }} flex={1} height={58} padding={0} borderWidth={0} backgroundColor="transparent" color={active === label ? '#6254f5' : '#85879a'}><YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}>{label === 'Novo' ? <YStack width={48} height={48} marginTop={-24} borderRadius={999} backgroundColor="#6254f5" style={{ alignItems: 'center', justifyContent: 'center' }}><MobileIcon name="plus" size={22} color="#ffffff" /></YStack> : <MobileIcon name={icon as MobileIconName} size={19} color="currentColor" />}<Text fontSize={11} fontWeight={active === label ? '700' : '500'}>{label}</Text></YStack></Button>)}
         </XStack>
       </YStack>
-    </Theme>
   )
 }
