@@ -42,7 +42,7 @@ final class RecurrenceApiTest extends TestCase
     {
         [$user, $account, $category] = $this->context('INCOME');
         Sanctum::actingAs($user);
-        $schedule = $this->createSchedule($account, $category, 'INCOME');
+        $schedule = $this->createSchedule($category, 'INCOME');
         $occurrence = RecurrenceOccurrence::query()->firstOrFail();
 
         $this->postJson('/api/recurrence-occurrences/'.$occurrence->id.'/materialize', ['effective_at' => '2026-12-01 10:00:00'])
@@ -65,7 +65,7 @@ final class RecurrenceApiTest extends TestCase
         [$user, $account, $category] = $this->context('EXPENSE');
         $otherCategory = Category::query()->create(['user_id' => $user->id, 'name' => 'Outra', 'nature' => 'EXPENSE', 'status' => 'ACTIVE']);
         Sanctum::actingAs($user);
-        $schedule = $this->createSchedule($account, $category, 'EXPENSE');
+        $schedule = $this->createSchedule($category, 'EXPENSE');
         $this->postJson('/api/recurrences/'.$schedule['id'].'/generate', ['until' => '2027-02-01 09:00:00'])->assertOk();
         $occurrences = RecurrenceOccurrence::query()->orderBy('scheduled_at')->get();
 
@@ -108,7 +108,7 @@ final class RecurrenceApiTest extends TestCase
         return [$user, $account, $category];
     }
 
-    private function createSchedule(FinancialAccount $account, Category $category, string $nature): array
+    private function createSchedule(Category $category, string $nature): array
     {
         return $this->postJson('/api/recurrences', [
             'nature' => $nature, 'amount' => '10.0000',
