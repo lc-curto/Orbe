@@ -18,7 +18,7 @@ final class BasicOperationService
         int $userId,
         string $nature,
         string $amount,
-        int $accountId,
+        ?int $accountId,
         int $categoryId,
         ?string $description,
         string $state,
@@ -41,16 +41,25 @@ final class BasicOperationService
                 }
             }
 
-            $account = FinancialAccount::query()->lockForUpdate()->find($accountId);
+            if (! in_array($state, ['REALIZED', 'PENDING'], true)) {
+                throw new FinancialInvariantViolation('Estado de operação inválido.');
+            }
+            if ($state === 'REALIZED' && $accountId === null) {
+                throw new FinancialInvariantViolation('Uma operação realizada exige uma conta ativa.');
+            }
+            if ($state === 'PENDING' && $accountId !== null) {
+                throw new FinancialInvariantViolation('Uma operação pendente não pode ter destino financeiro associado.');
+            }
+
+            $account = $accountId !== null
+                ? FinancialAccount::query()->lockForUpdate()->find($accountId)
+                : null;
             $category = Category::query()->find($categoryId);
-            if ($account === null || $account->user_id !== $userId || $account->status !== 'ACTIVE') {
+            if ($state === 'REALIZED' && ($account === null || $account->user_id !== $userId || $account->status !== 'ACTIVE')) {
                 throw new FinancialInvariantViolation('A conta não pertence ao utilizador ou não está ativa.');
             }
             if ($category === null || $category->user_id !== $userId || $category->status !== 'ACTIVE' || $category->nature !== $nature) {
                 throw new FinancialInvariantViolation('A categoria não pertence ao utilizador, não está ativa ou tem natureza incompatível.');
-            }
-            if (! in_array($state, ['REALIZED', 'PENDING'], true)) {
-                throw new FinancialInvariantViolation('Estado de operação inválido.');
             }
             if ($state === 'REALIZED' && $effectiveAt === null) {
                 throw new FinancialInvariantViolation('Uma operação realizada exige data efetiva.');
@@ -88,9 +97,9 @@ final class BasicOperationService
         });
     }
 
-    public function confirm(int $userId, Operation $operation, string $effectiveAt): Operation
+    public function confirm(int $userId, Operation $operation, int $accountId, string $effectiveAt): Operation
     {
-        return DB::transaction(function () use ($userId, $operation, $effectiveAt): Operation {
+        return DB::transaction(function () use ($userId, $operation, $accountId, $effectiveAt): Operation {
             $operation = Operation::query()->lockForUpdate()->with('entries')->findOrFail($operation->id);
             if ($operation->user_id !== $userId) {
                 throw new FinancialInvariantViolation('A operação não pertence ao utilizador.');
@@ -102,16 +111,16 @@ final class BasicOperationService
                 throw new FinancialInvariantViolation('A operação já possui efeitos financeiros.');
             }
 
-            $account = FinancialAccount::query()->lockForUpdate()->find($operation->account_id);
+            $account = FinancialAccount::query()->lockForUpdate()->find($accountId);
             if ($account === null || $account->user_id !== $userId || $account->status !== 'ACTIVE') {
                 throw new FinancialInvariantViolation('A conta de confirmação não pertence ao utilizador ou não está ativa.');
             }
 
-            $operation->update(['state' => 'REALIZED', 'effective_at' => $effectiveAt]);
+            $operation->update(['account_id' => $accountId, 'state' => 'REALIZED', 'effective_at' => $effectiveAt]);
             FinancialEntry::query()->create([
                 'user_id' => $userId,
                 'operation_id' => $operation->id,
-                'account_id' => $operation->account_id,
+                'account_id' => $accountId,
                 'amount' => $operation->amount,
                 'effect' => $operation->operation_type === 'INCOME' ? 'INCREASE' : 'DECREASE',
                 'state' => 'REALIZED',
