@@ -75,12 +75,12 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 ## Trabalho funcional pendente
 - Contas, Cartões/faturas e Rota Financeira: páginas primárias implementadas; utilizador confirmou QA local do `AppShell` e das páginas principais. Os contratos de saldos/projeções e os formulários de escrita continuam pendentes.
-- Dívidas: página principal de leitura em implementação na branch `feature/debts-primary-page`; interface usa placeholders explícitos enquanto o read model não existe. Nenhum valor ou dívida é simulado. Detalhes, pagamentos e contratos ficam para fase posterior.
+- Dívidas: não haverá página principal autónoma. A implementação visual de Dívidas na branch `feature/debts-primary-page` fica obsoleta e não deve ser integrada; obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados, conforme os contratos. Nenhum valor ou dívida é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
 - Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global nem bloquear páginas primárias.
 - Definir validações e ações por estado/dependência quando os contratos forem tratados.
 
-Ordem de execução: concluir a interface primária de Dívidas; desenhar subpáginas e modais; fazer auditoria/refatoração frontend direcionada; só depois fechar read models/contratos e implementar formulários.
+Ordem de execução: concluir e validar as páginas de leitura ainda necessárias; desenhar os detalhes/modais dos movimentos e faturas; fazer auditoria/refatoração frontend direcionada; fechar read models/contratos financeiros e implementar os formulários suportados.
 
 ## Estado da implementação frontend — 2026-11-26
 
@@ -94,11 +94,11 @@ Ordem de execução: concluir a interface primária de Dívidas; desenhar subpá
 - O estado de implementação não equivale a validação final: QA local das páginas principais foi confirmado pelo utilizador; auditoria frontend direcionada e validações de cada nova branch continuam necessárias.
 
 ## Próxima sequência recomendada
-1. Concluir e validar a página principal de Dívidas na branch atual, sem depender de contratos.
-2. Desenhar as subpáginas e modais das páginas primárias, seguindo as decisões aprovadas.
-3. Auditar e refatorar gradualmente Movimentos e `App.tsx` segundo as práticas React/TypeScript/Tamagui; limitar cada alteração ao escopo e validar build/lint/QA.
-4. Numa fase posterior, fechar os read models e contratos financeiros, incluindo Dívidas e Rota.
-5. Implementar formulários e ações de escrita após contratos e validações estarem aprovados.
+1. Retirar a página autónoma de Dívidas e a sua integração de navegação; não integrar o código da página do PR #7.
+2. Corrigir navegação e painel Mais para remover Dívidas como destino de página.
+3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta e liquidação de obrigações associadas.
+4. Auditar e refatorar gradualmente Movimentos e `App.tsx` segundo React/TypeScript/Tamagui; limitar cada alteração ao escopo e validar build/lint/QA.
+5. Fechar read models/contratos financeiros pendentes e implementar formulários/ações suportados.
 
 ## Critério para novas alterações estruturais
 A implementação estrutural do frontend e do núcleo já está em curso e tem entregas publicadas na `main`. Para novas alterações estruturais, continuam obrigatórios: arquitetura/UML aprovada, precisão monetária e integridade transacional definidas, fluxos críticos especificados e critérios de aceitação/testes identificados. Não interpretar uma entrega parcial como aprovação de contratos ou funcionalidades ainda pendentes.
@@ -296,7 +296,7 @@ Enquanto estes contratos não existirem, o frontend não deve criar categorias, 
 
 Antes de implementar os formulários concretos, o produto deve completar as subpáginas principais em modo de leitura. Esta ordem reduz retrabalho, permite validar a navegação e o `AppShell` em todos os tamanhos de ecrã e garante que cada página é ligada apenas aos dados e contratos já existentes.
 
-A sequência de subpáginas é: Movimentos/Programações, Contas, Cartões e faturas, Rota Financeira, Dívidas, Relatórios e Configurações. Os formulários de escrita avançam depois desta ronda, respeitando os contratos backend confirmados.
+A sequência de páginas/subpáginas é: Movimentos/Programações, Contas, Cartões e faturas, Rota Financeira, Relatórios e Configurações. Não existe página autónoma de Dívidas; os detalhes de obrigações são acessados a partir dos movimentos/faturas relacionados. Os formulários de escrita avançam respeitando os contratos backend confirmados.
 
 A Rota Financeira está especificada visualmente, mas não pode ser implementada com projeções fictícias nesta etapa. A API atual não expõe ainda um read model diário de projeção e faltam no frontend os dados de classificação fixa/variável/excluída e as regras completas de obrigações futuras. A sua implementação fica condicionada ao fecho desse contrato de leitura e projeção.
 
@@ -306,7 +306,8 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 - [!] Implementar Rota Financeira — aguarda contrato/read model de projeção diária.
 - [ ] Validar e concluir Contas em modo de leitura (UI em `feature/accounts-page`: hierarquia do saldo total, secção As minhas contas e menu contextual por conta; os saldos reais continuam condicionados ao contrato/read model disponível).
 - [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado; detalhe da fatura lista os movimentos associados, agrupados por dia e reutilizando a linha de Movimentos, sem filtros de estado).
-- [ ] Implementar Dívidas e detalhe de pagamentos.
+- [x] Decisão de produto: descontinuar a página autónoma de Dívidas.
+- [ ] Implementar consulta e liquidação de obrigações nos detalhes de movimentos/faturas, conforme os contratos aprovados.
 - [ ] Implementar Relatórios.
 - [ ] Implementar Configurações conforme a navegação aprovada.
 - [ ] Garantir que operações com vários lançamentos aparecem uma única vez.
@@ -332,7 +333,7 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 
 ## Próxima sequência de execução
 
-1. Completar as subpáginas em modo de leitura: Contas, Cartões/faturas, Rota Financeira, Dívidas, Relatórios e Configurações.
+1. Completar/validar as subpáginas em modo de leitura: Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações; não implementar página autónoma de Dívidas.
 2. Fechar os contratos de leitura e projeção necessários para a Rota Financeira, sem criar dados ou regras fictícias.
 3. Validar a navegação e o `AppShell` em desktop, tablet e mobile.
 4. Implementar os formulários suportados pelos contratos atuais.
@@ -355,17 +356,17 @@ Este documento é um mapa de execução, não substitui as especificações func
 
 - A ação **Mais** existe exclusivamente na bottom bar; não aparece na sidebar.
 - A bottom bar é consistente em todas as páginas mobile/tablet e apresenta Início, Movimentos, Rota, Contas e Mais.
-- **Mais** abre sempre o mesmo painel inferior integrado, com as quatro opções fixas e na mesma ordem: Cartões, Dívidas, Relatórios e Configurações.
+- **Mais** abre sempre o mesmo painel inferior integrado, com as três opções fixas e na mesma ordem: Cartões, Relatórios e Configurações.
 - O painel Mais não apresenta perfil, notificações, logout ou opções dependentes da página atual. Ao selecionar uma página, navega e fecha; ao tocar novamente em Mais ou fora do painel, fecha.
 - A sidebar apresenta todas as páginas, agrupadas em Principal, Gestão financeira e Ferramentas.
 - Dashboard, Movimentos e Rota Financeira: FAB global (+) com as mesmas três opções, sempre na mesma ordem: **Novo gasto**, **Novo rendimento**, **Nova transferência**. Não varia conforme a página nem apresenta ações adicionais de dívida, programação ou projeção.
 - **Gasto** é o termo de interface; a natureza técnica/financeira mantém `EXPENSE`/despesa. O meio de pagamento define se a operação gera efeito numa conta, fatura/cartão ou obrigação em aberto, conforme os contratos financeiros.
 - Recorrência é uma configuração do fluxo de gasto/rendimento; não é uma quarta opção independente no FAB.
 - Contas e Cartões mantêm ações de criação de entidade no contexto das respetivas páginas. Os formulários ainda indisponíveis devem comunicar isso sem criar dados fictícios.
-- Não existe ação genérica **Nova dívida** no FAB. Financiamento recebido ou registo de obrigação preexistente exige fluxo próprio ainda por especificar; a decisão sobre manter Dívidas como página principal não é reaberta por esta atualização.
+- Não existe ação genérica **Nova dívida** no FAB nem página autónoma de Dívidas. Financiamento recebido ou registo de obrigação preexistente exige fluxo próprio ainda por especificar; obrigações ligadas a gastos são consultadas/liquidadas no contexto dos movimentos/faturas associados.
 - Não existe ação **Nova projeção** no FAB: a projeção é calculada na Rota Financeira.
 - Relatórios e Configurações não apresentam FAB quando não há ação de criação aprovada.
 - O menu contextual `⋮` dos movimentos tem composição aprovada em `docs/03-interface-e-formularios.md`; a implementação e as ações por estado dependem dos contratos API pendentes.
 - A linha de uma compra parcelada apresenta o valor da prestação do período; o valor total da compra só é mostrado ao abrir o detalhe. A indicação de prestações pagas é secundária/discreta.
 - O menu contextual `⋮` dos movimentos tem hierarquia aprovada: Editar, Duplicar, ação de estado, ações específicas do tipo, separador e ação destrutiva final (Eliminar se elegível; Estornar para operação realizada). A composição está aprovada; contratos de permissões, transições, endpoints e fluxos de pagamento/estorno continuam pendentes.
-- Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios, Configurações e Dívidas permanecem páginas-placeholder até à implementação funcional.
+- Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios e Configurações permanecem páginas-placeholder até à implementação funcional. A página autónoma de Dívidas está descontinuada.
