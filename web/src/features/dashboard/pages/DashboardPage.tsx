@@ -1,4 +1,4 @@
-import { Button, Card, H1, Paragraph, Separator, Text, XStack, YStack } from 'tamagui'
+import { Button, Card, H1, Paragraph, Separator, Text, XStack, YStack } from '../../../design-system/primitives'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { AppIcon, type AppIconName } from '../../../shared/components/AppIcon'
 import type { CurrencySymbol } from '../../currency/types'
