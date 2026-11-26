@@ -22,7 +22,7 @@ Uma operação de despesa ou receita mantém:
 
 - `operation_type`: `EXPENSE` ou `INCOME`;
 - `amount`: positivo e persistido em `DECIMAL(19,4)`;
-- `account_id`: conta selecionada para o efeito, inclusive enquanto a operação está pendente;
+- `account_id`: destino da operação quando `REALIZED`; omitido/nulo enquanto `PENDING`. Nesta Fase 1, a realização de gasto/ganho comum exige uma conta ativa. Cartão/fatura e outros destinos só podem ser usados quando existir contrato próprio para o fluxo;
 - `category_id`: categoria da mesma natureza e utilizador;
 - `description`: opcional, até 500 caracteres;
 - `state`: `REALIZED` ou `PENDING` nesta fase;
@@ -30,7 +30,7 @@ Uma operação de despesa ou receita mantém:
 - `planned_at` para operações pendentes;
 - `idempotency_key` opcional, única por utilizador quando informada.
 
-Uma operação `REALIZED` cria exatamente um `financial_entry` dirigido à conta. Despesa usa efeito `DECREASE`; receita usa `INCREASE`. Uma operação `PENDING` não cria lançamento efetivo. A confirmação é explícita e cria o lançamento uma única vez.
+Uma operação `REALIZED` cria exatamente um `financial_entry` dirigido à conta. Despesa usa efeito `DECREASE`; receita usa `INCREASE`. Uma operação `PENDING` não tem destino financeiro associado, não apresenta nem exige conta/cartão/fatura e não cria lançamento efetivo. A confirmação como realizado exige fornecer e validar uma conta ativa antes de criar o lançamento, uma única vez. Na Fase 1, este contrato cobre apenas operações comuns por conta; cartão/fatura ou outros destinos exigem contrato específico.
 
 ## Endpoints — operações base
 
@@ -44,7 +44,7 @@ Todos exigem Sanctum e isolamento pelo utilizador autenticado:
 - `POST /api/incomes`
 - `POST /api/operations/{operation}/confirm`
 
-O payload de despesa/receita contém `amount`, `account_id`, `category_id`, `state`, `effective_at` ou `planned_at`, e opcionalmente `description` e `idempotency_key`.
+O payload de despesa/receita contém `amount`, `category_id`, `state`, `effective_at` ou `planned_at`, e opcionalmente `description` e `idempotency_key`. `account_id` é omitido/nulo para `PENDING` e obrigatório para `REALIZED` nesta Fase 1. O formulário de pendente não envia nem apresenta destino financeiro. O endpoint de confirmação de operação pendente recebe `account_id` e valida que a conta está ativa antes de criar o lançamento. Cartões/faturas não estão cobertos por este contrato comum.
 
 ## Limites desta fase
 
@@ -75,11 +75,11 @@ O sistema rejeita a mesma conta nas duas pernas, contas de outro utilizador, con
 
 ## Entidades — recorrências
 
-`recurrence_schedules` representa a programação. Mantém utilizador, natureza (`EXPENSE` ou `INCOME`), valor `DECIMAL(19,4)`, conta, categoria, descrição, periodicidade, primeira ocorrência, estado, data de fim opcional e chave de idempotência.
+`recurrence_schedules` representa a programação. Mantém utilizador, natureza (`EXPENSE` ou `INCOME`), valor `DECIMAL(19,4)`, conta/destino opcional enquanto as ocorrências forem pendentes, categoria, descrição, periodicidade, primeira ocorrência, estado, data de fim opcional e chave de idempotência. Não exigir nem apresentar conta/cartão/meio de liquidação para ocorrências pendentes; o destino é recolhido na confirmação/materialização como realizado.
 
 As periodicidades mínimas são `DAILY`, `WEEKLY` e `MONTHLY`. Não são suportados calendários complexos, dias úteis ou exceções nesta fase. Os estados da programação são `ACTIVE`, `PAUSED` e `ENDED`; apenas `ACTIVE` gera novas ocorrências.
 
-`recurrence_occurrences` representa cada ocorrência individual. Mantém data prevista, valor, conta, categoria, descrição resolvida, estado, operação materializada opcional e data efetiva. Os estados mínimos são `PENDING`, `REALIZED` e `CANCELLED`.
+`recurrence_occurrences` representa cada ocorrência individual. Mantém data prevista, valor, destino financeiro opcional enquanto `PENDING`, categoria, descrição resolvida, estado, operação materializada opcional e data efetiva. Uma ocorrência realizada exige destino válido; a materialização deve receber esse destino quando não estiver definido. Os estados mínimos são `PENDING`, `REALIZED` e `CANCELLED`.
 
 Existe uma unicidade por programação e data prevista. Uma ocorrência pode referenciar no máximo uma operação, protegida por unicidade na coluna `operation_id`.
 
@@ -87,7 +87,7 @@ Existe uma unicidade por programação e data prevista. Uma ocorrência pode ref
 
 A criação de uma programação cria a primeira ocorrência. A geração adicional é feita com uma data limite explícita através de `POST /api/recurrences/{schedule}/generate` ou do parâmetro `until` da listagem. Repetições são idempotentes e não duplicam ocorrências.
 
-Ocorrências `PENDING` não criam `financial_entries`. A materialização é explícita e reutiliza o serviço de despesas/receitas existente, numa transação. A chave `recurrence-occurrence-{id}` impede a criação de duas operações para a mesma ocorrência.
+Ocorrências `PENDING` não têm destino financeiro e não criam `financial_entries`. A materialização/confirmacão como realizada é explícita, exige destino válido (conta ativa nesta Fase 1) e reutiliza o serviço de despesas/receitas existente, numa transação. A chave `recurrence-occurrence-{id}` impede a criação de duas operações para a mesma ocorrência.
 
 ## Alterações e cancelamento
 
