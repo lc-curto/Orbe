@@ -66,7 +66,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 | Compra no dia do fecho | Regra de atribuição ao ciclo quando a compra ocorre na data de fecho. |
 | Crédito negativo de fatura | Se é permitido, como transita para ciclos seguintes e em que condições pode ser devolvido à conta. |
 | Estimativa variável da Rota | Categorias iniciais, janela histórica, fórmula, distribuição diária e comunicação de dados `UNCLASSIFIED`. |
-| Moeda e precisão | Escala, arredondamento e se a moeda principal pode mudar depois de existirem movimentos. |
+| Moeda | Se a moeda principal pode mudar depois de existirem movimentos. A precisão e o arredondamento do núcleo estão aprovados em ARC-003 (`DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas). |
 | Saldo inicial de conta | **Decidido:** informar o saldo existente ao iniciar a utilização da conta no Orbe; registar como abertura, não como receita/despesa. |
 
 **Contrato de saldo inicial de cartão definido:** saldo inicial positivo é integralmente distribuído por faturas; não existe parcela por distribuir, obrigação especial em dívidas ou novo destino financeiro. A operação original é única por cartão. Distribuições históricas são imutáveis; correções e reversões são rastreáveis. A obrigação em aberto deriva exclusivamente de `financial_entries`.
@@ -75,7 +75,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 ## Trabalho funcional pendente
 - Contas, Cartões/faturas e Rota Financeira: páginas primárias implementadas; utilizador confirmou QA local do `AppShell` e das páginas principais. Os contratos de saldos/projeções e os formulários de escrita continuam pendentes.
-- Dívidas: não haverá página principal autónoma. A implementação visual de Dívidas na branch `feature/debts-primary-page` fica obsoleta e não deve ser integrada; obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados, conforme os contratos. Nenhum valor ou dívida é simulado.
+- Dívidas: não haverá página principal autónoma. O código da página de Dívidas foi removido da branch `feature/debts-primary-page`; o PR #7 mantém a remoção da navegação/placeholder e o alinhamento do FAB, juntamente com a alteração backend de destinos pendentes. Obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados, conforme os contratos. Nenhum valor ou dívida é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
 - Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global nem bloquear páginas primárias.
 - Definir validações e ações por estado/dependência quando os contratos forem tratados.
@@ -95,11 +95,11 @@ Ordem de execução: concluir e validar as páginas de leitura ainda necessária
 - O estado de implementação não equivale a validação final: QA local das páginas principais foi confirmado pelo utilizador; auditoria frontend direcionada e validações de cada nova branch continuam necessárias.
 
 ## Próxima sequência recomendada
-1. Retirar a página autónoma de Dívidas e a sua integração de navegação; não integrar o código da página do PR #7.
-2. Corrigir navegação e painel Mais para remover Dívidas como destino de página.
-3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta e liquidação de obrigações associadas.
-4. Auditar e refatorar gradualmente Movimentos e `App.tsx` segundo React/TypeScript/Tamagui; limitar cada alteração ao escopo e validar build/lint/QA.
-5. Fechar read models/contratos financeiros pendentes e implementar formulários/ações suportados.
+1. Validar localmente a build, lint e QA visual/responsivo da branch atual, incluindo ausência de Dívidas na navegação e FAB idêntico nas páginas/abas aprovadas.
+2. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta e liquidação de obrigações associadas.
+3. Auditar e refatorar gradualmente Movimentos e `App.tsx` segundo React/TypeScript/Tamagui; limitar cada alteração ao escopo e validar build/lint/QA.
+4. Fechar read models/contratos financeiros pendentes, sobretudo projeção diária, e implementar formulários/ações suportados.
+5. Executar auditoria final de consistência entre documentação, API, frontend e modelo ER.
 
 ## Critério para novas alterações estruturais
 A implementação estrutural do frontend e do núcleo já está em curso e tem entregas publicadas na `main`. Para novas alterações estruturais, continuam obrigatórios: arquitetura/UML aprovada, precisão monetária e integridade transacional definidas, fluxos críticos especificados e critérios de aceitação/testes identificados. Não interpretar uma entrega parcial como aprovação de contratos ou funcionalidades ainda pendentes.
@@ -150,7 +150,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Definir e implementar o contrato mínimo de contas, categorias, despesas comuns e receitas — Fase 1.
 - [x] Definir e implementar o contrato mínimo de transferências com duas pernas — Fase 2.
 - [x] Implementar recorrências — Fase 3, conforme [12 — Contrato de recorrências](06-contratos-api.md).
-- Regra de destino pendente/realizado aplicada no backend da branch `feature/debts-primary-page`: criação de gasto/ganho pendente sem `account_id`, confirmação exige conta ativa e cria o lançamento na mesma transação; recorrências são criadas sem conta e recolhem conta na materialização. Testes de regressão foram acrescentados, mas ainda não executados nesta sessão.
+- [x] Regra de destino pendente/realizado aplicada no backend da branch `feature/debts-primary-page`: gasto/rendimento `PENDING` é criado sem `account_id` e sem lançamento; criação `REALIZED` exige conta ativa; confirmação recebe a conta e cria o lançamento na mesma transação; programações/ocorrências de recorrência são criadas sem conta e recolhem destino na materialização. O utilizador executou localmente a suite completa: **52 testes passaram (217 assertions)**. O Pint `--test` nos 7 ficheiros PHP alterados também passou.
 - [!] Implementar gestão completa de dívidas: depende do contrato específico e das fases seguintes.
 
 ## 3. Autenticação e API
@@ -176,7 +176,6 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Implementar endpoints mínimos de receitas.
 - [x] Implementar endpoint mínimo de transferências com confirmação de pernas pendentes.
 - [x] Implementar endpoints de recorrências, geração idempotente, materialização e alterações de ocorrências.
-- [ ] Implementar endpoints de transferências.
 - [ ] Implementar endpoints de edição, cancelamento, eliminação e reversão contextual.
 - [ ] Integrar o frontend com a API e a autenticação.
 
@@ -190,7 +189,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Implementar navegação inferior fixa em todas as páginas mobile/tablet (Dashboard e subpáginas).
 - [x] Implementar seletor mensal.
 - [x] Implementar saldo, receitas, despesas e resultado.
-- [x] Centralizar criação no botão flutuante global (+), fixo no viewport, com opções de despesa, receita e transferência.
+- [x] Centralizar criação no botão flutuante global (+), fixo no viewport, com opções fixas **Novo gasto**, **Novo rendimento** e **Nova transferência**, na mesma ordem nas páginas Dashboard, Movimentos e Rota Financeira.
 - [x] Corrigir contenção e overflow da sidebar; apresentar apenas o nome do utilizador no perfil.
 - [x] Implementar despesas por categoria em desktop e mobile.
 - [x] Preservar o Dashboard durante a implementação dos formulários.
@@ -305,8 +304,8 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 ## 12. Subpáginas
 
 - [x] Implementar Movimentos e a aba Programações em modo de leitura.
-- [!] Implementar Rota Financeira — aguarda contrato/read model de projeção diária.
-- [ ] Validar e concluir Contas em modo de leitura (UI em `feature/accounts-page`: hierarquia do saldo total, secção As minhas contas e menu contextual por conta; os saldos reais continuam condicionados ao contrato/read model disponível).
+- [x] Implementar a interface da Rota Financeira (desktop trimestral e mobile mensal). [!] Saldo diário/final, projeção e classificação fixa/variável dependem de contrato/read model ainda pendente; não apresentar valores simulados.
+- [x] Implementar e validar localmente a página Contas em modo de leitura (hierarquia do saldo total, secção As minhas contas e menu contextual por conta). Os saldos apresentados continuam condicionados aos dados/read model disponíveis.
 - [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado; detalhe da fatura lista os movimentos associados, agrupados por dia e reutilizando a linha de Movimentos, sem filtros de estado).
 - [x] Decisão de produto: descontinuar a página autónoma de Dívidas.
 - [ ] Implementar consulta e liquidação de obrigações nos detalhes de movimentos/faturas, conforme os contratos aprovados.
@@ -335,20 +334,19 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 
 ## Próxima sequência de execução
 
-1. Completar/validar as subpáginas em modo de leitura: Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações; não implementar página autónoma de Dívidas.
-2. Fechar os contratos de leitura e projeção necessários para a Rota Financeira, sem criar dados ou regras fictícias.
-3. Validar a navegação e o `AppShell` em desktop, tablet e mobile.
-4. Implementar os formulários suportados pelos contratos atuais.
-5. Validar os fluxos completos no frontend.
-6. Implementar os formulários comuns após o fecho dos contratos pendentes.
-7. Executar a auditoria final e publicar apenas após autorização explícita.
+1. Executar build e lint frontend e QA visual em desktop/tablet/mobile da branch atual.
+2. Validar a regra pendente→realizado no frontend: sem destino no pendente; conta obrigatória na confirmação.
+3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta/liquidação de obrigações associadas.
+4. Fechar contratos/read models financeiros pendentes (incluindo projeções) e implementar os formulários suportados.
+5. Executar auditoria final e publicar a versão validada.
 
-## Publicação e validação — 2026-11-25
+## Publicação e validação — 2026-11-26
 
 - PR #5 foi integrado na `main` no merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`.
-- A navegação responsiva, o painel Mais e o FAB global estão implementados; as opções fixas do FAB nas páginas principais de operações e as regras do menu contextual estão registadas em `docs/03-interface-e-formularios.md`.
-- A regra de entrada global de criação foi sincronizada com `docs/03-interface-e-formularios.md`: o FAB pertence ao `AppShell`, não é duplicado dentro dos formulários, e opções sem suporte continuam indisponíveis.
-- Build, lint e testes frontend não foram executados após o merge do PR #5. A validação visual/responsiva e a auditoria final permanecem pendentes.
+- O PR #7 (`feature/debts-primary-page`) atualiza o backend para destinos financeiros pendentes/realizados e corrige a UI: remove Dívidas como página/destino, elimina o placeholder, e fixa o FAB em **Novo gasto**, **Novo rendimento**, **Nova transferência** também na aba Programações.
+- Validação backend local reportada pelo utilizador: **52 testes passaram, 217 assertions**; Pint `--test` nos 7 ficheiros PHP alterados passou.
+- O Pint global continua a reportar **63 problemas de estilo em 98 ficheiros**; não foi aplicado formatting global para evitar alterações fora do escopo.
+- Build, lint e QA visual/responsivo do frontend ainda não foram executados após as alterações do PR #7. A integração deve aguardar essa validação.
 
 ## Regra de controlo
 
