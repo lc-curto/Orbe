@@ -39,7 +39,9 @@ if (-not (Test-Path .env)) {
     Copy-Item .env.example .env
 }
 
-php artisan key:generate
+if (-not (Select-String -Path .env -Pattern '^APP_KEY=base64:.+' -Quiet)) {
+    php artisan key:generate
+}
 ```
 
 Confirma a configuração de base de dados em `backend/.env`. Com a configuração SQLite por omissão, cria o ficheiro se ainda não existir (a partir de `backend/`):
