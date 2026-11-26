@@ -17,7 +17,7 @@ function money(value: number): string {
 export function DebtKpis({ debts }: Props) {
   const available = debts !== null
   const activeDebts = debts?.filter((debt) => debt.status === 'ACTIVE') ?? []
-  const totalOpen = activeDebts.reduce((sum, debt) => sum + amount(debt.openBalance), 0)
+  const totalOpen = debts?.reduce((sum, debt) => sum + amount(debt.openBalance), 0) ?? 0
   const monthlyPayments = activeDebts.reduce((sum, debt) => sum + amount(debt.monthlyPayment), 0)
 
   const metrics = [
