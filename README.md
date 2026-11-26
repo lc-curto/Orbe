@@ -42,7 +42,15 @@ if (-not (Test-Path .env)) {
 php artisan key:generate
 ```
 
-Confirma a configuração de base de dados em `backend/.env`. Com a configuração SQLite por omissão, garante que o ficheiro de base de dados indicado pela configuração Laravel existe. Se usares MySQL, define `DB_CONNECTION=mysql`, host, porta, nome da base de dados, utilizador e palavra-passe.
+Confirma a configuração de base de dados em `backend/.env`. Com a configuração SQLite por omissão, cria o ficheiro se ainda não existir (a partir de `backend/`):
+
+```powershell
+if (-not (Test-Path database/database.sqlite)) {
+    New-Item -ItemType File database/database.sqlite | Out-Null
+}
+```
+
+Se usares MySQL, define `DB_CONNECTION=mysql`, host, porta, nome da base de dados, utilizador e palavra-passe.
 
 Executa as migrations e inicia a API:
 
