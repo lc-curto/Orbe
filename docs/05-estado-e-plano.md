@@ -91,7 +91,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 - PR #7 foi integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`): remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
 - Backend da branch: gasto/rendimento pendente sem destino financeiro; realizado exige conta ativa; confirmação recolhe conta e cria lançamento; recorrências pendentes não guardam destino até à materialização.
 - Validação local reportada pelo utilizador: **52 testes backend passaram (217 assertions)** e Pint `--test` passou nos 7 ficheiros PHP alterados. O Pint global reporta 63 problemas de estilo em 98 ficheiros preexistentes/abrangidos; não foi aplicada formatação global.
-- Após o PR #7, a workflow `Web CI` passou lint e build de produção na branch `feature/reports-settings-ui` (run 45877403801, commit `7eaf5c2`). A QA visual/responsiva em desktop/tablet/mobile continua pendente. O rate limit da Vercel é um limite de deploy e não invalida o CI concluído.
+- Após o PR #7, a workflow `Web CI` passou lint e build de produção na branch `feature/reports-settings-ui` (run 45877731901, commit `0c5c0cc`). A QA visual/responsiva em desktop/tablet/mobile continua pendente. O rate limit da Vercel é um limite de deploy e não invalida o CI concluído.
 - Formulários de escrita, consulta/liquidação contextual de obrigações e projeções reais permanecem por implementar/validar. A ausência de página autónoma de Dívidas é uma decisão aprovada, não uma funcionalidade em falta.
 
 ## Próxima sequência recomendada
@@ -360,7 +360,7 @@ Em cada refatoração: confirmar comportamento atual, definir ficheiros afetados
 - Validação backend local reportada pelo utilizador: **52 testes passaram, 217 assertions**; Pint `--test` nos 7 ficheiros PHP alterados passou.
 - O Pint global continua a reportar **63 problemas de estilo em 98 ficheiros**; não foi aplicado formatting global para evitar alterações fora do escopo.
 - Pós-merge: a referência global `RuntimeException` da migration foi corrigida e foi aplicada formatação nos controllers em commits `68ed3ea`, `eb2ecb3`, `9f67bb0` e `efe8df3`. Estes ajustes não alteram as regras de domínio; a suite não foi reexecutada após os commits remotos.
-- CI após as alterações do PR #7 passou lint e build de produção na branch feature/reports-settings-ui (run 45877403801, commit `7eaf5c2`). A QA visual/responsiva continua pendente. O status Vercel anterior falhou por rate limit de deploy, não por falha de build.
+- CI após as alterações do PR #7 passou lint e build de produção na branch feature/reports-settings-ui (run 45877731901, commit `0c5c0cc`). A QA visual/responsiva continua pendente. O status Vercel anterior falhou por rate limit de deploy, não por falha de build.
 
 ## Regra de controlo
 
@@ -386,15 +386,15 @@ Este documento é um mapa de execução, não substitui as especificações func
 - Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios e Configurações têm interface implementada na branch feature/reports-settings-ui; lint e build passam no CI (run 45877403801), enquanto QA responsivo continua pendente. A página autónoma de Dívidas está descontinuada.
 
 
-## Implementação frontend — Relatórios e Configurações (branch feature/reports-settings-ui, 2026-11-26)
+## Implementação frontend — Relatórios e Configurações (branch `feature/reports-settings-ui-clean`, PR #9, 2026-11-26)
 - Criadas páginas React/TypeScript dedicadas e integradas nas variantes desktop e mobile do shell existente.
 - Relatórios usa o componente MonthSelector existente; a agregação de operações realizadas foi isolada em `features/reports/utils.ts`. Apresenta apenas dimensões suportadas pelos dados atuais. A análise de obrigações sem read model disponível é explicitamente indisponível; não há valores fictícios.
 - Configurações apresenta os grupos aprovados. A preferência de símbolo é funcional e guardada no navegador; as opções sem contratos/painéis próprios são informativas, não ações simuladas.
 - Regra aprovada: a alteração de símbolo não converte nem altera valores, dados, saldos, cálculos, escala ou precisão.
-- Lint e build de produção passaram no CI da branch (run 45877403801, commit `7eaf5c2`). A QA visual/responsiva e a revisão final continuam pendentes antes de integrar na main.
+- Lint e build de produção passaram no CI da branch (run 45877731901, commit `0c5c0cc`). A QA visual/responsiva e a revisão final continuam pendentes antes de integrar na main.
 
 
-## Organização frontend — branch `feature/reports-settings-ui` (2026-11-26)
+## Organização frontend — branch `feature/reports-settings-ui-clean` (PR #9, 2026-11-26)
 - Mantida a funcionalidade de Relatórios, Configurações e preferência de símbolo; a reorganização é estrutural, sem alterar contratos financeiros.
 - `app/`: composição da aplicação, shell e estado/navegação global.
 - `features/dashboard/`: Dashboard desktop (`pages/DashboardPage.tsx`), Dashboard mobile (`components/MobileDashboard.tsx`) e especificação visual (`specs/`).
