@@ -404,3 +404,10 @@ Este documento é um mapa de execução, não substitui as especificações func
 - `styles/` e `features/*/styles/`: CSS transversal e estilos separados por área; `index.css` apenas agrega os imports ordenados.
 - `MobileDashboardSpec.tsx` foi movido para `features/dashboard/specs/` para separar a especificação visual da interface executada.
 - Lint e build passaram no CI da branch (run 45880748947, commit `960c156`); QA visual/responsiva continua pendente. Não integrar na `main` antes da QA e revisão.
+
+
+### Stack web — decisão (26/11/2026)
+
+Tamagui foi removido da stack web. A interface utiliza React, TypeScript, HTML semântico, CSS e primitives próprias do design system em `web/src/design-system/primitives.tsx`. O tema global permanece baseado em `data-theme` e tokens CSS. Foram removidos Tamagui Provider/configuração/plugin, alias React Native Web e dependências Tamagui/react-native-web. A página de Configurações foi restaurada ao commit anterior à migração Tamagui; os restantes componentes que dependiam da biblioteca foram desacoplados de forma explícita.
+
+**Validação pendente:** executar `npm ci`, lint, build TypeScript/Vite e QA visual desktop/mobile após a remoção das dependências.
