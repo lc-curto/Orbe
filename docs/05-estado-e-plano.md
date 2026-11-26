@@ -74,17 +74,15 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 **Contrato de saldo inicial de conta definido:** ao criar uma conta, informar o saldo existente no início da utilização no Orbe. O valor é reconhecido por operação `ACCOUNT_OPENING_BALANCE` e lançamento realizado dirigido à conta; não é receita/despesa. Saldo zero não gera lançamento; saldo negativo só é permitido quando compatível com o tipo de conta. Existe uma única abertura original por conta, não editável diretamente; correções preservam a origem e são rastreáveis. O saldo atual deriva dos lançamentos válidos.
 
 ## Trabalho funcional pendente
-- Concluir/validar a interface de leitura de Contas e Cartões/faturas já implementada; os formulários de escrita continuam pendentes.
-- Rota Financeira: interface em `main`; três meses lado a lado no desktop e um mês por vez no mobile. Saldo diário/final e projeção dependem do read model; classificação fixa/variável também não está disponível. Build e QA visual local aguardam validação.
-- Definir detalhes de dívida e pagamentos, incluindo os contratos funcionais ainda pendentes.
-- Definir modais/formulários de adicionar, editar, cancelar, reverter e confirmar conforme os contratos disponíveis.
-- Definir validações e ações permitidas por estado/dependência.
-- Validar navegação responsiva, FAB contextual, painel Mais, safe areas e comportamento do `AppShell`.
-- Auditar consistência e reaproveitamento de componentes.
+- Contas, Cartões/faturas e Rota Financeira: páginas primárias implementadas; utilizador confirmou QA local do `AppShell` e das páginas principais. Os contratos de saldos/projeções e os formulários de escrita continuam pendentes.
+- Dívidas: página principal de leitura em implementação na branch `feature/debts-primary-page`; interface usa placeholders explícitos enquanto o read model não existe. Nenhum valor ou dívida é simulado. Detalhes, pagamentos e contratos ficam para fase posterior.
+- Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
+- Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global nem bloquear páginas primárias.
+- Definir validações e ações por estado/dependência quando os contratos forem tratados.
 
-Ordem de execução atualizada: validar a navegação e as páginas de leitura já implementadas; fechar contratos/read models pendentes; implementar páginas-placeholder e formulários; executar auditoria final.
+Ordem de execução: concluir a interface primária de Dívidas; desenhar subpáginas e modais; fazer auditoria/refatoração frontend direcionada; só depois fechar read models/contratos e implementar formulários.
 
-## Estado da implementação frontend — 2026-11-25
+## Estado da implementação frontend — 2026-11-26
 
 - PR #3: página Contas em modo de leitura publicada na `main`.
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
@@ -96,11 +94,11 @@ Ordem de execução atualizada: validar a navegação e as páginas de leitura j
 - O estado de implementação não equivale a validação final: os testes responsivos e a auditoria frontend permanecem pendentes no cronograma.
 
 ## Próxima sequência recomendada
-1. Validar localmente o build da `main` e corrigir qualquer erro antes de novas funcionalidades.
-2. Fazer QA responsivo do `AppShell`: sidebar expandida/recolhida, popover de utilizador, bottom bar, painel Mais e FAB.
-3. Validar páginas de leitura e estados loading/erro/vazio com dados reais.
-4. Fechar o read model diário da Rota e as decisões pendentes de cartões/faturas e Dívidas.
-5. Implementar formulários apenas quando os contratos correspondentes estiverem definidos; depois executar testes de aceitação.
+1. Concluir e validar a página principal de Dívidas na branch atual, sem depender de contratos.
+2. Desenhar as subpáginas e modais das páginas primárias, seguindo as decisões aprovadas.
+3. Auditar e refatorar gradualmente Movimentos e `App.tsx` segundo as práticas React/TypeScript/Tamagui; limitar cada alteração ao escopo e validar build/lint/QA.
+4. Numa fase posterior, fechar os read models e contratos financeiros, incluindo Dívidas e Rota.
+5. Implementar formulários e ações de escrita após contratos e validações estarem aprovados.
 
 ## Critério para novas alterações estruturais
 A implementação estrutural do frontend e do núcleo já está em curso e tem entregas publicadas na `main`. Para novas alterações estruturais, continuam obrigatórios: arquitetura/UML aprovada, precisão monetária e integridade transacional definidas, fluxos críticos especificados e critérios de aceitação/testes identificados. Não interpretar uma entrega parcial como aprovação de contratos ou funcionalidades ainda pendentes.
