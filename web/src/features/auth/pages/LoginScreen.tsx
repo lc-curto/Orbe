@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { H1, Paragraph, Text, YStack } from '../../../design-system/primitives'
+import { Heading, Paragraph, Text, Stack } from '../../../design-system/primitives'
 import { useAuth } from '../../../api/useAuth'
 
 type AuthMode = 'login' | 'register' | 'forgot' | 'reset'
@@ -56,9 +56,9 @@ export function LoginScreen() {
   const description = mode === 'login' ? 'Entra na tua conta para consultar as tuas finanças.' : mode === 'register' ? 'Cria a tua conta para começar a organizar as tuas finanças.' : mode === 'forgot' ? 'Enviaremos instruções para o teu email, se existir uma conta associada.' : 'Escolhe uma palavra-passe nova para a tua conta.'
 
   return (
-    <YStack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" padding={24} style={{ justifyContent: 'center', alignItems: 'center' }}>
-      <YStack className="auth-card" backgroundColor="#ffffff" borderWidth={1} borderColor="#e4e7ec" borderRadius={24} padding={32} width="100%" maxWidth={440} gap={24}>
-        <YStack gap={8}><Text color="#175cd3" fontSize={28} fontWeight="800">Orbe</Text><H1 fontSize={28} letterSpacing={-0.6}>{title}</H1><Paragraph color="#667085" margin={0}>{description}</Paragraph></YStack>
+    <Stack className="auth-screen" backgroundColor="#f7f9fc" minHeight="100vh" padding={24} style={{ justifyContent: 'center', alignItems: 'center' }}>
+      <Stack className="auth-card" backgroundColor="#ffffff" borderWidth={1} borderColor="#e4e7ec" borderRadius={24} padding={32} width="100%" maxWidth={440} gap={24}>
+        <Stack gap={8}><Text color="#175cd3" fontSize={28} fontWeight="800">Orbe</Text><Heading fontSize={28} letterSpacing={-0.6}>{title}</Heading><Paragraph color="#667085" margin={0}>{description}</Paragraph></Stack>
         <form className="auth-form" onSubmit={submit} noValidate>
           {mode === 'register' ? <><label className="auth-label" htmlFor="auth-name">Nome</label><input className="auth-input" id="auth-name" name="name" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="O teu nome" disabled={loading} autoFocus /></> : null}
           <label className="auth-label" htmlFor="auth-email">Email</label><input className="auth-input" id="auth-email" name="email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="nome@exemplo.pt" disabled={loading} autoFocus={mode !== 'register'} />
@@ -68,10 +68,10 @@ export function LoginScreen() {
           {success ? <div className="auth-success" role="status">{success}</div> : null}
           <button className="auth-submit" type="submit" disabled={loading}>{loading ? 'A processar…' : mode === 'login' ? 'Entrar' : mode === 'register' ? 'Criar conta' : mode === 'forgot' ? 'Enviar instruções' : 'Alterar palavra-passe'}</button>
         </form>
-        <YStack gap={10} style={{ alignItems: 'center' }}>
+        <Stack gap={10} style={{ alignItems: 'center' }}>
           {mode === 'login' ? <><button className="auth-link" type="button" onClick={() => changeMode('forgot')}>Esqueci-me da palavra-passe</button><Text color="#667085" fontSize={13}>Ainda não tens conta? <button className="auth-link" type="button" onClick={() => changeMode('register')}>Criar conta</button></Text></> : <button className="auth-link" type="button" onClick={() => changeMode('login')}>Voltar a iniciar sessão</button>}
-        </YStack>
-      </YStack>
-    </YStack>
+        </Stack>
+      </Stack>
+    </Stack>
   )
 }
