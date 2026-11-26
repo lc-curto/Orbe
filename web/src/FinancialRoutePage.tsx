@@ -6,12 +6,12 @@ import { useFinancialRouteData } from './features/financial-route/hooks/useFinan
 import type { RouteDay, RouteFlowFilter } from './features/financial-route/types'
 import { formatAmount, formatMonthRange, shiftMonth } from './features/financial-route/utils'
 
-export function FinancialRoutePage({ operations, month }: {
+export function FinancialRoutePage({ operations, month, onMonthChange }: {
   operations: Operation[]
   month: string
-  onMonthChange?: (month: string) => void
+  onMonthChange: (month: string) => void
 }) {
-  const [firstMonth, setFirstMonth] = useState(month)
+  const firstMonth = month
   const [onlyMovementDays, setOnlyMovementDays] = useState(false)
   const [flowFilter, setFlowFilter] = useState<RouteFlowFilter>('ALL')
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
@@ -34,7 +34,7 @@ export function FinancialRoutePage({ operations, month }: {
   }
 
   function changePeriod(offset: number) {
-    setFirstMonth((current) => shiftMonth(current, offset))
+    onMonthChange(shiftMonth(firstMonth, offset))
   }
 
   const filterOptions: Array<{ value: RouteFlowFilter; label: string }> = [
