@@ -47,7 +47,7 @@ final class BasicOperationsController extends Controller
         abort_unless(in_array($nature, ['INCOME', 'EXPENSE'], true), 404);
         $data = $request->validate([
             'amount' => ['required', 'numeric', 'gt:0'],
-            'account_id' => ['required', 'integer'],
+            'account_id' => ['nullable', 'integer', 'required_if:state,REALIZED', 'prohibited_if:state,PENDING'],
             'category_id' => ['required', 'integer'],
             'description' => ['nullable', 'string', 'max:500'],
             'state' => ['required', 'in:REALIZED,PENDING'],
@@ -56,7 +56,7 @@ final class BasicOperationsController extends Controller
             'idempotency_key' => ['nullable', 'string', 'max:191'],
         ]);
         try {
-            $operation = $service->create((int) $request->user()->id, $nature, (string) $data['amount'], (int) $data['account_id'], (int) $data['category_id'], $data['description'] ?? null, $data['state'], $data['effective_at'] ?? null, $data['planned_at'] ?? null, $data['idempotency_key'] ?? null);
+            $operation = $service->create((int) $request->user()->id, $nature, (string) $data['amount'], isset($data['account_id']) ? (int) $data['account_id'] : null, (int) $data['category_id'], $data['description'] ?? null, $data['state'], $data['effective_at'] ?? null, $data['planned_at'] ?? null, $data['idempotency_key'] ?? null);
             return response()->json(['data' => $operation], 201);
         } catch (FinancialInvariantViolation $exception) {
             throw ValidationException::withMessages(['financial' => $exception->getMessage()]);
@@ -66,9 +66,9 @@ final class BasicOperationsController extends Controller
     public function confirm(Request $request, Operation $operation, BasicOperationService $service): JsonResponse
     {
         abort_unless($operation->user_id === $request->user()->id, 404);
-        $data = $request->validate(['effective_at' => ['required', 'date']]);
+        $data = $request->validate(['account_id' => ['required', 'integer'], 'effective_at' => ['required', 'date']]);
         try {
-            return response()->json(['data' => $service->confirm((int) $request->user()->id, $operation, $data['effective_at'])]);
+            return response()->json(['data' => $service->confirm((int) $request->user()->id, $operation, (int) $data['account_id'], $data['effective_at'])]);
         } catch (FinancialInvariantViolation $exception) {
             throw ValidationException::withMessages(['financial' => $exception->getMessage()]);
         }
