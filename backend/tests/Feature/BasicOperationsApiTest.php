@@ -63,6 +63,13 @@ final class BasicOperationsApiTest extends TestCase
         $this->postJson('/api/operations/'.$pending->json('data.id').'/confirm', [
             'effective_at' => '2026-12-02 10:00:00',
         ])->assertUnprocessable()->assertJsonValidationErrors('account_id');
+
+        $other = User::factory()->create();
+        $otherAccount = FinancialAccount::query()->create(['user_id' => $other->id, 'name' => 'Conta alheia', 'account_type' => 'BANK', 'status' => 'ACTIVE']);
+        $this->postJson('/api/operations/'.$pending->json('data.id').'/confirm', [
+            'account_id' => $otherAccount->id, 'effective_at' => '2026-12-02 10:00:00',
+        ])->assertUnprocessable()->assertJsonValidationErrors('financial');
+
         $this->assertDatabaseHas('operations', ['id' => $pending->json('data.id'), 'state' => 'PENDING', 'account_id' => null]);
         $this->assertDatabaseCount('financial_entries', 0);
 
