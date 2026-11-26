@@ -98,8 +98,8 @@ Reutiliza estrutura de Contas.
 - Usar exclusivamente dados reais disponíveis. Se faltar read model, apresentar estado informativo sem estimativas.
 
 ## Configurações — aprovado
-- Preferências: Perfil, Moeda, Categorias, Aparência e preferências.
-- Moeda: lista de 10 moedas internacionais principais, incluindo Real brasileiro (BRL, R$); a seleção altera apenas o símbolo apresentado, sem conversão nem alteração de valor.
+- Preferências: Perfil, Moeda de apresentação, Categorias, Aparência e preferências.
+- Moeda de apresentação: lista de 10 símbolos monetários, incluindo Real brasileiro (BRL, R$); a seleção altera apenas o símbolo apresentado, sem conversão nem alteração de valor.
 - Aparência: alternar entre tema claro e escuro; preferência guardada localmente e aplicada à interface.
 - Segurança e Dados: Segurança, Dados e cópias de segurança.
 - Sobre o Orbe.
