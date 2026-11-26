@@ -49,21 +49,19 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - A edição e as ações sobre programações/ocorrências usam botões dedicados e não permitem edição inline.
 
 ## Rota Financeira — aprovado
-- Visão mensal com uma linha por dia, incluindo dias sem movimentos.
-- Seletor mensal e navegação anterior/seguinte.
-- Cabeçalho com saldo projetado no fim do mês.
-- KPIs apenas Entradas e Saídas; sem KPI de saldo inicial.
-- Tabela: Dia, Entradas, Saídas, Saldo.
-- Dias futuros mostram projeção; sem gráfico e sem distinção inicial entre saídas fixas/variáveis.
-- Entradas e saídas neutras; saídas com sinal negativo.
-- Cor só na célula/valor Saldo, nunca na linha:
-  - Verde: confortável; despesas fixas e variáveis estimadas cobertas.
-  - Azul: protegido; fixas cobertas, variáveis estimadas ainda não.
-  - Amarelo: atenção; saldo positivo, mas insuficiente para fixas pendentes.
-  - Vermelho: risco; saldo projetado negativo ou obrigação essencial sem cobertura.
-- Sem badges, legendas ou etiquetas coloridas.
+- Desktop: mostrar pelo menos três meses consecutivos lado a lado; navegação anterior/seguinte desloca o período um mês.
+- Cada mês apresenta título, totais de entradas/saídas, indicação do saldo final e tabela diária.
+- Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura.
+- Tabela diária: Dia, Entradas, Saídas, Saldo; incluir todos os dias do mês quando o switch está desligado.
+- O switch ligado mostra apenas dias com movimentos realizados elegíveis.
+- Selecionar a data abre modal de detalhe; filtros numa linha e nesta ordem: Todos, Receitas, G. fixos, G. variáveis.
+- KPIs/totais apenas Entradas e Saídas; sem KPI de saldo inicial.
+- Sem gráfico e sem distinção fixa/variável na tabela principal.
+- Entradas e saídas realizadas são agregadas; transferências e estados não realizados são excluídos.
+- Saldo diário e saldo final/projeção só são apresentados quando o contrato financeiro fornecer valores válidos. Até lá, indicar indisponibilidade, sem inventar números.
+- Cor só na célula/valor Saldo quando houver cálculo fiável, nunca na linha. Sem badges, legendas ou etiquetas coloridas.
 - Saldo projetado final recebe cor apenas quando negativo.
-- Exemplos numéricos devem ser matematicamente coerentes.
+- O FAB global é o único ponto de criação; não adicionar botão + local.
 
 ## Contas — aprovado
 - Cabeçalho Contas sem botão + local; a ação Nova conta é apresentada pelo botão flutuante global (+), contextual à página.
@@ -109,30 +107,6 @@ Reutiliza estrutura de Contas e Cartões.
 
 ## Ordem de desenho aprovada
 Concluir páginas principais; desenhar subpáginas; definir modais; auditar consistência e reaproveitamento.
-
-
-## Navegação e criação — implementação remota em 2026-11-25
-
-Esta secção regista o comportamento atualmente implementado no frontend, após o PR #5. É um registo de implementação, não altera os requisitos financeiros nem autoriza fluxos de escrita ainda sem contrato.
-
-- Bottom bar fixa em mobile/tablet em todas as páginas: Início, Movimentos, Rota, Contas e Mais.
-- Painel Mais fixo e consistente: Cartões, Dívidas, Relatórios e Configurações; fecha por seleção, novo toque em Mais ou toque fora.
-- Sidebar desktop com páginas agrupadas em Principal, Gestão financeira e Ferramentas; Mais não aparece na sidebar.
-- FAB global (+) contextual: Dashboard/Movimentos oferecem despesa, receita e transferência; Contas oferece Nova conta; Cartões oferece Novo cartão; Dívidas oferece Nova dívida; Movimentos/Programações oferece Nova programação; Rota oferece Nova projeção, ainda indisponível por falta de contrato/read model; Relatórios e Configurações não mostram FAB.
-- Ações de criação sem formulário/contrato apenas informam indisponibilidade; não criam registos fictícios.
-- Rota, Dívidas, Relatórios e Configurações estão acessíveis, mas são placeholders. Contas e Cartões têm interfaces de leitura; as ações de criação permanecem indisponíveis.
-- O nome do utilizador é apresentado no perfil da sidebar, sem email. O Dashboard mobile não mantém um menu Mais próprio.
-
-
-## Rota Financeira — implementação frontend inicial (2026-11-25)
-
-- A página frontend substitui o placeholder e está ligada à navegação desktop e mobile.
-- Seletor mensal anterior/seguinte, KPI de Entradas e Saídas e tabela diária com as quatro colunas aprovadas: Data, Entrada, Saída e Saldo.
-- A tabela apresenta todos os dias do mês; o switch **Só dias com movimento** filtra para dias com operações realizadas elegíveis.
-- Selecionar a data abre modal de detalhe com filtros numa linha e nesta ordem: Todos, Receitas, G. fixos, G. variáveis.
-- A lista usa operações realizadas de receita/despesa disponíveis no read model; transferências e estados não realizados são excluídos dos totais apresentados.
-- **Limitação explícita:** o frontend atual não calcula saldo diário nem projeção final. A célula Saldo e o saldo projetado mostram indisponibilidade, sem inventar valores. Os filtros G. fixos/variáveis informam que a classificação ainda não existe no contrato de leitura.
-- Esta entrega é uma implementação parcial da interface, não conclusão da Rota Financeira nem alteração das regras financeiras aprovadas.
 
 
 ## Regra de implementação frontend
