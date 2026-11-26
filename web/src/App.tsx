@@ -355,8 +355,6 @@ export default function App() {
       ? [{ label: 'Novo cartão', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: 'A criação de cartões será disponibilizada na fase de formulários.' }]
       : ['Relatórios', 'Configurações'].includes(activeKey)
             ? [{ label: 'Sem ações de criação nesta página', icon: 'wallet' as IconName, kind: 'unavailable' as const, message: activeKey === 'Relatórios' ? 'A criação de relatórios ainda não está disponível.' : 'As Configurações não têm ações de criação.' }]
-            : activeKey === 'Movimentos' && movementTab === 'schedules'
-            ? [{ label: 'Nova programação', icon: 'route' as IconName, kind: 'unavailable' as const, message: 'A criação de programações será disponibilizada na fase de formulários.' }]
             : [
                 { label: 'Novo gasto', icon: 'expense' as IconName, kind: 'expense' as const },
                 { label: 'Novo rendimento', icon: 'income' as IconName, kind: 'income' as const },
