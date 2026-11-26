@@ -76,7 +76,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 ## Trabalho funcional pendente
 - Contratos/read models de saldos e projeções continuam pendentes, especialmente saldo diário/final e projeção na Rota Financeira.
 - Formulários de escrita ainda não estão todos integrados; implementar apenas os fluxos cobertos por contratos aprovados.
-- Dívidas: não haverá página principal autónoma. O código da página de Dívidas foi removido da branch `feature/debts-primary-page`; o PR #7 remove a navegação/placeholder e alinha o FAB, juntamente com a alteração backend de destinos pendentes. Obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados. Nenhum valor ou dívida é simulado.
+- Dívidas: não haverá página principal autónoma. O código da página de Dívidas foi removido; o PR #7, integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`), remove a navegação/placeholder e alinha o FAB, juntamente com a alteração backend de destinos pendentes. Obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados. Nenhum valor ou dívida é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
 - Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global.
 - Definir validações e ações por estado/dependência quando os contratos forem tratados.
@@ -88,7 +88,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; formulários de programação continuam indisponíveis.
 - Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; os dados realizados são agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis.
-- PR #7, branch `feature/debts-primary-page`: remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
+- PR #7 foi integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`): remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
 - Backend da branch: gasto/rendimento pendente sem destino financeiro; realizado exige conta ativa; confirmação recolhe conta e cria lançamento; recorrências pendentes não guardam destino até à materialização.
 - Validação local reportada pelo utilizador: **52 testes backend passaram (217 assertions)** e Pint `--test` passou nos 7 ficheiros PHP alterados. O Pint global reporta 63 problemas de estilo em 98 ficheiros preexistentes/abrangidos; não foi aplicada formatação global.
 - Build, lint e QA visual/responsivo frontend do PR #7 ainda não foram executados. O status Vercel do commit atual falhou por limite de deploy (rate limit), não por um resultado de build confirmado.
@@ -346,7 +346,7 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 - O PR #7 (`feature/debts-primary-page`) atualiza o backend para destinos financeiros pendentes/realizados e corrige a UI: remove Dívidas como página/destino, elimina o placeholder, e fixa o FAB em **Novo gasto**, **Novo rendimento**, **Nova transferência** também na aba Programações.
 - Validação backend local reportada pelo utilizador: **52 testes passaram, 217 assertions**; Pint `--test` nos 7 ficheiros PHP alterados passou.
 - O Pint global continua a reportar **63 problemas de estilo em 98 ficheiros**; não foi aplicado formatting global para evitar alterações fora do escopo.
-- Build, lint e QA visual/responsivo do frontend ainda não foram executados após as alterações do PR #7. A integração deve aguardar essa validação.
+- Build, lint e QA visual/responsivo do frontend ainda não foram executados após as alterações do PR #7; permanecem obrigatórios antes de considerar a entrega frontend validada. O status Vercel falhou por limite de deploy (rate limit), sem indicar falha de build.
 
 ## Regra de controlo
 
