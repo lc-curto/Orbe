@@ -55,7 +55,6 @@
 [data-theme="dark"] .mobile-bottom-bar button[aria-current="page"] * { color: var(--orbe-teal) !important; }
 
 /* Shared cards, lists, forms and popovers. */
-[data-theme="dark"] .main-content .tamagui-card,
 [data-theme="dark"] .main-content [class*="Card"]:not(.mobile-balance-card),
 [data-theme="dark"] .main-content [class*="-card"]:not(.mobile-balance-card),
 [data-theme="dark"] .main-content .movement-kpi,
