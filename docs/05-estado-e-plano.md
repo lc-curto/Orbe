@@ -78,7 +78,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 ## Trabalho funcional pendente
 - Concluir/validar a interface de leitura de Contas e Cartões/faturas já implementada; os formulários de escrita continuam pendentes.
-- Concluir a Rota Financeira: a interface frontend inicial já existe; falta contrato/read model de projeção, saldo diário e classificação fixa/variável. Dívidas, Relatórios e Configurações continuam placeholders.
+- Rota Financeira: frontend atualizado nesta branch com três meses lado a lado no desktop e um mês por vez no mobile. Saldo diário/final e projeção continuam dependentes do read model; classificação fixa/variável também não está disponível. Build, lint e validação visual local ainda pendentes.
 - Definir detalhes de dívida e pagamentos, incluindo os contratos funcionais ainda pendentes.
 - Definir modais/formulários de adicionar, editar, cancelar, reverter e confirmar conforme os contratos disponíveis.
 - Definir validações e ações permitidas por estado/dependência.
@@ -93,7 +93,7 @@ Ordem de execução atualizada: validar a navegação e as páginas de leitura j
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; os formulários de programação continuam indisponíveis.
-- Rota Financeira: interface frontend inicial implementada na branch `feature/financial-route-page`; dados realizados agregados a partir do read model atual. Saldo diário/projeção e classificação fixa/variável continuam indisponíveis. Dívidas, Relatórios e Configurações permanecem placeholders.
+- Rota Financeira: interface trimestral desktop e mensal mobile implementada na branch `feature/financial-route-page`; dados realizados agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis. Build/lint e QA visual local pendentes.
 - As opções Nova conta, Novo cartão, Nova dívida, Nova programação e Nova projeção no FAB comunicam indisponibilidade enquanto faltarem formulários/contratos; não criam registos fictícios.
 - Relatórios e Configurações não apresentam FAB porque não têm ação de criação.
 - O estado de implementação não equivale a validação final: os testes responsivos e a auditoria frontend permanecem pendentes no cronograma.
