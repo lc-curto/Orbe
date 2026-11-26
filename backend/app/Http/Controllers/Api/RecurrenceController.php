@@ -63,6 +63,7 @@ final class RecurrenceController extends Controller
     {
         $this->assertScheduleOwner($request, $schedule);
         $data = $request->validate(['until' => ['required', 'date']]);
+
         try {
             return response()->json(['data' => $service->generate((int) $request->user()->id, $schedule, $data['until'])]);
         } catch (FinancialInvariantViolation|InvalidArgumentException $exception) {
@@ -74,6 +75,7 @@ final class RecurrenceController extends Controller
     {
         $this->assertScheduleOwner($request, $schedule);
         $data = $request->validate(['until' => ['nullable', 'date']]);
+
         try {
             return response()->json(['data' => $service->listOccurrences((int) $request->user()->id, $schedule, $data['until'] ?? null)]);
         } catch (FinancialInvariantViolation|InvalidArgumentException $exception) {
@@ -85,6 +87,7 @@ final class RecurrenceController extends Controller
     {
         $this->assertOccurrenceOwner($request, $occurrence);
         $data = $request->validate(['account_id' => ['required', 'integer'], 'effective_at' => ['required', 'date']]);
+
         try {
             return response()->json(['data' => $service->materialize((int) $request->user()->id, $occurrence, (int) $data['account_id'], $data['effective_at'])]);
         } catch (FinancialInvariantViolation|InvalidArgumentException $exception) {
@@ -96,6 +99,7 @@ final class RecurrenceController extends Controller
     {
         $this->assertOccurrenceOwner($request, $occurrence);
         $data = $this->validatedUpdate($request);
+
         try {
             return response()->json(['data' => $service->updateOccurrence((int) $request->user()->id, $occurrence, $data)]);
         } catch (FinancialInvariantViolation|InvalidArgumentException $exception) {
@@ -107,6 +111,7 @@ final class RecurrenceController extends Controller
     {
         $this->assertOccurrenceOwner($request, $occurrence);
         $data = $this->validatedUpdate($request);
+
         try {
             return response()->json(['data' => $service->updateOccurrenceAndFollowing((int) $request->user()->id, $occurrence, $data)]);
         } catch (FinancialInvariantViolation|InvalidArgumentException $exception) {
@@ -117,6 +122,7 @@ final class RecurrenceController extends Controller
     public function cancel(Request $request, RecurrenceOccurrence $occurrence, RecurrenceService $service): JsonResponse
     {
         $this->assertOccurrenceOwner($request, $occurrence);
+
         try {
             return response()->json(['data' => $service->cancel((int) $request->user()->id, $occurrence)]);
         } catch (FinancialInvariantViolation|InvalidArgumentException $exception) {
