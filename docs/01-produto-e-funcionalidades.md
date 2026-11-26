@@ -2,11 +2,7 @@
 
 > Documento consolidado. Cada tema tem aqui a sua fonte principal; não criar documentos separados para páginas, casos ou etapas individuais.
 
-
 ---
-
-<!-- Conteúdo consolidado de docs/01-produto-e-funcionalidades.md -->
-
 
 ## Objetivo
 Aplicação de gestão financeira pessoal para compreender e gerir contas, movimentos, cartões de crédito, dívidas, recorrências, relatórios e projeções. O produto combina rigor financeiro com uma experiência simples; a interface não deve expor complexidade técnica desnecessária.
@@ -70,9 +66,6 @@ Os clientes Web e mobile terão interfaces próprias, mas utilizarão o mesmo ba
 Os saldos e resultados devem ser coerentes em todas as páginas e plataformas, sem duplicação de efeitos financeiros.
 
 ---
-
-<!-- Conteúdo consolidado de docs/01-produto-e-funcionalidades.md -->
-
 
 ## Estados
 O sistema controla os estados e transições conforme a natureza e os factos confirmados.
