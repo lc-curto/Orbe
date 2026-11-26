@@ -76,7 +76,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 ## Trabalho funcional pendente
 - Contratos/read models de saldos e projeções continuam pendentes, especialmente saldo diário/final e projeção na Rota Financeira.
 - Formulários de escrita ainda não estão todos integrados; implementar apenas os fluxos cobertos por contratos aprovados.
-- Dívidas: não haverá página principal autónoma. O código da página de Dívidas foi removido; o PR #7, integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`), remove a navegação/placeholder e alinha o FAB, juntamente com a alteração backend de destinos pendentes. Obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados. Nenhum valor ou dívida é simulado.
+- Dívidas/obrigações: não existe página principal autónoma. O código da página foi removido pelo PR #7, integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5). Obrigações associadas a gastos permanecem no modelo financeiro e são consultadas/liquidadas a partir dos movimentos/faturas relacionados. Financiamentos ou obrigações preexistentes exigem fluxo específico ainda por definir; isso não autoriza reintroduzir uma página autónoma. Nenhum valor é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
 - Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global.
 - Definir validações e ações por estado/dependência quando os contratos forem tratados.
@@ -151,7 +151,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Definir e implementar o contrato mínimo de transferências com duas pernas — Fase 2.
 - [x] Implementar recorrências — Fase 3, conforme [12 — Contrato de recorrências](06-contratos-api.md).
 - [x] Regra de destino pendente/realizado aplicada no backend da branch `feature/debts-primary-page`: gasto/rendimento `PENDING` é criado sem `account_id` e sem lançamento; criação `REALIZED` exige conta ativa; confirmação recebe a conta e cria o lançamento na mesma transação; programações/ocorrências de recorrência são criadas sem conta e recolhem destino na materialização. O utilizador executou localmente a suite completa: **52 testes passaram (217 assertions)**. O Pint `--test` nos 7 ficheiros PHP alterados também passou.
-- [!] Implementar gestão completa de dívidas: depende do contrato específico e das fases seguintes.
+- [!] Especificar e implementar fluxos próprios para financiamento ou obrigações preexistentes, quando aprovados. Esta pendência não reabre nem implica uma página autónoma de Dívidas; obrigações associadas a gastos continuam a ser consultadas/liquidadas no contexto dos movimentos/faturas relacionados.
 
 ## 3. Autenticação e API
 
