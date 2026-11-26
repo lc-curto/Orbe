@@ -1,7 +1,13 @@
 import { forwardRef } from 'react'
-import type { CSSProperties, ReactNode } from 'react'
+import type {
+  ButtonHTMLAttributes,
+  CSSProperties,
+  HTMLAttributes,
+  MouseEventHandler,
+  ReactNode,
+} from 'react'
 
-type PrimitiveProps = Record<string, any> & {
+type PrimitiveProps = Record<string, unknown> & {
   children?: ReactNode
   className?: string
   style?: CSSProperties
@@ -74,24 +80,24 @@ function getStyle(props: PrimitiveProps, base: CSSProperties = {}): CSSPropertie
   for (const [key, value] of Object.entries(props)) {
     const mapped = styleKeys[key]
     if (mapped && value !== undefined && value !== null) {
-      ;(style as Record<string, unknown>)[mapped] = value
+      ;(style as Record<string, unknown>)[mapped] = value as CSSProperties[keyof CSSProperties]
     }
   }
   if (props.paddingHorizontal !== undefined) {
-    style.paddingLeft = props.paddingHorizontal
-    style.paddingRight = props.paddingHorizontal
+    style.paddingLeft = props.paddingHorizontal as CSSProperties['paddingLeft']
+    style.paddingRight = props.paddingHorizontal as CSSProperties['paddingRight']
   }
   if (props.paddingVertical !== undefined) {
-    style.paddingTop = props.paddingVertical
-    style.paddingBottom = props.paddingVertical
+    style.paddingTop = props.paddingVertical as CSSProperties['paddingTop']
+    style.paddingBottom = props.paddingVertical as CSSProperties['paddingBottom']
   }
   if (props.marginHorizontal !== undefined) {
-    style.marginLeft = props.marginHorizontal
-    style.marginRight = props.marginHorizontal
+    style.marginLeft = props.marginHorizontal as CSSProperties['marginLeft']
+    style.marginRight = props.marginHorizontal as CSSProperties['marginRight']
   }
   if (props.marginVertical !== undefined) {
-    style.marginTop = props.marginVertical
-    style.marginBottom = props.marginVertical
+    style.marginTop = props.marginVertical as CSSProperties['marginTop']
+    style.marginBottom = props.marginVertical as CSSProperties['marginBottom']
   }
   if (props.fontVariant === 'tabular-nums') style.fontVariantNumeric = 'tabular-nums'
   if (typeof props.numberOfLines === 'number') {
@@ -103,7 +109,7 @@ function getStyle(props: PrimitiveProps, base: CSSProperties = {}): CSSPropertie
   return { ...style, ...props.style }
 }
 
-function getRestProps(props: PrimitiveProps) {
+function getRestProps(props: PrimitiveProps): Record<string, unknown> {
   const omit = new Set([
     'children', 'className', 'style', 'onPress', 'paddingHorizontal',
     'paddingVertical', 'marginHorizontal', 'marginVertical', 'fontVariant',
@@ -119,40 +125,40 @@ function classNames(...values: Array<string | undefined>) {
 
 export const YStack = forwardRef<HTMLDivElement, PrimitiveProps>(function YStack(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'column', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'column', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
 })
 
 export const XStack = forwardRef<HTMLDivElement, PrimitiveProps>(function XStack(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'row', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-stack', className)} style={getStyle(rest, { display: 'flex', flexDirection: 'row', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
 })
 
 export const Text = forwardRef<HTMLSpanElement, PrimitiveProps>(function Text(props, ref) {
   const { children, className, ...rest } = props
-  return <span ref={ref} {...getRestProps(rest)} className={classNames('orbe-text', className)} style={getStyle(rest, { display: 'block', margin: 0 })}>{children}</span>
+  return <span ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLSpanElement>)} className={classNames('orbe-text', className)} style={getStyle(rest, { display: 'block', margin: 0 })}>{children}</span>
 })
 
 export const Button = forwardRef<HTMLButtonElement, PrimitiveProps>(function Button(props, ref) {
   const { children, className, onPress, onClick, type = 'button', ...rest } = props
-  return <button ref={ref} type={type} {...getRestProps(rest)} onClick={onClick ?? onPress} className={classNames('orbe-button', className)} style={getStyle(rest, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', font: 'inherit', cursor: rest.disabled ? 'not-allowed' : 'pointer', backgroundColor: 'transparent', borderStyle: 'solid', borderWidth: 0 })}>{children}</button>
+  return <button ref={ref} type={type as 'button' | 'submit' | 'reset'} {...(getRestProps(rest) as ButtonHTMLAttributes<HTMLButtonElement>)} onClick={(onClick ?? onPress) as MouseEventHandler<HTMLButtonElement> | undefined} className={classNames('orbe-button', className)} style={getStyle(rest, { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', font: 'inherit', cursor: rest.disabled === true ? 'not-allowed' : 'pointer', backgroundColor: 'transparent', borderStyle: 'solid', borderWidth: 0 })}>{children}</button>
 })
 
 export const Card = forwardRef<HTMLDivElement, PrimitiveProps>(function Card(props, ref) {
   const { children, className, ...rest } = props
-  return <div ref={ref} {...getRestProps(rest)} className={classNames('orbe-card', className)} style={getStyle(rest, { boxSizing: 'border-box', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
+  return <div ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLDivElement>)} className={classNames('orbe-card', className)} style={getStyle(rest, { boxSizing: 'border-box', minWidth: 0, borderStyle: 'solid', borderWidth: 0 })}>{children}</div>
 })
 
 export const Separator = forwardRef<HTMLHRElement, PrimitiveProps>(function Separator(props, ref) {
   const { className, ...rest } = props
-  return <hr ref={ref} {...getRestProps(rest)} className={classNames('orbe-separator', className)} style={getStyle(rest, { border: 0, borderTop: '1px solid #e4e7ec', margin: 0, width: '100%' })} />
+  return <hr ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLHRElement>)} className={classNames('orbe-separator', className)} style={getStyle(rest, { border: 0, borderTop: '1px solid #e4e7ec', margin: 0, width: '100%' })} />
 })
 
 export const H1 = forwardRef<HTMLHeadingElement, PrimitiveProps>(function H1(props, ref) {
   const { children, className, ...rest } = props
-  return <h1 ref={ref} {...getRestProps(rest)} className={classNames('orbe-heading', className)} style={getStyle(rest, { margin: 0, fontSize: 36, fontWeight: 800 })}>{children}</h1>
+  return <h1 ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLHeadingElement>)} className={classNames('orbe-heading', className)} style={getStyle(rest, { margin: 0, fontSize: 36, fontWeight: 800 })}>{children}</h1>
 })
 
 export const Paragraph = forwardRef<HTMLParagraphElement, PrimitiveProps>(function Paragraph(props, ref) {
   const { children, className, ...rest } = props
-  return <p ref={ref} {...getRestProps(rest)} className={classNames('orbe-paragraph', className)} style={getStyle(rest, { margin: 0 })}>{children}</p>
+  return <p ref={ref} {...(getRestProps(rest) as HTMLAttributes<HTMLParagraphElement>)} className={classNames('orbe-paragraph', className)} style={getStyle(rest, { margin: 0 })}>{children}</p>
 })
