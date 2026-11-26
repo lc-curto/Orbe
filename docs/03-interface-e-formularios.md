@@ -127,7 +127,7 @@ As especificações desta documentação definem comportamento e apresentação,
 **Estado:** aprovado pelo utilizador  
 **Data da aprovação:** 24/11/2026  
 **Âmbito:** interface, composição visual, responsividade e interação dos formulários  
-**Stack do projeto:** React, TypeScript, Vite e Tamagui  
+**Stack do projeto:** React, TypeScript, Vite, HTML semântico e CSS; primitives próprias do design system em `web/src/design-system/`  
 **Documento único de referência:** este ficheiro substitui integralmente qualquer versão anterior desta especificação.
 
 ---
