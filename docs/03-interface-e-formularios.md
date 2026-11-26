@@ -47,14 +47,14 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 ## Rota Financeira — aprovado
 - Desktop: mostrar pelo menos três meses consecutivos lado a lado; navegação anterior/seguinte desloca o período um mês.
 - Cada mês apresenta título, totais de entradas/saídas, indicação do saldo final e tabela diária.
-- Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura.
+- Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura. A lista cresce com a página (sem scroll interno) e termina junto da área reservada à bottom bar; o FAB global fica fixo no viewport e sobrepõe a lista.
 - Cabeçalho mobile segue o padrão de Movimentos: título alinhado à esquerda e seletor mensal partilhado alinhado à direita; ocultar subtítulo neste breakpoint.
 - Tabela diária: Dia, Entradas, Saídas, Saldo; incluir todos os dias do mês quando o switch está desligado.
 - O switch ligado mostra apenas dias com movimentos realizados elegíveis.
 - Selecionar a data abre modal de detalhe; filtros numa linha e nesta ordem: Todos, Receitas, G. fixos, G. variáveis.
 - KPIs/totais apenas Entradas e Saídas; sem KPI de saldo inicial.
 - Sem gráfico e sem distinção fixa/variável na tabela principal.
-- Entradas e saídas realizadas são agregadas; transferências e estados não realizados são excluídos.
+- Entradas e saídas realizadas são agregadas; transferências não alteram esses totais, mas aparecem no detalhe diário como operação neutra. Estados não realizados não entram na tabela nem nos totais.
 - Saldo diário e saldo final/projeção só são apresentados quando o contrato financeiro fornecer valores válidos. Até lá, indicar indisponibilidade, sem inventar números.
 - Cor só na célula/valor Saldo quando houver cálculo fiável, nunca na linha. Sem badges, legendas ou etiquetas coloridas.
 - Saldo projetado final recebe cor apenas quando negativo.
