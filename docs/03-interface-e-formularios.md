@@ -52,6 +52,7 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Desktop: mostrar pelo menos três meses consecutivos lado a lado; navegação anterior/seguinte desloca o período um mês.
 - Cada mês apresenta título, totais de entradas/saídas, indicação do saldo final e tabela diária.
 - Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura.
+- Cabeçalho mobile segue o padrão de Movimentos: título alinhado à esquerda e seletor mensal partilhado alinhado à direita; ocultar subtítulo neste breakpoint.
 - Tabela diária: Dia, Entradas, Saídas, Saldo; incluir todos os dias do mês quando o switch está desligado.
 - O switch ligado mostra apenas dias com movimentos realizados elegíveis.
 - Selecionar a data abre modal de detalhe; filtros numa linha e nesta ordem: Todos, Receitas, G. fixos, G. variáveis.
