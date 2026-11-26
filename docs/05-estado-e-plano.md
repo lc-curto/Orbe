@@ -112,12 +112,6 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 
 ---
 
-## Decisões de interface aprovadas — 2026-11-26
-
-- A linha de uma compra parcelada apresenta o valor da prestação do período; o valor total da compra só é mostrado ao abrir o detalhe. A informação de prestações pagas é secundária/discreta.
-- O menu contextual `⋮` dos movimentos tem hierarquia aprovada: Editar, Duplicar, ação de estado, ações específicas do tipo, separador e ação destrutiva final (Eliminar se elegível; Estornar para operação realizada).
-- O desenho do menu está aprovado; contratos de permissões, transições, endpoints e fluxos de pagamento/estorno continuam pendentes e não foram declarados implementados.
-
 > Documento de controlo do projeto. Atualizado em 2026-11-26.
 >
 > Este documento regista o estado conhecido no repositório e orienta a sequência de trabalho. Um item marcado como concluído significa que existe implementação ou decisão versionada; não significa que todos os fluxos relacionados estejam completos ou que a auditoria final tenha sido concluída.
@@ -376,4 +370,6 @@ Este documento é um mapa de execução, não substitui as especificações func
 - Não existe ação **Nova projeção** no FAB: a projeção é calculada na Rota Financeira.
 - Relatórios e Configurações não apresentam FAB quando não há ação de criação aprovada.
 - O menu contextual `⋮` dos movimentos tem composição aprovada em `docs/03-interface-e-formularios.md`; a implementação e as ações por estado dependem dos contratos API pendentes.
+- A linha de uma compra parcelada apresenta o valor da prestação do período; o valor total da compra só é mostrado ao abrir o detalhe. A indicação de prestações pagas é secundária/discreta.
+- O menu contextual `⋮` dos movimentos tem hierarquia aprovada: Editar, Duplicar, ação de estado, ações específicas do tipo, separador e ação destrutiva final (Eliminar se elegível; Estornar para operação realizada). A composição está aprovada; contratos de permissões, transições, endpoints e fluxos de pagamento/estorno continuam pendentes.
 - Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios, Configurações e Dívidas permanecem páginas-placeholder até à implementação funcional.
