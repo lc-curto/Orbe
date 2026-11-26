@@ -5,7 +5,7 @@ O Orbe é uma aplicação de gestão financeira pessoal, organizada num monorepo
 ## Estrutura
 
 - `backend/` — API Laravel, domínio financeiro, persistência e testes ([guia backend](backend/README.md)).
-- `web/` — aplicação React + TypeScript + Vite, com Tamagui ([guia web](web/README.md)); o código é organizado por aplicação, funcionalidades e componentes partilhados.
+- `web/` — aplicação React + TypeScript + Vite, com primitives React/HTML e CSS próprios ([guia web](web/README.md)); o código é organizado por aplicação, funcionalidades e componentes partilhados.
 - `docs/` — decisões de produto, regras financeiras, interface, arquitetura, estado e contratos API.
 - `AGENTS.md` — regras de trabalho e desenvolvimento do projeto.
 
