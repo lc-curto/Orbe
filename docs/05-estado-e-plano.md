@@ -75,7 +75,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 ## Trabalho funcional pendente
 - Contratos/read models de saldos e projeções continuam pendentes, especialmente saldo diário/final e projeção na Rota Financeira.
-- Formularios de escrita ainda não estão todos integrados; implementar apenas os fluxos cobertos por contratos aprovados.
+- Formulários de escrita ainda não estão todos integrados; implementar apenas os fluxos cobertos por contratos aprovados.
 - Dívidas: não haverá página principal autónoma. O código da página de Dívidas foi removido da branch `feature/debts-primary-page`; o PR #7 remove a navegação/placeholder e alinha o FAB, juntamente com a alteração backend de destinos pendentes. Obrigações permanecem no modelo financeiro e serão consultadas/geridas a partir dos movimentos/faturas relacionados. Nenhum valor ou dívida é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
 - Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global.
@@ -277,7 +277,7 @@ Estes são os únicos fluxos de escrita que têm contratos backend confirmados n
 - [ ] Definir edição, cancelamento, eliminação e reversão contextual.
 - [ ] Definir pagamento completo de faturas.
 - [ ] Fechar políticas de faturas vencidas, ciclos anteriores e crédito negativo.
-- [ ] Fechar precisão monetária e arredondamento.
+- [x] Fechar precisão monetária e arredondamento para o núcleo financeiro: `DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas (ARC-003).
 
 Enquanto estes contratos não existirem, o frontend não deve criar categorias, contas, endpoints, payloads ou fluxos fictícios.
 
