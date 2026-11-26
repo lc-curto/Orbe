@@ -150,6 +150,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Definir e implementar o contrato mínimo de contas, categorias, despesas comuns e receitas — Fase 1.
 - [x] Definir e implementar o contrato mínimo de transferências com duas pernas — Fase 2.
 - [x] Implementar recorrências — Fase 3, conforme [12 — Contrato de recorrências](06-contratos-api.md).
+- Regra de destino pendente/realizado aplicada no backend da branch `feature/debts-primary-page`: criação de gasto/ganho pendente sem `account_id`, confirmação exige conta ativa e cria o lançamento na mesma transação; recorrências são criadas sem conta e recolhem conta na materialização. Testes de regressão foram acrescentados, mas ainda não executados nesta sessão.
 - [!] Implementar gestão completa de dívidas: depende do contrato específico e das fases seguintes.
 
 ## 3. Autenticação e API
