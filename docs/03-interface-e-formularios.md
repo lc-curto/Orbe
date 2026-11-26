@@ -392,11 +392,14 @@ Os campos efetivos e a sua obrigatoriedade devem vir da documentação funcional
 2. Campo de valor em destaque, correspondente ao valor total do gasto.
 3. Campos funcionais do gasto, com etiquetas superiores e contorno.
 4. Seletor de categoria em lista simples com ícones.
-5. Campo de meio de pagamento/liquidação, que determina os efeitos financeiros da operação conforme o contrato: conta (pagamento imediato), cartão/fatura, por pagar (obrigação) ou prestações. A obrigação, quando aplicável, deriva do gasto; não se cria uma segunda despesa nem se exige uma ação genérica paralela **Nova dívida**.
+5. Para um gasto **realizado**, apresentar o seletor do destino/instrumento financeiro suportado pelo fluxo (por exemplo, conta ou cartão/fatura); a seleção adequada é obrigatória antes de guardar. Para um gasto **pendente**, ocultar completamente este campo: não apresentar nem exigir conta, cartão, fatura ou meio de liquidação. Ao confirmar o pendente como realizado, recolher então os dados necessários. A obrigação, quando aplicável, deriva do gasto; não se cria uma segunda despesa nem se exige uma ação genérica paralela **Nova dívida**.
 6. Controlo de data com atalhos rápidos.
 7. Rodapé fixo com ação secundária e ação principal.
 
 **Regras visuais e de apresentação:**
+- O estado (Pendente/Realizado) determina os campos de liquidação antes de guardar.
+- Em Pendente, não renderizar seletor, placeholder, resumo ou campo de conta/cartão/meio de liquidação; a ausência é intencional, não um campo por preencher.
+- Em Realizado, apresentar o destino/instrumento adequado e impedir guardar enquanto não estiver selecionado.
 - Valor total do gasto é o primeiro foco visual no formulário.
 - Campos restantes devem ter hierarquia mais discreta.
 - Não transformar cada campo num cartão independente.
@@ -415,15 +418,18 @@ Valor total
 [Campos definidos pela especificação funcional]
 Categoria
 [Lista simples com ícones]
-Meio de pagamento
-[Conta / Cartão / Por pagar / Prestações]
+Estado
+[Pendente / Realizado]
+
+[Se Realizado: Conta / Cartão ou outro destino suportado]
+[Se Pendente: não mostrar campos de liquidação]
 Data
 [Hoje] [Ontem] [Escolher data]
 ────────────────────────────────────────
 [Cancelar]                 [Guardar]
 ```
 
-**Limite funcional:** esta composição aprova a intenção de interface, não cria endpoints nem fecha todos os campos/regras de obrigações genéricas, financiamento, pagamento parcial ou seleção antecipada em operações pendentes. Estes continuam sujeitos aos contratos financeiros/API.
+**Limite funcional:** esta composição aprova a regra de apresentação e validação de destino por estado; não cria endpoints nem fecha todos os campos/regras de obrigações genéricas, financiamento ou pagamento parcial. Para destinos ainda sem contrato, a opção não pode ser apresentada como executável.
 
 ### 6.2 Receita
 
@@ -434,7 +440,8 @@ Data
 - Distinguir a natureza da operação com tratamento visual coerente, por exemplo na cor do valor, sem criar um segundo design system.
 - Não usar uma cor diferente em todos os elementos indiscriminadamente.
 - Se a receita usar categorias ou campos diferentes por regra funcional, respeitar essa diferença sem alterar a estrutura visual comum.
-- Quando já recebida, representar a conta onde o valor entrou; quando prevista/pendente, não apresentar a seleção da conta como obrigatória nem assumir que fica associada na criação. O momento de associação da conta em receitas pendentes continua por decidir.
+- Para um rendimento **realizado**, apresentar e exigir a conta/destino suportado onde o valor entrou antes de guardar.
+- Para um rendimento **pendente**, ocultar completamente a seleção de conta/cartão/destino; não apresentar nem exigir instrumento financeiro. Ao confirmar o recebimento, recolher então o destino necessário.
 
 ### 6.3 Transferência
 
@@ -975,8 +982,8 @@ A interface deve distinguir o instrumento utilizado e o efeito financeiro corres
 **Despesa pendente**
 - Mostrar claramente que está pendente e que a data é prevista.
 - Não aumentar saldo de conta nem reconhecer como realizado antes da confirmação.
-- A documentação não decide se conta/cartão é associado já na criação ou apenas no momento da confirmação. Não impor uma destas opções nem tornar o campo obrigatório até essa decisão ser fechada.
-- Na confirmação, recolher os dados necessários para criar os efeitos efetivos permitidos. O detalhe exato depende da decisão pendente sobre associação antecipada.
+- Não apresentar nem exigir conta, cartão, fatura ou outro destino durante a criação/edição enquanto a despesa permanecer pendente.
+- Ao confirmar como realizada, exigir e recolher o destino/instrumento adequado ao tipo de operação antes de criar os efeitos financeiros. A operação não pode ser confirmada sem essa associação.
 
 ### 17.3 Receita recebida ou prevista
 
@@ -988,7 +995,8 @@ A interface deve distinguir o instrumento utilizado e o efeito financeiro corres
 **Receita prevista/pendente**
 - Mostrar estado pendente e data prevista.
 - Não aumentar o saldo efetivo da conta.
-- A associação antecipada a uma conta, ou a seleção apenas no momento da confirmação, não está definida nos documentos. Não escolher silenciosamente uma alternativa.
+- Não apresentar nem exigir conta, cartão ou outro destino durante a criação/edição enquanto o rendimento permanecer pendente.
+- Ao confirmar o recebimento, exigir e recolher o destino adequado antes de criar o efeito financeiro.
 - A confirmação do recebimento deve ser uma ação explícita.
 
 **Recebimentos parciais:** as regras aprovadas detalham pagamentos parciais de obrigações, mas não fecham suficientemente o fluxo de recebimentos parciais de receitas. Não inventar um fluxo, alocação ou conjunto de ações.
@@ -1089,18 +1097,17 @@ A apresentação dos botões e menus deve obedecer a `docs/01-produto-e-funciona
 ### 17.12 Decisões funcionais ainda pendentes — não resolver no desenho
 
 A documentação consultada não permite fechar os pontos seguintes. Permanecem explicitamente pendentes:
-1. Associar conta/cartão na criação de operação pendente ou apenas na confirmação, tanto para despesas como para receitas.
-2. Taxonomia completa de meios de pagamento e respetiva apresentação. Não inventar opções como dinheiro, débito, transferência ou outras como catálogo fechado.
-3. Recebimentos parciais de receitas: criação, associação, conta de destino e reversão.
-4. Associação de pagamentos de dívida a prestações específicas; não presumir FIFO.
-5. Regra para compras efetuadas no próprio dia do fecho do cartão.
-6. Apresentação de faturas de ciclos anteriores que continuam com obrigação em aberto.
-7. Política de planos de fatura vencidos: débito automático ou reagendamento.
-8. Crédito negativo de fatura, passagem a ciclos seguintes e eventual devolução à conta.
-9. Fórmula, janela histórica, distribuição diária e apresentação de estimativas variáveis na Rota.
-10. Precisão monetária, escala e arredondamento; a interface não deve fixar casas decimais ou regras de arredondamento por conta própria.
-11. Moeda principal e possibilidade de alteração depois de existirem movimentos.
-12. Máquinas de estado completas de faturas, planos, dívidas, prestações, ocorrências e exceções de transferências.
+1. Taxonomia completa de destinos/instrumentos para operações realizadas e respetiva apresentação. Não inventar um catálogo fechado de opções não suportadas pelos contratos.
+2. Recebimentos parciais de receitas: criação, destino, alocação e reversão.
+3. Associação de pagamentos de dívida a prestações específicas; não presumir FIFO.
+4. Regra para compras efetuadas no próprio dia do fecho do cartão.
+5. Apresentação de faturas de ciclos anteriores que continuam com obrigação em aberto.
+6. Política de planos de fatura vencidos: débito automático ou reagendamento.
+7. Crédito negativo de fatura, passagem a ciclos seguintes e eventual devolução à conta.
+8. Fórmula, janela histórica, distribuição diária e apresentação de estimativas variáveis na Rota.
+9. Precisão monetária, escala e arredondamento; a interface não deve fixar casas decimais ou regras de arredondamento por conta própria.
+10. Moeda principal e possibilidade de alteração depois de existirem movimentos.
+11. Máquinas de estado completas de faturas, planos, dívidas, prestações, ocorrências e exceções de transferências.
 
 Até estas decisões serem aprovadas:
 - Não transformar os pontos pendentes em campos obrigatórios, opções, botões, validações ou comportamentos.
