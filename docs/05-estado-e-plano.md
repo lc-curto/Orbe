@@ -81,7 +81,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 - Auditar/refatorar gradualmente páginas existentes com problemas de arquitetura React, começando por Movimentos e responsabilidades excessivas em `App.tsx`; não fazer refatoração global.
 - Definir validações e ações por estado/dependência quando os contratos forem tratados.
 
-## Estado da implementação frontend — 2026-11-26
+## Estado da implementação frontend — 2026-11-27
 
 - PR #3: página Contas em modo de leitura publicada na `main`.
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
@@ -91,7 +91,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 - PR #7 foi integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`): remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
 - Backend da branch: gasto/rendimento pendente sem destino financeiro; realizado exige conta ativa; confirmação recolhe conta e cria lançamento; recorrências pendentes não guardam destino até à materialização.
 - Validação local reportada pelo utilizador: **52 testes backend passaram (217 assertions)** e Pint `--test` passou nos 7 ficheiros PHP alterados. O Pint global reporta 63 problemas de estilo em 98 ficheiros preexistentes/abrangidos; não foi aplicada formatação global.
-- Após o PR #7, a workflow `Web CI` passou lint e build de produção na branch `feature/reports-settings-ui-clean` (PR #9, run 45880748947, commit `960c156`). A QA visual/responsiva em desktop/tablet/mobile continua pendente. O rate limit da Vercel é um limite de deploy e não invalida o CI concluído.
+- Após o PR #7, a workflow `Web CI` passou lint, TypeScript e build de produção na branch `feature/reports-settings-ui-clean` (PR #9, run 45975451168, commit `71cff376`). A QA visual/responsiva em desktop/tablet/mobile continua pendente. O rate limit da Vercel é um limite de deploy e não invalida o CI concluído.
 - Formulários de escrita, consulta/liquidação contextual de obrigações e projeções reais permanecem por implementar/validar. A ausência de página autónoma de Dívidas é uma decisão aprovada, não uma funcionalidade em falta.
 
 ## Próxima sequência recomendada
@@ -391,7 +391,7 @@ Este documento é um mapa de execução, não substitui as especificações func
 - Relatórios usa o componente MonthSelector existente; a agregação de operações realizadas foi isolada em `features/reports/utils.ts`. Apresenta apenas dimensões suportadas pelos dados atuais. A análise de obrigações sem read model disponível é explicitamente indisponível; não há valores fictícios.
 - Configurações apresenta os grupos aprovados. A preferência de símbolo é funcional e guardada no navegador; as opções sem contratos/painéis próprios são informativas, não ações simuladas.
 - Regra aprovada: a alteração de símbolo não converte nem altera valores, dados, saldos, cálculos, escala ou precisão.
-- Lint, TypeScript e build de produção passaram no CI da branch (run 45975362442, commit `1e8a55b`). A QA visual/responsiva em browser e a revisão final continuam pendentes antes de integrar na main.
+- Lint, TypeScript e build de produção passaram no CI da branch (run 45975451168, commit `71cff376`). A QA visual/responsiva em browser e a revisão final continuam pendentes antes de integrar na main.
 
 
 ## Organização frontend — branch `feature/reports-settings-ui-clean` (PR #9, 2026-11-26)
