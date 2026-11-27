@@ -128,3 +128,24 @@
     font-size: 13px;
   }
 }
+@media (min-width: 1025px) {
+  .movement-financial-summary {
+    width: 100%;
+    box-sizing: border-box;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+  .movement-financial-summary .movement-financial-result > strong {
+    font-size: 36px;
+  }
+  .movement-financial-summary .movement-financial-breakdown {
+    gap: 24px;
+    padding-top: 16px;
+  }
+  .movement-financial-summary .movement-financial-breakdown > div > span {
+    font-size: 13px;
+  }
+  .movement-financial-summary .movement-financial-breakdown > div > strong {
+    font-size: 15px;
+  }
+}
