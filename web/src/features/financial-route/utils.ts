@@ -1,3 +1,5 @@
+import { formatCurrency } from '../currency/formatCurrency'
+import type { CurrencySymbol } from '../currency/types'
 import type { Operation } from '../../api/types'
 
 export function dateKey(value?: string | null) {
@@ -29,8 +31,8 @@ export function formatMonthRange(first: string, last: string) {
   return `${firstLabel} – ${lastLabel}`
 }
 
-export function formatMoney(value: number) {
-  return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(Object.is(value, -0) ? 0 : value)
+export function formatMoney(value: number, symbol: CurrencySymbol = '€') {
+  return formatCurrency(Object.is(value, -0) ? 0 : value, symbol)
 }
 
 export function formatAmount(value: number) {

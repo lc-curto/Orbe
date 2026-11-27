@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Card, CardInvoice, Operation } from './api/types'
-import { MovementRow } from './MovementsPage'
+import type { Card, CardInvoice, Operation } from '../../../api/types'
+import { formatCurrency } from '../../currency/formatCurrency'
+import { useCurrency } from '../../currency/useCurrency'
+import type { CurrencySymbol } from '../../currency/types'
+import { MovementRow } from '../../movements/components/MovementRow'
 
 type Props = {
   cards: Card[]
@@ -11,8 +14,8 @@ type Props = {
 
 type CardFilter = 'ACTIVE' | 'CLOSED'
 
-function money(value: string | number): string {
-  return new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'EUR' }).format(Number(value))
+function money(value: string | number, symbol: CurrencySymbol = '€'): string {
+  return formatCurrency(value, symbol)
 }
 
 function date(value: string): string {
@@ -42,6 +45,7 @@ function CardIcon() {
 }
 
 export function CardsPage({ cards, operations, loading, error }: Props) {
+  const { symbol } = useCurrency()
   const [filter, setFilter] = useState<CardFilter>('ACTIVE')
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null)
   const [selectedInvoiceId, setSelectedInvoiceId] = useState<number | null>(null)
@@ -91,9 +95,9 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
         <span className={`cards-invoice-status ${state === 'Paga' ? 'is-paid' : state === 'Cancelada' ? 'is-cancelled' : 'is-open'}`}>{state}</span>
       </div>
       <div className="cards-invoice-amounts">
-        <div><span>Em aberto</span><strong>{money(invoice.summary.open_amount)}</strong></div>
-        <div><span>Total</span><strong>{money(invoice.summary.obligation_amount)}</strong></div>
-        <div><span>Pago</span><strong>{money(invoice.summary.paid_amount)}</strong></div>
+        <div><span>Em aberto</span><strong>{money(invoice.summary.open_amount, symbol)}</strong></div>
+        <div><span>Total</span><strong>{money(invoice.summary.obligation_amount, symbol)}</strong></div>
+        <div><span>Pago</span><strong>{money(invoice.summary.paid_amount, symbol)}</strong></div>
       </div>
       <div className="cards-invoice-due"><span>Vencimento</span><strong>{date(invoice.due_date)}</strong></div>
     </button>
@@ -110,10 +114,10 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
       </header>
       <div className="cards-detail-summary">
         <span className="cards-summary-label">Total da fatura</span>
-        <strong className="cards-available-value">{money(selectedInvoice.summary.obligation_amount)}</strong>
+        <strong className="cards-available-value">{money(selectedInvoice.summary.obligation_amount, symbol)}</strong>
         <div className="cards-invoice-total-lines">
-          <span>Pago <strong>{money(selectedInvoice.summary.paid_amount)}</strong></span>
-          <span>Em aberto <strong>{money(selectedInvoice.summary.open_amount)}</strong></span>
+          <span>Pago <strong>{money(selectedInvoice.summary.paid_amount, symbol)}</strong></span>
+          <span>Em aberto <strong>{money(selectedInvoice.summary.open_amount, symbol)}</strong></span>
         </div>
       </div>
       <h2 className="accounts-section-title">Movimentos</h2>
@@ -139,13 +143,13 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
       </header>
       <div className="cards-detail-summary">
         <span className="cards-summary-label">Disponível</span>
-        <strong className="cards-available-value">{money(selectedCard.summary.available_amount)}</strong>
-        <p>de {money(selectedCard.credit_limit)}</p>
+        <strong className="cards-available-value">{money(selectedCard.summary.available_amount, symbol)}</strong>
+        <p>de {money(selectedCard.credit_limit, symbol)}</p>
         <div className="cards-usage-track" role="progressbar" aria-label="Limite utilizado" aria-valuenow={Math.round(cardUsage(selectedCard))} aria-valuemin={0} aria-valuemax={100}>
           <span style={{ width: `${cardUsage(selectedCard)}%` }} />
         </div>
         <div className="cards-usage-foot">
-          <span>Utilizado {money(selectedCard.summary.used_amount)}</span>
+          <span>Utilizado {money(selectedCard.summary.used_amount, symbol)}</span>
           <span>{cardUsage(selectedCard).toLocaleString('pt-PT', { maximumFractionDigits: 0 })}%</span>
         </div>
         <div className="cards-cycle-line">
@@ -168,7 +172,7 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
       </header>
       <div className="accounts-total-card cards-total-card">
         <span className="accounts-total-label">TOTAL EM DÍVIDA</span>
-        <strong className="accounts-total-value">{money(totalDebt)}</strong>
+        <strong className="accounts-total-value">{money(totalDebt, symbol)}</strong>
         <p className="accounts-readonly-note">{cards.length} {cards.length === 1 ? 'cartão' : 'cartões'}</p>
       </div>
       <div className="accounts-filter-row">
@@ -196,9 +200,9 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
                 <span className={`accounts-status-badge ${isActive ? 'is-active' : 'is-closed'}`}>{isActive ? 'Ativo' : 'Encerrado'}</span>
                 <span className="cards-row-chevron" aria-hidden="true">›</span>
               </div>
-              <div className="cards-row-limit-line"><span>Utilizado {money(card.summary.used_amount)}</span><span>Limite total {money(card.credit_limit)}</span></div>
+              <div className="cards-row-limit-line"><span>Utilizado {money(card.summary.used_amount, symbol)}</span><span>Limite total {money(card.credit_limit, symbol)}</span></div>
               <div className="cards-usage-track" role="progressbar" aria-label={`Limite utilizado por ${card.name}`} aria-valuenow={Math.round(usage)} aria-valuemin={0} aria-valuemax={100}><span style={{ width: `${usage}%` }} /></div>
-              <div className="cards-row-available-line"><span>Disponível {money(card.summary.available_amount)}</span><span>{usage.toLocaleString('pt-PT', { maximumFractionDigits: 0 })}% utilizado</span></div>
+              <div className="cards-row-available-line"><span>Disponível {money(card.summary.available_amount, symbol)}</span><span>{usage.toLocaleString('pt-PT', { maximumFractionDigits: 0 })}% utilizado</span></div>
               <div className="cards-cycle-line"><span>Fecho {card.closing_day ?? '—'} · Vence {card.due_day ?? '—'}</span></div>
             </button>
             <div className="accounts-row-actions">

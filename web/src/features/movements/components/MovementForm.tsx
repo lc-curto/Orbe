@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import { OrbeIcon } from '../design-system/Icon'
-import type { OrbeIconName } from '../design-system/Icon'
-import { orbe } from '../design-system/tokens'
+import { OrbeIcon } from '../../../design-system/Icon'
+import type { OrbeIconName } from '../../../design-system/Icon'
+import { orbe } from '../../../design-system/tokens'
+import { useCurrency } from '../../currency/useCurrency'
 import './formStyles.css'
 
 type FormKind = 'expense' | 'income' | 'transfer'
@@ -154,7 +155,8 @@ export function Textarea({ id, value, onChange, maxLength, disabled }: { id: str
 }
 
 export function MoneyInput({ id, value, onChange, disabled }: { id: string; value: string; onChange: (value: string) => void; disabled?: boolean }) {
-  return <div className="orbe-money-input"><span aria-hidden="true">€</span><input id={id} name={id} className="orbe-input orbe-money-input-control" inputMode="decimal" value={value} onChange={(event) => onChange(event.target.value)} onBlur={() => onChange(normalizeMoney(value))} placeholder="0,00" disabled={disabled} /></div>
+  const { symbol } = useCurrency()
+  return <div className="orbe-money-input"><span aria-hidden="true">{symbol}</span><input id={id} name={id} className="orbe-input orbe-money-input-control" inputMode="decimal" value={value} onChange={(event) => onChange(event.target.value)} onBlur={() => onChange(normalizeMoney(value))} placeholder="0,00" disabled={disabled} /></div>
 }
 
 function dateFromOffset(offset: number) {
@@ -225,7 +227,7 @@ export function Toast({ message, type = 'info' }: { message: string; type?: 'inf
 
 function today() { return dateFromOffset(0) }
 function normalizeMoney(value: string) {
-  const clean = value.trim().replace(/€/g, '').replace(/\s/g, '')
+  const clean = value.trim().replace(/[€$£]/g, '').replace(/CHF/g, '').replace(/\s/g, '')
   if (!clean || /^-/.test(clean) || /[^\d.,]/.test(clean)) return ''
   if (/^\d{1,3}\.\d{3},\d{1,4}$/.test(clean)) return clean.replace(/\./g, '').replace(',', '.')
   if (/^\d{1,3},\d{3}\.\d{1,4}$/.test(clean)) return clean.replace(/,/g, '')

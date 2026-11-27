@@ -1,6 +1,6 @@
 # Orbe — Web
 
-Aplicação web do Orbe em React + TypeScript + Vite, com Tamagui e `react-native-web` para a camada de compatibilidade de componentes.
+Aplicação web do Orbe em React + TypeScript + Vite. A camada visual usa primitives nativas React/HTML e CSS, centralizadas em `src/design-system/`; não depende de Tamagui nem de `react-native-web`.
 
 ## Requisitos
 
@@ -38,9 +38,19 @@ npm run preview
 - `build`: verificação TypeScript e build de produção.
 - `preview`: serve localmente o build produzido.
 
+## Organização do código
+
+`src/app/` contém a composição da aplicação e o shell. As páginas e componentes de domínio ficam em `src/features/<domínio>/`, organizados em `pages/`, `components/`, `hooks/`, `utils/` e `styles/` conforme necessário. Componentes reutilizáveis sem dono de domínio ficam em `src/shared/components/`; tokens e primitives ficam em `src/design-system/`; contratos e acesso à API ficam em `src/api/`.
+
+O entrypoint é `src/main.tsx`. `src/index.css` agrega os estilos transversais e por feature, preservando a ordem de importação. Evitar páginas na raiz de `src`, imports de componentes de uma página para outra e folhas CSS globais monolíticas. Novos estilos devem ser colocados junto da feature e usar nomes de classe específicos.
+
+## Validação contínua
+
+A workflow `Web CI` executa `npm ci`, ESLint e `npm run build` (TypeScript + Vite) em pushes e pull requests que alterem `web/**`. Pode também ser executada manualmente no GitHub Actions.
+
 ## Estado funcional
 
-A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas e interface da Rota Financeira. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
+A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. CI de lint e build TypeScript/Vite passou após a remoção de Tamagui; QA visual responsivo desktop/mobile permanece pendente. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
 
 Não criar dados fictícios nem apresentar projeções como valores realizados. A página principal autónoma de Dívidas foi descontinuada; obrigações permanecem ligadas aos movimentos/faturas associados.
 

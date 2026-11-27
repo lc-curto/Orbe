@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Button, Card, Text, XStack, YStack } from 'tamagui'
+import { Button, Card, Text, Row, Stack } from './primitives'
 import { OrbeIcon } from './Icon'
 import type { OrbeIconName } from './Icon'
 import { movementTone, orbe } from './tokens'
@@ -14,7 +14,7 @@ export function OrbeIconButton({ icon, label, onPress, disabled = false }: { ico
 }
 
 export function OrbeSectionHeader({ title, action, onAction }: { title: string; action?: string; onAction?: () => void }) {
-  return <XStack style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={orbe.space.md}><Text color={orbe.colors.text} fontSize={orbe.typography.title} fontWeight="800">{title}</Text>{action ? <Button onPress={onAction} aria-label={action} borderWidth={0} backgroundColor="transparent" padding={0} color={orbe.colors.primary} fontSize={orbe.typography.label} fontWeight="700">{action}</Button> : null}</XStack>
+  return <Row style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={orbe.space.md}><Text color={orbe.colors.text} fontSize={orbe.typography.title} fontWeight="800">{title}</Text>{action ? <Button onPress={onAction} aria-label={action} borderWidth={0} backgroundColor="transparent" padding={0} color={orbe.colors.primary} fontSize={orbe.typography.label} fontWeight="700">{action}</Button> : null}</Row>
 }
 
 export function OrbeAmount({ value, kind, large = false }: { value: string; kind: MovementKind; large?: boolean }) {
@@ -29,5 +29,5 @@ export function OrbeBadge({ children, tone = 'success' }: { children: ReactNode;
 
 export function OrbeBottomBar({ active, onSelect }: { active: string; onSelect: (label: string) => void }) {
   const items: Array<[string, OrbeIconName]> = [['Início', 'grid'], ['Movimentos', 'moves'], ['Novo', 'plus'], ['Contas', 'wallet'], ['Mais', 'more']]
-  return <XStack className="orbe-bottom-bar" backgroundColor={orbe.colors.surface} borderTopWidth={1} borderColor={orbe.colors.border} paddingHorizontal={8} paddingTop={8} paddingBottom={8}>{items.map(([label, icon]) => <Button key={label} onPress={() => onSelect(label)} aria-label={label} flex={1} height={58} padding={0} borderWidth={0} backgroundColor="transparent" color={active === label ? orbe.colors.primary : orbe.colors.neutral}><YStack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}>{label === 'Novo' ? <YStack width={48} height={48} marginTop={-24} borderRadius={orbe.radius.pill} backgroundColor={orbe.colors.primary} style={{ alignItems: 'center', justifyContent: 'center' }}><OrbeIcon name="plus" size={22} color="#ffffff" /></YStack> : <OrbeIcon name={icon} size={19} color="currentColor" />}<Text color="currentColor" fontSize={11} fontWeight={active === label ? '700' : '500'}>{label}</Text></YStack></Button>)}</XStack>
+  return <Row className="orbe-bottom-bar" backgroundColor={orbe.colors.surface} borderTopWidth={1} borderColor={orbe.colors.border} paddingHorizontal={8} paddingTop={8} paddingBottom={8}>{items.map(([label, icon]) => <Button key={label} onPress={() => onSelect(label)} aria-label={label} flex={1} height={58} padding={0} borderWidth={0} backgroundColor="transparent" color={active === label ? orbe.colors.primary : orbe.colors.neutral}><Stack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}>{label === 'Novo' ? <Stack width={48} height={48} marginTop={-24} borderRadius={orbe.radius.pill} backgroundColor={orbe.colors.primary} style={{ alignItems: 'center', justifyContent: 'center' }}><OrbeIcon name="plus" size={22} color="#ffffff" /></Stack> : <OrbeIcon name={icon} size={19} color="currentColor" />}<Text color="currentColor" fontSize={11} fontWeight={active === label ? '700' : '500'}>{label}</Text></Stack></Button>)}</Row>
 }

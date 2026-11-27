@@ -1,0 +1,147 @@
+/* Responsive shell: exactly one layout tree is visible at every viewport width. */
+.desktop-layout { display: flex; flex: 1 1 auto; align-items: stretch; min-height: 100vh; }
+.mobile-page-shell { display: none; }
+
+/* Global responsive creation action and navigation; fixed to the viewport. */
+.desktop-sidebar {
+  display: flex; flex-direction: column; height: 100vh; max-height: 100vh;
+  min-height: 0 !important; overflow: hidden !important;
+}
+.desktop-sidebar-navigation {
+  flex: 1 1 auto !important; min-height: 0 !important; overflow-y: auto; overflow-x: hidden;
+  overscroll-behavior: contain; scrollbar-width: thin;
+}
+.desktop-sidebar-navigation > * { min-width: 0; max-width: 100%; }
+.sidebar-footer, .sidebar-footer .account-menu {
+  width: 100%; min-width: 0; max-width: 100%; flex-shrink: 0;
+}
+.sidebar-profile-button {
+  width: 100% !important; max-width: 100% !important; min-width: 0 !important; overflow: hidden !important;
+}
+.sidebar-profile-copy, .sidebar-profile-name-wrap {
+  min-width: 0 !important; max-width: 100% !important; overflow: hidden !important;
+}
+.sidebar-profile-name {
+  display: block !important; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.main-content { min-width: 0; overflow-x: clip; }
+.app-add-fab {
+  position: fixed; right: calc(24px + env(safe-area-inset-right)); bottom: calc(24px + env(safe-area-inset-bottom));
+  z-index: 60; display: inline-flex; align-items: center; justify-content: center;
+  width: 58px; height: 58px; padding: 0; border: 0; border-radius: 50%;
+  background: #6259e8; color: #ffffff; box-shadow: 0 8px 22px rgba(98, 89, 232, .32); cursor: pointer;
+}
+.app-add-fab:hover:not(:disabled) { background: #5147d8; box-shadow: 0 10px 26px rgba(98, 89, 232, .38); }
+.app-add-fab:disabled { opacity: .48; box-shadow: none; }
+.add-fab-dismiss { position: fixed; inset: 0; z-index: 49; border: 0; padding: 0; background: transparent; cursor: default; }
+.add-fab-menu {
+  position: fixed; right: calc(24px + env(safe-area-inset-right)); bottom: calc(94px + env(safe-area-inset-bottom));
+  z-index: 55; width: 224px; max-width: calc(100vw - 32px); padding: 8px;
+  border: 1px solid var(--orbe-border); border-radius: 16px; background: #ffffff;
+  box-shadow: 0 12px 32px rgba(16, 24, 40, .16);
+}
+.add-fab-menu-item {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 46px; padding: 0 12px;
+  border: 0; border-radius: 10px; background: transparent; color: var(--orbe-text); font: inherit;
+  font-size: 13px; font-weight: 650; text-align: left; cursor: pointer;
+}
+.add-fab-menu-item:hover { background: #f2f4f7; box-shadow: none !important; }
+@media (max-width: 1024px) {
+  .app-add-fab {
+    right: calc(16px + env(safe-area-inset-right));
+    bottom: calc(var(--orbe-nav-height) + 18px + env(safe-area-inset-bottom));
+    z-index: 40; width: 56px; height: 56px;
+  }
+  .add-fab-menu {
+    right: calc(16px + env(safe-area-inset-right));
+    bottom: calc(var(--orbe-nav-height) + 84px + env(safe-area-inset-bottom));
+    z-index: 55;
+  }
+  .mobile-page-shell { display: block !important; }
+  .mobile-bottom-bar {
+    display: flex !important; position: fixed !important; left: 0; right: 0; bottom: 0; width: 100%;
+    min-height: var(--orbe-nav-height); z-index: 25 !important;
+    padding-top: 8px !important; padding-bottom: calc(8px + env(safe-area-inset-bottom)) !important;
+    background: var(--orbe-surface) !important; border-top: 1px solid var(--orbe-border) !important;
+    padding-left: 8px !important; padding-right: 8px !important;
+    box-shadow: 0 -6px 20px rgba(16,24,40,.07);
+  }
+  .mobile-dashboard-content { padding-bottom: calc(160px + env(safe-area-inset-bottom)) !important; }
+  .mobile-page-shell { padding-bottom: calc(160px + env(safe-area-inset-bottom)) !important; }
+  .mobile-page-shell .movements-page { padding-bottom: 0 !important; }
+}
+
+/*
+ * Navigation breakpoint contract:
+ * - Desktop (> 1024px): sidebar only.
+ * - Tablet/mobile (<= 1024px): bottom navigation only.
+ * The responsive wrappers have no inline display style; CSS owns visibility.
+ */
+@media (min-width: 1025px) {
+  .desktop-layout {
+    display: flex !important;
+  }
+
+  .mobile-bottom-bar {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1024px) {
+  .desktop-layout,
+  .desktop-sidebar {
+    display: none !important;
+  }
+
+  .mobile-bottom-bar {
+    display: flex !important;
+  }
+}
+
+/* Responsive dashboard shell: the mobile tree must never escape its visibility wrapper.
+   Stack primitives set display:flex inline, so hiding the inner component with CSS alone
+   is insufficient. The outer .mobile-page-shell owns the breakpoint visibility. */
+.mobile-dashboard-shell {
+  display: none !important;
+}
+@media (max-width: 1024px) {
+  .mobile-dashboard-shell {
+    display: block !important;
+    width: 100%;
+    min-width: 0;
+  }
+  .mobile-dashboard-shell > .mobile-dashboard {
+    display: flex !important;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Collapsed sidebar keeps a full-size, centered hit target and legible glyphs. */
+.desktop-sidebar-navigation .orbe-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+}
+.desktop-sidebar-navigation .orbe-button svg,
+.sidebar-footer .orbe-button svg {
+  display: block;
+  flex: 0 0 auto;
+  width: 20px !important;
+  height: 20px !important;
+}
+.desktop-sidebar.collapsed .desktop-sidebar-navigation .orbe-button {
+  justify-content: center !important;
+  padding: 0 !important;
+}
+.desktop-sidebar.collapsed .desktop-sidebar-navigation .orbe-button > div {
+  width: 100%;
+  justify-content: center !important;
+  gap: 0 !important;
+}
+.desktop-sidebar.collapsed .sidebar-footer .orbe-button {
+  width: 100%;
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

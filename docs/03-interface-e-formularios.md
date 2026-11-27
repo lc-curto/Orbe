@@ -15,6 +15,18 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Mais existe apenas na bottom bar; abre um painel inferior integrado com Cartões, Relatórios e Configurações, sempre nesta ordem.
 - O painel Mais não inclui perfil, notificações, logout nem opções dependentes da página. Fecha ao selecionar uma página, tocar novamente em Mais ou tocar fora.
 - No desktop, a sidebar contém todas as páginas agrupadas em Principal, Gestão financeira e Ferramentas; Mais não é item da sidebar.
+- Breakpoint da navegação global: **desktop > 1024 px** (sidebar, sem bottom bar); **tablet/mobile ≤ 1024 px** (bottom bar fixa, sem sidebar). O layout deve renderizar apenas uma variante de página visível por breakpoint; os wrappers responsivos não devem aplicar `display:flex` inline, e a bottom bar usa o tema/superfície atual.
+- O Dashboard mobile deve permanecer dentro de `.mobile-page-shell` (wrapper externo controlado por CSS). Componentes `Stack` aplicam `display:flex` inline, portanto não podem depender apenas de `display:none` no próprio componente para serem ocultados no desktop. Não renderizar a variante mobile fora do wrapper responsivo.
+
+## Configurações — mobile first
+- Ecrã inicial com título/subtítulo, cartão de perfil e lista de categorias: Preferências, Conta, Segurança, Dados e privacidade, Sobre o Orbe.
+- Mobile: a lista é o ecrã principal; selecionar uma categoria abre um ecrã de detalhe com ação de voltar. Não apresentar overview e detalhe ao mesmo tempo.
+- Desktop (>1024 px): usar a mesma arquitetura de categorias com navegação local à esquerda e conteúdo da categoria à direita. Não criar uma segunda implementação funcional nem duplicar o conteúdo dentro da página.
+- Preferências: moeda de apresentação (símbolo apenas, sem conversão) e aparência. Categorias mantêm-se em consulta, acessíveis a partir de Preferências.
+- Aparência oferece Claro, Escuro e Sistema. Sistema segue `prefers-color-scheme`; a preferência selecionada é persistida localmente através do ThemeProvider existente.
+- Conta apresenta os dados do perfil existentes; Segurança comunica que as opções são geridas pela conta; Dados e privacidade informa que exportação/restauro não estão disponíveis; Sobre apresenta informação da aplicação.
+- Reutilizar providers de moeda/tema, tokens semânticos e AppIcon. Não introduzir biblioteca de UI, novo estado de backend ou funcionalidades de segurança/exportação não suportadas.
+- Categorias e conteúdo devem respeitar teclado, foco visível, labels acessíveis, alvos de toque adequados, safe area e largura mínima de 320 px.
 
 ## Dashboard — aprovado
 - Saudação dinâmica Bom dia/Boa tarde/Boa noite com primeiro nome.
@@ -91,14 +103,31 @@ Reutiliza estrutura de Contas.
 - Gestão avançada de financiamento ou dívida preexistente exige fluxo próprio, ainda por especificar; não reintroduzir uma página autónoma sem decisão explícita.
 
 ## Relatórios — aprovado
-- Cabeçalho Relatórios e seletor mês/ano.
-- KPIs Receitas e Despesas; resultado do mês.
-- Visualização simples da composição receitas/despesas.
-- Análise financeira: evolução mensal; despesas por categoria; atividade por conta; compras/faturas/pagamentos de cartões; pagamentos/evolução das dívidas.
-- Apenas operações realizadas; sem projeções.
+- Cabeçalho com título, descrição curta e seletor mês/ano; reutilizar o `MonthSelector` e o padrão responsivo de Movimentos.
+- Mobile-first: uma coluna com a evolução mensal em primeiro lugar, seguida de despesas por categoria e resumo do mês. Desktop mantém o gráfico em largura total e coloca categorias e resumo em duas colunas quando houver espaço.
+- Não apresentar cartões KPI no topo. O gráfico diário é o elemento analítico principal.
+- Evolução diária: receitas e despesas realizadas agregadas por dia do mês selecionado. Excluir pendentes, canceladas, transferências e projeções.
+- Despesas por categoria: ranking das cinco principais categorias com barras proporcionais à participação no total de despesas realizadas; incluir “Sem categoria” quando aplicável.
+- Resumo do mês: receitas realizadas, despesas realizadas e resultado líquido (receitas menos despesas).
+- Acessibilidade do gráfico: legenda, descrição acessível e tabela de valores diários consultável por disclosure; respeitar foco visível e preferência de movimento reduzido.
+- Usar exclusivamente operações reais disponíveis na API e a formatação/moeda centralizada existente. Estados de carregamento, erro e ausência de dados devem ser explícitos.
+- Não apresentar nesta iteração atividade por conta, cartões/faturas ou obrigações como painéis autónomos; não duplicar a lista de movimentos. Estas análises exigem decisão/escopo próprio e dados adequados.
+- Não introduzir bibliotecas de UI ou gráficos. Utilizar React/TypeScript, SVG sem dependência externa, CSS e componentes/providers existentes.
+- Breakpoints seguem o shell do Orbe: sidebar acima de 1024 px e bottom bar até 1024 px. Renderizar uma única arquitetura funcional, adaptada por CSS; evitar layouts paralelos que provoquem duplicação ou desformatação.
+
+### Comportamento aprovado — Relatórios e moeda (2026-11-27)
+- O seletor de mês/ano de Relatórios reutiliza o componente e o padrão responsivo de posicionamento/alinhamento já adotado em Movimentos. Não criar um novo padrão de cabeçalho ou deslocar o seletor.
+- Relatórios apresenta apenas operações realizadas no período selecionado; não inclui pendentes, canceladas ou projeções.
+- Evolução diária e resumo devem derivar das mesmas operações realizadas e não duplicar transferências ou efeitos de operações com múltiplos lançamentos.
+- A participação por categoria é calculada sobre o total de despesas realizadas do mês; a ordenação mostra as cinco maiores categorias.
+- A preferência de moeda altera exclusivamente o símbolo apresentado na interface. Não efetua câmbio, conversão, alteração de valores guardados, saldos, cálculos, precisão ou escala. É uma preferência de apresentação, não uma alteração da denominação financeira dos movimentos.
+- A implementação deve centralizar a preferência e a formatação para evitar formatadores divergentes entre páginas. A escolha persistida no navegador não altera os dados da API nem implica sincronização entre dispositivos.
+- O tema é uma preferência visual global, persistida no navegador. Não altera dados nem regras financeiras.
 
 ## Configurações — aprovado
-- Preferências: Perfil, Moeda, Categorias, Aparência e preferências.
+- Preferências: Perfil, Moeda de apresentação, Categorias, Aparência e preferências.
+- Moeda de apresentação: lista de 10 símbolos monetários, incluindo Real brasileiro (BRL, R$); a seleção altera apenas o símbolo apresentado, sem conversão nem alteração de valor.
+- Aparência: Claro, Escuro e Sistema; preferência guardada localmente e aplicada globalmente. Sistema acompanha `prefers-color-scheme`.
 - Segurança e Dados: Segurança, Dados e cópias de segurança.
 - Sobre o Orbe.
 - Não editar movimentos, contas, cartões ou obrigações diretamente nesta página.
@@ -116,7 +145,7 @@ As especificações desta documentação definem comportamento e apresentação,
 **Estado:** aprovado pelo utilizador  
 **Data da aprovação:** 24/11/2026  
 **Âmbito:** interface, composição visual, responsividade e interação dos formulários  
-**Stack do projeto:** React, TypeScript, Vite e Tamagui  
+**Stack do projeto:** React, TypeScript, Vite, HTML semântico e CSS; primitives próprias do design system em `web/src/design-system/`  
 **Documento único de referência:** este ficheiro substitui integralmente qualquer versão anterior desta especificação.
 
 ---

@@ -1,6 +1,7 @@
 import type { RouteMonth, RouteDay, RouteFlowFilter } from '../types'
 import { RouteDailyTable } from './RouteDailyTable'
 import { formatAmount, formatMonth } from '../utils'
+import { useCurrency } from '../../currency/useCurrency'
 
 export function RouteMonthCard({ month, days, flowFilter, onSelectDay, mobile = false }: {
   month: RouteMonth
@@ -9,6 +10,7 @@ export function RouteMonthCard({ month, days, flowFilter, onSelectDay, mobile = 
   onSelectDay: (date: string) => void
   mobile?: boolean
 }) {
+  const { symbol } = useCurrency()
   const income = days.reduce((sum, day) => sum + (flowFilter === 'EXPENSE' ? 0 : day.income), 0)
   const expenses = days.reduce((sum, day) => sum + (flowFilter === 'INCOME' ? 0 : day.expenses), 0)
 
@@ -17,8 +19,8 @@ export function RouteMonthCard({ month, days, flowFilter, onSelectDay, mobile = 
       <div className="route-month-heading">
         <h2>{formatMonth(month.month)}</h2>
         <div className="route-month-totals">
-          <span className="route-month-income">+ {formatAmount(income)} entradas</span>
-          <span className="route-month-expenses">− {formatAmount(expenses)} saídas</span>
+          <span className="route-month-income">+ {formatAmount(income)} {symbol} entradas</span>
+          <span className="route-month-expenses">− {formatAmount(expenses)} {symbol} saídas</span>
         </div>
       </div>
       <div className="route-month-ending"><span>Saldo final</span><strong>Indisponível</strong></div>
