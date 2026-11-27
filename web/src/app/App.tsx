@@ -97,6 +97,7 @@ export default function App() {
   const [movementTab, setMovementTab] = useState<'movements' | 'schedules'>('movements')
   const [periodMonth, setPeriodMonth] = useState(() => currentMonthKey())
   const [routeMonth, setRouteMonth] = useState(() => currentMonthKey())
+  const routeMonthFollowsCurrent = useRef(true)
   const [reportsMonth, setReportsMonth] = useState(() => {
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -121,6 +122,28 @@ export default function App() {
     setAddMenuOpen(false)
     setMorePagesOpen(false)
   }
+
+  function changeRouteMonth(month: string) {
+    routeMonthFollowsCurrent.current = month === currentMonthKey()
+    setRouteMonth(month)
+  }
+
+  useEffect(() => {
+    const syncCurrentRouteMonth = () => {
+      if (document.visibilityState === 'hidden' || !routeMonthFollowsCurrent.current) return
+      setRouteMonth(currentMonthKey())
+    }
+
+    const intervalId = window.setInterval(syncCurrentRouteMonth, 60_000)
+    window.addEventListener('focus', syncCurrentRouteMonth)
+    document.addEventListener('visibilitychange', syncCurrentRouteMonth)
+
+    return () => {
+      window.clearInterval(intervalId)
+      window.removeEventListener('focus', syncCurrentRouteMonth)
+      document.removeEventListener('visibilitychange', syncCurrentRouteMonth)
+    }
+  }, [])
 
   useEffect(() => {
     if (!accountMenuOpen) return
@@ -359,7 +382,7 @@ export default function App() {
             <DesktopPageFrame>
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
-            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} invoices={finance.data.invoices} loading={finance.loading} error={finance.error} month={routeMonth} onMonthChange={setRouteMonth} /> : null}
+            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} invoices={finance.data.invoices} loading={finance.loading} error={finance.error} month={routeMonth} onMonthChange={changeRouteMonth} /> : null}
             {activeKey === 'Relatórios' ? <ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /> : null}
             {activeKey === 'Configurações' ? <SettingsPage user={user} categories={finance.data.categories} /> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={periodMonth} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
@@ -367,7 +390,7 @@ export default function App() {
             </DesktopPageFrame>
           </Stack>
         </div>
-        {activeKey === 'Cartões' ? <MobilePageFrame className="cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></MobilePageFrame> : activeKey === 'Contas' ? <MobilePageFrame className="accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></MobilePageFrame> : activeKey === 'Movimentos' ? <MobilePageFrame><MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={periodMonth} onMonthChange={changeMovementMonth} onNotify={notify} /></MobilePageFrame> : activeKey === 'Rota' ? <MobilePageFrame className="route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} invoices={finance.data.invoices} loading={finance.loading} error={finance.error} month={routeMonth} onMonthChange={setRouteMonth} /></MobilePageFrame> : activeKey === 'Relatórios' ? <MobilePageFrame className="reports-mobile-shell"><ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /></MobilePageFrame> : activeKey === 'Configurações' ? <MobilePageFrame><SettingsPage user={user} categories={finance.data.categories} /></MobilePageFrame> : <MobilePageFrame className="mobile-dashboard-shell"><MobileDashboard period={displayPeriod} month={periodMonth} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={navigateTo} userName={user.name} authError={authError} logoutError={logoutError} currencySymbol={currencySymbol} movements={movements} categories={dashboardCategories} loading={finance.loading} /></MobilePageFrame>}
+        {activeKey === 'Cartões' ? <MobilePageFrame className="cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></MobilePageFrame> : activeKey === 'Contas' ? <MobilePageFrame className="accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></MobilePageFrame> : activeKey === 'Movimentos' ? <MobilePageFrame><MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={periodMonth} onMonthChange={changeMovementMonth} onNotify={notify} /></MobilePageFrame> : activeKey === 'Rota' ? <MobilePageFrame className="route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} invoices={finance.data.invoices} loading={finance.loading} error={finance.error} month={routeMonth} onMonthChange={changeRouteMonth} /></MobilePageFrame> : activeKey === 'Relatórios' ? <MobilePageFrame className="reports-mobile-shell"><ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /></MobilePageFrame> : activeKey === 'Configurações' ? <MobilePageFrame><SettingsPage user={user} categories={finance.data.categories} /></MobilePageFrame> : <MobilePageFrame className="mobile-dashboard-shell"><MobileDashboard period={displayPeriod} month={periodMonth} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={navigateTo} userName={user.name} authError={authError} logoutError={logoutError} currencySymbol={currencySymbol} movements={movements} categories={dashboardCategories} loading={finance.loading} /></MobilePageFrame>}
         {feedback ? <Row className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></Row> : null}
         <div className="mobile-bottom-bar">
           {navigation.map((item) => {
