@@ -121,9 +121,55 @@
   backdrop-filter: blur(3px);
 }
 [data-theme="dark"] .mobile-more-pages-panel {
-  background: color-mix(in srgb, var(--orbe-surface) 88%, var(--orbe-teal)) !important;
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
   border-top-color: var(--orbe-teal) !important;
+  color: var(--orbe-text) !important;
   box-shadow: 0 -18px 48px rgba(0, 0, 0, .48) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-account,
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-divider {
+  border-color: var(--orbe-border) !important;
+  background-color: transparent;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-account strong,
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-page-item,
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-page-item svg {
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-account small,
+[data-theme="dark"] .mobile-more-pages-panel h2 {
+  color: var(--orbe-muted) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-account-avatar {
+  border-color: var(--orbe-border) !important;
+  color: var(--orbe-teal) !important;
+  background: var(--orbe-bg) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-page-item:hover:not(:disabled),
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-page-item:focus-visible {
+  background: color-mix(in srgb, var(--orbe-teal) 12%, var(--orbe-surface)) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-logout,
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-logout svg {
+  color: var(--orbe-danger) !important;
+}
+[data-theme="dark"] .sidebar-account-popover {
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .sidebar-account-popover-header,
+[data-theme="dark"] .sidebar-account-popover-header strong,
+[data-theme="dark"] .sidebar-account-menu-action,
+[data-theme="dark"] .sidebar-account-menu-action svg {
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .sidebar-account-popover-header small {
+  color: var(--orbe-muted) !important;
+}
+[data-theme="dark"] .sidebar-account-menu-action:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-teal) 12%, var(--orbe-surface)) !important;
 }
 
 /* Month selectors and movement filters. */
