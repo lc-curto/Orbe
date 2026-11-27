@@ -36,7 +36,7 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - Sidebar content is left-aligned through shared navigation primitives and semantic theme tokens. Expanded and collapsed states retain their intended alignment.
 - For 1025–1199px, use shared desktop gutter and section-gap tokens at compact values, and a 220px expanded sidebar. At 1200px and above, retain established desktop geometry.
 - The page title, theme control and period/action controls share the PageHeader row. The shell-level duplicate theme control is removed; every authenticated page uses PageHeader.
-- Rota Financeira keeps its differentiated period behavior: one quarterly/range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
+- Rota Financeira keeps its differentiated period behavior: one 24-month range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
 - The Dashboard available-balance card and applicable financial summary cards use the shared design-system variant orbe-financial-highlight-card. Its teal gradient is intentionally identical in light and dark mode; generic dark-theme surface rules exclude this variant.
 - Layout changes use existing tokens, shared shell styles and primitive props. No new UI dependency, feature-specific layout token, or `!important` override is permitted. Pre-existing legacy overrides are tracked in the state document and must be removed as affected components migrate to semantic tokens.
 
@@ -93,7 +93,7 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - A edição e as ações sobre programações/ocorrências usam botões dedicados e não permitem edição inline.
 
 ## Rota Financeira — aprovado
-- Desktop: apresentar 24 meses consecutivos a partir do mês atual por defeito (mês atual + 23 seguintes), em grelha de três colunas; navegação anterior/seguinte desloca a janela um mês. A janela avança com o calendário e nunca fica fixa na data em que a página foi aberta.
+- Desktop: apresentar 24 meses consecutivos a partir do mês atual por defeito (mês atual + 23 seguintes), em grelha de três colunas. A aplicação acompanha a mudança de mês automaticamente enquanto a janela estiver a seguir o mês atual; se o utilizador navegar para outro período, a seleção manual é preservada. Navegação anterior/seguinte desloca o início da janela um mês.
 - A navegação para meses anteriores mantém o histórico consultável; não elimina nem congela operações. Ao alterar operações históricas, o read model é atualizado e a projeção futura recalculada a partir do saldo de referência atualizado, sem duplicar efeitos já refletidos nele.
 - Ao carregar a página, posicionar o scroll para que a linha do dia local atual fique visível. O dia atual recebe destaque subtil com token semântico, sem competir com os estados de saldo/alerta. O posicionamento inicial deve funcionar em desktop e mobile e não repetir-se em cada atualização de dados.
 - Cada mês apresenta título, totais de entradas/saídas, saldo final projetado e tabela diária.
