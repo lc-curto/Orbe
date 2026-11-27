@@ -22,7 +22,7 @@ final class FinancialRouteReadService
         return DB::transaction(function () use ($userId, $firstMonth, $projectionMonths): array {
             $today = now()->toDateString();
             $windowStart = $firstMonth.'-01';
-            $windowEnd = (new \\DateTimeImmutable($windowStart))->modify('+'.$projectionMonths.' months -1 day')->format('Y-m-d');
+            $windowEnd = (new \DateTimeImmutable($windowStart))->modify('+'.$projectionMonths.' months -1 day')->format('Y-m-d');
             $actualWindowEnd = min($windowEnd, $today);
             $accountIds = FinancialAccount::query()
                 ->where('user_id', $userId)
@@ -47,9 +47,9 @@ final class FinancialRouteReadService
                     ->where('user_id', $userId)
                     ->whereIn('account_id', $accountIds)
                     ->where('state', 'REALIZED')
-                    ->selectRaw("COALESCE(SUM(CASE WHEN effective_at <= ? AND effect = 'INCREASE' THEN amount WHEN effective_at <= ? AND effect = 'DECREASE' THEN -amount ELSE 0 END), 0) as balance", [$today, $today])
+                    ->selectRaw("COALESCE(SUM(CASE WHEN effective_at <= ? AND effect = 'INCREASE' THEN amount WHEN effective_at <= ? AND effect = 'DECREASE' THEN -amount ELSE 0 END), 0) as balance", [$today.' 23:59:59', $today.' 23:59:59])
                     ->selectRaw("COALESCE(SUM(CASE WHEN effective_at IS NULL OR amount < 0 OR effect NOT IN ('INCREASE', 'DECREASE') THEN 1 ELSE 0 END), 0) as invalid_count")
-                    ->selectRaw('COALESCE(SUM(CASE WHEN effective_at > ? THEN 1 ELSE 0 END), 0) as future_count', [$today])
+                    ->selectRaw('COALESCE(SUM(CASE WHEN effective_at > ? THEN 1 ELSE 0 END), 0) as future_count', [$today.' 23:59:59'])
                     ->first();
 
                 $referenceBalance = bcadd((string) ($realizedAggregate->balance ?? '0'), '0', 4);
