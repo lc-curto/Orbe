@@ -33,6 +33,25 @@ final class FinancialRouteReadApiTest extends TestCase
     }
 
     #[Test]
+    public function pending_operation_planned_for_reference_date_is_included_in_same_day_balance(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $account = $this->account($user);
+        $this->openingBalance($user, $account, '1000.0000', '2026-11-01 12:00:00');
+        $this->operation($user, 'EXPENSE', 'PENDING', '100.0000', null, '2026-11-27 12:00:00', 'Supermercado');
+
+        $this->getJson('/api/financial-route?month=2026-11')
+            ->assertOk()
+            ->assertJsonPath('data.reference_date', '2026-11-27')
+            ->assertJsonPath('data.reference_balance', '1000.0000')
+            ->assertJsonPath('data.months.0.days.26.expenses', '100.0000')
+            ->assertJsonPath('data.months.0.days.26.balance', '900.0000')
+            ->assertJsonPath('data.months.0.ending_balance', '900.0000')
+            ->assertJsonPath('data.months.1.opening_balance', '900.0000');
+    }
+
+    #[Test]
     public function pending_flows_accumulate_and_carry_balance_across_months(): void
     {
         $user = User::factory()->create();
