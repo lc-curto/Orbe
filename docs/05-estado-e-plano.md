@@ -471,7 +471,7 @@ Para reduzir esquecimentos, o workflow `.github/workflows/pr-quality-gate.yml` v
 **Findings específicos da Fase 1:**
 - A consolidação de spacing em `web/src/styles/app-shell.css` é uma primeira harmonização, não a auditoria final. Ainda é necessário reconciliar as regras antigas das features com os tokens e eliminar duplicação/contradições sem regressão visual.
 - A revisão estática atual encontrou 60 declarações `!important` em `web/src/styles/theme.css` e quatro declarações de acessibilidade de movimento reduzido em `web/src/styles/base.css`. As declarações de tema são legado de compatibilidade entre estilos de tema e estilos de apresentação inline; não devem ser ampliadas. Migrar progressivamente os estilos inline para tokens/classes semânticos e remover cada override que deixe de ser necessário. A regra obrigatória está em `AGENTS.md` e `docs/03-interface-e-formularios.md`: `!important` é último recurso e cada nova ocorrência exige justificação explícita.
-- A branch não declara paridade visual aprovada: o cabeçalho/KPIs de Dashboard ainda têm composição desktop/mobile distinta, embora as secções inferiores sejam partilhadas.
+- A composição do Dashboard foi parcialmente unificada com `PageHeader` e `DashboardSections`; manter QA de paridade desktop/mobile e consolidar os KPIs quando a validação visual justificar.
 - O `App.tsx` continua a concentrar navegação, estados e composição de páginas; a decomposição deve ser incremental, sem reescrita nem alteração de comportamento.
 
 ### QA visual ainda por executar em browser
@@ -502,3 +502,14 @@ Correções aplicadas na branch de QA:
 - O shell mobile mantém espaço inferior para a bottom bar; Configurações deve ser revalidada para confirmar que o último cartão fica totalmente acessível por scroll.
 
 **Regra de QA da Rota:** ≤1024 px = exatamente um mês visível; >1024 px = três meses visíveis. Verificar especialmente 320, 390, 768, 1024 e 1025 px. O CI não confirma paridade visual: a aprovação final depende de nova validação no browser local.
+
+### Consolidação transversal do Design System — 27/11/2026
+
+Após os screenshots adicionais a 320 px, foi identificada inconsistência entre páginas além da Rota Financeira. Foram aplicadas na branch de QA:
+- Criado `PageHeader` partilhado em `web/src/shared/components/PageHeader.tsx`, adotado em Dashboard desktop/mobile, Movimentos, Rota, Contas, Cartões, Relatórios e Configurações.
+- Criado `DesktopPageFrame` em `web/src/app/AppShell.tsx`; todas as páginas autenticadas no layout desktop passam pelo mesmo frame.
+- `MobilePageFrame` passou a ser utilizado por todas as páginas autenticadas no layout mobile/tablet, com container interno comum.
+- CSS transversal centraliza largura, gutters, espaçamento, hierarquia de título, descrição e ações do cabeçalho; os estilos de feature ficam restritos à composição funcional.
+- Documentada em `docs/03-interface-e-formularios.md` a obrigatoriedade de reutilizar os frames, PageHeader e tokens nas novas páginas.
+
+**Ainda não declarar consistência visual concluída:** o código agora estabelece a estrutura reutilizável, mas é necessário executar novo QA local em todas as páginas, sobretudo 320 px, para confirmar que CSS legado de cada feature não contradiz o frame/header comum. Corrigir os desvios encontrados antes de integrar.
