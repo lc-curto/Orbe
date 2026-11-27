@@ -27,6 +27,8 @@ return new class extends Migration {
         });
 
         Schema::table('card_invoices', function (Blueprint $table): void {
+            // Keep a narrow FK support index independent of the route read index.
+            $table->index(['user_id'], 'invoices_user_fk_idx');
             $table->index(
                 ['user_id', 'due_date'],
                 'invoices_route_user_due_idx',
@@ -54,6 +56,7 @@ return new class extends Migration {
 
         Schema::table('card_invoices', function (Blueprint $table): void {
             $table->dropIndex('invoices_route_user_due_idx');
+            // invoices_user_fk_idx is intentionally retained as the FK support index.
         });
 
         Schema::table('financial_accounts', function (Blueprint $table): void {
