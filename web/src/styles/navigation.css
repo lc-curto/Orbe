@@ -64,4 +64,29 @@
   .mobile-page-shell .movements-page { padding-bottom: 0 !important; }
 }
 
+/*
+ * Navigation breakpoint contract:
+ * - Desktop (>= 1024px): sidebar only.
+ * - Tablet/mobile (< 1024px): bottom navigation only.
+ * These declarations must override the inline display:flex applied by Row.
+ */
+@media (min-width: 1024px) {
+  .desktop-layout {
+    display: flex !important;
+  }
 
+  .mobile-bottom-bar {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .desktop-layout,
+  .desktop-sidebar {
+    display: none !important;
+  }
+
+  .mobile-bottom-bar {
+    display: flex !important;
+  }
+}
