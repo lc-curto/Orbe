@@ -10,6 +10,8 @@ import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
+const FINANCIAL_ROUTE_MONTHS = 24
+
 function formatAmount(value: string | null): string {
   const units = value === null ? null : parseMoneyUnits(value)
   return units === null ? 'Indisponível' : formatMoneyUnits(units)
@@ -74,7 +76,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   return <section className="financial-route-page">
     <PageHeader title="Rota Financeira" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
       <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
-      <span>{formatMonthRange(month, shiftMonth(month, 23))}</span>
+      <span>{formatMonthRange(month, shiftMonth(month, FINANCIAL_ROUTE_MONTHS - 1))}</span>
       <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
     </div>} mobilePeriod={<MonthSelector month={month} onMonthChange={onMonthChange} className="route-month-selector-mobile" />} />
 
