@@ -54,7 +54,8 @@ export function FinancialRoutePage({ operations, accounts, invoices, loading, er
     { value: 'INCOME', label: 'Entradas' },
     { value: 'EXPENSE', label: 'Saídas' },
   ]
-  const mobileEndingNegative = mobileMonth?.endingBalance !== null && mobileMonth?.endingBalance !== undefined && mobileMonth.endingBalance < 0n
+  const mobileEndingBalance = mobileMonth?.endingBalance ?? null
+  const mobileEndingNegative = mobileEndingBalance !== null && mobileEndingBalance < 0n
 
   return <section className="financial-route-page">
     <PageHeader title="Rota Financeira" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
