@@ -434,9 +434,10 @@ A fase de estabilização parte do commit atual da `main` após os PRs #9 e #10.
 ### Auditoria estática inicial
 
 - A navegação global está configurada com sidebar apenas em desktop (>1024 px) e bottom bar em tablet/mobile (≤1024 px). O CSS e os wrappers responsivos usam este limite; a validação renderizada em browser continua pendente.
-- **Bloqueador de estabilização — Dashboard com dados de demonstração:** o Dashboard desktop/mobile apresenta saldo disponível fixo, valores de ganhos/gastos fixos, categorias/valores fixos e períodos limitados a novembro/dezembro de 2026. O seletor não representa um período financeiro dinâmico e a ação “Ver todas” de categorias apenas apresenta uma notificação. Estes valores não podem ser tratados como dados reais nem considerados QA concluída. O saldo disponível depende de read model de saldo; não calcular no frontend por aproximação.
-- A Rota Financeira inicia em `2026-11` hardcoded. Deve iniciar no mês corrente de forma dinâmica, sem alterar a regra de projeção nem inventar saldo final.
-- O Dashboard contém variantes desktop/mobile com apresentação duplicada; a QA deve confirmar paridade de conteúdo, ordem, estados e ações em ambas.
+- **Dashboard — correção implementada na branch da Fase 1:** ganhos, gastos e despesas por categoria derivam agora das operações `REALIZED` com `effective_at` no mês selecionado. As categorias são agrupadas por categoria real (ou “Sem categoria”) e limitadas às cinco maiores. Não há valores de demonstração.
+- O saldo disponível não é fornecido pelo read model atual; desktop e mobile mostram explicitamente **Indisponível**, sem estimativa frontend. O acesso às despesas por categoria encaminha para Movimentos; não promete filtro por categoria que ainda não existe.
+- Os seletores do Dashboard e a Rota Financeira deixam de estar limitados a novembro/dezembro de 2026. A Rota inicia no mês corrente, sem alterar a regra de projeção nem inventar saldo final.
+- A paridade desktop/mobile continua a exigir validação visual e interação em browser.
 
 ### Consistência de espaçamento — requisito da Fase 1
 
@@ -450,7 +451,9 @@ As capturas de Cartões, Rota Financeira e Relatórios mostram diferenças de ma
 - Auditar Cartões, Rota Financeira, Relatórios e restantes páginas primárias lado a lado; verificar alinhamento das bordas dos conteúdos e consistência entre desktop/tablet/mobile.
 - Não ajustar espaçamentos apenas para uma captura: corrigir a regra compartilhada ou documentar a exceção funcional.
 
-Critério de aceitação: páginas primárias seguem o mesmo sistema de container, gutters, ritmo vertical e padding de componentes, sem margens/paddings locais divergentes sem justificativa; confirmar visualmente nos viewports definidos.
+**Implementação CSS na branch da Fase 1:** tokens centrais para gutters (32 px desktop, 24 px tablet, 16 px mobile), largura de conteúdo (1200 px), gap vertical (24 px) e padding de painéis (20 px desktop / 16 px mobile). Cartões, Contas, Relatórios e Rota usam containers e gutters comuns; exceções de densidade em linhas/tabelas mantêm-se intencionais.
+
+Critério de aceitação visual: confirmar no browser que as páginas seguem esta geometria sem overflow nem margens/paddings locais contraditórios nos viewports definidos.
 
 ### QA visual ainda por executar em browser
 
