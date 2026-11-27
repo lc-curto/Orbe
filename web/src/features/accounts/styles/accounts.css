@@ -1,5 +1,4 @@
 /* Accounts page mode: render only the active page in the desktop shell. */
-.main-content.accounts-mode > :not(.accounts-page) { display: none !important; }
 
 /* Accounts page: reference-inspired read-only layout */
 .accounts-page { width: 100%; max-width: var(--orbe-page-content-max); margin: 0 auto; color: var(--orbe-text); }
