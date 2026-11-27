@@ -125,7 +125,7 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 1. QA visual/responsiva de Relatórios e Configurações em desktop/tablet/mobile, incluindo gráfico diário, cabeçalho/seletor, estados loading/erro/vazio, layout de Perfil sem quebra artificial, lista de 10 moedas, persistência do símbolo e alternância/persistência do tema claro/escuro.
 2. Validar a regra pendente→realizado no frontend: sem destino no pendente; conta obrigatória na confirmação.
 3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta/liquidação de obrigações associadas.
-4. Fechar contratos/read models financeiros pendentes, sobretudo projeção diária, e implementar os formulários suportados.
+4. Fechar os read models financeiros ainda pendentes (classificação fixa/variável, estimativa variável e contratos de recorrências/planos fora do read model atual) e implementar os formulários suportados.
 5. Executar auditoria final de consistência entre documentação, API, frontend e modelo ER.
 
 ## Critério para novas alterações estruturais
@@ -347,12 +347,12 @@ Antes de implementar os formulários concretos, o produto deve completar as subp
 
 A sequência de páginas/subpáginas é: Movimentos/Programações, Contas, Cartões e faturas, Rota Financeira, Relatórios e Configurações. Não existe página autónoma de Dívidas; os detalhes de obrigações são acessados a partir dos movimentos/faturas relacionados. Os formulários de escrita avançam respeitando os contratos backend confirmados.
 
-A Rota Financeira está especificada visualmente, mas não pode ser implementada com projeções fictícias nesta etapa. A API atual não expõe ainda um read model diário de projeção e faltam no frontend os dados de classificação fixa/variável/excluída e as regras completas de obrigações futuras. A sua implementação fica condicionada ao fecho desse contrato de leitura e projeção.
+**Estado anterior, supersedido pela implementação do PR #13:** nesta etapa de 25/11, a Rota ainda não tinha read model diário e não deveria usar projeções fictícias. O PR #13 implementa agora o read model diário real e a janela de 24 meses; continuam fora do âmbito a classificação fixa/variável/excluída, a estimativa variável e os contratos completos de obrigações/recorrências futuras.
 
 ## 12. Subpáginas
 
 - [x] Implementar Movimentos e a aba Programações em modo de leitura.
-- [x] Implementar a interface da Rota Financeira (desktop com janela de 24 meses em grelha de três colunas e mobile com mês selecionado). Saldo diário/final e projeção são fornecidos pelo read model; classificação fixa/variável e estimativa variável continuam pendentes.
+- [x] Implementar a interface da Rota Financeira no PR #13 (ainda aberto, não integrado na `main`): desktop com 24 meses em grelha de três colunas e mobile com mês selecionado. Saldo diário/final e projeção são fornecidos pelo read model; classificação fixa/variável e estimativa variável continuam pendentes.
 - [x] Implementar e validar localmente a página Contas em modo de leitura (hierarquia do saldo total, secção As minhas contas e menu contextual por conta). Os saldos apresentados continuam condicionados aos dados/read model disponíveis.
 - [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado; detalhe da fatura lista os movimentos associados, agrupados por dia e reutilizando a linha de Movimentos, sem filtros de estado).
 - [x] Decisão de produto: descontinuar a página autónoma de Dívidas.
@@ -596,7 +596,7 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Saudação/título à esquerda e botão de tema à direita na primeira linha.
 - Mês abreviado + ano na linha seguinte, alinhado à esquerda; setas mínimas alinhadas à direita.
 - Composição aplicada no PageHeader e MonthSelector partilhados para Dashboard, Movimentos e Relatórios.
-- Rota Financeira mantém comportamento diferenciado: intervalo de 3 meses no desktop e mês único no mobile, sem duplicação.
+- Rota Financeira mantém comportamento diferenciado: janela de 24 meses no desktop e mês único no mobile, sem duplicação.
 - CI passou (Web CI e PR Quality Gate); validação visual manual do utilizador ainda pendente. Implementado na branch do PR #12, sem integração na main.
 
 
