@@ -34,7 +34,7 @@ export function shiftMonth(month: string, offset: number) {
 
 export function monthLabel(month: string, style: 'short' | 'long' = 'short') {
   const date = new Date(`${month}-01T12:00:00`)
-  return new Intl.DateTimeFormat('pt-PT', { month: style, year: '2-digit' }).format(date)
+  return new Intl.DateTimeFormat('pt-PT', { month: style, year: 'numeric' }).format(date)
 }
 
 export function operationMonth(operation: Operation) {
@@ -58,7 +58,8 @@ export function totalsFor(operations: Operation[]): PeriodTotals {
 
 export function expensesByCategory(operations: Operation[]) {
   const grouped = new Map<string, number>()
-  operations.filter((operation) => operation.operation_type === 'EXPENSE').forEach((operation) => {
+  operations.forEach((operation) => {
+    if (!isRealizedOperation(operation) || operation.operation_type !== 'EXPENSE') return
     const amount = Number(operation.amount)
     if (!Number.isFinite(amount)) return
     const name = operation.category?.name ?? 'Sem categoria'
