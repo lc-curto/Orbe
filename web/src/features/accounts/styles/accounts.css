@@ -8,7 +8,7 @@
 .accounts-new-button { display: inline-flex; align-items: center; gap: 6px; border: 0; border-radius: 11px; padding: 10px 15px; background: #625bff; color: #fff; font-size: 14px; font-weight: 700; white-space: nowrap; }
 .accounts-filter-row { display: flex; justify-content: flex-end; align-items: center; gap: 5px; margin: 0 0 12px; }
 .accounts-filter-label { color: var(--orbe-muted); font-size: 12px; }
-.accounts-status-filter { max-width: 220px; border: 1px solid var(--orbe-border); border-radius: 10px; padding: 9px 10px; background: #fff; color: var(--orbe-text); font-size: 12px; cursor: pointer; }
+.accounts-status-filter { max-width: 220px; border: 1px solid var(--orbe-border); border-radius: 10px; padding: 9px 10px; background: var(--orbe-surface); color: var(--orbe-text); font-size: 12px; cursor: pointer; }
 .accounts-list { border: 1px solid var(--orbe-border); border-radius: 17px; background: var(--orbe-surface); overflow: hidden; box-shadow: 0 5px 18px rgba(16,24,40,.035); }
 .accounts-row { display: flex; align-items: center; gap: 14px; padding: 18px 20px; min-height: 82px; }
 .accounts-row + .accounts-row { border-top: 1px solid var(--orbe-border); }
@@ -19,7 +19,7 @@
 .accounts-row-main > span { color: var(--orbe-muted); font-size: 12px; }
 .accounts-status-badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 4px 9px; font-size: 11px; font-weight: 700; }
 .accounts-status-badge.is-active { color: #087f70; background: #e7f4ef; }
-.accounts-status-badge.is-closed { color: #667085; background: #f2f4f7; }
+.accounts-status-badge.is-closed { color: var(--orbe-muted); background: color-mix(in srgb, var(--orbe-muted) 12%, var(--orbe-surface)); }
 .accounts-row-balance { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; min-width: 92px; }
 .accounts-row-balance strong { font-size: 14px; font-weight: 700; }
 .accounts-row-balance span { color: var(--orbe-muted); font-size: 11px; }
@@ -53,11 +53,11 @@
 .accounts-row-actions { position: relative; flex: 0 0 36px; display: flex; justify-content: flex-end; }
 .accounts-menu-button { display: inline-grid; width: 36px; height: 36px; place-items: center; border: 1px solid transparent; border-radius: 9px; background: transparent; color: var(--orbe-muted); cursor: pointer; font-size: 23px; line-height: 1; }
 .accounts-menu-button:hover, .accounts-menu-button[aria-expanded="true"] { background: #f5f6fa; border-color: var(--orbe-border); }
-.accounts-menu-panel { position: absolute; top: calc(100% + 5px); right: 0; z-index: 25; width: 205px; padding: 6px; border: 1px solid var(--orbe-border); border-radius: 12px; background: #fff; box-shadow: 0 12px 30px rgba(16,24,40,.14); }
+.accounts-menu-panel { position: absolute; top: calc(100% + 5px); right: 0; z-index: 25; width: 205px; padding: 6px; border: 1px solid var(--orbe-border); border-radius: 12px; background: var(--orbe-surface); color: var(--orbe-text); box-shadow: 0 12px 30px rgba(16,24,40,.14); }
 .accounts-menu-item { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 42px; border: 0; border-radius: 8px; background: transparent; color: var(--orbe-text); cursor: pointer; text-align: left; font: inherit; font-size: 13px; padding: 0 10px; }
 .accounts-menu-item:hover { background: #f5f6fa; }
 .accounts-menu-item > span:first-child { color: var(--orbe-primary); font-size: 17px; }
-.accounts-action-notice { margin-top: 12px; padding: 12px 14px; border: 1px solid #dbe7ff; border-radius: 11px; background: #f0f6ff; color: #344054; font-size: 12px; line-height: 1.5; }
+.accounts-action-notice { margin-top: 12px; padding: 12px 14px; border: 1px solid color-mix(in srgb, var(--orbe-primary) 28%, var(--orbe-border)); border-radius: 11px; background: color-mix(in srgb, var(--orbe-primary) 8%, var(--orbe-surface)); color: var(--orbe-text); font-size: 12px; line-height: 1.5; }
 @media (max-width: 1024px) {
   .accounts-total-card { margin-top: 0; margin-bottom: 22px; }
   .accounts-row { gap: 9px; }
