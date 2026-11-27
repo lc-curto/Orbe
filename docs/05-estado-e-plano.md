@@ -533,3 +533,15 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Tema continua a usar a preferência local e o `ThemeProvider` existente.
 - Validação visual desktop/tablet/mobile ainda necessária após atualização da branch.
 
+
+
+## Ajuste de composição do cabeçalho mobile/tablet
+
+- O breakpoint mobile/tablet do Orbe é `max-width: 1024px`.
+- No Dashboard, o cumprimento e o primeiro nome permanecem numa linha; nomes extensos são truncados de forma controlada.
+- A data aparece abaixo do cumprimento.
+- O botão de tema fica alinhado à direita no cabeçalho, sem sobrepor o seletor de mês.
+- O período fica numa segunda linha, com rótulo `Período` e seletor alinhado à direita.
+- O tema também permanece acessível no painel `Mais` nas restantes páginas mobile/tablet; o botão global flutuante fica oculto nesse breakpoint para evitar sobreposição.
+- A validação final em browser nos breakpoints (incluindo 320 px, 768 px, 1024 px e 1025 px) é necessária antes de aprovar o PR.
+
