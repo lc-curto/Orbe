@@ -167,8 +167,45 @@ final class FinancialRouteReadService
                 }
             }
 
+            $actualDates = array_keys($actualNetByDate);
+            sort($actualDates);
+            $actualPrefix = [];
+            $actualRunning = '0.0000';
+            foreach ($actualDates as $effectDate) {
+                $actualRunning = bcadd($actualRunning, $actualNetByDate[$effectDate], 4);
+                $actualPrefix[] = $actualRunning;
+            }
+
+            $plannedDates = array_keys($plannedNetByDate);
+            sort($plannedDates);
+            $plannedPrefix = [];
+            $plannedRunning = '0.0000';
+            foreach ($plannedDates as $effectDate) {
+                $plannedRunning = bcadd($plannedRunning, $plannedNetByDate[$effectDate], 4);
+                $plannedPrefix[] = $plannedRunning;
+            }
+
+            $prefixAt = static function (array $dates, array $prefix, string $date): string {
+                $low = 0;
+                $high = count($dates) - 1;
+                $found = -1;
+                while ($low <= $high) {
+                    $middle = intdiv($low + $high, 2);
+                    if ($dates[$middle] <= $date) {
+                        $found = $middle;
+                        $low = $middle + 1;
+                    } else {
+                        $high = $middle - 1;
+                    }
+                }
+
+                return $found < 0 ? '0.0000' : $prefix[$found];
+            };
+
+            $actualTotal = $actualRunning;
+            $plannedBeforeToday = $prefixAt($plannedDates, $plannedPrefix, $this->shiftDate($today, -1));
             $balanceCache = [];
-            $balanceAt = function (string $date) use (&$balanceCache, $referenceBalance, $referenceBalanceValid, $projectionValid, $actualNetByDate, $plannedNetByDate, $today): ?string {
+            $balanceAt = function (string $date) use (&$balanceCache, $referenceBalance, $referenceBalanceValid, $projectionValid, $actualDates, $actualPrefix, $actualTotal, $plannedDates, $plannedPrefix, $plannedBeforeToday, $prefixAt, $today): ?string {
                 if (array_key_exists($date, $balanceCache)) {
                     return $balanceCache[$date];
                 }
@@ -177,23 +214,16 @@ final class FinancialRouteReadService
                 }
 
                 if ($date < $today) {
-                    $netAfter = '0.0000';
-                    foreach ($actualNetByDate as $effectDate => $net) {
-                        if ($effectDate > $date && $effectDate <= $today) {
-                            $netAfter = bcadd($netAfter, $net, 4);
-                        }
-                    }
+                    $actualThroughDate = $prefixAt($actualDates, $actualPrefix, $date);
+                    $netAfter = bcsub($actualTotal, $actualThroughDate, 4);
                     $balance = bcsub($referenceBalance, $netAfter, 4);
                 } else {
                     if ($projectionValid === false) {
                         return null;
                     }
-                    $balance = bcadd($referenceBalance, $plannedNetByDate[$today] ?? '0.0000', 4);
-                    foreach ($plannedNetByDate as $effectDate => $net) {
-                        if ($effectDate > $today && $effectDate <= $date) {
-                            $balance = bcadd($balance, $net, 4);
-                        }
-                    }
+                    $plannedThroughDate = $prefixAt($plannedDates, $plannedPrefix, $date);
+                    $plannedSinceToday = bcsub($plannedThroughDate, $plannedBeforeToday, 4);
+                    $balance = bcadd($referenceBalance, $plannedSinceToday, 4);
                 }
 
                 $balanceCache[$date] = $balance;
