@@ -43,10 +43,10 @@
 .route-table tbody tr.has-movements { background: var(--orbe-surface); }
 .route-day-button { border: 0; background: transparent; color: var(--orbe-text); font: inherit; font-size: 10px; font-weight: 600; padding: 2px 0; cursor: pointer; text-align: left; }
 .route-day-button:hover { color: var(--orbe-primary); box-shadow: none; }
-.route-income-cell { color: var(--orbe-success); }
-.route-expense-cell { color: var(--orbe-danger); }
+.route-table td.route-income-cell { color: var(--orbe-success); }
+.route-table td.route-expense-cell { color: var(--orbe-danger); }
 .route-balance-cell { font-weight: 600; font-variant-numeric: tabular-nums; }
-.route-balance-negative { color: var(--orbe-danger); }
+.route-table td.route-balance-negative { color: var(--orbe-danger); }
 .route-status { margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--orbe-border); border-radius: 12px; background: var(--orbe-surface); color: var(--orbe-muted); font-size: 12px; }
 .route-status-error { color: var(--orbe-danger); }
 .route-overdue-summary { margin: 0 0 14px; border: 1px solid var(--orbe-border); border-radius: 12px; background: var(--orbe-surface); color: var(--orbe-text); font-size: 12px; }
