@@ -1232,3 +1232,9 @@ Regras obrigatórias para todas as páginas:
 - O seletor mensal é discreto, sem superfície ou borda própria; setas mantêm área de toque acessível.
 - O padrão é implementado no componente partilhado PageHeader e MonthSelector, não em CSS/markup isolado de cada página.
 - Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de três meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
+
+
+### Card de saldo do Dashboard — consistência de tema
+
+- O card de saldo mantém exatamente o mesmo fundo verde em light e dark mode.
+- Não aplicar overrides de cor ou gradiente específicos do tema ao `mobile-balance-card`; a tipografia interna já usa cores explícitas de alto contraste.
