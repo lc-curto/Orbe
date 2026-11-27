@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 final class FinancialRouteReadService
 {
+    private const PROJECTION_MONTHS = 24;
     public function __construct(private readonly CardInvoiceSummaryService $invoiceSummaries) {}
 
     /** @return array<string, mixed> */
@@ -200,7 +201,7 @@ final class FinancialRouteReadService
             };
 
             $months = [];
-            for ($index = 0; $index < 24; $index++) {
+            for ($index = 0; $index < self::PROJECTION_MONTHS; $index++) {
                 $month = $this->shiftMonth($firstMonth, $index);
                 $bounds = $this->monthBounds($month);
                 $days = [];
