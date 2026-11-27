@@ -34,7 +34,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
         />
         {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
         <UiCard
-          className="mobile-balance-card"
+          className="mobile-balance-card orbe-financial-highlight-card"
           borderRadius={18}
           padding={18}
           style={{
