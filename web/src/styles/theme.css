@@ -78,7 +78,7 @@
 [data-theme="dark"] .main-content .route-mobile-summary:not(.orbe-financial-highlight-card),
 [data-theme="dark"] .main-content .accounts-total-card:not(.orbe-financial-highlight-card),
 [data-theme="dark"] .main-content .cards-total-card:not(.orbe-financial-highlight-card),
-[data-theme="dark"] .main-content .cards-detail-summary {
+[data-theme="dark"] .main-content .cards-detail-summary:not(.orbe-financial-highlight-card) {
   background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text);
 }
 [data-theme="dark"] .main-content .movement-row,
