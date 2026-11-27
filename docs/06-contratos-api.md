@@ -199,9 +199,9 @@ Contrato proposto para criação atómica:
 
 **Implementado no PR #13 (branch aberta; ainda não integrado na `main`).** O endpoint é somente de leitura, exige autenticação Sanctum e aplica isolamento pelo utilizador autenticado.
 
-- `GET /api/financial-route?month=YYYY-MM`
+- `GET /api/financial-route?month=YYYY-MM&months=N`
 - `month` é opcional; por omissão usa o mês atual do backend. Quando informado, deve respeitar `YYYY-MM`; valor inválido retorna `422`.
-- A resposta é `{ data: FinancialRouteReadModel }` e contém exatamente 24 meses consecutivos a partir do mês solicitado, incluindo o mês inicial. A interface desktop apresenta os 24 meses; mobile apresenta o primeiro mês da janela.
+- `months` é opcional, inteiro entre 1 e 24; por omissão é 24. O read model devolve exatamente a quantidade solicitada de meses consecutivos a partir do mês indicado. Desktop pede 24 meses; mobile pede apenas 1 para reduzir cálculo e payload.
 - O read model não é persistido. É calculado pelo `FinancialRouteReadService` em transação de leitura, com base nos lançamentos realizados elegíveis, operações pendentes e valores ainda por pagar das faturas. React apenas apresenta os valores e resolve os IDs para detalhes carregados.
 
 Campos da resposta `data`:
