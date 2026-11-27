@@ -1,7 +1,7 @@
 import type { RouteMonth, RouteDay, RouteFlowFilter } from '../types'
 import { RouteDailyTable } from './RouteDailyTable'
 import { formatMonth } from '../utils'
-import { formatMoneyUnits, parseMoneyUnits } from '../projection'
+import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
 function formatAmount(value: string | null): string {
@@ -20,7 +20,7 @@ export function RouteMonthCard({ month, days, flowFilter, onSelectDay, mobile = 
   const income = flowFilter === 'EXPENSE' ? '0.0000' : month.totals.income
   const expenses = flowFilter === 'INCOME' ? '0.0000' : month.totals.expenses
   const endingBalanceUnits = month.endingBalance === null ? null : parseMoneyUnits(month.endingBalance)
-  const endingBalanceNegative = endingBalanceUnits !== null && endingBalanceUnits < 0n
+  const endingBalanceNegative = endingBalanceUnits !== null && isDisplayedNegative(endingBalanceUnits)
 
   return <section className={`route-month-card ${mobile ? 'route-month-card-mobile' : ''}`}>
     <header className="route-month-card-header">
