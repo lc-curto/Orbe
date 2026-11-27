@@ -4,6 +4,7 @@ import type { Operation } from '../../api/types'
 
 export function dateKey(value?: string | null) {
   if (!value) return null
+  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(value)) return value
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return null
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
