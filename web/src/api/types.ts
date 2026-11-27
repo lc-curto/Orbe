@@ -119,3 +119,39 @@ export type Card = {
   }
   invoices?: CardInvoice[]
 }
+
+export type FinancialRouteDayReadModel = {
+  date: string
+  income: string
+  expenses: string
+  balance: string | null
+  operation_ids: number[]
+  invoice_ids: number[]
+}
+
+export type FinancialRouteMonthReadModel = {
+  month: string
+  days: FinancialRouteDayReadModel[]
+  totals: { income: string; expenses: string }
+  opening_balance: string | null
+  ending_balance: string | null
+}
+
+export type FinancialRouteOverdueItem = {
+  id: string
+  type: 'operation' | 'invoice'
+  operation_id: number | null
+  invoice_id: number | null
+  date: string | null
+  label: string
+  amount: string
+  nature: 'INCOME' | 'EXPENSE'
+}
+
+export type FinancialRouteReadModel = {
+  reference_date: string
+  reference_balance: string | null
+  months: FinancialRouteMonthReadModel[]
+  overdue_items: FinancialRouteOverdueItem[]
+  overdue_total: string
+}
