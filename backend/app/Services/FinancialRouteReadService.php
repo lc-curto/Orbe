@@ -160,62 +160,37 @@ final class FinancialRouteReadService
                 }
             }
 
-            $firstBounds = $this->monthBounds($firstMonth);
-            $lastMonth = $this->shiftMonth($firstMonth, 2);
-            $lastBounds = $this->monthBounds($lastMonth);
-            $timelineStart = $firstBounds['first'] < $today ? $firstBounds['first'] : $today;
-            $timelineEnd = $lastBounds['last'] > $today ? $lastBounds['last'] : $today;
-            $balanceByDate = [];
-
-            if ($referenceBalanceValid) {
-                $historicalSuffix = $actualNetByDate[$today] ?? '0.0000';
-                $date = $this->shiftDate($today, -1);
-                while ($date >= $timelineStart) {
-                    $balanceByDate[$date] = bcsub($referenceBalance, $historicalSuffix, 4);
-                    $historicalSuffix = bcadd($historicalSuffix, $actualNetByDate[$date] ?? '0.0000', 4);
-                    $date = $this->shiftDate($date, -1);
+            $balanceCache = [];
+            $balanceAt = function (string $date) use (&$balanceCache, $referenceBalance, $referenceBalanceValid, $projectionValid, $actualNetByDate, $plannedNetByDate, $today): ?string {
+                if (array_key_exists($date, $balanceCache)) {
+                    return $balanceCache[$date];
                 }
-
-                if ($projectionValid) {
-                    $todayBalance = bcadd($referenceBalance, $plannedNetByDate[$today] ?? '0.0000', 4);
-                    $balanceByDate[$today] = $todayBalance;
-                    $date = $this->shiftDate($today, 1);
-                    $runningBalance = $todayBalance;
-                    while ($date <= $timelineEnd) {
-                        $runningBalance = bcadd($runningBalance, $plannedNetByDate[$date] ?? '0.0000', 4);
-                        $balanceByDate[$date] = $runningBalance;
-                        $date = $this->shiftDate($date, 1);
-                    }
-                } else {
-                    $date = $today;
-                    while ($date <= $timelineEnd) {
-                        $balanceByDate[$date] = null;
-                        $date = $this->shiftDate($date, 1);
-                    }
-                }
-            } else {
-                $date = $timelineStart;
-                while ($date <= $timelineEnd) {
-                    $balanceByDate[$date] = null;
-                    $date = $this->shiftDate($date, 1);
-                }
-            }
-
-            $balanceAt = function (string $date) use ($balanceByDate, $referenceBalance, $referenceBalanceValid, $actualNetByDate, $today): ?string {
-                if (array_key_exists($date, $balanceByDate)) {
-                    return $balanceByDate[$date];
-                }
-                if (!$referenceBalanceValid || $date >= $today) {
+                if (!$referenceBalanceValid) {
                     return null;
                 }
 
-                $netAfter = '0.0000';
-                $cursor = $this->shiftDate($date, 1);
-                while ($cursor <= $today) {
-                    $netAfter = bcadd($netAfter, $actualNetByDate[$cursor] ?? '0.0000', 4);
-                    $cursor = $this->shiftDate($cursor, 1);
+                if ($date < $today) {
+                    $netAfter = '0.0000';
+                    foreach ($actualNetByDate as $effectDate => $net) {
+                        if ($effectDate > $date && $effectDate <= $today) {
+                            $netAfter = bcadd($netAfter, $net, 4);
+                        }
+                    }
+                    $balance = bcsub($referenceBalance, $netAfter, 4);
+                } else {
+                    if (!$projectionValid) {
+                        return null;
+                    }
+                    $balance = bcadd($referenceBalance, $plannedNetByDate[$today] ?? '0.0000', 4);
+                    foreach ($plannedNetByDate as $effectDate => $net) {
+                        if ($effectDate > $today && $effectDate <= $date) {
+                            $balance = bcadd($balance, $net, 4);
+                        }
+                    }
                 }
-                return bcsub($referenceBalance, $netAfter, 4);
+
+                $balanceCache[$date] = $balance;
+                return $balance;
             };
 
             $months = [];
