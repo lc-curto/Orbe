@@ -37,11 +37,6 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           className="mobile-balance-card orbe-financial-highlight-card"
           borderRadius={18}
           padding={18}
-          style={{
-            background: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)',
-            backgroundColor: '#0f766e',
-            boxShadow: '0 8px 22px rgba(15, 118, 110, 0.16)',
-          }}
         >
           <Stack gap={12}>
             <Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text>
