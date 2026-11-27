@@ -45,6 +45,7 @@ export type Operation = {
   planned_at?: string | null
   category?: Category | null
   account?: Account | null
+  account_id?: number | null
   entries?: FinancialEntry[]
 }
 
@@ -54,6 +55,8 @@ export type FinancialEntry = {
   effect: 'INCREASE' | 'DECREASE'
   state: string
   effective_at?: string | null
+  account_id?: number | null
+  invoice_id?: number | null
   account?: Account | null
   invoice?: CardInvoice | null
 }
