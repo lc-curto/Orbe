@@ -715,3 +715,99 @@
     transition: none;
   }
 }
+
+
+/* Expense payment selection — shared form design tokens, responsive at 320px. */
+.orbe-expense-payment {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 4px 0 18px;
+}
+
+.orbe-form-section-title {
+  color: var(--orbe-form-text);
+  font-size: 13px;
+  font-weight: 750;
+  margin-top: 4px;
+}
+
+.orbe-choice-grid {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.orbe-choice-grid-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.orbe-choice-grid-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.orbe-choice-card {
+  display: flex;
+  min-width: 0;
+  min-height: 58px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 11px;
+  color: var(--orbe-form-text);
+  text-align: left;
+  background: var(--orbe-form-surface);
+  border: 1px solid var(--orbe-form-border);
+  border-radius: var(--orbe-form-radius-control, 12px);
+  cursor: pointer;
+}
+
+.orbe-choice-card strong {
+  max-width: 100%;
+  font-size: 13px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.orbe-choice-card span {
+  color: var(--orbe-form-muted);
+  font-size: 11px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.orbe-choice-card.is-selected {
+  color: var(--orbe-form-primary);
+  background: var(--orbe-form-primary-soft);
+  border-color: var(--orbe-form-primary);
+  box-shadow: inset 0 0 0 1px var(--orbe-form-primary);
+}
+
+.orbe-choice-card.is-selected span { color: var(--orbe-form-primary); }
+.orbe-choice-card:hover:not(:disabled) { border-color: var(--orbe-form-primary); }
+.orbe-choice-card:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--orbe-form-focus) 45%, transparent);
+  outline-offset: 2px;
+}
+.orbe-choice-card:disabled { cursor: not-allowed; opacity: .6; }
+
+.orbe-form-helper,
+.orbe-form-blocked-note {
+  margin: 0 0 14px;
+  padding: 11px 12px;
+  color: var(--orbe-form-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  background: var(--orbe-form-background);
+  border: 1px solid var(--orbe-form-border);
+  border-radius: var(--orbe-form-radius-control, 12px);
+}
+
+.orbe-form-blocked-note {
+  margin: 0 22px 12px;
+  color: var(--orbe-form-text);
+  border-color: color-mix(in srgb, var(--orbe-form-primary) 35%, var(--orbe-form-border));
+}
+
+@media (max-width: 360px) {
+  .orbe-choice-grid { gap: 6px; }
+  .orbe-choice-card { padding: 9px 7px; }
+  .orbe-choice-card strong { font-size: 12px; }
+  .orbe-choice-card span { font-size: 10px; }
+}
