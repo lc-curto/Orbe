@@ -4,7 +4,6 @@ import { useTheme } from '../../features/theme/useTheme'
 
 type PageHeaderProps = {
   title: string
-  description?: string
   titleId?: string
   className?: string
   actions?: ReactNode
