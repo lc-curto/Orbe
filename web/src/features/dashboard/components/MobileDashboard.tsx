@@ -10,7 +10,7 @@ function formatMoney(amount: string, symbol: CurrencySymbol): string {
   return formatCurrency(amount, symbol)
 }
 
-export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading, authError, logoutError }: {
+export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, movements, categories, loading, authError, logoutError }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
@@ -27,7 +27,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
 
   return (
     <Stack className="mobile-dashboard" backgroundColor="#f7f9fc" minHeight="100vh">
-      <Stack className="mobile-dashboard-content" gap={16}>
+      <Stack className="mobile-dashboard-content" gap="var(--orbe-page-section-gap)">
         <Row className="mobile-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }}>
           <Stack className="mobile-dashboard-greeting" flex={1} minWidth={0} gap={4}>
             <Text className="mobile-dashboard-greeting-text" color="#101828" fontWeight="800" numberOfLines={1}>Bom dia, {userName.split(' ')[0]}</Text>
