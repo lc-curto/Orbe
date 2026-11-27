@@ -1,3 +1,4 @@
+import { PageHeader } from '../../../shared/components/PageHeader'
 import { useEffect, useState } from 'react'
 import type { AuthUser, Category } from '../../../api/types'
 import { AppIcon } from '../../../shared/components/AppIcon'
@@ -133,7 +134,7 @@ export function SettingsPage({ user, categories }: Props) {
   }
 
   return <section className="settings-page" aria-labelledby="settings-page-title">
-    {(!isMobile || !mobileDetailOpen) ? <header className="settings-page-header"><h1 id="settings-page-title">Configurações</h1><p>Personaliza a tua experiência no Orbe.</p></header> : null}
+    {(!isMobile || !mobileDetailOpen) ? <PageHeader title="Configurações" titleId="settings-page-title" description="Personaliza a tua experiência no Orbe." className="settings-page-header" /> : null}
     {isMobile
       ? mobileDetailOpen
         ? <div className="settings-mobile-detail">
