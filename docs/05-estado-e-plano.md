@@ -83,14 +83,14 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 - Crédito/estorno segue o extrato e as regras reais do emissor: o Orbe regista o crédito na fatura/ciclo ou conta em que o emissor efetivamente o liquidou, sem abatimento automático à fatura mais antiga nem transferência fictícia para conta.
 - Pagamento realizado só pode ter data de hoje ou passada. A Rota considera a data efetiva real; efeitos anteriores à data de referência já estão incluídos no saldo atual e não são reaplicados na projeção.
 
-**Resolvido nesta revisão:** definição do saldo inicial, fórmula acumulada diária, continuidade entre dias/períodos e princípio de cálculo/read model comum. O read model deve expor/calcular os efeitos elegíveis por data a partir do domínio financeiro central; não é uma fonte financeira paralela.
+**Resolvido nesta revisão:** definição do saldo inicial, fórmula acumulada diária, continuidade entre dias/períodos e read model comum. A implementação do PR #13 acrescenta o endpoint Laravel `/api/financial-route`, calculado em transação de leitura a partir de lançamentos de conta realizados, operações pendentes e saldos em aberto das faturas. O read model é derivado do núcleo financeiro; não é uma fonte financeira paralela.
 
 **Contrato de saldo inicial de cartão definido:** saldo inicial positivo é integralmente distribuído por faturas; não existe parcela por distribuir, obrigação especial em dívidas ou novo destino financeiro. A operação original é única por cartão. Distribuições históricas são imutáveis; correções e reversões são rastreáveis. A obrigação em aberto deriva exclusivamente de `financial_entries`.
 
 **Contrato de saldo inicial de conta definido:** ao criar uma conta, informar o saldo existente no início da utilização no Orbe. O valor é reconhecido por operação `ACCOUNT_OPENING_BALANCE` e lançamento realizado dirigido à conta; não é receita/despesa. Saldo zero não gera lançamento; saldo negativo só é permitido quando compatível com o tipo de conta. Existe uma única abertura original por conta, não editável diretamente; correções preservam a origem e são rastreáveis. O saldo atual deriva dos lançamentos válidos.
 
 ## Trabalho funcional pendente
-- Contratos/read models de saldos e projeções continuam pendentes, especialmente saldo diário/final e projeção na Rota Financeira.
+- Read model de saldo/projeção da Rota implementado nesta PR; testes de integração e CI devem confirmar o comportamento antes do merge. A classificação fixa/variável e a estimativa variável continuam pendentes.
 - Formulários de escrita ainda não estão todos integrados; implementar apenas os fluxos cobertos por contratos aprovados.
 - Dívidas/obrigações: não existe página principal autónoma. O código da página foi removido pelo PR #7, integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`). Obrigações associadas a gastos permanecem no modelo financeiro e são consultadas/liquidadas a partir dos movimentos/faturas relacionados. Financiamentos ou obrigações preexistentes exigem fluxo específico ainda por definir; isso não autoriza reintroduzir uma página autónoma. Nenhum valor é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
@@ -99,11 +99,22 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 
 ## Estado da implementação frontend — 2026-11-27
 
+### Implementação da projeção acumulada da Rota — PR #13
+
+- O cálculo financeiro foi colocado no backend Laravel (`FinancialRouteReadService`), não no React, para manter regras e aritmética monetária no domínio/API.
+- O read model usa uma transação de leitura, soma lançamentos realizados em contas BANK/CASH/WALLET (carteiras como equivalentes de caixa; cartões de crédito excluídos) e utiliza aritmética BCMath na escala `DECIMAL(19,4)`.
+- O saldo histórico é reconstruído a partir do saldo de referência e dos efeitos realizados posteriores; o saldo atual/futuro acumula apenas operações pendentes e faturas ainda por pagar, evitando reaplicar efeitos já realizados.
+- Faturas são agregadas em lote pelo serviço comum `CardInvoiceSummaryService`, reutilizado pelos endpoints de cartões/faturas, evitando cálculos duplicados e consultas por fatura.
+- Faturas e operações pendentes vencidas permanecem no resumo de vencidos; não são reagendadas automaticamente nem descontadas como nova saída futura.
+- O frontend apenas apresenta o read model e resolve IDs para detalhes existentes; não recalcula saldos nem introduz uma fonte financeira local.
+- Testes de integração cobrem transição de mês, não duplicação de realizados, fatura única no vencimento, vencidos e saldo indisponível quando os efeitos têm dados inválidos. Execução de CI pendente até à validação do PR.
+- Pendências delimitadas: contratos de planos de pagamento parcelados e projeção de recorrências ainda não materializadas não fazem parte do read model atual; classificação fixa/variável permanece fora desta implementação.
+
 - PR #3: página Contas em modo de leitura publicada na `main`.
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; formulários de programação continuam indisponíveis.
-- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; os dados realizados são agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis.
+- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`. Nesta PR, saldo de referência, saldo diário acumulado, continuidade entre meses, projeção de operações pendentes e faturas por vencimento são fornecidos por read model Laravel. O horizonte visual é de três meses consecutivos, navegável para qualquer mês. A classificação fixa/variável e a estimativa variável continuam indisponíveis.
 - PR #7 foi integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`): remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
 - Backend da branch: gasto/rendimento pendente sem destino financeiro; realizado exige conta ativa; confirmação recolhe conta e cria lançamento; recorrências pendentes não guardam destino até à materialização.
 - Validação local reportada pelo utilizador: **52 testes backend passaram (217 assertions)** e Pint `--test` passou nos 7 ficheiros PHP alterados. O Pint global reporta 63 problemas de estilo em 98 ficheiros preexistentes/abrangidos; não foi aplicada formatação global.
