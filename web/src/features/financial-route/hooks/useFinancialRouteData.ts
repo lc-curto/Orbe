@@ -31,7 +31,7 @@ export function useFinancialRouteData(month: string, operations: Operation[], in
       })
 
     return () => controller.abort()
-  }, [month])
+  }, [month, operations, invoices])
 
   const projection = useMemo<RouteProjection | null>(() => {
     const response = state.response
