@@ -48,14 +48,11 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
   ]
 
   return <section className="financial-route-page">
-    <PageHeader title="Rota Financeira" description="Acompanhamento diário do teu dinheiro" className="financial-route-header" actions={<>
-      <div className="route-period-selector route-desktop-period">
-        <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
-        <span>{formatMonthRange(firstMonth, shiftMonth(firstMonth, 2))}</span>
-        <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
-      </div>
-      <MonthSelector month={firstMonth} onMonthChange={onMonthChange} className="route-month-selector-mobile" />
-    </>} />
+    <PageHeader title="Rota Financeira" description="Acompanhamento diário do teu dinheiro" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
+      <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
+      <span>{formatMonthRange(firstMonth, shiftMonth(firstMonth, 2))}</span>
+      <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
+    </div>} mobilePeriod={<MonthSelector month={firstMonth} onMonthChange={onMonthChange} className="route-month-selector-mobile" />} />
 
     <div className="route-desktop-controls">
       <div className="route-flow-filters" aria-label="Filtrar meses por movimento">
