@@ -93,7 +93,9 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - A edição e as ações sobre programações/ocorrências usam botões dedicados e não permitem edição inline.
 
 ## Rota Financeira — aprovado
-- Desktop: apresentar 24 meses consecutivos a partir do mês selecionado, em grelha de três colunas; navegação anterior/seguinte desloca a janela um mês. O horizonte de projeção padrão começa no mês atual e cobre pelo menos 24 meses.
+- Desktop: apresentar 24 meses consecutivos a partir do mês atual por defeito (mês atual + 23 seguintes), em grelha de três colunas; navegação anterior/seguinte desloca a janela um mês. A janela avança com o calendário e nunca fica fixa na data em que a página foi aberta.
+- A navegação para meses anteriores mantém o histórico consultável; não elimina nem congela operações. Ao alterar operações históricas, o read model é atualizado e a projeção futura recalculada a partir do saldo de referência atualizado, sem duplicar efeitos já refletidos nele.
+- Ao carregar a página, posicionar o scroll para que a linha do dia local atual fique visível. O dia atual recebe destaque subtil com token semântico, sem competir com os estados de saldo/alerta. O posicionamento inicial deve funcionar em desktop e mobile e não repetir-se em cada atualização de dados.
 - Cada mês apresenta título, totais de entradas/saídas, saldo final projetado e tabela diária.
 - Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura. A lista cresce com a página (sem scroll interno) e termina junto da área reservada à bottom bar; o FAB global fica fixo no viewport e sobrepõe a lista.
 - Cabeçalho mobile segue o padrão de Movimentos: título alinhado à esquerda e seletor mensal partilhado alinhado à direita; ocultar subtítulo neste breakpoint.
