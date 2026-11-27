@@ -51,7 +51,7 @@ export function AccountsPage({ accounts, loading, error }: Props) {
   }, [openMenuId])
 
   return <section ref={pageRef} className="accounts-page" aria-labelledby="accounts-page-title">
-    <PageHeader title="Contas" titleId="accounts-page-title" description={`${activeAccounts.length} ${activeAccounts.length === 1 ? 'conta ativa' : 'contas ativas'}`} className="accounts-page-header" />
+    <PageHeader title="Contas" titleId="accounts-page-title" className="accounts-page-header" />
 
     <div className="accounts-total-card orbe-financial-highlight-card">
       <span className="accounts-total-label">Saldo total</span>
