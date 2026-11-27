@@ -26,9 +26,10 @@ Quando uma operação planeada é realizada, o seu efeito projetado corresponden
 
 - Movimentos e Rota Financeira partem do mesmo conjunto de operações e efeitos financeiros válidos; a Rota não mantém um registo financeiro paralelo.
 - A diferença é de finalidade e agregação: Movimentos apresenta as operações individualmente; a Rota apresenta a evolução projetada do saldo, agregando os efeitos por data.
-- O saldo de referência da Rota é a soma dos saldos atuais de todas as contas financeiras de caixa, incluindo dinheiro e contas bancárias, excluindo cartões de crédito. O limite de crédito não é saldo próprio.
+- O saldo de referência da Rota é a soma dos efeitos realizados válidos dirigidos a contas bancárias, dinheiro e carteiras digitais (WALLET tratada como equivalente de caixa); cartões de crédito ficam excluídos. O limite de crédito não é saldo próprio.
+- A data de referência é a data local do pedido de projeção. O read model calcula o saldo no backend, dentro de uma transação de leitura, somando lançamentos de conta em estado REALIZED com data efetiva até essa referência. Se um efeito realizado necessário ao saldo tiver valor, destino ou data inválidos, o saldo é apresentado como indisponível, não estimado.
 - A associação de um gasto ou ganho pendente a uma conta não é condição para o incluir na projeção. A operação entra na Rota com base no seu valor, natureza, estado e data prevista, mesmo sem conta associada.
-- Operações já realizadas e refletidas nos saldos atuais das contas não podem ser novamente aplicadas como saídas/entradas projetadas. A projeção deve partir do saldo atual e acrescentar apenas efeitos futuros ainda não refletidos nesse saldo.
+- Operações já realizadas e refletidas no saldo de referência não podem ser novamente aplicadas como saídas/entradas projetadas. A projeção futura acrescenta apenas efeitos ainda pendentes e faturas ainda por pagar.
 - Canceladas não permanecem projetadas. Pendentes não alteram o saldo efetivo das contas.
 
 A separação operação/lançamentos (1:N) está aprovada. O destino de cada lançamento também está decidido: referência específica a uma conta, fatura ou dívida, com exatamente um destino por lançamento (ARC-001). O modelo conceptual e as relações entre entidades estão detalhados em [07 — Modelo ER](04-arquitetura-modelo-e-auditoria.md); o esquema físico continua por validar.
