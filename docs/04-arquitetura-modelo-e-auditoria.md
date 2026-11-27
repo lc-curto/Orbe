@@ -116,6 +116,8 @@ O domínio não deve depender da interface. Regras financeiras não devem ser re
 ## 7. Persistência e desempenho — proposta a validar
 MySQL/InnoDB; índices baseados em consultas reais; análise de planos de execução; evitar N+1; paginação adequada; cache apenas de dados derivados e reconstruíveis. Não introduzir Redis, Elasticsearch ou microserviços sem necessidade demonstrada.
 
+Na Rota Financeira, o read model calcula saldos diários por somas acumuladas e pesquisa binária, evitando percorrer todos os lançamentos para cada dia projetado. Em mobile, apenas a tabela do mês visível é montada; desktop mantém a grelha de 24 meses. O filtro «Só dias com movimento» considera entradas/saídas positivas exibidas na Rota; dias apenas com transferências não são incluídos, pois transferências não alteram o saldo global nem aparecem como fluxo na tabela.
+
 ## 8. Precisão monetária — ARC-003
 
 **Estado: aprovado para o núcleo financeiro.** Todos os valores monetários persistidos usam `DECIMAL(19,4)`. A aplicação usa aritmética decimal exata; `float` e `double` são proibidos em cálculos financeiros.
