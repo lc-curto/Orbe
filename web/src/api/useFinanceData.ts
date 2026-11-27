@@ -30,7 +30,6 @@ export function useFinanceData(user: AuthUser | null): FinanceDataState & { refr
   useEffect(() => {
     let mounted = true
     if (!user) {
-      setState({ data: emptyData, loading: false, error: null, userId: null })
       return () => { mounted = false }
     }
 
