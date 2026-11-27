@@ -19,6 +19,7 @@ import { useCurrency } from '../features/currency/useCurrency'
 import type { CurrencySymbol } from '../features/currency/types'
 import { ReportsPage } from '../features/reports/pages/ReportsPage'
 import { SettingsPage } from '../features/settings/pages/SettingsPage'
+import { useTheme } from '../features/theme/useTheme'
 
 function formatMoney(amount: string, symbol: CurrencySymbol = '€'): string {
   return formatCurrency(amount, symbol)
@@ -78,6 +79,7 @@ function FinanceStatus({ loading, error, authenticated }: { loading: boolean; er
 
 export default function App() {
   const { symbol: currencySymbol } = useCurrency()
+  const { theme, setTheme } = useTheme()
   const { user, loading: authLoading, error: authError, logout } = useAuth()
   const [logoutError, setLogoutError] = useState<string | null>(null)
   const finance = useFinanceData(user)
@@ -245,6 +247,22 @@ export default function App() {
     window.setTimeout(() => setFeedback(''), 2400)
   }
 
+  async function handleLogout() {
+    setLogoutError(null)
+    try {
+      await logout()
+    } catch {
+      const message = 'Não foi possível terminar a sessão. Tenta novamente.'
+      setLogoutError(message)
+      notify(message)
+    }
+  }
+
+  function toggleTheme() {
+    const resolved = document.documentElement.dataset.theme
+    setTheme(resolved === 'dark' ? 'light' : 'dark')
+  }
+
   function openForm(kind: 'expense' | 'income' | 'transfer') {
     setActiveForm(kind)
   }
@@ -271,6 +289,15 @@ export default function App() {
 
   return (
     <AppShell>
+        <button
+          className="global-theme-toggle"
+          type="button"
+          onClick={toggleTheme}
+          aria-label={document.documentElement.dataset.theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+          title={document.documentElement.dataset.theme === 'dark' ? 'Tema claro' : 'Tema escuro'}
+        >
+          <AppIcon name={document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon'} size={18} />
+        </button>
         <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <div className="desktop-layout">
           <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} padding="20px 16px" borderRightWidth={1} borderColor="#eaecf0" backgroundColor="#ffffff">
@@ -291,6 +318,9 @@ export default function App() {
             <Stack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
               <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" className="sidebar-footer-action" borderWidth={0} backgroundColor="transparent" color="#475467" height={42}>
                 <Row alignItems="center" gap={10}><AppIcon name="bell" size={20} strokeWidth={2} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</Row>
+              </Button>
+              <Button onPress={() => void handleLogout()} aria-label="Terminar sessão" title="Terminar sessão" className="sidebar-footer-action sidebar-logout-action" borderWidth={0} backgroundColor="transparent" color="#c2415d" height={42} disabled={authLoading}>
+                <Row alignItems="center" gap={10}><AppIcon name="logout" size={20} strokeWidth={2} />{sidebarOpen ? <Text fontSize={13}>Terminar sessão</Text> : null}</Row>
               </Button>
               <Stack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
                 <span ref={accountMenuAnchorRef} className="account-menu-anchor">
@@ -355,9 +385,15 @@ export default function App() {
         </div>
         {morePagesOpen ? <>
           <button className="mobile-more-panel-dismiss" type="button" aria-label="Fechar menu Mais" onClick={() => setMorePagesOpen(false)} />
-          <section className="mobile-more-pages-panel" role="menu" aria-label="Páginas secundárias">
-            <h2>Mais páginas</h2>
+          <section className="mobile-more-pages-panel" role="menu" aria-label="Menu Mais">
+            <h2>Mais</h2>
+            <div className="mobile-more-account">
+              <span className="mobile-more-account-avatar"><AppIcon name="user" size={18} /></span>
+              <span><strong>{user.name}</strong><small>{user.email}</small></span>
+            </div>
             {morePages.map((page) => <button key={page.label} className="mobile-more-page-item" type="button" role="menuitem" onClick={() => { navigateTo(page.label) }}><AppIcon name={page.icon} size={18} /><span>{page.label}</span></button>)}
+            <div className="mobile-more-divider" />
+            <button className="mobile-more-page-item mobile-more-logout" type="button" role="menuitem" onClick={() => { setMorePagesOpen(false); void handleLogout() }} disabled={authLoading}><AppIcon name="logout" size={18} /><span>Terminar sessão</span></button>
           </section>
         </> : null}
         {addMenuOpen ? <><button className="add-fab-dismiss" type="button" aria-label="Fechar opções de criação" onClick={() => setAddMenuOpen(false)} /><div className="add-fab-menu" role="menu" aria-label={`Criar na página ${activeKey}`}>
