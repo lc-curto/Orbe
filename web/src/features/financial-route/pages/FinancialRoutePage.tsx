@@ -7,7 +7,7 @@ import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
 import type { RouteDay, RouteFlowFilter } from '../types'
 import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
-import { formatMoneyUnits, parseMoneyUnits } from '../projection'
+import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
 function formatAmount(value: string | null): string {
@@ -69,7 +69,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   ]
   const mobileEndingBalance = mobileMonth?.endingBalance ?? null
   const mobileEndingUnits = mobileEndingBalance === null ? null : parseMoneyUnits(mobileEndingBalance)
-  const mobileEndingNegative = mobileEndingUnits !== null && mobileEndingUnits < 0n
+  const mobileEndingNegative = mobileEndingUnits !== null && isDisplayedNegative(mobileEndingUnits)
 
   return <section className="financial-route-page">
     <PageHeader title="Rota Financeira" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
