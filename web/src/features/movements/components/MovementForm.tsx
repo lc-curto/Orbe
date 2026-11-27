@@ -269,6 +269,7 @@ export function MovementForm({
   onSuccess: (message: string) => void
 }) {
   const [description, setDescription] = useState('')
+  const [notes, setNotes] = useState('')
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('')
   const [account, setAccount] = useState('')
@@ -277,7 +278,7 @@ export function MovementForm({
   const [frequency, setFrequency] = useState<'DAILY' | 'WEEKLY' | 'MONTHLY'>('MONTHLY')
   const [endAt, setEndAt] = useState('')
   const [destination, setDestination] = useState('')
-  const [operationState, setOperationState] = useState<'REALIZED' | 'PENDING'>('PENDING')
+  const [operationState, setOperationState] = useState<'REALIZED' | 'PENDING'>(kind === 'expense' ? 'REALIZED' : 'PENDING')
   const [paymentMethod, setPaymentMethod] = useState<'account' | 'card'>('account')
   const [accountMode, setAccountMode] = useState<'immediate' | 'future' | 'installments'>('immediate')
   const [plannedAccount, setPlannedAccount] = useState('')
@@ -319,8 +320,10 @@ export function MovementForm({
     })),
     [categoryRecords, nature],
   )
-  const unsupportedExpenseFlow = kind === 'expense' && (paymentMethod === 'card' || accountMode !== 'immediate')
-  const dirty = Boolean(description || amount || category || account || plannedAccount || selectedCard || destination || endAt
+  const unsupportedExpenseFlow = kind === 'expense' && !isRecurring && (paymentMethod === 'card' || accountMode !== 'immediate')
+  const unsupportedNotes = !isTransfer && Boolean(notes.trim())
+  const blockedUntilBackend = unsupportedExpenseFlow || unsupportedNotes
+  const dirty = Boolean(description || notes || amount || category || account || plannedAccount || selectedCard || destination || endAt
     || entryMode !== 'single' || frequency !== 'MONTHLY'
     || operationState !== 'PENDING' || outState !== 'PENDING' || inState !== 'PENDING'
     || outDate !== today() || inDate !== today() || date !== today() || firstInstallmentPaid)
@@ -334,6 +337,7 @@ export function MovementForm({
     } else {
       setFrequency('MONTHLY')
       setEndAt('')
+      setOperationState(kind === 'expense' && paymentMethod === 'account' && accountMode === 'immediate' ? 'REALIZED' : 'PENDING')
     }
   }
 
@@ -386,8 +390,8 @@ export function MovementForm({
     setErrors({})
     try {
       const normalizedAmount = normalizeMoney(amount)
-      if (unsupportedExpenseFlow) {
-        setErrors({ form: 'Esta modalidade está preparada na interface, mas ainda não pode ser guardada. Falta implementar o contrato financeiro no backend.' })
+      if (blockedUntilBackend) {
+        setErrors({ form: unsupportedNotes ? 'As notas estão desenhadas na interface, mas ainda não são persistidas pela API.' : 'Esta modalidade está preparada na interface, mas ainda não pode ser guardada. Falta implementar o contrato financeiro no backend.' })
         return
       }
       if (isRecurring) {
@@ -515,9 +519,9 @@ export function MovementForm({
         <FormField label="Categoria" name="category" required error={errors.category}>
           <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder={categories.length ? "Selecionar categoria" : `Não existem categorias ativas de ${kind === "income" ? "rendimento" : "gasto"}.`} disabled={submitting} />
         </FormField>
-        <FormField label={isRecurring ? 'Primeira ocorrência' : operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
+        {(kind === 'income' || isRecurring) ? <FormField label={isRecurring ? 'Primeira ocorrência' : operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
           <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
-        </FormField>
+        </FormField> : null}
         {!isRecurring && kind === 'expense' ? <section className="orbe-expense-payment" aria-label="Forma de pagamento">
           <div className="orbe-form-section-title">Como será pago?</div>
           <div className="orbe-choice-grid orbe-choice-grid-two" role="radiogroup" aria-label="Forma de pagamento">
@@ -568,10 +572,13 @@ export function MovementForm({
               <DateInput id="endAt" value={endAt} onChange={setEndAt} disabled={submitting} />
             </FormField>
           </> : null}
+          <FormField label="Notas (opcional)" name="notes">
+            <Textarea id="notes" value={notes} onChange={setNotes} maxLength={2000} disabled={submitting} />
+          </FormField>
         </OrbeDisclosure>
       </>}
-      {unsupportedExpenseFlow ? <p className="orbe-form-blocked-note" role="status">Interface preparada. Esta modalidade só poderá ser guardada quando a API e o modelo financeiro forem implementados.</p> : null}
-      <FormActions onCancel={onClose} loading={submitting} disabled={unsupportedExpenseFlow} submitLabel={isRecurring ? 'Criar programação' : isTransfer ? 'Guardar transferência' : kind === 'income' ? 'Guardar rendimento' : 'Guardar gasto'} />
+      {blockedUntilBackend ? <p className="orbe-form-blocked-note" role="status">{unsupportedNotes ? 'As notas ainda não são guardadas pela API.' : 'Interface preparada. Esta modalidade só poderá ser guardada quando a API e o modelo financeiro forem implementados.'}</p> : null}
+      <FormActions onCancel={onClose} loading={submitting} disabled={blockedUntilBackend} submitLabel={isRecurring ? 'Criar programação' : isTransfer ? 'Guardar transferência' : kind === 'income' ? 'Guardar rendimento' : 'Guardar gasto'} />
     </form>
   </ResponsiveFormContainer>
 }
