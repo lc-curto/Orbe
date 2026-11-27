@@ -12,6 +12,16 @@ Estas invariantes são obrigatórias. Uma implementação que as viole está inc
 - Saldos agregados podem ser armazenados como otimização se forem reconstruíveis.
 - Rota Financeira é simulação sobre o motor central, não um segundo motor.
 
+## Princípio fundamental da Rota Financeira
+
+**Saldo projetado do dia = saldo projetado do dia anterior + entradas planeadas − saídas planeadas.**
+
+A Rota Financeira representa a evolução acumulada do cenário financeiro. Parte do saldo efetivo de referência e incorpora, em cada data, todos os efeitos financeiros elegíveis, incluindo operações planeadas ainda não realizadas. Cada saldo diário resulta do saldo projetado do dia anterior acrescido das entradas e deduzido das saídas previstas para o dia.
+
+Este cálculo é uma projeção, não um saldo efetivo nem uma nova regra de negócio. A Rota consulta e calcula exclusivamente a partir dos dados, entidades, efeitos e regras financeiras comuns do Orbe, na mesma base de dados que alimenta as restantes páginas. Não cria uma base de dados, um motor financeiro, operações ou regras exclusivas.
+
+Quando uma operação planeada é realizada, o seu efeito projetado correspondente é substituído pelo efeito efetivo na data efetiva, sem duplicação. Alterações e cancelamentos válidos recalculam a projeção segundo as regras centrais do sistema.
+
 ## Dados partilhados entre Movimentos e Rota Financeira
 
 - Movimentos e Rota Financeira partem do mesmo conjunto de operações e efeitos financeiros válidos; a Rota não mantém um registo financeiro paralelo.
