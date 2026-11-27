@@ -47,7 +47,7 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
             {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
 
             <Row className="dashboard-kpi-row" flexWrap="nowrap" gap={16}>
-              <Card {...border} borderRadius={16} padding={20} flex={1} minWidth={0} backgroundColor="#175cd3">
+              <Card className="orbe-financial-highlight-card" borderWidth={1} borderColor="var(--orbe-financial-highlight-border)" borderRadius={18} padding={20} flex={1} minWidth={0}>
                 <Stack gap={8}>
                   <Text color="#dbeafe" fontSize={16}>Saldo disponível</Text>
                   <Text color="#ffffff" fontSize={30} fontWeight="800">Indisponível</Text>
