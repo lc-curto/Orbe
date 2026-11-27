@@ -415,9 +415,13 @@ Tamagui foi removido da stack web. A interface utiliza React, TypeScript, HTML s
 
 ### Correção responsiva da navegação (27/11/2026)
 
-Corrigida a coexistência da sidebar e da bottom bar: os componentes de layout aplicavam `display:flex` inline, que anulava a regra CSS de ocultação. A visibilidade agora é explicitamente controlada com regras de breakpoint e `!important`:
+A primeira correção CSS não eliminou o problema observado em QA: as páginas eram montadas nas variantes desktop e mobile ao mesmo tempo, e os wrappers `Row` aplicavam `display:flex` inline. Em determinados breakpoints, isso permitia coexistência da sidebar, bottom bar e conteúdo repetido.
 
-- Desktop (≥1024 px): sidebar/layout desktop visível; bottom bar oculta.
-- Tablet e mobile (≤1023 px): sidebar/layout desktop ocultos; bottom bar visível.
+Correção estrutural:
+- Desktop **> 1024 px**: variante desktop e sidebar; bottom bar e shells mobile ocultos.
+- Tablet/mobile **≤ 1024 px**: variante mobile e bottom bar; layout desktop/sidebar ocultos.
+- Wrappers responsivos usam elementos sem `display:flex` inline; CSS controla a visibilidade e o layout.
+- A bottom bar usa as variáveis de superfície e borda do tema ativo.
+- Os breakpoints das páginas e componentes foram alinhados ao limite de 1024 px.
 
-**Validação:** contrato de breakpoint revisto; ESLint e build TypeScript/Vite passaram no [CI run 45971276853](https://github.com/lc-curto/Orbe/actions/runs/45971276853). QA visual renderizada nos tamanhos desktop/tablet/mobile continua necessária.
+**Validação:** CI pendente após esta correção. QA visual em larguras 1440, 1280, 1024, 768, 390 e 320 px permanece necessária antes de integrar na `main`.

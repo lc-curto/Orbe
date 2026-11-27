@@ -15,7 +15,7 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Mais existe apenas na bottom bar; abre um painel inferior integrado com Cartões, Relatórios e Configurações, sempre nesta ordem.
 - O painel Mais não inclui perfil, notificações, logout nem opções dependentes da página. Fecha ao selecionar uma página, tocar novamente em Mais ou tocar fora.
 - No desktop, a sidebar contém todas as páginas agrupadas em Principal, Gestão financeira e Ferramentas; Mais não é item da sidebar.
-- Breakpoint da navegação global: **desktop ≥ 1024 px** (sidebar, sem bottom bar); **tablet/mobile ≤ 1023 px** (bottom bar fixa, sem sidebar). As regras de visibilidade devem prevalecer sobre `display:flex` inline dos componentes de layout.
+- Breakpoint da navegação global: **desktop > 1024 px** (sidebar, sem bottom bar); **tablet/mobile ≤ 1024 px** (bottom bar fixa, sem sidebar). O layout deve renderizar apenas uma variante de página visível por breakpoint; os wrappers responsivos não devem aplicar `display:flex` inline, e a bottom bar usa o tema/superfície atual.
 
 ## Dashboard — aprovado
 - Saudação dinâmica Bom dia/Boa tarde/Boa noite com primeiro nome.

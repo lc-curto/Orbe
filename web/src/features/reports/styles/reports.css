@@ -51,7 +51,7 @@
 .report-state { padding: 24px 0; }
 .report-state-error { color: var(--orbe-danger); }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .mobile-page-shell .reports-page { max-width: 680px; padding: 18px 18px 0; }
   .mobile-page-shell .reports-header { padding-top: 0; }
   .mobile-page-shell .reports-header .movements-heading h1 { font-size: 28px; }

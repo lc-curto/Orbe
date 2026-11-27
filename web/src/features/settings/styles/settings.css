@@ -36,7 +36,7 @@
 .settings-category-chip small { color: var(--orbe-muted); font-size: 10px; }
 .settings-category-empty { margin: 0; color: var(--orbe-muted); font-size: 12px; }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .mobile-page-shell .settings-page { max-width: 680px; padding: 18px 18px 0; }
   .settings-page-header { margin-bottom: 18px; }
   .settings-section-content { padding: 0 16px; }

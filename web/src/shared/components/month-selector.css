@@ -57,7 +57,7 @@
 .desktop-month-selector,
 .movement-month-selector { border-radius: 999px; }
 
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .orbe-month-selector { height: 44px; min-width: 104px; }
   .orbe-month-selector button { flex-basis: 26px; width: 26px; height: 32px; }
   .orbe-month-selector-label { min-width: 40px; font-size: 12px; }
@@ -90,7 +90,7 @@
 .movements-header-actions .desktop-new-button {
   white-space: nowrap;
 }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .mobile-page-shell .movements-header {
     display: flex !important;
     align-items: center !important;

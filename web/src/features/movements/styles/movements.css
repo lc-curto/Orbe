@@ -60,7 +60,7 @@
 .occurrence-note { margin-left: auto; }
 .muted { color: var(--orbe-muted); font-size: 12px; }
 .mobile-new-button, .mobile-page-shell { display: none; }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .mobile-page-shell { display: block; min-height: 100vh; background: var(--orbe-bg); padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
   .mobile-page-shell .movements-page { max-width: 680px; padding: 18px 18px 0; }
   .mobile-page-shell .movements-header { padding-top: 0; }
@@ -108,7 +108,7 @@
 .toolbar-filter { flex: 0 0 auto; }
 .schedule-list-header { display: flex; align-items: center; justify-content: space-between; margin: 10px 0 8px; color: var(--orbe-muted); font-size: 12px; font-weight: 700; }
 .schedule-list-header button { border: 0; background: transparent; color: var(--orbe-muted); cursor: pointer; font: inherit; }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .mobile-page-shell .movements-page { padding-top: 14px; }
   .movements-brand { margin-bottom: 6px; }
   .movements-header { align-items: flex-start; padding-bottom: 10px; }

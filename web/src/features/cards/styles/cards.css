@@ -42,7 +42,7 @@
 .cards-invoice-due { display: flex; justify-content: space-between; align-items: center; padding-top: 11px; border-top: 1px solid var(--orbe-border); }
 .cards-invoice-due strong { font-size: 12px; }
 .cards-mobile-shell { display: none; }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .main-content.cards-mode { display: none; }
   .cards-mobile-shell { display: block; padding: 18px 14px calc(92px + env(safe-area-inset-bottom)); min-height: 100vh; background: var(--orbe-bg); }
   .cards-row { padding: 15px 12px; gap: 10px; }
@@ -74,7 +74,7 @@
 .cards-invoice-day-list { overflow: hidden; border: 1px solid var(--orbe-border); border-radius: 14px; background: var(--orbe-surface); }
 .cards-invoice-day-list .movement-row { padding: 14px 16px; }
 .cards-invoice-day-list .movement-row + .movement-row { border-top: 1px solid var(--orbe-border); }
-@media (max-width: 1023px) {
+@media (max-width: 1024px) {
   .cards-invoice-day-list .movement-row { padding: 12px 10px; gap: 9px; }
   .cards-invoice-day-list .movement-amount { font-size: 12px; }
   .cards-invoice-total-lines { font-size: 12px; }
