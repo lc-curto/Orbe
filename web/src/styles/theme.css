@@ -76,7 +76,6 @@
 [data-theme="dark"] .main-content .cards-detail-summary {
   background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text);
 }
-[data-theme="dark"] .main-content .mobile-balance-card { background: #175cd3 !important; color: #fff !important; }
 [data-theme="dark"] .main-content .movement-row,
 [data-theme="dark"] .main-content .accounts-row,
 [data-theme="dark"] .main-content .cards-invoice-row,
