@@ -438,6 +438,20 @@ A fase de estabilização parte do commit atual da `main` após os PRs #9 e #10.
 - A Rota Financeira inicia em `2026-11` hardcoded. Deve iniciar no mês corrente de forma dinâmica, sem alterar a regra de projeção nem inventar saldo final.
 - O Dashboard contém variantes desktop/mobile com apresentação duplicada; a QA deve confirmar paridade de conteúdo, ordem, estados e ações em ambas.
 
+### Consistência de espaçamento — requisito da Fase 1
+
+As capturas de Cartões, Rota Financeira e Relatórios mostram diferenças de margens externas, padding dos conteúdos e alinhamento dos blocos. Tratar como finding transversal de UI, não como correções isoladas por página.
+
+- Definir/confirmar uma escala central de spacing tokens no Design System e reutilizá-la em todas as páginas.
+- Padronizar o container de página: largura, alinhamento, gutter horizontal e espaçamento vertical entre título, descrição, filtros, conteúdo e navegação.
+- Padronizar o padding interno de cards, painéis, tabelas e estados vazios; elementos equivalentes devem ter os mesmos valores.
+- Remover valores arbitrários e overrides locais de `margin`/`padding` quando duplicam ou contradizem os tokens existentes.
+- Permitir diferenças por breakpoint apenas quando justificadas pela responsividade, usando os mesmos tokens e regras previsíveis.
+- Auditar Cartões, Rota Financeira, Relatórios e restantes páginas primárias lado a lado; verificar alinhamento das bordas dos conteúdos e consistência entre desktop/tablet/mobile.
+- Não ajustar espaçamentos apenas para uma captura: corrigir a regra compartilhada ou documentar a exceção funcional.
+
+Critério de aceitação: páginas primárias seguem o mesmo sistema de container, gutters, ritmo vertical e padding de componentes, sem margens/paddings locais divergentes sem justificativa; confirmar visualmente nos viewports definidos.
+
 ### QA visual ainda por executar em browser
 
 Validar todas as páginas primárias em 320, 390, 768, 1024, 1025, 1280 e 1440 px, nos temas claro/escuro, incluindo navegação, safe areas, foco/teclado, loading, erro, vazio, filtros, seletor mensal, menus, FAB e persistência de preferências. Não marcar a fase como concluída apenas com lint/build.
