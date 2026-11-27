@@ -1,6 +1,16 @@
 /* Responsive shell: one visible layout tree at each breakpoint. */
 .desktop-layout { display: flex; flex: 1 1 auto; align-items: stretch; min-height: 100vh; }
-.desktop-sidebar { display: flex; flex-direction: column; height: 100vh; max-height: 100vh; min-height: 0; overflow: hidden; }
+.desktop-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  min-height: 0;
+  overflow: hidden;
+  border-right: 1px solid var(--orbe-border);
+  background: var(--orbe-surface);
+  color: var(--orbe-text);
+}
 .desktop-sidebar-navigation { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: thin; }
 .desktop-sidebar-navigation > * { min-width: 0; max-width: 100%; }
 .sidebar-footer, .sidebar-footer .account-menu { width: 100%; min-width: 0; max-width: 100%; flex-shrink: 0; }
@@ -11,9 +21,53 @@
 .mobile-bottom-bar { display: none; }
 
 /* Shared desktop sidebar controls; collapsed variants use classes, not cascade overrides. */
-.sidebar-nav-button { width: 100%; min-width: 0; min-height: 44px; justify-content: flex-start; padding-inline: 12px; }
-.sidebar-nav-row { gap: 10px; justify-content: flex-start; }
-.sidebar-footer-action { width: 100%; min-width: 0; justify-content: flex-start; padding-inline: 12px; }
+.sidebar-nav-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  padding-inline: 12px;
+  color: var(--orbe-text);
+  background: transparent;
+}
+.sidebar-nav-button[aria-current="page"] {
+  background: color-mix(in srgb, var(--orbe-teal) 13%, var(--orbe-surface));
+  color: var(--orbe-teal);
+}
+.sidebar-nav-group { width: 100%; min-width: 0; }
+.sidebar-group-title {
+  display: block;
+  padding: 4px 12px;
+  color: var(--orbe-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: left;
+}
+.sidebar-nav-row { width: 100%; min-width: 0; gap: 10px; justify-content: flex-start; }
+.sidebar-footer-action {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding-inline: 12px;
+  color: var(--orbe-text);
+  background: transparent;
+}
+.sidebar-logout-action { color: var(--orbe-danger); }
+.sidebar-profile-button.is-open { background: color-mix(in srgb, var(--orbe-muted) 10%, var(--orbe-surface)); }
+.desktop-sidebar-collapse-button {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid var(--orbe-border);
+  border-radius: var(--orbe-radius-control);
+  background: var(--orbe-bg);
+  color: var(--orbe-muted);
+}
+.desktop-sidebar-brand { color: var(--orbe-text); font-size: 28px; font-weight: 800; }
 .desktop-sidebar.collapsed .sidebar-nav-button { justify-content: center; padding-inline: 0; }
 .desktop-sidebar.collapsed .sidebar-nav-row { justify-content: center; gap: 0; }
 .desktop-sidebar.collapsed .sidebar-footer-action { justify-content: center; padding-inline: 0; }
@@ -84,7 +138,7 @@
 }
 .global-theme-toggle:hover { background: var(--orbe-surface); color: var(--orbe-text); border-color: var(--orbe-muted); }
 .global-theme-toggle:focus-visible { outline: 2px solid var(--orbe-focus); outline-offset: 3px; }
-.sidebar-logout-action { color: var(--orbe-danger) !important; }
+
 .mobile-more-account {
   display: flex;
   align-items: center;
