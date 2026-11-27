@@ -70,7 +70,7 @@ export function MovementsPage({ tab, setTab, operations, recurrences, accounts, 
   }
 
   return <section className="movements-page">
-    <PageHeader title="Movimentos" className="movements-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="movement-month-selector" />} />
+    <PageHeader title="Movimentos" className="movements-header" period={<MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="movement-month-selector" />} />
     <div className="movement-tabs" role="tablist"><button type="button" role="tab" aria-selected={tab === 'movements'} className={tab === 'movements' ? 'active' : ''} onClick={() => setTab('movements')}>Movimentos</button><button type="button" role="tab" aria-selected={tab === 'schedules'} className={tab === 'schedules' ? 'active' : ''} onClick={() => setTab('schedules')}>Programações</button></div>
     {tab === 'movements' ? <>
       <div className="movement-kpis"><Kpi label="Ganhos" value={money(kpis.income, '+ ', symbol)} tone="#16805b" detail="Realizadas no período" /><Kpi label="Gastos" value={money(kpis.expenses, '− ', symbol)} tone="#c2415d" detail="Realizadas no período" /><Kpi label="Resultado" value={money(Math.abs(kpis.income - kpis.expenses), kpis.income - kpis.expenses >= 0 ? '+ ' : '− ', symbol)} tone={kpis.income - kpis.expenses >= 0 ? '#175cd3' : '#c2415d'} detail="Ganhos − gastos" /></div>
