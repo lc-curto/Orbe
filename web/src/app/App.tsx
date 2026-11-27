@@ -366,7 +366,7 @@ export default function App() {
         {!['Relatórios', 'Configurações'].includes(activeKey) ? <button className="app-add-fab" type="button" onClick={handleAddFabClick} aria-label={`Adicionar na página ${activeKey}`} aria-expanded={addMenuOpen} title={`Adicionar — ${activeKey}`}>
           <AppIcon name="plus" size={26} color="#ffffff" strokeWidth={2.2} />
         </button> : null}
-        {activeForm ? <MovementForm kind={activeForm} onClose={() => setActiveForm(null)} onUnavailable={(message) => { setActiveForm(null); notify(message) }} /> : null}
+        {activeForm ? <MovementForm kind={activeForm} accounts={finance.data.accounts} categories={finance.data.categories} onClose={() => setActiveForm(null)} onSuccess={(message) => { setActiveForm(null); finance.refresh(); notify(message) }} /> : null}
     </AppShell>
   )
 }
