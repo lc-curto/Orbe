@@ -1,6 +1,6 @@
 /* Shared financial summary variant. Colors intentionally remain teal in both themes. */
 .orbe-financial-highlight-card {
-  padding: var(--orbe-panel-padding);
+  padding: var(--orbe-financial-highlight-padding);
   border: 1px solid var(--orbe-financial-highlight-border);
   border-radius: var(--orbe-radius-card);
   background-color: var(--orbe-financial-highlight-start);
