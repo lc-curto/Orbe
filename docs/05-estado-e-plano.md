@@ -563,3 +563,12 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Regras transversais de ordem de KPIs/cards, pesquisa e filtros, além dos critérios de light/dark mode, registadas em `docs/03-interface-e-formularios.md`.
 - A correção de dark mode cobre também o shell mobile (`mobile-page-shell`), onde cards/KPIs e estados vazios não eram abrangidos por seletores anteriores.
 - Estado desta revisão: implementada na branch do PR para QA visual manual; não integrada na main. A aprovação visual em diferentes larguras e temas continua pendente.
+
+
+### Composição A do cabeçalho mobile — 27/11/2026
+
+- Saudação/título à esquerda e botão de tema à direita na primeira linha.
+- Mês abreviado + ano na linha seguinte, alinhado à esquerda; setas mínimas alinhadas à direita.
+- Composição aplicada no PageHeader e MonthSelector partilhados para Dashboard, Movimentos e Relatórios.
+- Rota Financeira mantém comportamento diferenciado: intervalo de 3 meses no desktop e mês único no mobile, sem duplicação.
+- Implementação na branch do PR #12; aguardando CI e validação visual do utilizador, sem integração na main.
