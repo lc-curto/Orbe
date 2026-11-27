@@ -275,7 +275,7 @@ export function MovementForm({
   const [frequency, setFrequency] = useState<'DAILY' | 'WEEKLY' | 'MONTHLY'>('MONTHLY')
   const [endAt, setEndAt] = useState('')
   const [destination, setDestination] = useState('')
-  const [operationState, setOperationState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
+  const [operationState, setOperationState] = useState<'REALIZED' | 'PENDING'>('PENDING')
   const [outState, setOutState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
   const [inState, setInState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
   const [outDate, setOutDate] = useState(today)
@@ -306,7 +306,7 @@ export function MovementForm({
   )
   const dirty = Boolean(description || amount || category || account || destination || endAt
     || entryMode !== 'single' || frequency !== 'MONTHLY'
-    || operationState !== 'REALIZED' || outState !== 'REALIZED' || inState !== 'REALIZED'
+    || operationState !== 'PENDING' || outState !== 'PENDING' || inState !== 'PENDING'
     || outDate !== today() || inDate !== today() || date !== today())
 
   function toggleRecurrence(enabled: boolean) {
@@ -321,9 +321,9 @@ export function MovementForm({
     }
   }
 
-  function togglePending(enabled: boolean) {
-    setOperationState(enabled ? 'PENDING' : 'REALIZED')
-    setAccount('')
+  function toggleRealized(enabled: boolean) {
+    setOperationState(enabled ? 'REALIZED' : 'PENDING')
+    if (!enabled) setAccount('')
   }
 
   function validate() {
@@ -441,9 +441,11 @@ export function MovementForm({
 
   const legDateLabel = (state: 'REALIZED' | 'PENDING', direction: 'out' | 'in') =>
     `Data ${state === 'REALIZED' ? 'efetiva' : 'prevista'} da ${direction === 'out' ? 'saída' : 'entrada'}`
-  const transferDetailsSummary = outDate === today() && inDate === today() && outState === 'REALIZED' && inState === 'REALIZED'
-    ? 'Hoje · ambas realizadas'
-    : 'Datas ou estados personalizados'
+  const transferDetailsSummary = outState === 'REALIZED' && inState === 'REALIZED'
+    ? outDate === today() && inDate === today() ? 'Hoje · ambas realizadas' : 'Ambas realizadas · datas personalizadas'
+    : outState === 'PENDING' && inState === 'PENDING'
+      ? 'Ambas pendentes · datas previstas'
+      : `${outState === 'REALIZED' ? 'Saída realizada' : 'Saída pendente'} · ${inState === 'REALIZED' ? 'entrada realizada' : 'entrada pendente'}`
 
   return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : 'Preenche os dados essenciais.'} onClose={onClose} dirty={dirty} submitting={submitting}>
     <form className="orbe-movement-form" onSubmit={submit} noValidate>
@@ -460,11 +462,11 @@ export function MovementForm({
           <SelectInput id="destination" value={destination} onChange={setDestination} options={accounts.filter((item) => item.value !== account)} placeholder={accounts.length === 0 ? "Não existem contas ativas." : account ? "Selecionar conta de destino" : "Seleciona primeiro a origem"} disabled={submitting || !account} />
         </FormField>
         <OrbeDisclosure title="Mais detalhes" description={transferDetailsSummary} open={transferDetailsOpen} onOpenChange={setTransferDetailsOpen}>
-          <OrbeFormToggle id="outStatePending" label="Marcar saída como pendente" description="A saída ainda não foi realizada." checked={outState === 'PENDING'} onChange={(checked) => setOutState(checked ? 'PENDING' : 'REALIZED')} disabled={submitting} />
+          <OrbeFormToggle id="outStateRealized" label="Registar saída como realizada" description="Confirma que o dinheiro já saiu da conta." checked={outState === 'REALIZED'} onChange={(checked) => setOutState(checked ? 'REALIZED' : 'PENDING')} disabled={submitting} />
           <FormField label={legDateLabel(outState, 'out')} name="outDate" required error={errors.outDate}>
             <DateInput id="outDate" value={outDate} onChange={setOutDate} disabled={submitting} />
           </FormField>
-          <OrbeFormToggle id="inStatePending" label="Marcar entrada como pendente" description="A entrada ainda não foi realizada." checked={inState === 'PENDING'} onChange={(checked) => setInState(checked ? 'PENDING' : 'REALIZED')} disabled={submitting} />
+          <OrbeFormToggle id="inStateRealized" label="Registar entrada como realizada" description="Confirma que o dinheiro já entrou na conta." checked={inState === 'REALIZED'} onChange={(checked) => setInState(checked ? 'REALIZED' : 'PENDING')} disabled={submitting} />
           <FormField label={legDateLabel(inState, 'in')} name="inDate" required error={errors.inDate}>
             <DateInput id="inDate" value={inDate} onChange={setInDate} disabled={submitting} />
           </FormField>
@@ -497,7 +499,7 @@ export function MovementForm({
             <FormField label="Data de fim (opcional)" name="endAt" error={errors.endAt}>
               <DateInput id="endAt" value={endAt} onChange={setEndAt} disabled={submitting} />
             </FormField>
-          </> : <OrbeFormToggle id="operationStatePending" label="Marcar como pendente" description="Ainda não foi realizado; não exige conta." checked={operationState === 'PENDING'} onChange={togglePending} disabled={submitting} />}
+          </> : <OrbeFormToggle id="operationStateRealized" label="Registar como realizado" description="Confirma que esta operação já aconteceu." checked={operationState === 'REALIZED'} onChange={toggleRealized} disabled={submitting} />}
         </OrbeDisclosure>
       </>}
       <FormActions onCancel={onClose} loading={submitting} submitLabel={isRecurring ? 'Criar programação' : isTransfer ? 'Guardar transferência' : kind === 'income' ? 'Guardar rendimento' : 'Guardar gasto'} />
