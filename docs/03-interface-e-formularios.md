@@ -1224,3 +1224,11 @@ Regras obrigatórias para todas as páginas:
 - Quando uma página tem KPIs/cards de resumo, a sequência padrão é: **cabeçalho → KPIs/cards → pesquisa → filtros → resultados**. Não colocar filtros antes dos resumos nem antes da pesquisa. Exceções só quando a função principal (por exemplo, uma vista de calendário/rota) exigir controlos antes do conteúdo filtrado; manter a exceção consistente entre desktop e mobile.
 - Dark mode é suportado pelo sistema de tokens e por todas as superfícies de feature, não apenas pelo fundo: cards/KPIs, pesquisa, filtros, tabs, listas, estados vazios, popovers, botões, FAB, navegação, texto, bordas, foco e estados disabled.
 - Não introduzir cores de fundo/texto fixas para componentes comuns quando existe token de tema. Verificar light e dark em desktop, tablet e mobile; contraste e legibilidade fazem parte do QA visual.
+
+
+### Cabeçalho mobile e navegação temporal
+
+- Composição padrão A: primeira linha com título à esquerda e controlo de tema à direita; segunda linha com mês abreviado + ano alinhado à esquerda e setas de navegação à direita.
+- O seletor mensal é discreto, sem superfície ou borda própria; setas mantêm área de toque acessível.
+- O padrão é implementado no componente partilhado PageHeader e MonthSelector, não em CSS/markup isolado de cada página.
+- Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de três meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
