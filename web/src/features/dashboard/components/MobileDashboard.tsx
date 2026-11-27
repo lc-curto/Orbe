@@ -1,7 +1,6 @@
 import { PageHeader } from '../../../shared/components/PageHeader'
 import { Card as UiCard, Separator, Text, Row, Stack } from '../../../design-system/primitives'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
-import { AppIcon } from '../../../shared/components/AppIcon'
 import { DashboardSections } from './DashboardSections'
 import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
 import type { DashboardMovement } from './DashboardSections'
@@ -19,8 +18,6 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
   loading: boolean
   authError: string | null
   logoutError: string | null
-  onThemeToggle: () => void
-  isDark: boolean
   userName: string
   currencySymbol: CurrencySymbol
   movements: DashboardMovement[]
@@ -33,17 +30,6 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           title={`Bom dia, ${userName.split(' ')[0]}`}
           description={period.date}
           className="mobile-dashboard-header"
-          actions={
-            <button
-              className="mobile-dashboard-theme-toggle"
-              type="button"
-              onClick={onThemeToggle}
-              aria-label={isDark ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
-              title={isDark ? 'Tema claro' : 'Tema escuro'}
-            >
-              <AppIcon name={isDark ? 'sun' : 'moon'} size={18} />
-            </button>
-          }
         />
         <div className="mobile-dashboard-period-row">
           <span className="mobile-dashboard-period-label">Período</span>
