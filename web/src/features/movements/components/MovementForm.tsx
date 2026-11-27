@@ -313,7 +313,7 @@ export function MovementForm({
     setEntryMode(enabled ? 'recurrence' : 'single')
     if (enabled) {
       setAccount('')
-      setOperationState('REALIZED')
+      setOperationState('PENDING')
       setMoreOptionsOpen(true)
     } else {
       setFrequency('MONTHLY')
