@@ -326,3 +326,14 @@
 }
 
 
+
+/* Keep the balance visibility control compact inside the mobile KPI card. */
+.mobile-balance-card .mobile-balance-visibility-button {
+  flex: 0 0 30px !important;
+  width: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+}
