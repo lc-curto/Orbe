@@ -63,6 +63,9 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
       </div>
       <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
     </div>
+    <div className="route-mobile-flow-filters" aria-label="Filtrar o mês por movimento">
+      {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
+    </div>
 
     <div className="route-desktop-months">
       {months.map((item) => <RouteMonthCard key={item.month} month={item} days={visibleDaysFor(item.days)} flowFilter={flowFilter} onSelectDay={selectDay} />)}
