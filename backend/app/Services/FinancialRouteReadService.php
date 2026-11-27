@@ -61,6 +61,7 @@ final class FinancialRouteReadService
                     $signedAmount = bcsub('0', $amount, 4);
                 } else {
                     $referenceBalanceValid = false;
+
                     continue;
                 }
 
@@ -95,6 +96,7 @@ final class FinancialRouteReadService
                 $amount = (string) $operation->amount;
                 if (bccomp($amount, '0', 4) <= 0) {
                     $projectionValid = false;
+
                     continue;
                 }
 
@@ -147,6 +149,7 @@ final class FinancialRouteReadService
                         'amount' => $amount,
                         'nature' => 'EXPENSE',
                     ];
+
                     continue;
                 }
 
