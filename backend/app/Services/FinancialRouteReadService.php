@@ -47,7 +47,7 @@ final class FinancialRouteReadService
                     ->where('user_id', $userId)
                     ->whereIn('account_id', $accountIds)
                     ->where('state', 'REALIZED')
-                    ->selectRaw("COALESCE(SUM(CASE WHEN effective_at <= ? AND effect = 'INCREASE' THEN amount WHEN effective_at <= ? AND effect = 'DECREASE' THEN -amount ELSE 0 END), 0) as balance", [$today.' 23:59:59', $today.' 23:59:59])
+                    ->selectRaw("COALESCE(SUM(CASE WHEN effective_at <= ? AND effect = 'INCREASE' THEN amount WHEN effective_at <= ? AND effect = 'DECREASE' THEN -amount ELSE 0 END), 0) as balance", [$today.' 23:59:59', $today.' 23:59:59'])
                     ->selectRaw("COALESCE(SUM(CASE WHEN effective_at IS NULL OR amount < 0 OR effect NOT IN ('INCREASE', 'DECREASE') THEN 1 ELSE 0 END), 0) as invalid_count")
                     ->selectRaw('COALESCE(SUM(CASE WHEN effective_at > ? THEN 1 ELSE 0 END), 0) as future_count', [$today.' 23:59:59'])
                     ->first();
