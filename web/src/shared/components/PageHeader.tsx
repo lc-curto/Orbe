@@ -8,10 +8,12 @@ type PageHeaderProps = {
   titleId?: string
   className?: string
   actions?: ReactNode
+  period?: ReactNode
+  mobilePeriod?: ReactNode
 }
 
 /** Shared page heading and responsive actions, including the cross-page theme control. */
-export function PageHeader({ title, titleId, className = '', actions }: PageHeaderProps) {
+export function PageHeader({ title, titleId, className = '', actions, period, mobilePeriod }: PageHeaderProps) {
   const { setTheme } = useTheme()
 
   function toggleTheme() {
@@ -36,6 +38,8 @@ export function PageHeader({ title, titleId, className = '', actions }: PageHead
         <AppIcon name={isDark ? 'sun' : 'moon'} size={18} />
       </button>
       {actions}
+      {period ? <div className="orbe-page-header-desktop-period">{period}</div> : null}
     </div>
+    {(mobilePeriod ?? period) ? <div className="orbe-page-header-period">{mobilePeriod ?? period}</div> : null}
   </header>
 }
