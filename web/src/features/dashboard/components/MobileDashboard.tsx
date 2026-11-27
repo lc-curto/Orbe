@@ -30,10 +30,8 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           title={`Bom dia, ${userName.split(' ')[0]}`}
           description={period.date}
           className="mobile-dashboard-header"
+          period={<MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />}
         />
-        <div className="mobile-dashboard-period-row">
-          <MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />
-        </div>
         {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
         <UiCard className="mobile-balance-card" borderRadius={18} padding={18}>
           <Stack gap={12}>
