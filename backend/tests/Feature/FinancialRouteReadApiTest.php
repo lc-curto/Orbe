@@ -152,6 +152,27 @@ final class FinancialRouteReadApiTest extends TestCase
     }
 
     #[Test]
+    public function transfers_are_visible_in_detail_but_do_not_change_route_cash_flow_or_total_balance(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $bank = $this->account($user, 'BANK');
+        $cash = $this->account($user, 'CASH');
+        $this->openingBalance($user, $bank, '1000.0000', '2026-11-01 12:00:00');
+        $transfer = $this->operation($user, 'TRANSFER', 'REALIZED', '200.0000', '2026-11-26 12:00:00');
+        $this->entry($user, $transfer, $bank, '200.0000', 'DECREASE', '2026-11-26 12:00:00');
+        $this->entry($user, $transfer, $cash, '200.0000', 'INCREASE', '2026-11-26 12:00:00');
+
+        $this->getJson('/api/financial-route?month=2026-11')
+            ->assertOk()
+            ->assertJsonPath('data.reference_balance', '1000.0000')
+            ->assertJsonPath('data.months.0.days.25.income', '0.0000')
+            ->assertJsonPath('data.months.0.days.25.expenses', '0.0000')
+            ->assertJsonPath('data.months.0.days.26.balance', '1000.0000')
+            ->assertJsonPath('data.months.0.days.25.operation_ids.0', $transfer->id);
+    }
+
+    #[Test]
     public function invalid_realized_entry_date_makes_balance_unavailable_instead_of_guessing(): void
     {
         $user = User::factory()->create();
