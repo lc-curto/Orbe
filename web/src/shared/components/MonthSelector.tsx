@@ -25,7 +25,7 @@ export function MonthSelector({ month, onMonthChange, minMonth, maxMonth, classN
   const canGoNext = !maxMonth || next <= maxMonth
 
   return (
-    <div className={`orbe-month-selector ${className}`} aria-label="Navegação por mês">
+    <div className={`orbe-month-selector ${className}`} role="group" aria-label="Navegação por mês">
       <span className="orbe-month-selector-label" aria-label="Mês selecionado">{shortMonthLabel(month)}</span>
       <div className="orbe-month-selector-navigation">
         <button type="button" aria-label="Mês anterior" disabled={!canGoPrevious} onClick={() => onMonthChange(previous)}>
