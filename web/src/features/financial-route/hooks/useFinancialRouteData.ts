@@ -1,21 +1,68 @@
-import { useMemo } from 'react'
-import type { Account, CardInvoice, Operation } from '../../../api/types'
-import { buildFinancialRouteProjection, localDateKey } from '../projection'
+import { useEffect, useMemo, useState } from 'react'
+import { ApiError } from '../../../api/client'
+import { fetchFinancialRouteReadModel } from '../../../api/finance'
+import type { CardInvoice, FinancialRouteReadModel, Operation } from '../../../api/types'
+import type { RouteDay, RouteMonth, RouteProjection } from '../types'
 
-export function useFinancialRouteData(
-  operations: Operation[],
-  accounts: Account[],
-  invoices: CardInvoice[],
-  firstMonth: string,
-  monthCount = 3,
-) {
-  const referenceDateKey = localDateKey()
-  return useMemo(() => buildFinancialRouteProjection(
-    operations,
-    accounts,
-    invoices,
-    firstMonth,
-    monthCount,
-    new Date(referenceDateKey + 'T12:00:00'),
-  ), [operations, accounts, invoices, firstMonth, monthCount, referenceDateKey])
+type RouteDataState = {
+  response: FinancialRouteReadModel | null
+  loading: boolean
+  error: string | null
+}
+
+function messageFor(error: unknown): string {
+  if (error instanceof ApiError) return error.message
+  return error instanceof Error ? error.message : 'Não foi possível carregar a projeção financeira.'
+}
+
+export function useFinancialRouteData(month: string, operations: Operation[], invoices: CardInvoice[]) {
+  const [state, setState] = useState<RouteDataState>({ response: null, loading: true, error: null })
+
+  useEffect(() => {
+    const controller = new AbortController()
+    setState({ response: null, loading: true, error: null })
+
+    void fetchFinancialRouteReadModel(month, controller.signal)
+      .then((response) => {
+        if (!controller.signal.aborted) setState({ response, loading: false, error: null })
+      })
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) setState({ response: null, loading: false, error: messageFor(error) })
+      })
+
+    return () => controller.abort()
+  }, [month])
+
+  const projection = useMemo<RouteProjection | null>(() => {
+    const response = state.response
+    if (!response) return null
+    const operationById = new Map(operations.map((operation) => [operation.id, operation]))
+    const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))
+    const months: RouteMonth[] = response.months.map((monthData) => {
+      const days: RouteDay[] = monthData.days.map((day) => ({
+        date: day.date,
+        income: day.income,
+        expenses: day.expenses,
+        balance: day.balance,
+        operations: day.operation_ids.map((id) => operationById.get(id)).filter((operation): operation is Operation => operation !== undefined),
+        invoices: day.invoice_ids.map((id) => invoiceById.get(id)).filter((invoice): invoice is CardInvoice => invoice !== undefined),
+      }))
+      return {
+        month: monthData.month,
+        days,
+        totals: monthData.totals,
+        openingBalance: monthData.opening_balance,
+        endingBalance: monthData.ending_balance,
+      }
+    })
+    return {
+      referenceDate: response.reference_date,
+      referenceBalance: response.reference_balance,
+      months,
+      overdueItems: response.overdue_items,
+      overdueTotal: response.overdue_total,
+    }
+  }, [state.response, operations, invoices])
+
+  return { projection, loading: state.loading, error: state.error }
 }
