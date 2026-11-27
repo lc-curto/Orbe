@@ -19,6 +19,6 @@ export type RouteMonth = {
 export const routeFilterOptions: Array<{ value: RouteFilter; label: string }> = [
   { value: 'ALL', label: 'Todos' },
   { value: 'INCOME', label: 'Ganhos' },
-  { value: 'FIXED', label: 'Gastos fixos' },
-  { value: 'VARIABLE', label: 'Gastos variáveis' },
+  { value: 'FIXED', label: 'G. Fixos' },
+  { value: 'VARIABLE', label: 'G. Variáveis' },
 ]
