@@ -20,10 +20,12 @@ final class ReadController extends Controller
             ->where('user_id', $request->user()->id)
             ->with(['invoices' => fn ($query) => $query->orderByDesc('period_start')])
             ->orderBy('name')
-            ->get()
-            ->map(fn (Card $card): array => $this->cardPayload($card, $invoiceSummaries));
+            ->get();
+        $summaries = $invoiceSummaries->forInvoices($cards->flatMap(fn (Card $card) => $card->invoices->pluck('id'))->all());
 
-        return response()->json(['data' => $cards]);
+        return response()->json([
+            'data' => $cards->map(fn (Card $card): array => $this->cardPayload($card, $summaries))->values()->all(),
+        ]);
     }
 
     public function card(Request $request, int $card, CardInvoiceSummaryService $invoiceSummaries): JsonResponse
@@ -32,8 +34,9 @@ final class ReadController extends Controller
             ->where('user_id', $request->user()->id)
             ->with(['invoices' => fn ($query) => $query->orderByDesc('period_start')])
             ->findOrFail($card);
+        $summaries = $invoiceSummaries->forInvoices($model->invoices->pluck('id')->all());
 
-        return response()->json(['data' => $this->cardPayload($model, $invoiceSummaries)]);
+        return response()->json(['data' => $this->cardPayload($model, $summaries)]);
     }
 
     public function invoices(Request $request, CardInvoiceSummaryService $invoiceSummaries): JsonResponse
@@ -42,10 +45,12 @@ final class ReadController extends Controller
             ->where('user_id', $request->user()->id)
             ->with('card')
             ->orderByDesc('period_start')
-            ->get()
-            ->map(fn (CardInvoice $invoice): array => $this->invoicePayload($invoice, $invoiceSummaries));
+            ->get();
+        $summaries = $invoiceSummaries->forInvoices($invoices->pluck('id')->all());
 
-        return response()->json(['data' => $invoices]);
+        return response()->json([
+            'data' => $invoices->map(fn (CardInvoice $invoice): array => $this->invoicePayload($invoice, $summaries[$invoice->id] ?? null))->values()->all(),
+        ]);
     }
 
     public function operations(Request $request): JsonResponse
@@ -61,11 +66,13 @@ final class ReadController extends Controller
         return response()->json(['data' => $operations]);
     }
 
-    /** @return array<string, mixed> */
-    private function cardPayload(Card $card, CardInvoiceSummaryService $invoiceSummaries): array
+    /** @param array<int, array{obligation_amount:string,paid_amount:string,open_amount:string}> $summaries
+     *  @return array<string, mixed>
+     */
+    private function cardPayload(Card $card, array $summaries): array
     {
         $invoices = $card->invoices
-            ->map(fn (CardInvoice $invoice): array => $this->invoicePayload($invoice, $invoiceSummaries));
+            ->map(fn (CardInvoice $invoice): array => $this->invoicePayload($invoice, $summaries[$invoice->id] ?? null));
         $used = $invoices->reduce(
             fn (string $carry, array $invoice): string => bcadd($carry, $invoice['summary']['open_amount'], 4),
             '0.0000',
@@ -80,11 +87,17 @@ final class ReadController extends Controller
         ]);
     }
 
-    /** @return array<string, mixed> */
-    private function invoicePayload(CardInvoice $invoice, CardInvoiceSummaryService $invoiceSummaries): array
+    /** @param array{obligation_amount:string,paid_amount:string,open_amount:string}|null $summary
+     *  @return array<string, mixed>
+     */
+    private function invoicePayload(CardInvoice $invoice, ?array $summary): array
     {
         $payload = $invoice->toArray();
-        $payload['summary'] = $invoiceSummaries->forInvoice((int) $invoice->id);
+        $payload['summary'] = $summary ?? [
+            'obligation_amount' => '0.0000',
+            'paid_amount' => '0.0000',
+            'open_amount' => '0.0000',
+        ];
         return $payload;
     }
 }
