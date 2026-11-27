@@ -10,6 +10,9 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('financial_entries', function (Blueprint $table): void {
+            // Preserve a standalone index for the user_id foreign key; MySQL may otherwise
+            // rely on the wider route index and refuse to drop it during rollback.
+            $table->index(['user_id'], 'entries_user_fk_idx');
             $table->index(
                 ['user_id', 'account_id', 'state', 'effective_at'],
                 'entries_route_user_account_state_date_idx',
@@ -42,6 +45,7 @@ return new class extends Migration {
     {
         Schema::table('financial_entries', function (Blueprint $table): void {
             $table->dropIndex('entries_route_user_account_state_date_idx');
+            // entries_user_fk_idx is intentionally retained as the FK support index.
         });
 
         Schema::table('operations', function (Blueprint $table): void {
