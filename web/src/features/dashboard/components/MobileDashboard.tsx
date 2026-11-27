@@ -7,7 +7,7 @@ import type { DashboardMovement } from './DashboardSections'
 import type { CurrencySymbol } from '../../currency/types'
 
 
-export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading, authError, logoutError, onThemeToggle, isDark }: {
+export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading, authError, logoutError }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
