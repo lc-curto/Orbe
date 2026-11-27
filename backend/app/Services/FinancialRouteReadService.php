@@ -291,7 +291,7 @@ final class FinancialRouteReadService
     /** @return array{first:string,last:string,days:int} */
     private function monthBounds(string $month): array
     {
-        $first = new \DateTimeImmutable($month . '-01');
+        $first = new \DateTimeImmutable($month.'-01');
         return [
             'first' => $first->format('Y-m-01'),
             'prefix' => $first->format('Y-m-'),
