@@ -558,7 +558,7 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 ### Refinamento transversal de interface — 27/11/2026
 
 - Cabeçalho principal sem descrição ou texto auxiliar imediatamente abaixo do título, aplicado pelo componente `PageHeader`.
-- Seletor de mês partilhado no padrão opção C: mês à esquerda, navegação anterior/seguinte agrupada à direita.
+- Seletor de mês partilhado no padrão opção 2: mês abreviado + ano completo (`Nov 2026`), setas discretas nos dois lados, sem superfície/borda; removida a etiqueta redundante “Período” na Dashboard.
 - Na Rota Financeira mobile, o resumo mensal fica antes dos filtros de visualização.
 - Regras transversais de ordem de KPIs/cards, pesquisa e filtros, além dos critérios de light/dark mode, registadas em `docs/03-interface-e-formularios.md`.
 - A correção de dark mode cobre também o shell mobile (`mobile-page-shell`), onde cards/KPIs e estados vazios não eram abrangidos por seletores anteriores.
