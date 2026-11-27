@@ -20,7 +20,7 @@ Aplicação de gestão financeira pessoal para compreender e gerir contas, movim
 - Multiutilizador/família.
 - Multi-moeda e conversão cambial.
 - Orçamentos e metas de poupança.
-- Projeções no Dashboard, Movimentos, Contas, Cartões e Relatórios.
+- Projeções exclusivamente na Rota Financeira. Dashboard, Movimentos, Contas, Cartões e Relatórios não apresentam projeções como valores realizados.
 
 ## Moeda
 O utilizador escolhe uma moeda principal. A aplicação opera apenas nessa moeda.
