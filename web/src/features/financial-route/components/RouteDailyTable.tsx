@@ -1,5 +1,5 @@
 import type { RouteDay, RouteFlowFilter } from '../types'
-import { formatDay } from '../utils'
+import { formatDay, localDateKey } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
@@ -14,6 +14,7 @@ export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
   onSelectDay: (date: string) => void
 }) {
   const { symbol } = useCurrency()
+  const today = localDateKey()
   return <div className="route-table-wrap">
     <table className="route-table">
       <thead><tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th>Saldo</th></tr></thead>
@@ -27,7 +28,7 @@ export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
           const income = formatAmount(day.income)
           const expenses = formatAmount(day.expenses)
           const balance = formatAmount(day.balance)
-          const isToday = day.date === (() => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` })()
+          const isToday = day.date === today
           return <tr key={day.date} data-route-date={day.date} className={[hasMovements ? 'has-movements' : '', isToday ? 'route-today' : ''].filter(Boolean).join(' ')}>
             <td><button className="route-day-button" type="button" aria-current={isToday ? "date" : undefined} onClick={() => onSelectDay(day.date)}>{formatDay(day.date)}</button></td>
             <td className="route-income-cell">{flowFilter === 'EXPENSE' || incomeUnits === null || incomeUnits === 0n ? '—' : '+ ' + income + ' ' + symbol}</td>
