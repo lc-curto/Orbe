@@ -25,7 +25,7 @@ type DashboardPageProps = {
   card?: FinancialCard
   invoice?: CardInvoice
   setActiveKey: (value: string) => void
-  notify: (message: string) => void
+  categories: Array<{ name: string; amount: string; percentage: number }>
   authError: string | null
   logoutError: string | null
 }
@@ -47,14 +47,14 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
 
 
 
-export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, card, invoice, setActiveKey, notify, authError, logoutError }: DashboardPageProps) {
+export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, categories, card, invoice, setActiveKey, authError, logoutError }: DashboardPageProps) {
   return <>
 <Row className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <Stack gap={4} flex={1} minWidth={0}>
                 <Heading fontSize={36} letterSpacing={-1.2}>Bom dia, {userName.split(' ')[0]}</Heading>
                 <Paragraph color="#667085" margin={0}>{period.date}</Paragraph>
               </Stack>
-              <MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="desktop-month-selector" />
+              <MonthSelector month={month} onMonthChange={onMonthChange} className="desktop-month-selector" />
             </Row>
 
             {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
@@ -63,8 +63,8 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
               <Card {...border} borderRadius={16} padding={20} flex={1} minWidth={0} backgroundColor="#175cd3">
                 <Stack gap={8}>
                   <Text color="#dbeafe" fontSize={16}>Saldo disponível</Text>
-                  <Text color="#ffffff" fontSize={34} fontWeight="800">{currencySymbol} 2.840,50</Text>
-                  <Text color="#dbeafe" fontSize={14}>Todas as contas</Text>
+                  <Text color="#ffffff" fontSize={30} fontWeight="800">Indisponível</Text>
+                  <Text color="#dbeafe" fontSize={13}>O read model atual não fornece saldo de contas.</Text>
                 </Stack>
               </Card>
               <SummaryCard label="Ganhos" amount={displayPeriod.income} detail={`Realizadas em ${period.label}`} tone="#16805b" />
@@ -74,11 +74,11 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
             <Card className="desktop-categories-card" {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
               <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={16}>
                 <Stack gap={3}><Text fontSize={18} fontWeight="700">Gastos por categoria</Text><Text color="#667085" fontSize={13}>Distribuição dos gastos em {period.label}</Text></Stack>
-                <Button className="dashboard-card-view-all" onPress={() => notify('A mostrar despesas por categoria')} aria-label="Ver todas as despesas por categoria" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver todas →</Button>
+                <Button className="dashboard-card-view-all" onPress={() => setActiveKey('Movimentos')} aria-label="Ver movimentos" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver movimentos →</Button>
               </Row>
-              <Row gap={28} flexWrap="wrap">
-                {[['Casa', '€ 162,00', '82%', '#175cd3'], ['Juros', '€ 1,00', '12%', '#087f70']].map(([label, value, width, color]) => <Stack key={label} flex={1} minWidth={220} gap={7}><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={13}>{label}</Text><Text color="#101828" fontSize={13} fontWeight="700">{String(value).replace(/€/g, currencySymbol)}</Text></Row><Stack height={7} borderRadius={99} backgroundColor="#eef2f6"><Stack width={width} height={7} borderRadius={99} backgroundColor={color} /></Stack></Stack>)}
-              </Row>
+              {categories.length === 0 ? <Text color="#667085" paddingVertical={12}>Sem despesas realizadas neste mês.</Text> : <Row gap={28} flexWrap="wrap">
+                {categories.map((category) => <Stack key={category.name} flex={1} minWidth={220} gap={7}><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={13}>{category.name}</Text><Text color="#101828" fontSize={13} fontWeight="700">{category.amount}</Text></Row><Stack height={7} borderRadius={99} backgroundColor="#eef2f6"><Stack width={String(category.percentage) + '%'} height={7} borderRadius={99} backgroundColor="#175cd3" /></Stack></Stack>)}
+              </Row>}
             </Card>
 
             <Card {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
