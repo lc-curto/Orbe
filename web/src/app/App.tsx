@@ -59,6 +59,7 @@ function movementView(operation: Operation, symbol: CurrencySymbol) {
   const sign = isExpense ? '− ' : isIncome ? '+ ' : ''
   const state = operation.state === 'PENDING' ? 'Pendente' : 'Realizada'
   return {
+    id: operation.id,
     icon: icon as AppIconName,
     name: operation.description || (operation.operation_type === 'TRANSFER' ? 'Transferência' : isExpense ? 'Despesa' : 'Receita'),
     meta: `${operation.operation_type} · ${state}`,
