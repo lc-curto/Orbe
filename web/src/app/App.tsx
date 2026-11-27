@@ -24,6 +24,33 @@ function formatMoney(amount: string, symbol: CurrencySymbol = '€'): string {
   return formatCurrency(amount, symbol)
 }
 
+function currentMonthKey(): string {
+  const now = new Date()
+  return String(now.getFullYear()) + '-' + String(now.getMonth() + 1).padStart(2, '0')
+}
+
+function amountToUnits(value: string): bigint {
+  const negative = value.startsWith('-')
+  const normalized = negative ? value.slice(1) : value
+  const parts = normalized.split('.')
+  const whole = parts[0] || '0'
+  const fraction = (parts[1] || '').padEnd(4, '0').slice(0, 4)
+  const units = BigInt(whole) * 10000n + BigInt(fraction)
+  return negative ? -units : units
+}
+
+function unitsToAmount(value: bigint): string {
+  const negative = value < 0n
+  const absolute = negative ? -value : value
+  const whole = absolute / 10000n
+  const fraction = String(absolute % 10000n).padStart(4, '0')
+  return (negative ? '-' : '') + String(whole) + '.' + fraction
+}
+
+function sumAmounts(values: string[]): string {
+  return unitsToAmount(values.reduce((total, value) => total + amountToUnits(value), 0n))
+}
+
 function movementView(operation: Operation, symbol: CurrencySymbol) {
   const isExpense = operation.operation_type === 'EXPENSE'
   const isIncome = operation.operation_type === 'INCOME'
@@ -65,8 +92,8 @@ export default function App() {
   })
   const [activeKey, setActiveKey] = useState('Início')
   const [movementTab, setMovementTab] = useState<'movements' | 'schedules'>('movements')
-  const [periodIndex, setPeriodIndex] = useState(0)
-  const [routeMonth, setRouteMonth] = useState('2026-11')
+  const [periodMonth, setPeriodMonth] = useState(() => currentMonthKey())
+  const [routeMonth, setRouteMonth] = useState(() => currentMonthKey())
   const [reportsMonth, setReportsMonth] = useState(() => {
     const now = new Date()
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -159,12 +186,32 @@ export default function App() {
   const card = finance.data.cards[0]
   const invoice = finance.data.invoices[0]
 
-  const periods = [
-    { label: 'novembro de 2026', shortLabel: 'Nov/26', date: 'Seg, 23 nov. 2026', income: '+ € 3.200,00', expenses: '− € 1.145,80' },
-    { label: 'dezembro de 2026', shortLabel: 'Dez/26', date: 'Ter, 01 dez. 2026', income: '+ € 2.850,00', expenses: '− € 980,20' },
-  ]
-  const period = periods[periodIndex]
-  const displayPeriod = { ...period, income: period.income.replace(/€/g, currencySymbol), expenses: period.expenses.replace(/€/g, currencySymbol) }
+  const [selectedYear, selectedMonth] = periodMonth.split('-').map(Number)
+  const selectedDate = new Date(selectedYear, selectedMonth - 1, 1)
+  const periodLabel = new Intl.DateTimeFormat('pt-PT', { month: 'long', year: 'numeric' }).format(selectedDate)
+  const todayLabel = new Intl.DateTimeFormat('pt-PT', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }).format(new Date())
+  const realizedMonthOperations = finance.data.operations.filter((operation) => operation.state === 'REALIZED' && operation.effective_at?.slice(0, 7) === periodMonth)
+  const periodIncome = sumAmounts(realizedMonthOperations.filter((operation) => operation.operation_type === 'INCOME').map((operation) => operation.amount))
+  const periodExpenses = sumAmounts(realizedMonthOperations.filter((operation) => operation.operation_type === 'EXPENSE').map((operation) => operation.amount))
+  const expenseCategories = new Map<string, bigint>()
+  realizedMonthOperations.filter((operation) => operation.operation_type === 'EXPENSE').forEach((operation) => {
+    const name = operation.category?.name ?? 'Sem categoria'
+    expenseCategories.set(name, (expenseCategories.get(name) ?? 0n) + amountToUnits(operation.amount))
+  })
+  const totalExpenseUnits = amountToUnits(periodExpenses)
+  const dashboardCategories = [...expenseCategories.entries()].sort((a, b) => a[1] > b[1] ? -1 : a[1] < b[1] ? 1 : a[0].localeCompare(b[0], 'pt-PT')).slice(0, 5).map(([name, amount]) => ({
+    name,
+    amount: formatMoney(unitsToAmount(amount), currencySymbol),
+    percentage: totalExpenseUnits > 0n ? Number((amount * 100n + totalExpenseUnits / 2n) / totalExpenseUnits) : 0,
+  }))
+  const period = { label: periodLabel, date: todayLabel }
+  const displayPeriod = {
+    label: periodLabel,
+    shortLabel: new Intl.DateTimeFormat('pt-PT', { month: 'short', year: '2-digit' }).format(selectedDate),
+    date: todayLabel,
+    income: '+ ' + formatMoney(periodIncome, currencySymbol),
+    expenses: '− ' + formatMoney(periodExpenses, currencySymbol),
+  }
 
   function toggleSidebar() {
     setSidebarOpen((value) => {
@@ -218,8 +265,7 @@ export default function App() {
               ]
 
   function changeMovementMonth(value: string) {
-    const nextIndex = value === '2026-12' ? 1 : 0
-    setPeriodIndex(nextIndex)
+    setPeriodMonth(value)
   }
 
   return (
@@ -293,10 +339,10 @@ export default function App() {
             {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}            {activeKey === 'Relatórios' ? <ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /> : null}
             {activeKey === 'Configurações' ? <SettingsPage user={user} categories={finance.data.categories} /> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
-            {activeKey === 'Início' ? <DashboardPage period={period} userName={user.name} displayPeriod={displayPeriod} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} currencySymbol={currencySymbol} movements={movements} card={card} invoice={invoice} setActiveKey={navigateTo} notify={notify} authError={authError} logoutError={logoutError} /> : null}
+            {activeKey === 'Início' ? <DashboardPage period={period} userName={user.name} displayPeriod={displayPeriod} month={periodMonth} onMonthChange={changeMovementMonth} currencySymbol={currencySymbol} movements={movements} categories={dashboardCategories} card={card} invoice={invoice} setActiveKey={navigateTo} authError={authError} logoutError={logoutError} /> : null}
           </Stack>
         </div>
-        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Rota' ? <div className="mobile-page-shell route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></div> : activeKey === 'Relatórios' ? <div className="mobile-page-shell"><ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /></div> : activeKey === 'Configurações' ? <div className="mobile-page-shell"><SettingsPage user={user} categories={finance.data.categories} /></div> : <div className="mobile-page-shell mobile-dashboard-shell"><MobileDashboard period={displayPeriod} month={`2026-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={navigateTo} notify={notify} userName={user.name} currencySymbol={currencySymbol} movements={movements} /></div>}
+        {activeKey === 'Cartões' ? <div className="mobile-page-shell cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Contas' ? <div className="mobile-page-shell accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></div> : activeKey === 'Movimentos' ? <div className="mobile-page-shell"><MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={`${2026}-${String(periodIndex + 11).padStart(2, '0')}`} onMonthChange={changeMovementMonth} onNotify={notify} /></div> : activeKey === 'Rota' ? <div className="mobile-page-shell route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></div> : activeKey === 'Relatórios' ? <div className="mobile-page-shell"><ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /></div> : activeKey === 'Configurações' ? <div className="mobile-page-shell"><SettingsPage user={user} categories={finance.data.categories} /></div> : <div className="mobile-page-shell mobile-dashboard-shell"><MobileDashboard period={displayPeriod} month={periodMonth} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={navigateTo} userName={user.name} currencySymbol={currencySymbol} movements={movements} categories={dashboardCategories} /></div>}
         {feedback ? <Row className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></Row> : null}
         <div className="mobile-bottom-bar">
           {navigation.map((item) => <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } navigateTo(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={activeKey === item.label || (item.label === 'Mais' && morePages.some((page) => page.label === activeKey)) ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#e6f4f1' : 'transparent'} color={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#087f70' : '#667085'}>
