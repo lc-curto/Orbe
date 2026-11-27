@@ -103,6 +103,9 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - KPIs/totais apenas Entradas e Saídas; sem KPI de saldo inicial.
 - Sem gráfico e sem distinção fixa/variável na tabela principal.
 - Entradas e saídas realizadas são agregadas; transferências não alteram esses totais, mas aparecem no detalhe diário como operação neutra. Estados não realizados não entram na tabela nem nos totais.
+- Movimentos e Rota Financeira usam as mesmas operações e efeitos financeiros válidos; a Rota altera a apresentação e agrega os efeitos por data, não cria movimentos diferentes.
+- Em Movimentos, os movimentos do cartão de crédito são apresentados individualmente. Na Rota, as compras do cartão não aparecem como saídas individuais: cada fatura é projetada uma única vez pelo seu valor total a pagar, na data prevista da fatura, esteja aberta ou fechada. Assim, a Rota não duplica a compra individual e o total da fatura.
+- O saldo de partida da Rota é a soma dos saldos atuais de contas bancárias e dinheiro, excluindo cartões de crédito. Operações pendentes entram na projeção mesmo sem conta associada; operações realizadas já refletidas no saldo não voltam a ser somadas como projeções.
 - Saldo diário e saldo final/projeção só são apresentados quando o contrato financeiro fornecer valores válidos. Até lá, indicar indisponibilidade, sem inventar números.
 - Cor só na célula/valor Saldo quando houver cálculo fiável, nunca na linha. Sem badges, legendas ou etiquetas coloridas.
 - Saldo projetado final recebe cor apenas quando negativo.
