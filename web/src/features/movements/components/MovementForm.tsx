@@ -6,7 +6,7 @@ import type { OrbeIconName } from '../../../design-system/Icon'
 import { orbe } from '../../../design-system/tokens'
 import { useCurrency } from '../../currency/useCurrency'
 import { ApiError } from '../../../api/client'
-import type { Account, Category } from '../../../api/types'
+import type { Account, Card, Category } from '../../../api/types'
 import { createExpense, createIncome, createRecurrence, createTransfer } from '../../../api/finance'
 import './formStyles.css'
 
@@ -203,8 +203,8 @@ export function FormErrorSummary({ errors }: { errors: FieldErrors }) {
   return <div className="orbe-error-summary" role="alert"><strong>Verifica os campos do formulário.</strong><ul>{messages.map((message) => <li key={message}>{message}</li>)}</ul></div>
 }
 
-export function FormActions({ onCancel, loading = false, submitLabel = 'Guardar' }: { onCancel: () => void; loading?: boolean; submitLabel?: string }) {
-  return <footer className="orbe-form-actions"><button type="button" className="orbe-button orbe-button-secondary" onClick={onCancel} disabled={loading}>Cancelar</button><button type="submit" className="orbe-button orbe-button-primary" disabled={loading}>{loading ? 'A guardar…' : submitLabel}</button></footer>
+export function FormActions({ onCancel, loading = false, disabled = false, submitLabel = 'Guardar' }: { onCancel: () => void; loading?: boolean; disabled?: boolean; submitLabel?: string }) {
+  return <footer className="orbe-form-actions"><button type="button" className="orbe-button orbe-button-secondary" onClick={onCancel} disabled={loading}>Cancelar</button><button type="submit" className="orbe-button orbe-button-primary" disabled={loading || disabled}>{loading ? 'A guardar…' : submitLabel}</button></footer>
 }
 
 export function FormLayout({ children, onSubmit }: { children: ReactNode; onSubmit: (event: FormEvent) => void }) {
@@ -256,12 +256,14 @@ function validMoney(value: string) {
 export function MovementForm({
   kind,
   accounts: accountRecords,
+  cards: cardRecords,
   categories: categoryRecords,
   onClose,
   onSuccess,
 }: {
   kind: FormKind
   accounts: Account[]
+  cards: Card[]
   categories: Category[]
   onClose: () => void
   onSuccess: (message: string) => void
@@ -276,7 +278,15 @@ export function MovementForm({
   const [endAt, setEndAt] = useState('')
   const [destination, setDestination] = useState('')
   const [operationState, setOperationState] = useState<'REALIZED' | 'PENDING'>('PENDING')
-  const [paymentMethod, setPaymentMethod] = useState<'account' | 'card' | 'term' | ''>('')
+  const [paymentMethod, setPaymentMethod] = useState<'account' | 'card'>('account')
+  const [accountMode, setAccountMode] = useState<'immediate' | 'future' | 'installments'>('immediate')
+  const [plannedAccount, setPlannedAccount] = useState('')
+  const [selectedCard, setSelectedCard] = useState('')
+  const [purchaseType, setPurchaseType] = useState<'single' | 'installments'>('single')
+  const [installmentCount, setInstallmentCount] = useState('2')
+  const [firstInstallmentPaid, setFirstInstallmentPaid] = useState(false)
+  const [firstPaidAccount, setFirstPaidAccount] = useState('')
+  const [firstPaidDate, setFirstPaidDate] = useState(today)
   const [outState, setOutState] = useState<'REALIZED' | 'PENDING'>('PENDING')
   const [inState, setInState] = useState<'REALIZED' | 'PENDING'>('PENDING')
   const [outDate, setOutDate] = useState(today)
@@ -298,6 +308,10 @@ export function MovementForm({
     })),
     [accountRecords],
   )
+  const cards: SelectOption[] = useMemo(
+    () => cardRecords.filter((item) => item.status === 'ACTIVE').map((item) => ({ value: String(item.id), label: item.name, secondary: `Disponível ${item.summary.available_amount}` })),
+    [cardRecords],
+  )
   const categories: SelectOption[] = useMemo(
     () => categoryRecords.filter((item) => item.status === 'ACTIVE' && item.nature === nature).map((item) => ({
       value: String(item.id),
@@ -305,10 +319,11 @@ export function MovementForm({
     })),
     [categoryRecords, nature],
   )
-  const dirty = Boolean(description || amount || category || account || destination || endAt
+  const unsupportedExpenseFlow = kind === 'expense' && (paymentMethod === 'card' || accountMode !== 'immediate')
+  const dirty = Boolean(description || amount || category || account || plannedAccount || selectedCard || destination || endAt
     || entryMode !== 'single' || frequency !== 'MONTHLY'
     || operationState !== 'PENDING' || outState !== 'PENDING' || inState !== 'PENDING'
-    || outDate !== today() || inDate !== today() || date !== today())
+    || outDate !== today() || inDate !== today() || date !== today() || firstInstallmentPaid)
 
   function toggleRecurrence(enabled: boolean) {
     setEntryMode(enabled ? 'recurrence' : 'single')
@@ -342,7 +357,18 @@ export function MovementForm({
         if (!date) next.date = 'Introduz a data da primeira ocorrência.'
         if (endAt && date && endAt < date) next.endAt = 'A data de fim não pode ser anterior à primeira ocorrência.'
       } else {
-        if (operationState === 'REALIZED' && !account) next.account = 'Seleciona uma conta para o movimento realizado.'
+        if (kind === 'expense') {
+          if (paymentMethod === 'account' && accountMode === 'immediate' && !account) next.account = 'Seleciona a conta usada para pagar.'
+          if (paymentMethod === 'account' && accountMode === 'future' && !plannedAccount) next.plannedAccount = 'Seleciona a conta prevista para o pagamento.'
+          if (paymentMethod === 'account' && accountMode === 'installments') {
+            if (!plannedAccount) next.plannedAccount = 'Seleciona a conta prevista para as prestações.'
+            if (!/^\\d+$/.test(installmentCount) || Number(installmentCount) < 2 || Number(installmentCount) > 120) next.installmentCount = 'Escolhe entre 2 e 120 prestações.'
+            if (firstInstallmentPaid && !firstPaidAccount) next.firstPaidAccount = 'Seleciona a conta usada para pagar a primeira prestação.'
+            if (firstInstallmentPaid && !firstPaidDate) next.firstPaidDate = 'Introduz a data efetiva do pagamento.'
+          }
+          if (paymentMethod === 'card' && !selectedCard) next.selectedCard = 'Seleciona um cartão ativo.'
+          if (paymentMethod === 'card' && purchaseType === 'installments' && (!/^\\d+$/.test(installmentCount) || Number(installmentCount) < 2 || Number(installmentCount) > 120)) next.installmentCount = 'Escolhe entre 2 e 120 prestações.'
+        } else if (operationState === 'REALIZED' && !account) next.account = 'Seleciona uma conta para o rendimento recebido.'
         if (!date) next.date = 'Introduz uma data válida.'
       }
     }
@@ -360,6 +386,10 @@ export function MovementForm({
     setErrors({})
     try {
       const normalizedAmount = normalizeMoney(amount)
+      if (unsupportedExpenseFlow) {
+        setErrors({ form: 'Esta modalidade está preparada na interface, mas ainda não pode ser guardada. Falta implementar o contrato financeiro no backend.' })
+        return
+      }
       if (isRecurring) {
         await createRecurrence({
           nature,
@@ -448,7 +478,7 @@ export function MovementForm({
       ? 'Ambas pendentes · datas previstas'
       : `${outState === 'REALIZED' ? 'Saída realizada' : 'Saída pendente'} · ${inState === 'REALIZED' ? 'entrada realizada' : 'entrada pendente'}`
 
-  return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : 'Preenche os dados essenciais.'} onClose={onClose} dirty={dirty} submitting={submitting}>
+  return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : kind === 'expense' ? 'Regista o gasto e define como será pago.' : 'Regista o rendimento e indica se já foi recebido.'} onClose={onClose} dirty={dirty} submitting={submitting}>
     <form className="orbe-movement-form" onSubmit={submit} noValidate>
       <FormErrorSummary errors={errors} />
       {isTransfer ? <>
@@ -488,32 +518,45 @@ export function MovementForm({
         <FormField label={isRecurring ? 'Primeira ocorrência' : operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
           <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
         </FormField>
-        {!isRecurring && kind === 'expense' ? <section className="orbe-payment-method" aria-label="Método de pagamento">
-          <span className="orbe-payment-method-title">Como será pago este gasto?</span>
-          <div className="orbe-payment-method-options" role="radiogroup" aria-label="Método de pagamento">
-            {([
-              { value: 'account', label: 'Conta' },
-              { value: 'card', label: 'Cartão' },
-              { value: 'term', label: 'A prazo' },
-            ] as const).map((option) => <label key={option.value} className={`orbe-payment-method-option ${paymentMethod === option.value ? 'is-selected' : ''}`}>
-              <input type="radio" name="paymentMethodVisual" value={option.value} checked={paymentMethod === option.value} onChange={() => setPaymentMethod(option.value)} disabled={submitting} />
-              <span>{option.label}</span>
-            </label>)}
+        {!isRecurring && kind === 'expense' ? <section className="orbe-expense-payment" aria-label="Forma de pagamento">
+          <div className="orbe-form-section-title">Como será pago?</div>
+          <div className="orbe-choice-grid orbe-choice-grid-two" role="radiogroup" aria-label="Forma de pagamento">
+            {([{ value: 'account', label: 'Conta', detail: 'Banco ou dinheiro' }, { value: 'card', label: 'Cartão', detail: 'Compra no crédito' }] as const).map((option) => <button key={option.value} type="button" role="radio" aria-checked={paymentMethod === option.value} className={`orbe-choice-card ${paymentMethod === option.value ? 'is-selected' : ''}`} onClick={() => { setPaymentMethod(option.value); setAccount(''); setPlannedAccount(''); setSelectedCard(''); setFirstInstallmentPaid(false) }} disabled={submitting}><strong>{option.label}</strong><span>{option.detail}</span></button>)}
           </div>
-          <p className="orbe-payment-method-note">Seleção visual nesta alteração; o método ainda não é gravado.</p>
+          {paymentMethod === 'account' ? <>
+            <div className="orbe-form-section-title">Modalidade</div>
+            <div className="orbe-choice-grid orbe-choice-grid-three" role="radiogroup" aria-label="Modalidade de pagamento">
+              {([{ value: 'immediate', label: 'Imediato', detail: 'Pago agora' }, { value: 'future', label: 'Data futura', detail: 'Pago depois' }, { value: 'installments', label: 'Prestações', detail: 'Pago em partes' }] as const).map((option) => <button key={option.value} type="button" role="radio" aria-checked={accountMode === option.value} className={`orbe-choice-card ${accountMode === option.value ? 'is-selected' : ''}`} onClick={() => { setAccountMode(option.value); setAccount(''); setPlannedAccount(''); setFirstInstallmentPaid(false); setOperationState(option.value === 'immediate' ? 'REALIZED' : 'PENDING') }} disabled={submitting}><strong>{option.label}</strong><span>{option.detail}</span></button>)}
+            </div>
+            {accountMode === 'immediate' ? <>
+              <FormField label="Conta usada para pagar" name="account" required error={errors.account}><SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder={accounts.length ? 'Selecionar conta' : 'Não existem contas ativas.'} disabled={submitting} /></FormField>
+              <FormField label="Data do pagamento" name="date" required error={errors.date}><DateInput id="date" value={date} onChange={setDate} disabled={submitting} /></FormField>
+            </> : accountMode === 'future' ? <>
+              <FormField label="Conta prevista para pagar" name="plannedAccount" required error={errors.plannedAccount}><SelectInput id="plannedAccount" value={plannedAccount} onChange={setPlannedAccount} options={accounts} placeholder={accounts.length ? 'Selecionar conta prevista' : 'Não existem contas ativas.'} disabled={submitting} /></FormField>
+              <FormField label="Data prevista de pagamento" name="date" required error={errors.date}><DateInput id="date" value={date} onChange={setDate} disabled={submitting} /></FormField>
+            </> : <>
+              <FormField label="Conta prevista para as prestações" name="plannedAccount" required error={errors.plannedAccount}><SelectInput id="plannedAccount" value={plannedAccount} onChange={setPlannedAccount} options={accounts} placeholder={accounts.length ? 'Selecionar conta prevista' : 'Não existem contas ativas.'} disabled={submitting} /></FormField>
+              <FormField label="Número de prestações" name="installmentCount" required error={errors.installmentCount}><SelectInput id="installmentCount" value={installmentCount} onChange={setInstallmentCount} options={[3,4,6,8,10,12,18,24,36,48,60,120].map((n) => ({ value: String(n), label: String(n) }))} placeholder="Selecionar número" disabled={submitting} /></FormField>
+              <FormField label="Vencimento da primeira prestação" name="date" required error={errors.date}><DateInput id="date" value={date} onChange={setDate} disabled={submitting} /></FormField>
+              <OrbeFormToggle id="firstInstallmentPaid" label="Já paguei a primeira prestação" description="Regista também o pagamento efetivo da primeira prestação." checked={firstInstallmentPaid} onChange={(checked) => { setFirstInstallmentPaid(checked); setFirstPaidAccount('') }} disabled={submitting} />
+              {firstInstallmentPaid ? <>
+                <FormField label="Conta usada no pagamento" name="firstPaidAccount" required error={errors.firstPaidAccount}><SelectInput id="firstPaidAccount" value={firstPaidAccount} onChange={setFirstPaidAccount} options={accounts} placeholder={accounts.length ? 'Selecionar conta usada' : 'Não existem contas ativas.'} disabled={submitting} /></FormField>
+                <FormField label="Data efetiva do pagamento" name="firstPaidDate" required error={errors.firstPaidDate}><DateInput id="firstPaidDate" value={firstPaidDate} onChange={setFirstPaidDate} disabled={submitting} /></FormField>
+              </> : null}
+            </>}
+          </> : <>
+            <FormField label="Cartão de crédito" name="selectedCard" required error={errors.selectedCard}><SelectInput id="selectedCard" value={selectedCard} onChange={setSelectedCard} options={cards} placeholder={cards.length ? 'Selecionar cartão' : 'Não existem cartões ativos.'} disabled={submitting} /></FormField>
+            <div className="orbe-choice-grid orbe-choice-grid-two" role="radiogroup" aria-label="Tipo de compra">
+              {([{ value: 'single', label: 'Compra única' }, { value: 'installments', label: 'Compra parcelada' }] as const).map((option) => <button key={option.value} type="button" role="radio" aria-checked={purchaseType === option.value} className={`orbe-choice-card ${purchaseType === option.value ? 'is-selected' : ''}`} onClick={() => setPurchaseType(option.value)} disabled={submitting}><strong>{option.label}</strong></button>)}
+            </div>
+            {purchaseType === 'installments' ? <FormField label="Número de prestações" name="installmentCount" required error={errors.installmentCount}><SelectInput id="cardInstallmentCount" value={installmentCount} onChange={setInstallmentCount} options={[2,3,4,5,6,8,10,12,18,24,36,48].map((n) => ({ value: String(n), label: String(n) }))} placeholder="Selecionar número" disabled={submitting} /></FormField> : null}
+            <FormField label="Data da compra" name="date" required error={errors.date}><DateInput id="date" value={date} onChange={setDate} disabled={submitting} /></FormField>
+            <p className="orbe-form-helper">O Orbe deverá distribuir a compra pelas faturas conforme o ciclo do cartão. Não é necessário escolher faturas ou vencimentos.</p>
+          </>}
         </section> : null}
-        {!isRecurring ? <>
-          <OrbeFormToggle
-            id="operationStateRealized"
-            label={kind === 'expense' ? 'Já foi pago?' : 'Já foi recebido?'}
-            description={kind === 'expense' ? 'Confirma que este gasto já foi pago.' : 'Confirma que este rendimento já foi recebido.'}
-            checked={operationState === 'REALIZED'}
-            onChange={toggleRealized}
-            disabled={submitting}
-          />
-          {operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
-            <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder={accounts.length ? "Selecionar conta" : "Não existem contas ativas."} disabled={submitting} />
-          </FormField> : null}
+        {!isRecurring && kind === 'income' ? <>
+          <OrbeFormToggle id="operationStateRealized" label="Já foi recebido?" description="Confirma que este rendimento já entrou na conta." checked={operationState === 'REALIZED'} onChange={toggleRealized} disabled={submitting} />
+          {operationState === 'REALIZED' ? <FormField label="Conta onde foi recebido" name="account" required error={errors.account}><SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder={accounts.length ? 'Selecionar conta' : 'Não existem contas ativas.'} disabled={submitting} /></FormField> : null}
         </> : null}
         <OrbeDisclosure title="Mais opções" description={isRecurring ? 'Programação recorrente ativa' : 'Recorrência'} open={moreOptionsOpen} onOpenChange={setMoreOptionsOpen}>
           <OrbeFormToggle id="entryModeRecurrence" label="Programar recorrência" description="Criar esta operação com frequência definida." checked={isRecurring} onChange={toggleRecurrence} disabled={submitting} />
@@ -527,7 +570,8 @@ export function MovementForm({
           </> : null}
         </OrbeDisclosure>
       </>}
-      <FormActions onCancel={onClose} loading={submitting} submitLabel={isRecurring ? 'Criar programação' : isTransfer ? 'Guardar transferência' : kind === 'income' ? 'Guardar rendimento' : 'Guardar gasto'} />
+      {unsupportedExpenseFlow ? <p className="orbe-form-blocked-note" role="status">Interface preparada. Esta modalidade só poderá ser guardada quando a API e o modelo financeiro forem implementados.</p> : null}
+      <FormActions onCancel={onClose} loading={submitting} disabled={unsupportedExpenseFlow} submitLabel={isRecurring ? 'Criar programação' : isTransfer ? 'Guardar transferência' : kind === 'income' ? 'Guardar rendimento' : 'Guardar gasto'} />
     </form>
   </ResponsiveFormContainer>
 }
