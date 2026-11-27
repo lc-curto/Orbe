@@ -222,6 +222,10 @@ final class FinancialRouteReadApiTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1, 'data.months')
             ->assertJsonPath('data.months.0.month', '2026-11');
+        $this->getJson('/api/financial-route?month=2026-11&months=6')
+            ->assertOk()
+            ->assertJsonCount(6, 'data.months')
+            ->assertJsonPath('data.months.5.month', '2027-04');
         $this->getJson('/api/financial-route?month=2026-11')->assertOk()->assertJsonCount(24, 'data.months');
     }
 
