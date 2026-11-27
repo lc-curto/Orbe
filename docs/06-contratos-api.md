@@ -113,3 +113,36 @@ Ocorrências realizadas ou passadas não podem ser reescritas. Todas as operaç�
 - `PATCH /api/recurrence-occurrences/{occurrence}`
 - `PATCH /api/recurrence-occurrences/{occurrence}/and-following`
 - `POST /api/recurrence-occurrences/{occurrence}/cancel`
+
+## Formulário de gasto — contrato futuro requerido (decisão 2026-11-27)
+
+Este contrato descreve a extensão necessária para implementar o formulário aprovado. Os endpoints/payloads existentes de despesa comum não devem ser considerados suficientes até que os campos abaixo sejam implementados e testados. A forma final dos nomes pode seguir os padrões existentes, mas a semântica é obrigatória.
+
+### Conta — imediato
+- Criar gasto realizado com conta efetiva e data efetiva.
+- A conta é uma conta ativa do utilizador; o pagamento e o reconhecimento da despesa são atómicos e idempotentes.
+
+### Conta — data futura
+- Criar gasto pendente com `planned_account_id` (conta ativa) e `due_at`.
+- Não enviar `account_id` como destino efetivo; não criar `financial_entries` realizados nem alterar saldo atual.
+- A leitura deve devolver conta prevista e data prevista para formulário, Movimentos e Rota Financeira.
+- A confirmação posterior como pago recebe conta efetiva e `effective_at`, cria o lançamento e preserva a previsão/histórico conforme regras de auditoria.
+
+### Conta — prestações
+- Criar gasto/plano com conta prevista, total, número de prestações e vencimento da primeira; backend gera calendário e valores usando aritmética decimal definida em ARC-003.
+- Opcionalmente, o comando pode incluir a primeira prestação paga, com conta efetiva e `effective_at`. A criação do plano e o pagamento inicial devem ser uma transação idempotente.
+- A conta efetiva e a data do pagamento inicial são distintas da conta prevista e do vencimento da prestação.
+- API de leitura deve expor estado e vencimento por prestação, incluindo prestações futuras, sem duplicar o gasto original.
+
+### Cartão — compra única/parcelada
+- Criar compra com `card_id`, data do gasto, valor total e indicador/número de prestações.
+- Backend calcula e devolve as alocações para faturas conforme ciclo do cartão; cliente não envia vencimento manual nem fatura escolhida, salvo exceção de domínio documentada e aprovada.
+- O contrato não aceita `first_installment_paid` no formulário de compra. Pagamentos são comandos separados de liquidação de fatura, com conta e data efetiva.
+- Compra, alocações e eventuais efeitos de obrigação são persistidos atomicamente e com idempotência.
+
+### Erros e validação
+- Rejeitar conta/cartão de outro utilizador ou inativo, modalidade incompatível com método, número de prestações inválido, datas impossíveis e payload com destino previsto confundido com destino efetivo.
+- Respostas de leitura devem permitir distinguir explicitamente `planned_account` de `effective_account`/lançamento, e `transaction_at`, `due_at` e `effective_at`.
+- Atualizar schemas, exemplos, testes API, read models de Movimentos/Cartões/Rota e documentação frontend quando o contrato for implementado.
+
+---
