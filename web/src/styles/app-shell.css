@@ -400,3 +400,30 @@
     overflow-wrap: anywhere;
   }
 }
+
+/* Shared desktop page frame: one content width and vertical rhythm for all modules. */
+.desktop-page-content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--orbe-page-section-gap);
+  width: 100%;
+  max-width: var(--orbe-page-content-max);
+  min-width: 0;
+  margin-inline: auto;
+}
+.desktop-page-content > * {
+  width: 100%;
+  min-width: 0;
+}
+.desktop-page-content > .accounts-page,
+.desktop-page-content > .cards-page,
+.desktop-page-content > .reports-page,
+.desktop-page-content > .financial-route-page {
+  max-width: var(--orbe-page-content-max);
+  margin-inline: auto;
+}
+@media (max-width: 1024px) {
+  .desktop-page-content { display: none; }
+}
