@@ -7,10 +7,13 @@ import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
 import type { RouteFlowFilter } from '../types'
 import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
-import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits, projectionMonthEnd } from '../projection'
+import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
-const FINANCIAL_ROUTE_MONTHS = 24
+const DESKTOP_VISIBLE_MONTHS = 3
+const DESKTOP_PREFETCH_MONTHS = 3
+const MOBILE_VISIBLE_MONTHS = 1
+const MOBILE_PREFETCH_MONTHS = 1
 
 function formatAmount(value: string | null): string {
   const units = value === null ? null : parseMoneyUnits(value)
@@ -39,7 +42,9 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   const mobileMonthRef = useRef<HTMLDivElement>(null)
   const initialTodayPositioned = useRef(false)
   const [isDesktopRoute, setIsDesktopRoute] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1025px)').matches)
-  const routeData = useFinancialRouteData(month, operations, invoices, isDesktopRoute ? FINANCIAL_ROUTE_MONTHS : 1)
+  const visibleMonthCount = isDesktopRoute ? DESKTOP_VISIBLE_MONTHS : MOBILE_VISIBLE_MONTHS
+  const prefetchMonthCount = isDesktopRoute ? DESKTOP_PREFETCH_MONTHS : MOBILE_PREFETCH_MONTHS
+  const routeData = useFinancialRouteData(month, operations, invoices, visibleMonthCount, prefetchMonthCount)
   const projection = routeData.projection
   const months = projection?.months
 
@@ -51,14 +56,14 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
     return () => media.removeEventListener('change', update)
   }, [])
 
-  const filteredMonths = useMemo(() => (months ?? []).map((item) => {
+  const filteredMonths = useMemo(() => (months ?? []).slice(0, visibleMonthCount).map((item) => {
     let days = onlyMovementDays
       ? item.days.filter((day) => hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
       : item.days
     if (flowFilter === 'INCOME') days = days.filter((day) => hasPositiveAmount(day.income))
     if (flowFilter === 'EXPENSE') days = days.filter((day) => hasPositiveAmount(day.expenses))
     return { month: item, days }
-  }), [months, onlyMovementDays, flowFilter])
+  }), [months, visibleMonthCount, onlyMovementDays, flowFilter])
   const mobileMonth = filteredMonths[0]?.month
   const mobileVisibleDays = filteredMonths[0]?.days ?? []
   const loading = financeLoading || routeData.loading
@@ -88,7 +93,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   }
 
   function changePeriod(offset: number) {
-    onMonthChange(shiftMonth(month, offset))
+    onMonthChange(shiftMonth(month, isDesktopRoute ? offset * DESKTOP_VISIBLE_MONTHS : offset))
   }
 
   const filterOptions: Array<{ value: RouteFlowFilter; label: string }> = [
@@ -103,7 +108,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   return <section className="financial-route-page">
     <PageHeader title="Rota Financeira" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
       <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
-      <span>{formatMonthRange(month, projectionMonthEnd(month, FINANCIAL_ROUTE_MONTHS))}</span>
+      <span>{formatMonthRange(month, shiftMonth(month, DESKTOP_VISIBLE_MONTHS - 1))}</span>
       <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
     </div>} mobilePeriod={<MonthSelector month={month} onMonthChange={onMonthChange} className="route-month-selector-mobile" />} />
 
