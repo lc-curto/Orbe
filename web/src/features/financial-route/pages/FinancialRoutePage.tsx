@@ -42,8 +42,8 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
 
   const filterOptions: Array<{ value: RouteFlowFilter; label: string }> = [
     { value: 'ALL', label: 'Todos' },
-    { value: 'INCOME', label: 'Ganhos' },
-    { value: 'EXPENSE', label: 'Gastos' },
+    { value: 'INCOME', label: 'Entradas' },
+    { value: 'EXPENSE', label: 'Saídas' },
   ]
 
   return <section className="financial-route-page">
@@ -72,8 +72,8 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
       <div className="route-mobile-summary">
         <div className="route-mobile-ending"><span>Saldo final</span><strong>Indisponível</strong></div>
         <div className="route-mobile-totals">
-          <span className="route-month-income">+ {mobileMonth ? formatAmount(mobileMonth.totals.income) : '0,00'} {symbol} ganhos</span>
-          <span className="route-month-expenses">− {mobileMonth ? formatAmount(mobileMonth.totals.expenses) : '0,00'} {symbol} gastos</span>
+          <span className="route-month-income">+ {mobileMonth ? formatAmount(mobileMonth.totals.income) : '0,00'} {symbol} entradas</span>
+          <span className="route-month-expenses">− {mobileMonth ? formatAmount(mobileMonth.totals.expenses) : '0,00'} {symbol} saídas</span>
         </div>
       </div>
       <div className="route-mobile-toolbar">
