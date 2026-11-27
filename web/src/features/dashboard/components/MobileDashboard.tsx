@@ -1,16 +1,12 @@
-import { Card as UiCard, Text, Row, Stack } from '../../../design-system/primitives'
+import { Card as UiCard, Separator, Text, Row, Stack } from '../../../design-system/primitives'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { DashboardSections } from './DashboardSections'
 import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
 import type { DashboardMovement } from './DashboardSections'
+import type { CurrencySymbol } from '../../currency/types'
 
-const border = { borderWidth: 1, borderColor: '#e4e7ec' as const }
 
-function formatMoney(amount: string, symbol: CurrencySymbol): string {
-  return formatCurrency(amount, symbol)
-}
-
-export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, movements, categories, loading, authError, logoutError }: {
+export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading, authError, logoutError }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
@@ -22,6 +18,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
   authError: string | null
   logoutError: string | null
   userName: string
+  currencySymbol: CurrencySymbol
   movements: DashboardMovement[]
 }) {
 
