@@ -390,6 +390,7 @@
   padding: 20px var(--orbe-page-gutter-tablet) calc(92px + env(safe-area-inset-bottom)) !important;
 }
 .mobile-page-shell.route-mobile-shell { padding-inline: var(--orbe-page-gutter-tablet) !important; }
+.mobile-page-shell.reports-mobile-shell { padding-inline: var(--orbe-page-gutter-tablet) !important; }
 .mobile-page-shell .cards-page,
 .mobile-page-shell .accounts-page,
 .mobile-page-shell .reports-page,
@@ -418,6 +419,7 @@
   .mobile-page-shell.cards-mobile-shell,
   .mobile-page-shell.accounts-mobile-shell { padding-inline: var(--orbe-page-gutter-tablet) !important; }
   .mobile-page-shell.route-mobile-shell { padding-inline: var(--orbe-page-gutter-tablet) !important; }
+  .mobile-page-shell.reports-mobile-shell { padding-inline: var(--orbe-page-gutter-tablet) !important; }
   .mobile-page-shell .reports-page .reports-header { margin-bottom: 16px; }
   .mobile-page-shell .financial-route-page .financial-route-header { margin-top: 0; margin-bottom: 16px; }
 }
@@ -430,6 +432,7 @@
   .mobile-page-shell.cards-mobile-shell,
   .mobile-page-shell.accounts-mobile-shell { padding-inline: var(--orbe-page-gutter-mobile) !important; }
   .mobile-page-shell.route-mobile-shell { padding-inline: var(--orbe-page-gutter-mobile) !important; }
+  .mobile-page-shell.reports-mobile-shell { padding-inline: var(--orbe-page-gutter-mobile) !important; }
   .mobile-page-shell .report-panel { padding: var(--orbe-panel-padding-mobile); }
   .cards-total-card,
   .cards-detail-summary,
