@@ -77,7 +77,7 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   color: var(--orbe-text); font: inherit; font-size: 14px; font-weight: 650;
   text-align: left; cursor: pointer;
 }
-.mobile-more-page-item:hover { background: #f2f4f7; box-shadow: none !important; }
+.mobile-more-page-item:hover:not(:disabled) { background: #f2f4f7; box-shadow: none; }
 .mobile-more-page-item:focus-visible {
   outline: 2px solid rgba(8, 127, 112, .55); outline-offset: -2px;
 }
