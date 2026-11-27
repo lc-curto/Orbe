@@ -1204,3 +1204,11 @@ Até estas decisões serem aprovadas:
 | Conferência de saldos | 02 — Correções e conferência; 04 — Contas; 07 — Conferências |
 | Dashboard/Movimentos/Rota/Relatórios | 02 — Classificação para estimativas; 04 — Páginas aprovadas; 07 — objetivos das páginas |
 
+### Refinamento visual transversal — 27/11/2026
+
+- A revisão visual deve ser aplicada transversalmente, não por correções isoladas de páginas.
+- A camada `web/src/styles/visual-polish.css` é carregada depois dos estilos de feature e centraliza a linguagem visual: tipografia sans-serif de sistema, paleta verde-azulada, superfícies e bordas subtis, raios consistentes e sombras reduzidas.
+- O FAB, navegação inferior, cabeçalhos, filtros, cartões, formulários e estados partilham os mesmos tokens e tratamentos.
+- O cartão de saldo da Dashboard usa uma superfície verde-azulada; não altera nem simula saldo financeiro.
+- O refinamento não pode alterar regras financeiras, contratos API, conteúdo ou fluxos de navegação.
+- QA visual final continua obrigatório em 320, 375, 768, 1024 e 1025+ px, em light/dark mode. CI de lint/build não substitui aprovação visual manual.
