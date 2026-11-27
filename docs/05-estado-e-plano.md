@@ -69,13 +69,28 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 | Moeda | Se a moeda principal pode mudar depois de existirem movimentos. A precisão e o arredondamento do núcleo estão aprovados em ARC-003 (`DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas). |
 | Saldo inicial de conta | **Decidido:** informar o saldo existente ao iniciar a utilização da conta no Orbe; registar como abertura, não como receita/despesa. |
 
-### Rota Financeira — regras de projeção a rever nesta PR (2026-11-27)
+### Rota Financeira — princípio consolidado e decisões (2026-11-27)
 
-- Movimentos e Rota Financeira usam a mesma base de operações/efeitos válidos; a diferença é a apresentação individual em Movimentos e a agregação projetada por data na Rota.
+**Regra fundamental aprovada:** saldo projetado do dia = saldo projetado do dia anterior + entradas planeadas − saídas planeadas. A Rota simula a evolução acumulada do cenário financeiro a partir do saldo efetivo de referência, incorporando todos os efeitos elegíveis nas respetivas datas, incluindo operações planeadas ainda não realizadas.
+
+A Rota não cria regras de negócio, entidades, operações, motor ou base de dados próprios. Usa exclusivamente os dados e as regras financeiras comuns do Orbe, consultados/calculados a partir da mesma base de dados que alimenta o restante sistema. Operação realizada substitui o efeito projetado correspondente sem duplicação; alterações e cancelamentos recalculam a projeção.
+
+**Decisões consolidadas:**
+- Movimentos e Rota usam a mesma base de operações/efeitos válidos; Movimentos apresenta operações individualmente e a Rota agrega os efeitos por data.
 - O saldo de referência é a soma dos saldos atuais de contas bancárias e dinheiro; cartões de crédito ficam excluídos.
-- Gasto/ganho pendente entra na projeção mesmo sem conta associada. O saldo atual já inclui operações realizadas refletidas nas contas, que não podem ser aplicadas novamente como projeção.
-- Movimentos apresenta as compras do cartão individualmente. A Rota projeta cada fatura uma única vez pelo total a pagar, na data prevista, independentemente de estar aberta ou fechada; não projeta simultaneamente as compras individuais que compõem essa fatura.
-- Esta PR formaliza os princípios acima para revisão. Continuam em discussão os casos de faturas vencidas, reagendamento/débito automático, faturas de ciclos anteriores, crédito negativo e o read model/cálculo diário/final da Rota.
+- Gastos/ganhos pendentes entram na projeção mesmo sem conta associada. Efeitos realizados já refletidos no saldo atual não podem ser reaplicados.
+- Movimentos apresenta compras de cartão individualmente. A Rota projeta cada fatura uma única vez pelo total ainda por pagar, na data prevista, sem projetar também as compras que a compõem.
+- Plano vencido sem confirmação permanece vencido; não recebe nova data automática.
+- Faturas de ciclos anteriores com saldo em dívida são agrupadas como vencidas no resumo, mantendo cada fatura consultável.
+- Plano parcial projeta parcelas nas datas planeadas e apenas o residual não reservado no vencimento da fatura.
+
+**Questões ainda em aberto:**
+- Débito automático/reagendamento: definir quando uma regra explícita pode gerar nova data projetada e como evitar projeção simultânea da data vencida e da nova data.
+- Crédito negativo de fatura: confirmar a regra de aplicação do crédito (proposta anterior: obrigação mais antiga do mesmo cartão) e garantir que não cria entrada fictícia em conta.
+- Compra no dia do fecho: confirmar que a alocação segue a regra/ciclo configurado no cartão e documentar o comportamento quando a data coincide exatamente com o fecho.
+- Operações realizadas com data efetiva futura: definir como são tratadas no saldo atual de referência e na projeção, para não refletir o mesmo efeito antes da data efetiva nem duplicá-lo nessa data.
+
+**Resolvido nesta revisão:** definição do saldo inicial, fórmula acumulada diária, continuidade entre dias/períodos e princípio de cálculo/read model comum. O read model deve expor/calcular os efeitos elegíveis por data a partir do domínio financeiro central; não é uma fonte financeira paralela.
 
 **Contrato de saldo inicial de cartão definido:** saldo inicial positivo é integralmente distribuído por faturas; não existe parcela por distribuir, obrigação especial em dívidas ou novo destino financeiro. A operação original é única por cartão. Distribuições históricas são imutáveis; correções e reversões são rastreáveis. A obrigação em aberto deriva exclusivamente de `financial_entries`.
 
