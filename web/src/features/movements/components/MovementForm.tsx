@@ -276,6 +276,7 @@ export function MovementForm({
   const [endAt, setEndAt] = useState('')
   const [destination, setDestination] = useState('')
   const [operationState, setOperationState] = useState<'REALIZED' | 'PENDING'>('PENDING')
+  const [paymentMethod, setPaymentMethod] = useState<'account' | 'card' | 'term' | ''>('')
   const [outState, setOutState] = useState<'REALIZED' | 'PENDING'>('PENDING')
   const [inState, setInState] = useState<'REALIZED' | 'PENDING'>('PENDING')
   const [outDate, setOutDate] = useState(today)
@@ -484,13 +485,37 @@ export function MovementForm({
         <FormField label="Categoria" name="category" required error={errors.category}>
           <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder={categories.length ? "Selecionar categoria" : `Não existem categorias ativas de ${kind === "income" ? "rendimento" : "gasto"}.`} disabled={submitting} />
         </FormField>
-        {!isRecurring && operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
-          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder={accounts.length ? "Selecionar conta" : "Não existem contas ativas."} disabled={submitting} />
-        </FormField> : null}
         <FormField label={isRecurring ? 'Primeira ocorrência' : operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
           <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
         </FormField>
-        <OrbeDisclosure title="Mais opções" description={isRecurring ? 'Programação recorrente ativa' : 'Recorrência e estado'} open={moreOptionsOpen} onOpenChange={setMoreOptionsOpen}>
+        {!isRecurring && kind === 'expense' ? <section className="orbe-payment-method" aria-label="Método de pagamento">
+          <span className="orbe-payment-method-title">Como será pago este gasto?</span>
+          <div className="orbe-payment-method-options" role="radiogroup" aria-label="Método de pagamento">
+            {([
+              { value: 'account', label: 'Conta' },
+              { value: 'card', label: 'Cartão' },
+              { value: 'term', label: 'A prazo' },
+            ] as const).map((option) => <label key={option.value} className={`orbe-payment-method-option ${paymentMethod === option.value ? 'is-selected' : ''}`}>
+              <input type="radio" name="paymentMethodVisual" value={option.value} checked={paymentMethod === option.value} onChange={() => setPaymentMethod(option.value)} disabled={submitting} />
+              <span>{option.label}</span>
+            </label>)}
+          </div>
+          <p className="orbe-payment-method-note">Seleção visual nesta alteração; o método ainda não é gravado.</p>
+        </section> : null}
+        {!isRecurring ? <>
+          <OrbeFormToggle
+            id="operationStateRealized"
+            label={kind === 'expense' ? 'Já foi pago?' : 'Já foi recebido?'}
+            description={kind === 'expense' ? 'Confirma que este gasto já foi pago.' : 'Confirma que este rendimento já foi recebido.'}
+            checked={operationState === 'REALIZED'}
+            onChange={toggleRealized}
+            disabled={submitting}
+          />
+          {operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
+            <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder={accounts.length ? "Selecionar conta" : "Não existem contas ativas."} disabled={submitting} />
+          </FormField> : null}
+        </> : null}
+        <OrbeDisclosure title="Mais opções" description={isRecurring ? 'Programação recorrente ativa' : 'Recorrência'} open={moreOptionsOpen} onOpenChange={setMoreOptionsOpen}>
           <OrbeFormToggle id="entryModeRecurrence" label="Programar recorrência" description="Criar esta operação com frequência definida." checked={isRecurring} onChange={toggleRecurrence} disabled={submitting} />
           {isRecurring ? <>
             <FormField label="Periodicidade" name="frequency" required>
@@ -499,7 +524,7 @@ export function MovementForm({
             <FormField label="Data de fim (opcional)" name="endAt" error={errors.endAt}>
               <DateInput id="endAt" value={endAt} onChange={setEndAt} disabled={submitting} />
             </FormField>
-          </> : <OrbeFormToggle id="operationStateRealized" label="Registar como realizado" description="Confirma que esta operação já aconteceu." checked={operationState === 'REALIZED'} onChange={toggleRealized} disabled={submitting} />}
+          </> : null}
         </OrbeDisclosure>
       </>}
       <FormActions onCancel={onClose} loading={submitting} submitLabel={isRecurring ? 'Criar programação' : isTransfer ? 'Guardar transferência' : kind === 'income' ? 'Guardar rendimento' : 'Guardar gasto'} />
