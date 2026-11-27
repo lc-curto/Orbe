@@ -24,7 +24,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
 }) {
 
   return (
-    <Stack className="mobile-dashboard" backgroundColor="#f7f9fc" minHeight="100vh">
+    <Stack className="mobile-dashboard" minHeight="100vh">
       <Stack className="mobile-dashboard-content" gap="var(--orbe-page-section-gap)">
         <PageHeader
           title={`Bom dia, ${userName.split(' ')[0]}`}
@@ -36,7 +36,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           <MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />
         </div>
         {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
-        <UiCard className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
+        <UiCard className="mobile-balance-card" borderRadius={18} padding={18}>
           <Stack gap={12}>
             <Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text>
             <Text color="#ffffff" fontSize={28} fontWeight="800">Indisponível</Text>
