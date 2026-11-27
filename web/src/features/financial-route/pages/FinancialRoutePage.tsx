@@ -48,7 +48,7 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
   ]
 
   return <section className="financial-route-page">
-    <PageHeader title="Rota Financeira" description="Acompanhamento diário do teu dinheiro" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
+    <PageHeader title="Rota Financeira" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
       <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
       <span>{formatMonthRange(firstMonth, shiftMonth(firstMonth, 2))}</span>
       <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
