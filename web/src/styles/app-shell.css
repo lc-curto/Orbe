@@ -326,3 +326,30 @@
 }
 
 
+
+/* Keep the balance visibility control compact inside the mobile KPI card. */
+.mobile-balance-card .mobile-balance-visibility-button {
+  flex: 0 0 30px !important;
+  width: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+}
+
+/* Dashboard card headers: keep "Ver todos" at the card's right edge. */
+.dashboard-card-header {
+  width: 100%;
+}
+.dashboard-card-view-all {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: max-content !important;
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  justify-content: flex-end !important;
+  text-align: right !important;
+}

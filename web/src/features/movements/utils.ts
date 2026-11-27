@@ -1,7 +1,7 @@
 import type { Operation } from '../../api/types'
 
 export function typeLabel(type: string) {
-  return ({ EXPENSE: 'Despesa', INCOME: 'Receita', TRANSFER: 'Transferência' } as Record<string, string>)[type] ?? type
+  return ({ EXPENSE: 'Gasto', INCOME: 'Ganho', TRANSFER: 'Transferência' } as Record<string, string>)[type] ?? type
 }
 
 export function stateLabel(state: string) {
