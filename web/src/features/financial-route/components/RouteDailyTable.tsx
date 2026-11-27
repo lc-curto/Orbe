@@ -1,6 +1,6 @@
 import type { RouteDay, RouteFlowFilter } from '../types'
 import { formatDay } from '../utils'
-import { formatMoneyUnits, parseMoneyUnits } from '../projection'
+import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
 function formatAmount(value: string | null): string {
@@ -21,7 +21,7 @@ export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
         {days.map((day) => {
           const hasMovements = day.operations.length > 0 || day.invoices.length > 0
           const balanceUnits = day.balance === null ? null : parseMoneyUnits(day.balance)
-          const balanceNegative = balanceUnits !== null && balanceUnits < 0n
+          const balanceNegative = balanceUnits !== null && isDisplayedNegative(balanceUnits)
           const incomeUnits = parseMoneyUnits(day.income)
           const expensesUnits = parseMoneyUnits(day.expenses)
           const income = formatAmount(day.income)
