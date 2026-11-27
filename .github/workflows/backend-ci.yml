@@ -49,7 +49,7 @@ jobs:
         run: php artisan key:generate --force
       - name: Check formatting of changed PHP files
         working-directory: backend
-        run: vendor/bin/pint --test app/Http/Controllers/Api/FinancialRouteController.php app/Http/Controllers/Api/ReadController.php app/Services/CardInvoiceSummaryService.php app/Services/FinancialRouteReadService.php routes/api.php tests/Feature/FinancialRouteReadApiTest.php
+        run: vendor/bin/pint --test -vvv app/Http/Controllers/Api/FinancialRouteController.php app/Http/Controllers/Api/ReadController.php app/Services/CardInvoiceSummaryService.php app/Services/FinancialRouteReadService.php routes/api.php tests/Feature/FinancialRouteReadApiTest.php
       - name: Run backend tests
         working-directory: backend
         run: php artisan test
