@@ -87,6 +87,7 @@ export function useFinancialRouteData(
   visibleCount: number,
   prefetchCount: number,
 ) {
+  const [refreshTick, setRefreshTick] = useState(0)
   const [state, setState] = useState<RouteDataState>({
     month: null,
     visibleCount: null,
@@ -98,7 +99,22 @@ export function useFinancialRouteData(
   })
 
   useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === 'visible') setRefreshTick((tick) => tick + 1)
+    }
+    const intervalId = window.setInterval(refresh, MONTH_CACHE_TTL_MS)
+    window.addEventListener('focus', refresh)
+    document.addEventListener('visibilitychange', refresh)
+    return () => {
+      window.clearInterval(intervalId)
+      window.removeEventListener('focus', refresh)
+      document.removeEventListener('visibilitychange', refresh)
+    }
+  }, [])
+
+  useEffect(() => {
     invalidateMonthCacheIfFinanceChanged(operations, invoices)
+    setState((current) => ({ ...current, loading: true }))
     const controller = new AbortController()
     let cancelled = false
 
@@ -139,7 +155,7 @@ export function useFinancialRouteData(
       cancelled = true
       controller.abort()
     }
-  }, [month, visibleCount, prefetchCount, operations, invoices])
+  }, [month, visibleCount, prefetchCount, operations, invoices, refreshTick])
 
   const stateMatchesRequest = state.month === month
     && state.visibleCount === visibleCount
