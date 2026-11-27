@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { PageHeader } from '../../../shared/components/PageHeader'
 import type { CardInvoice, Operation } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
@@ -31,7 +31,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   const { symbol } = useCurrency()
   const [onlyMovementDays, setOnlyMovementDays] = useState(false)
   const [flowFilter, setFlowFilter] = useState<RouteFlowFilter>('ALL')
-  const [selectedDay, setSelectedDay] = useState<string | null>(null)
+  const [selectedDay, setSelectedDay] = useState<{ date: string; periodMonth: string } | null>(null)
   const [detailFilter, setDetailFilter] = useState<'ALL' | 'INCOME' | 'FIXED' | 'VARIABLE'>('ALL')
   const routeData = useFinancialRouteData(month, operations, invoices)
   const projection = routeData.projection
@@ -39,10 +39,6 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   const mobileMonth = months[0]
   const loading = financeLoading || routeData.loading
   const error = routeData.error ?? financeError
-
-  useEffect(() => {
-    setSelectedDay(null)
-  }, [month])
 
   function visibleDaysFor(monthDays: RouteDay[]) {
     let visible = onlyMovementDays
@@ -53,10 +49,12 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
     return visible
   }
 
-  const activeDay = months.flatMap((item) => item.days).find((day) => day.date === selectedDay)
+  const activeDay = selectedDay?.periodMonth === month
+    ? months.flatMap((item) => item.days).find((day) => day.date === selectedDay.date)
+    : undefined
 
   function selectDay(date: string) {
-    setSelectedDay(date)
+    setSelectedDay({ date, periodMonth: month })
     setDetailFilter('ALL')
   }
 
@@ -126,6 +124,6 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
       </div>
     </> : null}
 
-    {selectedDay && activeDay ? <RouteDayModal date={selectedDay} operations={activeDay.operations} invoices={activeDay.invoices} filter={detailFilter} onFilterChange={setDetailFilter} onClose={() => setSelectedDay(null)} /> : null}
+    {selectedDay && selectedDay.periodMonth === month && activeDay ? <RouteDayModal date={selectedDay.date} operations={activeDay.operations} invoices={activeDay.invoices} filter={detailFilter} onFilterChange={setDetailFilter} onClose={() => setSelectedDay(null)} /> : null}
   </section>
 }
