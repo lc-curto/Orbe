@@ -1268,3 +1268,9 @@ Regras obrigatórias para todas as páginas:
 - O destaque é limitado aos cards de resumo; listas, tabelas, filtros e cards secundários mantêm as superfícies do tema.
 - Gradiente verde e contraste do conteúdo permanecem iguais em light e dark mode, por uma classe partilhada `orbe-financial-highlight-card` definida na camada de polimento visual.
 - O ícone da página Configurações passa a usar um símbolo de engrenagem distinto do controlo de tema.
+
+### Painel de movimentos do dia — dark mode
+
+- O bottom sheet da Rota Financeira deve usar superfície, texto, texto secundário, bordas e estados de filtro explícitos do tema escuro.
+- O modal mobile pode não estar dentro de `.main-content`; regras de tema devem selecionar `.route-day-modal` diretamente, sem depender desse ancestral.
+- O estado ativo dos filtros deve ter contraste próprio, e o estado vazio deve usar o token muted sobre a superfície escura.
