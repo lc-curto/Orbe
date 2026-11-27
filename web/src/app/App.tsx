@@ -300,32 +300,32 @@ export default function App() {
         </button>
         <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <div className="desktop-layout">
-          <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} padding="20px 16px" borderRightWidth={1} borderColor="#eaecf0" backgroundColor="#ffffff">
+          <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`}>
             <Row style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom={28}>
-              {sidebarOpen ? <Text fontSize={28} fontWeight="800" color="#101828">Orbe</Text> : null}
-              <Button onPress={toggleSidebar} aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'} width={40} height={40} borderRadius={10} padding={0} borderWidth={1} borderColor="#e4e7ec" backgroundColor={sidebarOpen ? 'transparent' : '#f7f9fc'}>
-                <AppIcon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} color="#667085" />
+              {sidebarOpen ? <Text className="desktop-sidebar-brand" fontSize={28} fontWeight="800">Orbe</Text> : null}
+              <Button className="desktop-sidebar-collapse-button" onPress={toggleSidebar} aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'}>
+                <AppIcon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} />
               </Button>
             </Row>
             <Stack className="desktop-sidebar-navigation" gap={18} flex={1}>
-              {sidebarGroups.map((group) => <Stack key={group.title} gap={7}>
-                {sidebarOpen ? <Text color="#98a2b3" fontSize={10} fontWeight="800" letterSpacing={1}>{group.title.toUpperCase()}</Text> : null}
-                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} className="sidebar-nav-button" borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
-                  <Row className="sidebar-nav-row" style={{ alignItems: 'center' }}><AppIcon name={item.icon} size={sidebarOpen ? 18 : 20} strokeWidth={2} />{sidebarOpen ? <Text>{item.label}</Text> : null}</Row>
+              {sidebarGroups.map((group) => <Stack key={group.title} className="sidebar-nav-group" gap={7}>
+                {sidebarOpen ? <Text className="sidebar-group-title">{group.title.toUpperCase()}</Text> : null}
+                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} className="sidebar-nav-button" justifyContent={sidebarOpen ? 'flex-start' : 'center'}>
+                  <Row className="sidebar-nav-row" width="100%" style={{ alignItems: 'center' }}><AppIcon name={item.icon} size={sidebarOpen ? 18 : 20} strokeWidth={2} />{sidebarOpen ? <Text>{item.label}</Text> : null}</Row>
                 </Button>)}
               </Stack>)}
             </Stack>
-            <Stack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
-              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" className="sidebar-footer-action" borderWidth={0} backgroundColor="transparent" color="#475467" height={42}>
+            <Stack className="sidebar-footer" gap={8}>
+              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" className="sidebar-footer-action" justifyContent={sidebarOpen ? 'flex-start' : 'center'}>
                 <Row alignItems="center" gap={10}><AppIcon name="bell" size={20} strokeWidth={2} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</Row>
               </Button>
-              <Button onPress={() => void handleLogout()} aria-label="Terminar sessão" title="Terminar sessão" className="sidebar-footer-action sidebar-logout-action" borderWidth={0} backgroundColor="transparent" color="#c2415d" height={42} disabled={authLoading}>
+              <Button onPress={() => void handleLogout()} aria-label="Terminar sessão" title="Terminar sessão" className="sidebar-footer-action sidebar-logout-action" justifyContent={sidebarOpen ? 'flex-start' : 'center'} disabled={authLoading}>
                 <Row alignItems="center" gap={10}><AppIcon name="logout" size={20} strokeWidth={2} />{sidebarOpen ? <Text fontSize={13}>Terminar sessão</Text> : null}</Row>
               </Button>
               <Stack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
                 <span ref={accountMenuAnchorRef} className="account-menu-anchor">
-                  <Button className="sidebar-profile-button sidebar-footer-action" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" height={44}>
-                    <Row className="sidebar-profile-copy" alignItems="center" gap={10}><AppIcon name="user" size={20} strokeWidth={2} />{sidebarOpen ? <Stack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></Stack> : null}</Row>
+                  <Button className={`sidebar-profile-button sidebar-footer-action${accountMenuOpen ? ' is-open' : ''}`} onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} justifyContent={sidebarOpen ? 'flex-start' : 'center'}>
+                    <Row className="sidebar-profile-copy" alignItems="center" gap={10} width="100%"><AppIcon name="user" size={20} strokeWidth={2} />{sidebarOpen ? <Stack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></Stack> : null}</Row>
                   </Button>
                 </span>
                 {accountMenuOpen && typeof document !== 'undefined' ? createPortal(
