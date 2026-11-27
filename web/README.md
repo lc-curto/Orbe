@@ -51,7 +51,7 @@ Toda alteração deve cumprir os Gates A/B/C definidos em [AGENTS.md](../AGENTS.
 Padrões Web obrigatórios:
 - React: render puro, Rules of Hooks, estado mínimo, dados derivados em funções/hooks; evitar efeitos para derivação.
 - TypeScript: contratos tipados; evitar `any`, casts e supressões sem justificação.
-- UI: reutilizar primitives e tokens de `src/design-system/`; seguir container, gutters e escala de spacing partilhados; não criar escalas por página nem usar `!important` como solução estrutural.
+- UI: reutilizar primitives e tokens de `src/design-system/`; seguir container, gutters e escala de spacing partilhados; não criar escalas por página. `!important` é proibido como solução estrutural e só pode ser último recurso, com justificação explícita conforme `AGENTS.md`.
 - CSS: estilos junto da feature, classes específicas, sem duplicar overrides globais; exceções responsivas devem ser justificadas.
 - Não adicionar biblioteca, abstração genérica ou arquitetura nova sem necessidade demonstrada e aprovação quando alterar a stack/decisão.
 
@@ -63,7 +63,7 @@ A workflow `Web CI` executa `npm ci`, ESLint e `npm run build` (TypeScript + Vit
 
 ## Estado funcional
 
-A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. CI de lint e build TypeScript/Vite passou após a remoção de Tamagui; QA visual responsivo desktop/mobile permanece pendente. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
+A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. CI de lint, TypeScript e build TypeScript/Vite passou na branch de estabilização no commit `4ab231e5c1feb18f9ced8379fa59b49824ffabaa`; lint/build local e QA visual responsivo desktop/mobile permanecem pendentes. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
 
 Não criar dados fictícios nem apresentar projeções como valores realizados. A página principal autónoma de Dívidas foi descontinuada; obrigações permanecem ligadas aos movimentos/faturas associados.
 
