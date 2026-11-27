@@ -63,7 +63,7 @@ A workflow `Web CI` executa `npm ci`, ESLint e `npm run build` (TypeScript + Vit
 
 ## Estado funcional
 
-A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. CI de lint, TypeScript e build TypeScript/Vite passou na branch de estabilização no commit `4ab231e5c1feb18f9ced8379fa59b49824ffabaa`; lint/build local e QA visual responsivo desktop/mobile permanecem pendentes. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
+A aplicação inclui Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. A estabilização frontend da Fase 1 foi integrada na `main` pelo PR #11 (merge commit `d987e7ff1204328f775df3abd662db0da69244c6`). Web CI (ESLint, TypeScript e build Vite) e PR Quality Gate passaram no commit final `03b9b47e7777b7b21a9bdb6f3516bfde718790fc`; QA visual responsiva desktop/mobile foi aprovado pelo utilizador. Todas as páginas autenticadas reutilizam `DesktopPageFrame`/`MobilePageFrame` e `PageHeader`, com regras comuns de largura, gutters, cabeçalhos e tokens. A leitura está implementada para os fluxos suportados; os formulários e ações de escrita ainda não estão todos integrados. O FAB global nas páginas aprovadas apresenta **Novo gasto**, **Novo rendimento** e **Nova transferência**.
 
 Não criar dados fictícios nem apresentar projeções como valores realizados. A página principal autónoma de Dívidas foi descontinuada; obrigações permanecem ligadas aos movimentos/faturas associados.
 
