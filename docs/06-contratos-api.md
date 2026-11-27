@@ -146,3 +146,50 @@ Este contrato descreve a extensão necessária para implementar o formulário ap
 - Atualizar schemas, exemplos, testes API, read models de Movimentos/Cartões/Rota e documentação frontend quando o contrato for implementado.
 
 ---
+
+
+## Extensão necessária — formulários de gastos e ganhos (interface implementada, contrato por implementar)
+
+Esta secção especifica o trabalho backend/API que falta para tornar funcionais as opções já desenhadas no formulário. É uma especificação de implementação; não afirma que os endpoints/campos já existem.
+
+### 1. Gasto por Conta — imediato
+- Reutilizar o contrato existente de `POST /expenses` com `state=REALIZED`, `account_id` e `effective_at`.
+- Conta ativa e pertencente ao utilizador; criação da operação e lançamento na mesma transação.
+- O formulário não deve enviar uma conta prevista neste caso.
+
+### 2. Gasto por Conta — data futura
+- Estender `POST /expenses` para aceitar `planned_account_id` e `planned_at` com `state=PENDING`.
+- `planned_account_id` é referência de previsão, não destino efetivo: não cria `financial_entries` realizados nem altera saldo.
+- Manter `account_id`/lançamento efetivo ausente até confirmação do pagamento.
+- A confirmação futura recebe conta efetiva e `effective_at`; não deve inferir conta efetiva a partir da prevista.
+
+### 3. Gasto por Conta — prestações
+Contrato proposto para criação atómica:
+- Dados do gasto: descrição, valor total, categoria, data do gasto e notas opcionais.
+- Plano: `planned_account_id`, `installments_count` (2–120) e `first_due_at`.
+- Pagamento inicial opcional: `first_installment_payment.account_id` e `first_installment_payment.effective_at`.
+- Backend calcula prestações em aritmética decimal ARC-003, atribui o resíduo de arredondamento de forma determinística e cria calendário/obrigações.
+- Se primeira prestação paga, liquida exatamente essa prestação, cria o efeito realizado na conta escolhida e reduz a obrigação; não cria uma segunda despesa.
+- A conta efetiva inicial pode diferir da conta prevista do plano.
+- Plano, prestações, operação original e pagamento inicial devem ser atómicos e idempotentes. Repetir a mesma chave não pode gerar novas prestações ou lançamentos.
+- Read model expõe estado, valor, vencimento, valor pago/em aberto e relação com a operação original.
+
+### 4. Compra de Cartão — única ou parcelada
+- Alterar o contrato atual de `POST /purchases`, que hoje exige alocações de fatura fornecidas pelo cliente.
+- Novo input de domínio: `card_id`, `purchased_at`, valor total, descrição/categoria/notas e `installments_count` (1 para compra única; >1 para parcelada), mais chave de idempotência.
+- Backend valida cartão ativo/do utilizador, determina ciclo de cada prestação e calcula as alocações para faturas; não exigir `invoice_id`, vencimentos ou montantes de alocação manuais ao utilizador.
+- Persistir compra e alocações numa transação; devolve a distribuição calculada para informação.
+- Não aceitar `first_installment_paid` neste formulário. Liquidação de fatura é comando separado com conta e data efetiva.
+- Compra reconhecida uma vez em Movimentos; Rota Financeira projeta o total de cada fatura uma única vez, sem projetar simultaneamente compras individuais dessa fatura.
+
+### 5. Notas e ganhos
+- Adicionar campo opcional `notes` ao contrato de gasto e rendimento e persistir no modelo/read model, com limite validado e sanitização adequada.
+- Ganhos mantêm o fluxo atual: pendente sem conta efetiva; recebido exige conta + `effective_at`. Não adicionar método Conta/Cartão.
+- Confirmar `planned_at` para rendimento pendente e `effective_at` para recebido; expor sem confundir as duas datas.
+
+### 6. Integridade e testes obrigatórios
+- Autorizar todas as referências por utilizador e estado ativo.
+- Rejeitar quantidade inválida, datas incompatíveis, plano sem conta prevista e pagamento inicial incompleto.
+- Transações DB, idempotência, concorrência e constraints adequadas.
+- Testar cálculo decimal e última prestação, pagamento inicial, repetição de requests, faturas no dia de fecho (regra de ciclo pendente de decisão), conta prevista sem impacto no saldo, e invariantes de Movimentos/Contas/Cartões/Rota.
+- Atualizar OpenAPI/exemplos, DTOs/requests, services, migrations, resources/read models e testes correspondentes.
