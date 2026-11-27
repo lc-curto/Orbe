@@ -268,24 +268,33 @@ Estes são os únicos fluxos de escrita que têm contratos backend confirmados n
 
 ## 10. Contratos ainda necessários
 
-- [ ] Definir campos e endpoints de contas.
-- [ ] Definir campos e endpoints de categorias.
-- [ ] Definir campos e endpoints de despesas.
-- [ ] Definir campos e endpoints de receitas.
-- [ ] Definir campos e endpoints de transferências.
+- [x] Definir campos e endpoints de contas (GET/POST implementados).
+- [x] Definir campos e endpoints de categorias (GET/POST implementados).
+- [x] Definir campos e endpoints de despesas (POST implementado).
+- [x] Definir campos e endpoints de receitas (POST implementado).
+- [x] Definir campos e endpoints de transferências (POST e confirmação de perna implementados).
 - [ ] Definir permissões e ações por estado.
 - [ ] Definir edição, cancelamento, eliminação e reversão contextual.
 - [ ] Definir pagamento completo de faturas.
 - [ ] Fechar políticas de faturas vencidas, ciclos anteriores e crédito negativo.
 - [x] Fechar precisão monetária e arredondamento para o núcleo financeiro: `DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas (ARC-003).
 
-Enquanto estes contratos não existirem, o frontend não deve criar categorias, contas, endpoints, payloads ou fluxos fictícios.
+Os contratos de criação de contas, categorias, despesas, receitas e transferências estão definidos e implementados no backend. Ações por estado, edição, cancelamento, eliminação e reversão contextual continuam condicionadas aos contratos e endpoints específicos; o frontend não deve inventá-los.
+
+## Implementação frontend — Movimentos (Fase 2, branch `feature/movements-write-flows`)
+
+- Os formulários de gasto, rendimento e transferência passaram a usar o read model real de contas/categorias ativas; foram removidas listas vazias fixas.
+- Gasto/rendimento permitem estado `REALIZED` ou `PENDING`. Realizado envia conta + `effective_at`; pendente não envia conta e envia `planned_at`.
+- Transferência envia uma operação única com pernas `OUT` e `IN`, cada uma com conta, estado e data própria, respeitando o contrato existente.
+- Submissão usa os endpoints existentes, chave de idempotência, bloqueio de submissão duplicada, validação local e mapeamento de erros API para o formulário.
+- Após sucesso, o read model financeiro é atualizado e o utilizador recebe feedback contextual.
+- Edição, confirmação de movimentos pendentes na listagem, cancelamento, eliminação, reversão e menus contextuais continuam pendentes por dependerem de fluxos/endpoints adicionais. Não foram simulados.
 
 ## 11. Formulários comuns após os contratos
 
-- [ ] Implementar despesa.
-- [ ] Implementar receita.
-- [ ] Implementar transferência.
+- [x] Implementar criação de gasto (realizado ou pendente) no formulário de Movimentos.
+- [x] Implementar criação de rendimento (realizado ou pendente) no formulário de Movimentos.
+- [x] Implementar criação de transferência com estado e data independentes para cada perna.
 - [ ] Implementar criação e edição de conta.
 - [ ] Implementar criação e edição de cartão.
 - [ ] Integrar o saldo inicial à criação do cartão.
