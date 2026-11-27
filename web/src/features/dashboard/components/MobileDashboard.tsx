@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Button, Card as UiCard, Separator, Text, Row, Stack } from '../../../design-system/primitives'
 import { Button, Card as UiCard, Separator, Text, Row, Stack } from '../../../design-system/primitives'
 import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
@@ -13,19 +13,18 @@ function formatMoney(amount: string, symbol: CurrencySymbol): string {
   return formatCurrency(amount, symbol)
 }
 
-export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, notify, userName, currencySymbol, movements }: {
+export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
   card?: FinancialCard
   invoice?: CardInvoice
   setActiveKey: (value: string) => void
-  notify: (message: string) => void
+  categories: Array<{ name: string; amount: string; percentage: number }>
   userName: string
   currencySymbol: CurrencySymbol
   movements: DashboardMovement[]
 }) {
-  const [hidden, setHidden] = useState(false)
 
   return (
     <Stack className="mobile-dashboard" backgroundColor="#f7f9fc" minHeight="100vh">
@@ -38,9 +37,28 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           <MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="dashboard-month-selector" />
         </Row>
         <UiCard className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
-          <Stack gap={12}><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }}><Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text><Button className="mobile-balance-visibility-button" onPress={() => setHidden((value) => !value)} aria-label={hidden ? 'Mostrar saldo' : 'Ocultar saldo'} width={30} height={30} minWidth={30} maxWidth={30} flexShrink={0} padding={0} borderRadius={9} borderWidth={0} backgroundColor="rgba(255,255,255,0.14)" style={{ flex: '0 0 30px' }}><AppIcon name={hidden ? 'eyeOff' : 'eye'} size={15} color="#ffffff" /></Button></Row><Stack gap={2}><Text color="#ffffff" fontSize={30} fontWeight="800">{hidden ? '••••••' : `${currencySymbol} 2.840,50`}</Text><Text color="#dbeafe" fontSize={12}>Todas as contas</Text></Stack><Separator borderColor="rgba(255,255,255,0.24)" /><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}>{[['Ganhos', period.income], ['Gastos', period.expenses]].map(([label, value]) => <Stack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{hidden ? '••••' : value}</Text></Stack>)}</Row></Stack>
+        <UiCard className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
+          <Stack gap={12}>
+            <Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text>
+            <Text color="#ffffff" fontSize={28} fontWeight="800">Indisponível</Text>
+            <Text color="#dbeafe" fontSize={12}>O read model atual não fornece saldo de contas.</Text>
+            <Separator borderColor="rgba(255,255,255,0.24)" />
+            <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}>{[['Ganhos', period.income], ['Gastos', period.expenses]].map(([label, value]) => <Stack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{value}</Text></Stack>)}</Row>
+          </Stack>
         </UiCard>
-        <UiCard {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}><Text color="#101828" fontSize={16} fontWeight="800">Gastos por categoria</Text><Button className="dashboard-card-view-all" onPress={() => notify('A mostrar despesas por categoria')} borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontSize={12} fontWeight="700">Ver todas</Button></Row><Stack gap={12}>{[['Casa', '€ 162,00', 82], ['Juros', '€ 1,00', 12]].map(([label, value, width]) => <Stack key={String(label)} gap={5}><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={12}>{label}</Text><Text color="#101828" fontSize={12} fontWeight="700">{String(value).replace(/€/g, currencySymbol)}</Text></Row><Stack height={5} borderRadius={99} backgroundColor="#e6f0ff"><Stack width={`${width}%`} height={5} borderRadius={99} backgroundColor="#175cd3" /></Stack></Stack>)}</Stack></UiCard>
+        </UiCard>
+        <UiCard {...border} borderRadius={16} padding={16} backgroundColor="#ffffff">
+          <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}>
+            <Text color="#101828" fontSize={16} fontWeight="800">Gastos por categoria</Text>
+            <Button className="dashboard-card-view-all" onPress={() => setActiveKey('Movimentos')} borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontSize={12} fontWeight="700">Ver movimentos</Button>
+          </Row>
+          <Stack gap={12}>
+            {categories.length === 0 ? <Text color="#667085" fontSize={13} paddingVertical={12}>Sem despesas realizadas neste mês.</Text> : categories.map((category) => <Stack key={category.name} gap={5}>
+              <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={12}>{category.name}</Text><Text color="#101828" fontSize={12} fontWeight="700">{category.amount}</Text></Row>
+              <Stack height={5} borderRadius={99} backgroundColor="#e6f0ff"><Stack width={String(category.percentage) + '%'} height={5} borderRadius={99} backgroundColor="#175cd3" /></Stack>
+            </Stack>)}
+          </Stack>
+        </UiCard>
         <UiCard {...border} borderRadius={16} padding={16} backgroundColor="#ffffff"><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={10}><Text color="#101828" fontSize={16} fontWeight="800">Cartões</Text><Button className="dashboard-card-view-all" onPress={() => setActiveKey('Cartões')} borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontSize={12} fontWeight="700">Ver todos</Button></Row>{invoice ? <Row padding={12} borderRadius={12} backgroundColor="#f7f9fc" style={{ justifyContent: 'space-between', alignItems: 'center' }}><Stack gap={3}><Text color="#667085" fontSize={11}>{card?.name ?? invoice.card?.name ?? 'Fatura do cartão'}</Text><Text color="#101828" fontSize={19} fontWeight="800">{formatMoney(invoice.summary.open_amount, currencySymbol)}</Text></Stack><Text color="#087f70" backgroundColor="#e6f4f1" borderRadius={99} paddingHorizontal={9} paddingVertical={5} fontSize={11} fontWeight="700">{invoice.cycle_state}</Text></Row> : card ? <Text color="#667085" fontSize={13}>{card.name} · sem faturas disponíveis.</Text> : <Text color="#667085" fontSize={13}>Sem cartões disponíveis.</Text>}</UiCard>
         <UiCard {...border} borderRadius={16} padding={16} backgroundColor="#ffffff">
           <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={10}>
