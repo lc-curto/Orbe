@@ -427,3 +427,41 @@
 [data-theme="dark"] .mobile-more-pages-panel {
   scrollbar-color: var(--orbe-muted) var(--orbe-surface);
 }
+
+/* System-wide dark-theme contrast for hover, feedback and primary actions. */
+[data-theme="dark"] .movements-page .toolbar-filter:hover,
+[data-theme="dark"] .movements-page .toolbar-filter[aria-expanded="true"],
+[data-theme="dark"] .movements-page .movement-filter-row > .filter-icon-button:hover,
+[data-theme="dark"] .movements-page .movement-filter-row > .filter-icon-button[aria-expanded="true"],
+[data-theme="dark"] .movements-page .search-submit-button:hover,
+[data-theme="dark"] .movements-page .search-submit-button:focus-visible {
+  background: color-mix(in srgb, var(--orbe-primary) 12%, var(--orbe-surface)) !important;
+  border-color: color-mix(in srgb, var(--orbe-primary) 34%, var(--orbe-border)) !important;
+  color: var(--orbe-primary) !important;
+}
+[data-theme="dark"] .movements-page .filter-panel {
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .app-add-fab,
+[data-theme="dark"] .route-mobile-add-action,
+[data-theme="dark"] .auth-submit {
+  color: var(--orbe-primary-button-text) !important;
+}
+[data-theme="dark"] .accounts-new-button {
+  background: var(--orbe-primary) !important;
+  color: var(--orbe-primary-button-text) !important;
+}
+[data-theme="dark"] .auth-error,
+[data-theme="dark"] .auth-inline-error {
+  background: var(--orbe-danger-soft) !important;
+  color: var(--orbe-danger) !important;
+  border-color: color-mix(in srgb, var(--orbe-danger) 30%, var(--orbe-border)) !important;
+}
+[data-theme="dark"] .auth-success {
+  background: var(--orbe-success-soft) !important;
+  color: var(--orbe-success) !important;
+}
+[data-theme="dark"] .movements-account-dropdown button:hover {
+  background: var(--orbe-danger-soft) !important;
+}
