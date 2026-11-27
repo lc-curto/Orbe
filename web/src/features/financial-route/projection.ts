@@ -33,13 +33,12 @@ export function parseMoneyUnits(value: string | number): bigint | null {
 }
 
 export function formatMoneyUnits(value: bigint): string {
-  const negative = value < 0n
-  const absolute = negative ? -value : value
+  const absolute = value < 0n ? -value : value
   const cents = (absolute + 50n) / 100n
   const whole = cents / 100n
   const fraction = String(cents % 100n).padStart(2, '0')
   const grouped = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 }).format(whole)
-  return (negative ? '−' : '') + grouped + ',' + fraction
+  return (value < 0n && cents > 0n ? '−' : '') + grouped + ',' + fraction
 }
 
 export function localDateKey(date = new Date()): string {
