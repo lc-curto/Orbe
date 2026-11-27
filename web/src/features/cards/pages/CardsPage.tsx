@@ -163,7 +163,7 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
         {!loading && !error ? (selectedCard.invoices ?? []).map(renderInvoice) : null}
       </div>
     </> : <>
-      <PageHeader title="Cartões" titleId="cards-page-title" description={`${activeCards.length} ${activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}`} className="accounts-page-header" />
+      <PageHeader title="Cartões" titleId="cards-page-title" className="accounts-page-header" />
       <div className="accounts-total-card cards-total-card orbe-financial-highlight-card">
         <span className="accounts-total-label">TOTAL EM DÍVIDA</span>
         <strong className="accounts-total-value">{money(totalDebt, symbol)}</strong>
