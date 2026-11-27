@@ -529,8 +529,7 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 
 - Logout desktop acessível diretamente no rodapé da sidebar, inclusive recolhida.
 - Logout em viewport mobile/tablet acessível pelo painel **Mais** da bottom bar.
-- Em desktop, o controlo global de tema permanece no shell.
-- Em mobile/tablet (até 1024 px), o controlo de tema é fornecido pelo `PageHeader` partilhado, em todas as páginas que apresentam cabeçalho; não existe implementação exclusiva do Dashboard.
+- O controlo de tema é fornecido pelo `PageHeader` partilhado em todos os breakpoints; o botão duplicado do shell foi removido. Não existe implementação exclusiva do Dashboard.
 - O painel **Mais** mantém o controlo de tema como alternativa, incluindo vistas de Configurações que ocultam o cabeçalho durante a navegação interna.
 - A preferência continua a ser aplicada e persistida pelo `ThemeProvider` existente.
 - QA visual em browser desktop/tablet/mobile ainda necessário após atualização da branch.
@@ -539,7 +538,7 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 
 - O breakpoint mobile/tablet do Orbe é `max-width: 1024px`.
 - No Dashboard, o cumprimento e o primeiro nome permanecem numa linha; nomes extensos são truncados de forma controlada.
-- A data aparece abaixo do cumprimento.
+- Não apresentar subtítulo ou texto auxiliar debaixo do título da página; a data não é renderizada como descrição do cabeçalho.
 - O controlo de tema usa o `PageHeader` partilhado e fica alinhado à direita; não deve ser implementado isoladamente por página.
 - O período do Dashboard fica numa segunda linha, com rótulo `Período` e seletor alinhado à direita.
 - Cabeçalhos com ações de página (por exemplo, seletor mensal) mantêm essas ações e apresentam o controlo de tema de forma empilhada no lado direito em mobile/tablet, evitando sobreposição.
@@ -552,7 +551,7 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Removidos estilos inline de fundo da moldura mobile da Dashboard e do cartão de saldo para permitir que o tema/tokens partilhados controlem a apresentação.
 - A camada visual é uma primeira harmonização; ainda requer revisão de regressões, QA em browser e eventual ajuste de componentes com estilos inline legados.
 - Não foram alteradas regras financeiras nem contratos API.
-- Lint/build e QA visual local ainda não executados nesta sessão; aguardar CI e validação manual do utilizador antes de considerar aprovado.
+- Web CI (ESLint, TypeScript e build Vite) e PR Quality Gate passaram no commit de implementação c4483165. QA visual manual do utilizador permanece pendente.
 
 
 ### Refinamento transversal de interface — 27/11/2026
@@ -587,7 +586,7 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Reutilizado o destaque verde do Dashboard nos resumos de saldo final da Rota Financeira (mobile), saldo total de Contas, total em dívida de Cartões e resumo da fatura selecionada.
 - O padrão é aplicado por uma classe partilhada, com gradiente e cores explícitos que não mudam em dark mode. Não afeta cards secundários, listas ou tabelas.
 - Ícone da página Configurações alterado de símbolo tipo sol para engrenagem, distinguindo-o do controlo de tema.
-- Implementação na branch do PR #12; pendente de CI e validação visual manual. Não integrada na main.
+- Web CI e PR Quality Gate passaram no commit de implementação c4483165; QA visual manual pendente. Não integrada na main.
 
 ## Desktop visual consistency — PR #12
 
@@ -595,5 +594,5 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Implementação na branch feature/movements-write-flows: alinhamento da sidebar através de props dos primitives; geometria desktop por tokens partilhados; controlo de tema no PageHeader em todos os breakpoints; removido o botão duplicado do shell.
 - Criada a variante partilhada orbe-financial-highlight-card no design system, aplicada ao saldo do Dashboard desktop/mobile e aos resumos financeiros aprovados. O tema escuro exclui esta variante das regras genéricas de superfície.
 - Corrigidos os overrides important introduzidos na camada de polimento dos cards e removido o override duplicado do seletor de período da Rota Financeira.
-- Finding legado: theme.css e a navegação mobile ainda contêm overrides important preexistentes para componentes com estilos inline/estilos de feature. Os seletores afetados pela sidebar desktop e pelo card de destaque foram corrigidos estruturalmente nesta tarefa. A remoção global dos restantes exige migrar esses componentes para tokens/estilos semânticos; não foi expandida para não alterar comportamentos visuais fora do escopo desktop aprovado.
-- Não integrado na main; pendente CI e QA visual manual em desktop e nos dois temas.
+- Finding legado: theme.css mantém overrides `!important` preexistentes para superfícies, formulários e componentes mobile; navigation.css mantém overrides de estado da navegação mobile. Impacto: a cascata é mais difícil de manter e estilos semânticos podem exigir exceções. Os seletores afetados pela sidebar desktop e pelo card de destaque foram corrigidos estruturalmente. Critério de remoção dos restantes: migrar cada componente afetado de estilos inline/hardcoded para tokens/classes semânticas e eliminar o override no mesmo PR de migração. Não expandido para mobile nesta alteração desktop.
+- Web CI (run 46012020608) e PR Quality Gate (run 46012020106) passaram no commit c4483165. QA visual manual em desktop e nos dois temas continua pendente; não integrado na main.
