@@ -10,10 +10,6 @@ export function dateKey(value?: string | null) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
 }
 
-export function localDateKey(date = new Date()) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-}
-
 export function shiftMonth(value: string, offset: number) {
   const [year, month] = value.split('-').map(Number)
   const date = new Date(year, month - 1 + offset, 1)
