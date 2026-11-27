@@ -644,3 +644,25 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - DateInput mantém apenas atalhos úteis Hoje/Ontem; removido “Escolher data” redundante, pois o input date já permite escolher.
 - Sem mudança de API/payloads/regra de negócio. Contas e Cartões/Faturas ainda não dispõem de formulários de criação/edição nesta fase; o padrão fica pronto para reutilização quando esses fluxos forem implementados.
 - CI executado no commit anterior passou; após esta correção de defaults, CI deve voltar a executar e QA manual de estados pendentes/realizados em light/dark e 320–1024+ px continua necessário antes do merge.
+
+## Decisão aprovada — formulário completo de gasto (2026-11-27)
+
+O fluxo visual completo foi aprovado pelo utilizador. A documentação de interface, regras financeiras, modelo e API foi adaptada para refletir a decisão; **a implementação ainda não está autorizada a começar sem fechar os contratos e atualizar o modelo**.
+
+- Método: Conta ou Cartão; «A prazo» é modalidade, não método.
+- Conta: modalidades Imediato, Data futura e Prestações. Conta prevista separada da conta efetiva; vencimento separado da data do lançamento e da data efetiva de pagamento.
+- Em prestações por Conta, permitir marcar primeira prestação já paga e recolher conta efetiva + data efetiva. O pagamento inicial liquida a prestação sem duplicar despesa.
+- Cartão: cartão + compra única/parcelada + número de prestações. Faturas/vencimentos calculados pelo ciclo; sem vencimento manual e sem checkbox de primeira prestação paga no formulário.
+- Contas e cartões devem ser carregados das entidades reais do utilizador; protótipo não representa persistência.
+
+### Trabalho necessário antes da implementação
+1. Atualizar modelo ER/UML e esquema físico para modalidade, plano/prestações e conta prevista.
+2. Definir e implementar contratos API para criação pendente com conta prevista, plano parcelado e liquidação inicial opcional.
+3. Definir o cálculo de alocação de compra de cartão às faturas e o read model da pré-visualização.
+4. Atualizar regras de confirmação/pagamento e ações de Movimentos/Cartões para refletir prestações e conta prevista.
+5. Implementar testes de integridade, idempotência, arredondamento, ciclo do cartão e ausência de dupla contagem.
+6. Só depois implementar o formulário aprovado e realizar QA visual/funcional desktop, tablet e mobile.
+
+Estado: decisão de UX aprovada; especificação documental atualizada; extensão de modelo/API por definir/implementar; formulário ainda não implementado.
+
+---
