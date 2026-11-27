@@ -1318,3 +1318,64 @@ Padrão obrigatório para formulários existentes e futuros:
 - Aplicado ao formulário de Movimentos (gasto, rendimento e transferência). Contas e Cartões/Faturas ainda não têm formulários de criação/edição nesta fase; quando forem implementados, devem reutilizar estes componentes, sem criar fluxos fictícios agora.
 - Não alterar payloads/API nem regras financeiras como parte da redução visual. A tarefa reorganiza a apresentação e usa defaults já previstos pelo fluxo.
 
+# Formulário de gasto — decisão consolidada (2026-11-27)
+
+Esta secção substitui, para o formulário de criação de gasto, qualquer descrição anterior que trate «A prazo» como método de pagamento ou misture o método com a modalidade. A decisão visual aprovada é a referência para a implementação.
+
+### Campos comuns
+- Descrição, valor total, categoria e **data do lançamento** (data em que o gasto aconteceu).
+- Método de pagamento: **Conta** ou **Cartão**. «A prazo» não é método; é uma modalidade disponível quando o método é Conta.
+- Observações opcionais.
+- O formulário é progressivo: apresenta apenas os campos relevantes ao método/modalidade escolhidos.
+
+### Método Conta — modalidade de pagamento
+Apresentar três opções visuais compactas, com ícone, título e descrição curta:
+- **Imediato** — Pago agora.
+- **Data futura** — Pago depois.
+- **Prestações** — Pago em partes.
+
+A seleção da modalidade revela os campos seguintes:
+
+**Imediato**
+- Conta de pagamento, escolhida entre as contas financeiras ativas do utilizador (inclui dinheiro quando configurado como conta).
+- Data do pagamento.
+- Ao guardar, registar o gasto e o pagamento realizado na conta/data indicadas, sem duplicar o efeito da despesa.
+
+**Data futura**
+- Conta prevista para pagamento, selecionada entre as contas ativas.
+- Data de vencimento.
+- Ao guardar, o gasto fica pendente. A conta selecionada é uma previsão de liquidação, não uma movimentação efetiva: não cria lançamento realizado nem altera saldo atual. A data e o valor alimentam a Rota Financeira.
+
+**Prestações**
+- Conta prevista para pagamento, selecionada entre as contas ativas.
+- Número de prestações.
+- Vencimento da primeira prestação; as seguintes são calculadas pelo calendário definido para o plano.
+- Checkbox «Já paguei a primeira prestação» (desmarcado por defeito).
+- Se marcado, revelar **Conta usada no pagamento** (conta ativa) e **Data em que pagou**. Estas são os dados reais da liquidação da primeira prestação e podem diferir da conta/data previstas para as restantes.
+- A primeira prestação é liquidada através de um efeito de pagamento real; as restantes ficam pendentes. O pagamento não reconhece novamente a despesa.
+
+### Método Cartão
+- Cartão de crédito selecionado entre os cartões ativos do utilizador.
+- Escolha **Compra única** ou **Compra em prestações**; se parcelada, selecionar número de prestações.
+- Não pedir conta bancária, data de vencimento da fatura, vencimento da primeira prestação nem «Já pagou a primeira prestação?».
+- O Orbe calcula a fatura/período e os vencimentos com base no cartão, na data do lançamento e no número de prestações, segundo o ciclo configurado. Mostrar pré-visualização informativa quando o cálculo estiver disponível; nunca pedir ao utilizador para preencher manualmente a distribuição pelas faturas.
+- Compra no cartão é reconhecida uma única vez. As alocações são associadas às faturas correspondentes; pagar a fatura é um fluxo separado no módulo Cartões/Faturas e não cria uma segunda despesa.
+
+### Defaults e estados
+- Não selecionar cartão ou conta por inferência; carregar opções reais e exigir escolha quando necessário.
+- Modalidade inicial visual: Imediato. A submissão nessa modalidade representa intenção de registar como pago e exige conta e data efetiva. Se o utilizador escolher Data futura, a operação é pendente.
+- «Já paguei a primeira prestação» começa desmarcado. Marcar exige conta e data efetivas.
+- Erros de validação/API mantêm o formulário aberto e os valores preenchidos.
+
+### Distinção de datas e dados
+- `transaction/launch date`: data do acontecimento/gasto.
+- `due date`: data prevista de vencimento da obrigação/prestação.
+- `effective/payment date`: data em que o pagamento realmente ocorreu.
+- Conta prevista não é conta efetivamente movimentada. A previsão pode ser guardada para a projeção; apenas pagamento realizado altera saldo.
+
+### Responsividade e acessibilidade
+- As três modalidades usam cartões de seleção compactos; em ecrãs estreitos devem adaptar-se sem truncar rótulos nem criar overflow.
+- Estados selecionado/foco devem usar tokens do tema claro/escuro, foco visível e controles acessíveis por teclado.
+- Validar desktop, tablet e mobile a partir de 320 px, incluindo estados condicionais, erro e submissão.
+
+---
