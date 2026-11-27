@@ -28,7 +28,6 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
       <Stack className="mobile-dashboard-content" gap="var(--orbe-page-section-gap)">
         <PageHeader
           title={`Bom dia, ${userName.split(' ')[0]}`}
-         
           className="mobile-dashboard-header"
           period={<MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />}
         />
