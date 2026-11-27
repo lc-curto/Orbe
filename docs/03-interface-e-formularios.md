@@ -103,11 +103,26 @@ Reutiliza estrutura de Contas.
 - Gestão avançada de financiamento ou dívida preexistente exige fluxo próprio, ainda por especificar; não reintroduzir uma página autónoma sem decisão explícita.
 
 ## Relatórios — aprovado
-- Cabeçalho Relatórios e seletor mês/ano, alinhado pelo mesmo padrão responsivo de Movimentos.
-- Não apresentar cartões KPI. O primeiro bloco é um gráfico de evolução diária do mês selecionado, com receitas e despesas realizadas por dia.
-- Apresentar composição receitas/despesas do mês e análise financeira: despesas por categoria; atividade por conta; compras/faturas/pagamentos de cartões; pagamentos/evolução das obrigações quando a API disponibilizar histórico.
-- Apenas operações realizadas; excluir pendentes, canceladas e transferências do gráfico de receitas/despesas. Sem projeções.
-- Usar exclusivamente dados reais disponíveis. Se faltar read model, apresentar estado informativo sem estimativas.
+- Cabeçalho com título, descrição curta e seletor mês/ano; reutilizar o `MonthSelector` e o padrão responsivo de Movimentos.
+- Mobile-first: uma coluna com a evolução mensal em primeiro lugar, seguida de despesas por categoria e resumo do mês. Desktop mantém o gráfico em largura total e coloca categorias e resumo em duas colunas quando houver espaço.
+- Não apresentar cartões KPI no topo. O gráfico diário é o elemento analítico principal.
+- Evolução diária: receitas e despesas realizadas agregadas por dia do mês selecionado. Excluir pendentes, canceladas, transferências e projeções.
+- Despesas por categoria: ranking das cinco principais categorias com barras proporcionais à participação no total de despesas realizadas; incluir “Sem categoria” quando aplicável.
+- Resumo do mês: receitas realizadas, despesas realizadas e resultado líquido (receitas menos despesas).
+- Acessibilidade do gráfico: legenda, descrição acessível e tabela de valores diários consultável por disclosure; respeitar foco visível e preferência de movimento reduzido.
+- Usar exclusivamente operações reais disponíveis na API e a formatação/moeda centralizada existente. Estados de carregamento, erro e ausência de dados devem ser explícitos.
+- Não apresentar nesta iteração atividade por conta, cartões/faturas ou obrigações como painéis autónomos; não duplicar a lista de movimentos. Estas análises exigem decisão/escopo próprio e dados adequados.
+- Não introduzir bibliotecas de UI ou gráficos. Utilizar React/TypeScript, SVG sem dependência externa, CSS e componentes/providers existentes.
+- Breakpoints seguem o shell do Orbe: sidebar acima de 1024 px e bottom bar até 1024 px. Renderizar uma única arquitetura funcional, adaptada por CSS; evitar layouts paralelos que provoquem duplicação ou desformatação.
+
+### Comportamento aprovado — Relatórios e moeda (2026-11-27)
+- O seletor de mês/ano de Relatórios reutiliza o componente e o padrão responsivo de posicionamento/alinhamento já adotado em Movimentos. Não criar um novo padrão de cabeçalho ou deslocar o seletor.
+- Relatórios apresenta apenas operações realizadas no período selecionado; não inclui pendentes, canceladas ou projeções.
+- Evolução diária e resumo devem derivar das mesmas operações realizadas e não duplicar transferências ou efeitos de operações com múltiplos lançamentos.
+- A participação por categoria é calculada sobre o total de despesas realizadas do mês; a ordenação mostra as cinco maiores categorias.
+- A preferência de moeda altera exclusivamente o símbolo apresentado na interface. Não efetua câmbio, conversão, alteração de valores guardados, saldos, cálculos, precisão ou escala. É uma preferência de apresentação, não uma alteração da denominação financeira dos movimentos.
+- A implementação deve centralizar a preferência e a formatação para evitar formatadores divergentes entre páginas. A escolha persistida no navegador não altera os dados da API nem implica sincronização entre dispositivos.
+- O tema é uma preferência visual global, persistida no navegador. Não altera dados nem regras financeiras.
 
 ## Configurações — aprovado
 - Preferências: Perfil, Moeda de apresentação, Categorias, Aparência e preferências.
