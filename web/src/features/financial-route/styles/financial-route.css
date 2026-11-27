@@ -135,7 +135,7 @@
   padding: 12px;
   border: 1px solid var(--orbe-border);
   border-radius: 14px;
-  background: #fff;
+  background: var(--orbe-surface);
   box-shadow: 0 12px 32px rgba(16, 24, 40, .16);
   color: var(--orbe-text);
 }
@@ -185,7 +185,7 @@
   cursor: pointer;
 }
 .sidebar-account-menu-action:hover:not(:disabled) {
-  background: #f2f4f7;
+  background: color-mix(in srgb, var(--orbe-primary) 9%, var(--orbe-surface));
   box-shadow: none;
 }
 .sidebar-account-menu-action:focus-visible {
@@ -268,7 +268,7 @@
     border: 1px solid var(--orbe-teal);
     border-radius: 999px;
     background: var(--orbe-teal);
-    color: #fff;
+    color: var(--orbe-primary-button-text, #fff);
     font: inherit;
     font-size: 12px;
     font-weight: 700;
