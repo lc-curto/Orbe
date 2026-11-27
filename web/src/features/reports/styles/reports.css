@@ -1,5 +1,4 @@
 /* Reports page: mobile-first layout, shared Orbe tokens and existing month selector. */
-.main-content.reports-mode > :not(.reports-page) { display: none !important; }
 
 .reports-page { width: 100%; max-width: var(--orbe-page-content-max); min-width: 0; margin: 0 auto; color: var(--orbe-text); }
 .reports-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 0 0 20px; }
