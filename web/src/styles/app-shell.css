@@ -402,6 +402,11 @@
 }
 .mobile-page-shell .reports-page.reports-page,
 .mobile-page-shell .financial-route-page.financial-route-page { padding-top: 0 !important; }
+.mobile-page-shell.reports-mobile-shell .reports-page,
+.mobile-page-shell.route-mobile-shell .financial-route-page {
+  max-width: var(--orbe-page-content-max);
+  padding-inline: 0 !important;
+}
 .mobile-page-shell .reports-grid { gap: 12px; }
 .mobile-page-shell .report-panel { padding: var(--orbe-panel-padding-mobile); }
 .cards-total-card,
