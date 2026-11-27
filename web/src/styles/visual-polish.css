@@ -1,0 +1,223 @@
+/* Orbe visual refinement: shared visual language, applied after feature styles. */
+:root {
+  --orbe-bg: #f5f8f7;
+  --orbe-surface: #ffffff;
+  --orbe-border: #e1e9e6;
+  --orbe-text: #172b28;
+  --orbe-muted: #647570;
+  --orbe-primary: #0f766e;
+  --orbe-teal: #0f766e;
+  --orbe-focus: #78cfc0;
+  --orbe-success: #16805b;
+  --orbe-danger: #c2415d;
+  --orbe-radius-card: 18px;
+  --orbe-radius-control: 12px;
+  --orbe-nav-height: 68px;
+  --orbe-panel-padding: 22px;
+  --orbe-panel-padding-mobile: 16px;
+}
+
+:root[data-theme="dark"] {
+  --orbe-bg: #101918;
+  --orbe-surface: #182321;
+  --orbe-border: #2b3b38;
+  --orbe-text: #e7f0ee;
+  --orbe-muted: #a2b5b0;
+  --orbe-primary: #5dd6c0;
+  --orbe-teal: #5dd6c0;
+  --orbe-focus: #72dccc;
+  --orbe-success: #64d4a2;
+  --orbe-danger: #f18b9a;
+}
+
+html { font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+body { font-family: inherit; font-size: 14px; line-height: 1.5; letter-spacing: -0.01em; }
+button, input, select, textarea { font-family: inherit; }
+button:hover:not(:disabled) { box-shadow: none; }
+
+.orbe-page-header-copy h1,
+.accounts-page-header h1,
+.financial-route-title h1,
+.reports-heading-copy h1,
+.settings-page-header h1,
+.mobile-dashboard-greeting-text {
+  font-family: inherit;
+  color: var(--orbe-text);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+
+.orbe-page-header-copy h1 { font-size: clamp(25px, 2.25vw, 32px); line-height: 1.16; }
+.orbe-page-header-copy p,
+.accounts-page-subtitle,
+.financial-route-title p,
+.settings-page-header p { color: var(--orbe-muted); line-height: 1.5; }
+
+.orbe-card,
+.accounts-total-card,
+.accounts-list,
+.cards-total-card,
+.cards-invoices-list,
+.cards-detail-summary,
+.report-panel,
+.settings-profile-card,
+.settings-mobile-category-list,
+.settings-preference-group,
+.settings-inline-navigation,
+.settings-detail-card,
+.settings-information-panel,
+.settings-category-list,
+.route-month-card,
+.route-mobile-summary,
+.movement-list,
+.schedule-list,
+.movement-kpi {
+  border-color: var(--orbe-border);
+  border-radius: var(--orbe-radius-card);
+  box-shadow: 0 2px 8px rgba(21, 45, 39, 0.035);
+}
+
+.accounts-total-card,
+.cards-total-card,
+.cards-detail-summary,
+.report-panel,
+.settings-preference-group,
+.settings-detail-card,
+.settings-information-panel {
+  padding: var(--orbe-panel-padding);
+}
+
+.accounts-row-icon,
+.cards-row-icon,
+.settings-profile-avatar,
+.settings-inline-icon,
+.settings-information-icon {
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--orbe-primary) 8%, var(--orbe-bg));
+  color: var(--orbe-primary);
+}
+
+.accounts-status-badge.is-active,
+.cards-invoice-status.is-paid {
+  color: var(--orbe-success);
+  background: color-mix(in srgb, var(--orbe-success) 10%, var(--orbe-surface));
+}
+
+.accounts-new-button,
+.app-add-fab {
+  background: var(--orbe-primary);
+  color: #ffffff;
+}
+
+.accounts-new-button { border-radius: 12px; font-weight: 650; }
+.app-add-fab {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--orbe-primary) 24%, transparent);
+}
+.app-add-fab:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-primary) 88%, #000);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--orbe-primary) 28%, transparent);
+}
+
+.mobile-bottom-bar {
+  background: color-mix(in srgb, var(--orbe-surface) 96%, transparent);
+  border-top-color: var(--orbe-border);
+  box-shadow: 0 -3px 14px rgba(21, 45, 39, 0.045);
+  backdrop-filter: blur(14px);
+}
+.mobile-bottom-bar .orbe-button {
+  border-radius: 13px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.mobile-more-pages-panel,
+.add-fab-menu,
+.account-dropdown,
+.accounts-menu-panel {
+  border-radius: 18px;
+  box-shadow: 0 16px 40px rgba(15, 35, 30, 0.14);
+}
+
+.orbe-page-theme-toggle {
+  background: var(--orbe-surface);
+  color: var(--orbe-muted);
+  border-color: var(--orbe-border);
+  box-shadow: 0 1px 3px rgba(15, 35, 30, 0.04);
+}
+.orbe-page-theme-toggle:hover:not(:disabled) {
+  background: var(--orbe-bg);
+  color: var(--orbe-text);
+  border-color: color-mix(in srgb, var(--orbe-primary) 35%, var(--orbe-border));
+}
+
+.filter-chips button,
+.toolbar-filter,
+.secondary-button,
+.route-flow-filters button,
+.route-period-selector,
+.orbe-month-selector {
+  border-radius: 12px;
+}
+.filter-chips button.selected,
+.movement-filter-row .filter-chips button.selected {
+  background: color-mix(in srgb, var(--orbe-primary) 8%, var(--orbe-surface));
+  border-color: color-mix(in srgb, var(--orbe-primary) 28%, var(--orbe-border));
+  color: var(--orbe-primary);
+}
+.search-control input,
+.accounts-status-filter,
+.settings-select-label select,
+.filter-panel select {
+  border-radius: 12px;
+}
+
+.mobile-balance-card {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%);
+  border-radius: 20px;
+  box-shadow: 0 8px 22px rgba(15, 118, 110, 0.16);
+}
+
+[data-theme="dark"] .mobile-balance-card {
+  background: linear-gradient(135deg, #155e59 0%, #123f3b 100%);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+}
+
+[data-theme="dark"] .mobile-bottom-bar {
+  background: color-mix(in srgb, var(--orbe-surface) 96%, transparent);
+}
+[data-theme="dark"] .mobile-bottom-bar .orbe-button[aria-current="page"] {
+  background: color-mix(in srgb, var(--orbe-primary) 13%, var(--orbe-surface));
+  color: var(--orbe-primary);
+}
+
+@media (max-width: 1024px) {
+  .orbe-page-header-copy h1,
+  .accounts-page-header h1,
+  .financial-route-title h1,
+  .reports-heading-copy h1,
+  .settings-page-header h1 {
+    font-size: clamp(24px, 6vw, 29px);
+    letter-spacing: -0.04em;
+  }
+  .app-add-fab {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+  .accounts-total-card,
+  .cards-total-card,
+  .cards-detail-summary,
+  .report-panel,
+  .settings-preference-group,
+  .settings-detail-card,
+  .settings-information-panel {
+    padding: var(--orbe-panel-padding-mobile);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-add-fab,
+  .orbe-page-theme-toggle { transition: none; }
+}
