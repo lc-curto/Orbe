@@ -19,10 +19,10 @@ A política e os Gates A/B/C de `AGENTS.md` aplicam-se a todas as PRs. Não deix
 <!-- Área/ficheiro | motivo e risco | item de trabalho/critério de conclusão -->
 
 ## Validação
-- [ ] Testes relevantes executados
-- [ ] Lint executado
-- [ ] TypeScript/build executado (quando aplicável)
-- [ ] QA visual/responsiva e estados relevantes executados (quando aplicável)
+- [ ] Testes relevantes executados ou explicitamente assinalados como pendentes/não aplicáveis, com motivo
+- [ ] Lint executado ou explicitamente assinalado como pendente/não aplicável, com motivo
+- [ ] TypeScript/build executado ou explicitamente assinalado como pendente/não aplicável, com motivo
+- [ ] QA visual/responsiva e estados relevantes executados ou explicitamente assinalados como pendentes/não aplicáveis, com motivo
 - [ ] Documentação atualizada (ou justificação de não aplicabilidade)
 
 **Comandos e resultados:**
