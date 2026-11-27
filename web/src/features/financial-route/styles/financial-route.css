@@ -256,3 +256,24 @@
   .route-month-card-mobile .route-table td { padding-inline: 4px; font-size: 9px; }
   .route-month-card-mobile .route-day-button { font-size: 10px; }
 }
+@media (max-width: 1024px) {
+  .route-mobile-add-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: start;
+    min-height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--orbe-teal);
+    border-radius: 999px;
+    background: var(--orbe-teal);
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+@media (min-width: 1025px) {
+  .route-mobile-add-action { display: none; }
+}
