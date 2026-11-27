@@ -892,3 +892,27 @@ A decisão do formulário exige distinguir semanticamente os dados de previsão 
 - Atualizar modelo ER/UML e testes de integridade/idempotência; só depois criar migrations e implementar UI/backend.
 
 ---
+
+
+## Extensão do modelo para formulários de gastos — estado 27/11/2026
+
+A interface está implementada no PR #12; o modelo físico e os serviços necessários para as modalidades abaixo ainda não estão implementados.
+
+### Persistência a especificar
+- **Conta prevista:** referência opcional na operação/plano, validada por utilizador e conta ativa. Não é FK de lançamento efetivo e não altera saldo.
+- **Plano de prestações por Conta:** entidade de plano ligada à operação original, com conta prevista, quantidade, valor total, data da primeira prestação e estado.
+- **Prestações:** registos individuais com número sequencial, valor, vencimento, estado e valor liquidado/em aberto. A obrigação deriva de registos de prestação/lançamentos válidos, sem criar uma segunda despesa para a operação original.
+- **Pagamento inicial:** ligação rastreável da prestação 1 ao lançamento/efeito efetivo, conta e data. Deve ser criado na mesma transação do plano quando marcado como já pago.
+- **Compra de Cartão:** persistir `card_id`, data da compra, quantidade de prestações e alocações calculadas às faturas. Preservar a relação compra → alocações → faturas.
+- **Notas:** campo opcional persistido na operação de gasto/ganho e exposto nos recursos/read models.
+
+### Invariantes
+1. A operação original representa o gasto uma única vez.
+2. Conta prevista nunca é conta efetiva nem destino de `financial_entries`.
+3. O pagamento da primeira prestação reduz a obrigação correspondente e afeta a conta escolhida, sem duplicar o gasto.
+4. Soma das prestações = total da obrigação; qualquer resíduo de arredondamento é atribuído deterministicamente conforme ARC-003.
+5. Compra de cartão + alocações calculadas preservam o total da compra; pagamentos de fatura não reconhecem a compra novamente.
+6. Operação, plano, prestações e pagamento inicial são atómicos e idempotentes.
+7. Movimentos apresenta compras individuais; Rota Financeira apresenta o total da fatura uma única vez e não soma também as compras que a compõem.
+
+O modelo ER/UML e migrations devem ser atualizados com estas entidades/relacionamentos antes da implementação dos serviços. A extensão respeita ARC-001: cada lançamento efetivo continua a ter exatamente um destino específico.
