@@ -63,8 +63,6 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 |---|---|
 | Estimativa variável da Rota | Categorias iniciais, janela histórica, fórmula, distribuição diária e comunicação de dados `UNCLASSIFIED`. |
 | Moeda | Se a moeda principal pode mudar depois de existirem movimentos. A precisão e o arredondamento do núcleo estão aprovados em ARC-003 (`DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas). |
-| Estimativa variável da Rota | Categorias iniciais, janela histórica, fórmula, distribuição diária e comunicação de dados `UNCLASSIFIED`. |
-| Moeda | Se a moeda principal pode mudar depois de existirem movimentos. A precisão e o arredondamento do núcleo estão aprovados em ARC-003 (`DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas). |
 
 ### Rota Financeira — princípio consolidado e decisões (2026-11-27)
 
@@ -84,8 +82,6 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 - Compra no dia do fecho segue a configuração/ciclo do cartão e a fatura efetivamente atribuída pelo sistema.
 - Crédito/estorno segue o extrato e as regras reais do emissor: o Orbe regista o crédito na fatura/ciclo ou conta em que o emissor efetivamente o liquidou, sem abatimento automático à fatura mais antiga nem transferência fictícia para conta.
 - Pagamento realizado só pode ter data de hoje ou passada. A Rota considera a data efetiva real; efeitos anteriores à data de referência já estão incluídos no saldo atual e não são reaplicados na projeção.
-
-**Questões ainda em aberto:**
 
 **Resolvido nesta revisão:** definição do saldo inicial, fórmula acumulada diária, continuidade entre dias/períodos e princípio de cálculo/read model comum. O read model deve expor/calcular os efeitos elegíveis por data a partir do domínio financeiro central; não é uma fonte financeira paralela.
 
