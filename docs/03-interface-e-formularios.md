@@ -115,7 +115,7 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - Uma operação realizada só pode ter data efetiva de hoje ou passada; não é possível registar um pagamento futuro como já realizado. A Rota usa a data real do pagamento. Efeitos realizados já incorporados no saldo de referência não são reaplicados.
 - Crédito/estorno de cartão segue o extrato e a aplicação efetiva do emissor: reduz a fatura/ciclo em que o emissor o lançou; não se presume abatimento à fatura mais antiga. Crédito mantido no cartão continua como crédito do cartão e é compensado conforme o emissor; devolução para conta bancária é entrada nessa conta na data real.
 - Saldo diário e saldo final são apresentados apenas quando o saldo de referência e os efeitos necessários são válidos; em caso de dados financeiros inválidos, indicar indisponibilidade em vez de inventar valores.
-- Cor apenas no valor/célula do saldo, nunca na linha nem em badges/legendas. Saldo diário negativo recebe cor de perigo; saldo não negativo mantém cor neutra. Saldo final do mês recebe cor apenas quando negativo.
+- Cor apenas no valor/célula do saldo, nunca na linha nem em badges/legendas. Saldo diário negativo à precisão apresentada (arredondado a cêntimos) recebe cor de perigo; saldo não negativo/zero mantém cor neutra. Saldo final do mês recebe cor apenas quando o valor apresentado é negativo.
 - O FAB global é o único ponto de criação; não adicionar botão + local.
 
 ## Contas — aprovado
