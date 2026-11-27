@@ -425,3 +425,27 @@ Correção estrutural:
 - Os breakpoints das páginas e componentes foram alinhados ao limite de 1024 px.
 
 **Validação:** ESLint e build TypeScript/Vite passaram no [CI run 45972363992](https://github.com/lc-curto/Orbe/actions/runs/45972363992), commit `80a308a`. QA visual em larguras 1440, 1280, 1024, 768, 390 e 320 px permanece necessária antes de integrar na `main`.
+
+
+## Fase 1 — estabilização frontend e QA (iniciada em 2026-11-27)
+
+A fase de estabilização parte do commit atual da `main` após os PRs #9 e #10. Não alterar regras de produto ou financeiras durante a QA visual; qualquer problema funcional descoberto deve ser registado e corrigido apenas dentro de um escopo explícito.
+
+### Auditoria estática inicial
+
+- A navegação global está configurada com sidebar apenas em desktop (>1024 px) e bottom bar em tablet/mobile (≤1024 px). O CSS e os wrappers responsivos usam este limite; a validação renderizada em browser continua pendente.
+- **Bloqueador de estabilização — Dashboard com dados de demonstração:** o Dashboard desktop/mobile apresenta saldo disponível fixo, valores de ganhos/gastos fixos, categorias/valores fixos e períodos limitados a novembro/dezembro de 2026. O seletor não representa um período financeiro dinâmico e a ação “Ver todas” de categorias apenas apresenta uma notificação. Estes valores não podem ser tratados como dados reais nem considerados QA concluída. O saldo disponível depende de read model de saldo; não calcular no frontend por aproximação.
+- A Rota Financeira inicia em `2026-11` hardcoded. Deve iniciar no mês corrente de forma dinâmica, sem alterar a regra de projeção nem inventar saldo final.
+- O Dashboard contém variantes desktop/mobile com apresentação duplicada; a QA deve confirmar paridade de conteúdo, ordem, estados e ações em ambas.
+
+### QA visual ainda por executar em browser
+
+Validar todas as páginas primárias em 320, 390, 768, 1024, 1025, 1280 e 1440 px, nos temas claro/escuro, incluindo navegação, safe areas, foco/teclado, loading, erro, vazio, filtros, seletor mensal, menus, FAB e persistência de preferências. Não marcar a fase como concluída apenas com lint/build.
+
+### Condição de conclusão
+
+- Corrigir defeitos reproduzidos e documentar os resultados por página/viewport.
+- Confirmar que não existem valores fictícios apresentados como dados financeiros reais.
+- Executar lint e build após as correções.
+- Fazer revisão final do diff e só então preparar PR para integração.
+- QA visual real e interação em browser devem ser reportadas como pendentes até serem executadas localmente.
