@@ -85,10 +85,8 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 - Plano parcial projeta parcelas nas datas planeadas e apenas o residual não reservado no vencimento da fatura.
 
 **Questões ainda em aberto:**
-- Débito automático/reagendamento: definir quando uma regra explícita pode gerar nova data projetada e como evitar projeção simultânea da data vencida e da nova data.
-- Crédito negativo de fatura: confirmar a regra de aplicação do crédito (proposta anterior: obrigação mais antiga do mesmo cartão) e garantir que não cria entrada fictícia em conta.
-- Compra no dia do fecho: confirmar que a alocação segue a regra/ciclo configurado no cartão e documentar o comportamento quando a data coincide exatamente com o fecho.
-- Operações realizadas com data efetiva futura: definir como são tratadas no saldo atual de referência e na projeção, para não refletir o mesmo efeito antes da data efetiva nem duplicá-lo nessa data.
+- Crédito negativo de fatura: proposta a validar — aplicar o crédito à obrigação em aberto mais antiga do mesmo cartão, avançando para obrigações seguintes se o crédito exceder a mais antiga. Se todas as obrigações estiverem liquidadas e sobrar crédito, mantê-lo como crédito disponível no cartão, sem criar entrada em conta.
+- Operações registadas como realizadas com data efetiva futura: clarificar se este estado/data é permitido no produto e, se for, como o efeito deve aparecer antes da data efetiva.
 
 **Resolvido nesta revisão:** definição do saldo inicial, fórmula acumulada diária, continuidade entre dias/períodos e princípio de cálculo/read model comum. O read model deve expor/calcular os efeitos elegíveis por data a partir do domínio financeiro central; não é uma fonte financeira paralela.
 
