@@ -122,27 +122,6 @@
 }
 
 
-/* Global, discreet theme switch available on every authenticated page and viewport. */
-.global-theme-toggle {
-  position: fixed;
-  top: calc(14px + env(safe-area-inset-top));
-  right: calc(18px + env(safe-area-inset-right));
-  z-index: 35;
-  display: inline-grid;
-  width: 38px;
-  height: 38px;
-  place-items: center;
-  border: 1px solid var(--orbe-border);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--orbe-surface) 92%, transparent);
-  color: var(--orbe-muted);
-  box-shadow: 0 2px 8px rgba(16, 24, 40, .06);
-  cursor: pointer;
-  transition: background-color .16s ease, color .16s ease, border-color .16s ease;
-}
-.global-theme-toggle:hover { background: var(--orbe-surface); color: var(--orbe-text); border-color: var(--orbe-muted); }
-.global-theme-toggle:focus-visible { outline: 2px solid var(--orbe-focus); outline-offset: 3px; }
-
 .mobile-more-account {
   display: flex;
   align-items: center;
