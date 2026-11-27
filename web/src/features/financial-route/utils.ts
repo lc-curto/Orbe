@@ -55,5 +55,9 @@ export function operationLabel(operation: Operation) {
 }
 
 export function operationDate(operation: Operation) {
-  return dateKey(operation.effective_at ?? operation.planned_at)
+  // Pendentes são projetadas na data prevista; realizadas usam a data efetiva.
+  const value = operation.state === 'PENDING'
+    ? operation.planned_at
+    : operation.effective_at ?? operation.planned_at
+  return dateKey(value)
 }
