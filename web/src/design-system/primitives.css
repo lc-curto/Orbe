@@ -41,3 +41,123 @@
 .orbe-separator {
   flex-shrink: 0;
 }
+
+/* Progressive disclosure and opt-in controls shared by feature forms. */
+.orbe-disclosure {
+  margin: 0 0 var(--orbe-space-4, 16px);
+  color: var(--orbe-text);
+  background: var(--orbe-surface);
+  border: 1px solid var(--orbe-border);
+  border-radius: var(--orbe-radius-control, 12px);
+  overflow: clip;
+}
+
+.orbe-disclosure > summary {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.orbe-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+
+.orbe-disclosure > summary::after {
+  content: "⌄";
+  flex: 0 0 auto;
+  margin-left: auto;
+  color: var(--orbe-muted);
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 140ms ease;
+}
+
+.orbe-disclosure[open] > summary::after {
+  transform: rotate(180deg);
+}
+
+.orbe-disclosure > summary:hover {
+  background: color-mix(in srgb, var(--orbe-primary) 6%, var(--orbe-surface));
+}
+
+.orbe-disclosure > summary:focus-visible {
+  outline: 2px solid var(--orbe-focus);
+  outline-offset: -3px;
+}
+
+.orbe-disclosure-copy,
+.orbe-form-toggle-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.orbe-disclosure-copy strong,
+.orbe-form-toggle-copy strong {
+  color: var(--orbe-text);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.orbe-disclosure-copy small,
+.orbe-form-toggle-copy small {
+  color: var(--orbe-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.orbe-disclosure-content {
+  padding: 0 14px 14px;
+}
+
+.orbe-disclosure-content > :last-child {
+  margin-bottom: 0;
+}
+
+.orbe-form-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  margin: 0 0 var(--orbe-space-3, 12px);
+  padding: 8px 0;
+  color: var(--orbe-text);
+  cursor: pointer;
+}
+
+.orbe-form-toggle input[type="checkbox"] {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--orbe-primary);
+  cursor: pointer;
+}
+
+.orbe-form-toggle input[type="checkbox"]:focus-visible {
+  outline: 2px solid var(--orbe-focus);
+  outline-offset: 3px;
+}
+
+.orbe-form-toggle input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+}
+
+.orbe-form-toggle:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbe-disclosure > summary::after {
+    transition: none;
+  }
+}
