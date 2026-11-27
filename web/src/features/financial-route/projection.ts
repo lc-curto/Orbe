@@ -1,3 +1,14 @@
+export function localDateKey(date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+}
+
+export function projectionMonthEnd(firstMonth: string, monthCount = 24): string {
+  if (!Number.isInteger(monthCount) || monthCount < 1) throw new RangeError('monthCount must be a positive integer')
+  const [year, month] = firstMonth.split('-').map(Number)
+  const date = new Date(year, month - 1 + monthCount - 1, 1)
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
+}
+
 const MONEY_SCALE = 10_000n
 
 export function parseMoneyUnits(value: string | number): bigint | null {
