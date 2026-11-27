@@ -12,6 +12,15 @@ Estas invariantes são obrigatórias. Uma implementação que as viole está inc
 - Saldos agregados podem ser armazenados como otimização se forem reconstruíveis.
 - Rota Financeira é simulação sobre o motor central, não um segundo motor.
 
+## Dados partilhados entre Movimentos e Rota Financeira
+
+- Movimentos e Rota Financeira partem do mesmo conjunto de operações e efeitos financeiros válidos; a Rota não mantém um registo financeiro paralelo.
+- A diferença é de finalidade e agregação: Movimentos apresenta as operações individualmente; a Rota apresenta a evolução projetada do saldo, agregando os efeitos por data.
+- O saldo de referência da Rota é a soma dos saldos atuais de todas as contas financeiras de caixa, incluindo dinheiro e contas bancárias, excluindo cartões de crédito. O limite de crédito não é saldo próprio.
+- A associação de um gasto ou ganho pendente a uma conta não é condição para o incluir na projeção. A operação entra na Rota com base no seu valor, natureza, estado e data prevista, mesmo sem conta associada.
+- Operações já realizadas e refletidas nos saldos atuais das contas não podem ser novamente aplicadas como saídas/entradas projetadas. A projeção deve partir do saldo atual e acrescentar apenas efeitos futuros ainda não refletidos nesse saldo.
+- Canceladas não permanecem projetadas. Pendentes não alteram o saldo efetivo das contas.
+
 A separação operação/lançamentos (1:N) está aprovada. O destino de cada lançamento também está decidido: referência específica a uma conta, fatura ou dívida, com exatamente um destino por lançamento (ARC-001). O modelo conceptual e as relações entre entidades estão detalhados em [07 — Modelo ER](04-arquitetura-modelo-e-auditoria.md); o esquema físico continua por validar.
 
 ## Realizado, pendente e projetado
@@ -30,6 +39,11 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Na compra parcelada, as alocações das parcelas são criadas na confirmação da compra e associadas aos respetivos períodos de faturação, mesmo que estejam em estado `PLANNED`.
 - Cada alocação de compra produz no máximo um lançamento de obrigação dirigido à respetiva fatura/período. A abertura operacional da fatura não cria novos lançamentos.
 - Os períodos `PLANNED` podem conter obrigações efetivas já reconhecidas; não são projeções nem faturas abertas na interface.
+- Movimentos apresenta as compras/lançamentos do cartão individualmente, incluindo as parcelas individuais que pertencem à operação.
+- A Rota Financeira não projeta cada compra do cartão como uma saída individual. Para cada fatura, projeta uma única saída consolidada pelo valor total a pagar da fatura: para fatura aberta, o total acumulado até ao momento; para fatura fechada, o total final. O estado aberto/fechado não determina se a fatura é incluída na projeção.
+- A projeção consolidada é colocada na data prevista de pagamento/vencimento da respetiva fatura. A mesma fatura não pode ser projetada mais de uma vez, nem em conjunto com as compras individuais que a compõem.
+- O total projetado da fatura deve refletir reduções de obrigação por pagamentos efetivamente confirmados. O pagamento confirmado é refletido como saída realizada na conta e redução da fatura; o mesmo valor não pode continuar projetado como pagamento futuro.
+- Planos de pagamento e parcelas de projeção devem ser reconciliados com o total da fatura: podem distribuir a projeção por datas quando existir plano válido, mas a soma projetada não pode exceder nem duplicar o montante ainda por pagar da fatura. Sem plano válido, projetar o montante por pagar na data prevista da fatura.
 - A projeção de pagamentos futuros é separada dos lançamentos de obrigação. Só a confirmação do pagamento cria os efeitos efetivos na conta e na fatura.
 - Pagamento da fatura é uma operação distinta: cria saída na conta e redução da obrigação da fatura; não cria uma segunda despesa.
 - A redução de cada fatura é alocada explicitamente a um ou mais lançamentos de obrigação dessa mesma fatura, sem exceder o saldo de cada obrigação.
