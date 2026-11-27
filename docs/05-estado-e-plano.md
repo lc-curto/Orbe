@@ -90,7 +90,7 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 **Contrato de saldo inicial de conta definido:** ao criar uma conta, informar o saldo existente no início da utilização no Orbe. O valor é reconhecido por operação `ACCOUNT_OPENING_BALANCE` e lançamento realizado dirigido à conta; não é receita/despesa. Saldo zero não gera lançamento; saldo negativo só é permitido quando compatível com o tipo de conta. Existe uma única abertura original por conta, não editável diretamente; correções preservam a origem e são rastreáveis. O saldo atual deriva dos lançamentos válidos.
 
 ## Trabalho funcional pendente
-- Read model de saldo/projeção da Rota implementado nesta PR; testes de integração e CI devem confirmar o comportamento antes do merge. A classificação fixa/variável e a estimativa variável continuam pendentes.
+- Read model de saldo/projeção da Rota implementado nesta PR; testes de integração e CI passaram no estado validado do PR. A classificação fixa/variável e a estimativa variável continuam pendentes.
 - Formulários de escrita ainda não estão todos integrados; implementar apenas os fluxos cobertos por contratos aprovados.
 - Dívidas/obrigações: não existe página principal autónoma. O código da página foi removido pelo PR #7, integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`). Obrigações associadas a gastos permanecem no modelo financeiro e são consultadas/liquidadas a partir dos movimentos/faturas relacionados. Financiamentos ou obrigações preexistentes exigem fluxo específico ainda por definir; isso não autoriza reintroduzir uma página autónoma. Nenhum valor é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
@@ -107,7 +107,7 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 - Faturas são agregadas em lote pelo serviço comum `CardInvoiceSummaryService`, reutilizado pelos endpoints de cartões/faturas, evitando cálculos duplicados e consultas por fatura.
 - Faturas e operações pendentes vencidas permanecem no resumo de vencidos; não são reagendadas automaticamente nem descontadas como nova saída futura.
 - O frontend apenas apresenta o read model e resolve IDs para detalhes existentes; não recalcula saldos nem introduz uma fonte financeira local.
-- Testes de integração cobrem transição de mês, não duplicação de realizados, fatura única no vencimento, vencidos e saldo indisponível quando os efeitos têm dados inválidos. Execução de CI pendente até à validação do PR.
+- Testes de integração cobrem transição de mês, não duplicação de realizados, fatura única no vencimento, vencidos, neutralidade de transferências e saldo indisponível quando os efeitos têm dados inválidos. Backend CI passou com 59 testes/250 assertions e Pint; Web CI passou com 3 testes, lint e build de produção. QA visual manual no browser permanece por executar.
 - Pendências delimitadas: contratos de planos de pagamento parcelados e projeção de recorrências ainda não materializadas não fazem parte do read model atual; classificação fixa/variável permanece fora desta implementação.
 
 - PR #3: página Contas em modo de leitura publicada na `main`.
