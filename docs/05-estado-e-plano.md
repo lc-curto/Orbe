@@ -114,7 +114,7 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; formulários de programação continuam indisponíveis.
-- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`. Nesta PR, saldo de referência, saldo diário acumulado, continuidade entre meses, projeção de operações pendentes e faturas por vencimento são fornecidos por read model Laravel. O horizonte visual é de três meses consecutivos, navegável para qualquer mês. A classificação fixa/variável e a estimativa variável continuam indisponíveis.
+- Rota Financeira: interface desktop com janela de 24 meses em grelha de três colunas e mensal mobile publicada na `main`. Nesta PR, saldo de referência, saldo diário acumulado, continuidade entre meses, projeção de operações pendentes e faturas por vencimento são fornecidos por read model Laravel. O horizonte visual e o read model abrangem 24 meses consecutivos a partir do mês selecionado; a abertura padrão começa no mês atual. A classificação fixa/variável e a estimativa variável continuam indisponíveis.
 - PR #7 foi integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`): remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
 - Backend da branch: gasto/rendimento pendente sem destino financeiro; realizado exige conta ativa; confirmação recolhe conta e cria lançamento; recorrências pendentes não guardam destino até à materialização.
 - Validação local reportada pelo utilizador: **52 testes backend passaram (217 assertions)** e Pint `--test` passou nos 7 ficheiros PHP alterados. O Pint global reporta 63 problemas de estilo em 98 ficheiros preexistentes/abrangidos; não foi aplicada formatação global.
@@ -352,7 +352,7 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 ## 12. Subpáginas
 
 - [x] Implementar Movimentos e a aba Programações em modo de leitura.
-- [x] Implementar a interface da Rota Financeira (desktop trimestral e mobile mensal). [!] Saldo diário/final, projeção e classificação fixa/variável dependem de contrato/read model ainda pendente; não apresentar valores simulados.
+- [x] Implementar a interface da Rota Financeira (desktop com janela de 24 meses em grelha de três colunas e mobile com mês selecionado). Saldo diário/final e projeção são fornecidos pelo read model; classificação fixa/variável e estimativa variável continuam pendentes.
 - [x] Implementar e validar localmente a página Contas em modo de leitura (hierarquia do saldo total, secção As minhas contas e menu contextual por conta). Os saldos apresentados continuam condicionados aos dados/read model disponíveis.
 - [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado; detalhe da fatura lista os movimentos associados, agrupados por dia e reutilizando a linha de Movimentos, sem filtros de estado).
 - [x] Decisão de produto: descontinuar a página autónoma de Dívidas.
@@ -537,7 +537,7 @@ Para reduzir esquecimentos, o workflow `.github/workflows/pr-quality-gate.yml` v
 - Todas as páginas usam o componente `PageHeader` para a estrutura comum de título/descrição/ações.
 - Largura, gutters, alinhamento, ritmo vertical e safe area são centralizados no shell e nos tokens do design system; estilos de feature devem limitar-se às necessidades específicas do módulo.
 - Seletor mensal no canto superior direito, na mesma linha do título, nas páginas que o apresentam.
-- Rota Financeira: **um mês visível até 1024 px; três meses acima de 1024 px**.
+- Rota Financeira: **um mês visível até 1024 px; janela de 24 meses (grelha de três colunas) acima de 1024 px**.
 - Movimentos permanece visível no layout desktop acima de 1024 px, dentro do `DesktopPageFrame`.
 
 A regra de reutilização dos frames, cabeçalho e tokens está formalizada em `docs/03-interface-e-formularios.md` e aplica-se também a páginas futuras.
