@@ -1,10 +1,29 @@
-import type { ReactNode } from 'react'
+import { useState } from 'react'
 import type { AuthUser, Category } from '../../../api/types'
+import { AppIcon } from '../../../shared/components/AppIcon'
+import type { AppIconName } from '../../../shared/components/AppIcon'
 import { useCurrency } from '../../currency/useCurrency'
 import type { CurrencySymbol } from '../../currency/types'
 import { useTheme } from '../../theme/useTheme'
+import type { ThemeMode } from '../../theme/types'
 
 type Props = { user: AuthUser; categories: Category[] }
+type SettingsCategory = 'preferences' | 'account' | 'security' | 'data' | 'about' | 'categories'
+
+type CategoryItem = {
+  id: SettingsCategory
+  title: string
+  description: string
+  icon: AppIconName
+}
+
+const settingsCategories: CategoryItem[] = [
+  { id: 'preferences', title: 'Preferências', description: 'Moeda e aparência', icon: 'settings' },
+  { id: 'account', title: 'Conta', description: 'Perfil e dados de acesso', icon: 'user' },
+  { id: 'security', title: 'Segurança', description: 'Proteção da conta', icon: 'shield' },
+  { id: 'data', title: 'Dados e privacidade', description: 'Exportação e cópias de segurança', icon: 'database' },
+  { id: 'about', title: 'Sobre o Orbe', description: 'Informação da aplicação', icon: 'info' },
+]
 
 const currencyOptions: Array<{ value: CurrencySymbol; label: string }> = [
   { value: '$', label: 'Dólar americano (USD · $)' },
@@ -19,81 +38,149 @@ const currencyOptions: Array<{ value: CurrencySymbol; label: string }> = [
   { value: 'R$', label: 'Real brasileiro (BRL · R$)' },
 ]
 
-function SettingsSection({ title, children }: { title: string; children: ReactNode }) {
-  return <section className="settings-section"><h2>{title}</h2><div className="settings-section-content">{children}</div></section>
+const themeOptions: Array<{ value: ThemeMode; label: string; icon: AppIconName }> = [
+  { value: 'light', label: 'Claro', icon: 'sun' },
+  { value: 'dark', label: 'Escuro', icon: 'moon' },
+  { value: 'system', label: 'Sistema', icon: 'monitor' },
+]
+
+function SettingsNavItem({ item, selected, onSelect }: { item: CategoryItem; selected: boolean; onSelect: () => void }) {
+  return <button type="button" className="settings-nav-item" aria-current={selected ? 'page' : undefined} onClick={onSelect}>
+    <AppIcon name={item.icon} size={20} />
+    <span className="settings-nav-item-copy"><strong>{item.title}</strong><small>{item.description}</small></span>
+    <AppIcon name="chevronRight" size={18} />
+  </button>
 }
 
-function SettingsRow({ title, detail, value }: { title: string; detail?: string; value?: string }) {
-  return <div className="settings-row"><div className="settings-row-copy"><strong>{title}</strong>{detail ? <span>{detail}</span> : null}</div>{value ? <span className="settings-row-value">{value}</span> : null}</div>
+function SettingsProfile({ user, onSelect }: { user: AuthUser; onSelect?: () => void }) {
+  const content = <>
+    <span className="settings-profile-avatar" aria-hidden="true"><AppIcon name="user" size={22} /></span>
+    <span className="settings-profile-copy"><strong>{user.name}</strong><small>{user.email}</small></span>
+    <AppIcon name="chevronRight" size={18} />
+  </>
+  return onSelect
+    ? <button type="button" className="settings-profile-card settings-profile-button" onClick={onSelect}>{content}</button>
+    : <div className="settings-profile-card">{content}</div>
+}
+
+function SettingsPageTitle({ title, description }: { title: string; description: string }) {
+  return <header className="settings-category-header"><h2>{title}</h2><p>{description}</p></header>
+}
+
+function PreferencesContent({ categories }: { categories: Category[] }) {
+  const { symbol, setSymbol } = useCurrency()
+  const { theme, setTheme } = useTheme()
+
+  return <div className="settings-content-stack">
+    <section className="settings-preference-group" aria-labelledby="settings-currency-title">
+      <div className="settings-preference-copy">
+        <h3 id="settings-currency-title">Moeda de apresentação</h3>
+        <p>Altera apenas o símbolo apresentado; não converte valores.</p>
+      </div>
+      <label className="settings-select-label" htmlFor="settings-currency">
+        <span>Símbolo</span>
+        <select id="settings-currency" value={symbol} onChange={(event) => setSymbol(event.target.value as CurrencySymbol)}>
+          {currencyOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+        </select>
+      </label>
+    </section>
+    <section className="settings-preference-group" aria-labelledby="settings-appearance-title">
+      <div className="settings-preference-copy">
+        <h3 id="settings-appearance-title">Aparência</h3>
+        <p>Escolhe como o Orbe é apresentado neste dispositivo.</p>
+      </div>
+      <div className="settings-theme-options" role="group" aria-label="Tema da interface">
+        {themeOptions.map((option) => <button key={option.value} type="button" className="settings-theme-option" aria-pressed={theme === option.value} onClick={() => setTheme(option.value)}>
+          <AppIcon name={option.icon} size={18} />
+          <span>{option.label}</span>
+        </button>)}
+      </div>
+    </section>
+    <button type="button" className="settings-inline-navigation" onClick={() => window.dispatchEvent(new CustomEvent('orbe:settings-category', { detail: 'categories' }))}>
+      <span className="settings-inline-icon"><AppIcon name="tag" size={20} /></span>
+      <span className="settings-inline-copy"><strong>Categorias</strong><small>{categories.length} categorias disponíveis · consulta</small></span>
+      <AppIcon name="chevronRight" size={18} />
+    </button>
+    <p className="settings-note">Moeda e tema são preferências locais deste navegador. A moeda altera apenas o símbolo; não modifica os dados financeiros.</p>
+  </div>
+}
+
+function SettingsCategoryContent({ category, user, categories }: { category: SettingsCategory; user: AuthUser; categories: Category[] }) {
+  if (category === 'preferences') return <PreferencesContent categories={categories} />
+  if (category === 'account') return <div className="settings-content-stack">
+    <section className="settings-detail-card">
+      <span className="settings-detail-label">Nome</span><strong>{user.name}</strong>
+    </section>
+    <section className="settings-detail-card">
+      <span className="settings-detail-label">Email</span><strong className="settings-break-word">{user.email}</strong>
+    </section>
+    <p className="settings-note">Os dados de perfil e as opções de acesso são geridos pela tua conta.</p>
+  </div>
+  if (category === 'security') return <div className="settings-content-stack">
+    <section className="settings-information-panel">
+      <span className="settings-information-icon"><AppIcon name="shield" size={22} /></span>
+      <div><h3>Segurança da conta</h3><p>As opções de segurança e autenticação são geridas pela conta.</p></div>
+    </section>
+  </div>
+  if (category === 'data') return <div className="settings-content-stack">
+    <section className="settings-information-panel">
+      <span className="settings-information-icon"><AppIcon name="database" size={22} /></span>
+      <div><h3>Exportação e cópias de segurança</h3><p>Exportação, cópias de segurança e restauro ainda não estão disponíveis no Orbe.</p><span className="settings-status">Indisponível</span></div>
+    </section>
+  </div>
+  if (category === 'categories') return <div className="settings-content-stack">
+    {categories.length ? <div className="settings-category-list">{categories.map((item) => <div className="settings-category-item" key={item.id}><span className="settings-category-item-name">{item.name}</span><span className="settings-category-item-type">{item.nature === 'EXPENSE' ? 'Despesa' : 'Receita'}</span></div>)}</div> : <div className="settings-empty-state"><AppIcon name="tag" size={24} /><strong>Sem categorias</strong><p>Não existem categorias disponíveis para consulta.</p></div>}
+  </div>
+  return <div className="settings-content-stack">
+    <section className="settings-detail-card"><span className="settings-detail-label">Aplicação</span><strong>Orbe</strong><span>Gestão financeira pessoal</span></section>
+    <section className="settings-detail-card"><span className="settings-detail-label">Plataforma</span><strong>Web</strong></section>
+  </div>
 }
 
 export function SettingsPage({ user, categories }: Props) {
-  const { symbol, setSymbol } = useCurrency()
-  const { theme, setTheme } = useTheme()
-  const darkModeEnabled = theme === 'dark'
+  const [activeCategory, setActiveCategory] = useState<SettingsCategory>('preferences')
+  const activeItem = settingsCategories.find((item) => item.id === activeCategory) ?? settingsCategories[0]
+
+  const selectCategory = (category: SettingsCategory) => {
+    setActiveCategory(category)
+    if (typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches) {
+      window.scrollTo({ top: 0, behavior: 'auto' })
+    }
+  }
 
   return <section className="settings-page" aria-labelledby="settings-page-title">
     <header className="settings-page-header">
       <h1 id="settings-page-title">Configurações</h1>
-      <p>Preferências da tua experiência no Orbe</p>
+      <p>Personaliza a tua experiência no Orbe.</p>
     </header>
-    <div className="settings-layout">
-      <SettingsSection title="Preferências">
-        <div className="settings-row settings-profile-row">
-          <strong className="settings-profile-label">Perfil</strong>
-          <strong className="settings-profile-name">{user.name}</strong>
-          <span className="settings-profile-email">{user.email}</span>
+    <div className="settings-mobile-overview">
+      <SettingsProfile user={user} onSelect={() => selectCategory('account')} />
+      <div className="settings-mobile-category-list" aria-label="Categorias de configurações">
+        {settingsCategories.filter((item) => item.id !== 'preferences').map((item) => <SettingsNavItem key={item.id} item={item} selected={false} onSelect={() => selectCategory(item.id)} />)}
+        <SettingsNavItem item={{ id: 'preferences', title: 'Preferências', description: 'Moeda e aparência', icon: 'settings' }} selected={false} onSelect={() => selectCategory('preferences')} />
+      </div>
+    </div>
+    <div className="settings-desktop-layout">
+      <aside className="settings-sidebar" aria-label="Navegação de configurações">
+        <SettingsProfile user={user} onSelect={() => selectCategory('account')} />
+        <nav className="settings-sidebar-nav">
+          {settingsCategories.map((item) => <SettingsNavItem key={item.id} item={item} selected={activeCategory === item.id} onSelect={() => selectCategory(item.id)} />)}
+        </nav>
+      </aside>
+      <div className="settings-category-panel">
+        <div className="settings-mobile-back">
+          <button type="button" onClick={() => selectCategory('preferences')} aria-label="Voltar às configurações"><AppIcon name="chevronLeft" size={20} /><span>Configurações</span></button>
         </div>
-        <div className="settings-row settings-currency-row">
-          <div className="settings-row-copy">
-            <strong>Moeda de apresentação</strong>
-            <span>Altera apenas o símbolo apresentado; não converte valores.</span>
-          </div>
-          <label className="settings-select-label" htmlFor="settings-currency">
-            <span>Símbolo</span>
-            <select id="settings-currency" value={symbol} onChange={(event) => setSymbol(event.target.value as CurrencySymbol)}>
-              {currencyOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
-            </select>
-          </label>
-        </div>
-        <details className="settings-categories-details">
-          <summary>
-            <div className="settings-row-copy">
-              <strong>Categorias</strong>
-              <span>{categories.length} categorias disponíveis · consulta</span>
-            </div>
-            <span className="settings-row-value">Ver</span>
-          </summary>
-          <div className="settings-category-list">
-            {categories.length ? categories.map((category) => <span className="settings-category-chip" key={category.id}>{category.name}<small>{category.nature === 'EXPENSE' ? 'Despesa' : 'Receita'}</small></span>) : <p className="settings-category-empty">Não existem categorias disponíveis.</p>}
-          </div>
-        </details>
-        <div className="settings-row settings-theme-row">
-          <div className="settings-row-copy">
-            <strong>Aparência</strong>
-            <span>Escolhe entre o tema claro e escuro da interface.</span>
-          </div>
-          <button
-            type="button"
-            className="settings-theme-toggle"
-            role="switch"
-            aria-checked={darkModeEnabled}
-            aria-label="Modo escuro"
-            onClick={() => setTheme(darkModeEnabled ? 'light' : 'dark')}
-          >
-            <span className="settings-theme-switch-track" aria-hidden="true"><span /></span>
-            <span>{darkModeEnabled ? 'Escuro' : 'Claro'}</span>
-          </button>
-        </div>
-      </SettingsSection>
-      <SettingsSection title="Segurança e dados">
-        <SettingsRow title="Segurança" detail="As opções de segurança são geridas pela conta." value="Conta" />
-        <SettingsRow title="Dados e cópias de segurança" detail="Exportação e restauro ainda não disponíveis." value="Indisponível" />
-      </SettingsSection>
-      <SettingsSection title="Sobre o Orbe">
-        <SettingsRow title="Orbe" detail="Gestão financeira pessoal" value="Web" />
-      </SettingsSection>
-      <p className="settings-storage-note">Moeda e tema são preferências locais deste navegador. A moeda altera apenas o símbolo; não modifica os dados financeiros.</p>
+        <SettingsPageTitle title={activeItem.title} description={activeItem.description} />
+        <SettingsCategoryContent category={activeCategory} user={user} categories={categories} />
+      </div>
+    </div>
+    <div className="settings-mobile-detail" aria-live="polite">
+      <div className="settings-mobile-back">
+        <button type="button" onClick={() => setActiveCategory('preferences')} aria-label="Voltar às configurações"><AppIcon name="chevronLeft" size={20} /><span>Configurações</span></button>
+      </div>
+      <SettingsPageTitle title={activeItem.title} description={activeItem.description} />
+      <SettingsCategoryContent category={activeCategory} user={user} categories={categories} />
     </div>
   </section>
 }
