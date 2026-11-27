@@ -80,7 +80,7 @@
   .route-mobile-shell .financial-route-title h1 { font-size: 28px; line-height: 1.2; letter-spacing: -1px; }
   .route-mobile-shell .financial-route-title p { display: none; }
   .route-mobile-shell .route-desktop-period { display: none; }
-  .route-mobile-shell .financial-route-header .route-month-selector-mobile { display: flex !important; margin-top: 0; }
+  .route-mobile-shell .financial-route-header .route-month-selector-mobile { display: flex; margin-top: 0; }
   .route-mobile-shell .route-month-selector-mobile .orbe-month-selector-label { min-width: 40px; }
   .route-mobile-shell .route-desktop-controls, .route-mobile-shell .route-desktop-months { display: none; }
   .route-mobile-shell .route-mobile-month { display: block; }
