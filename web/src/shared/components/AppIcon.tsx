@@ -1,4 +1,4 @@
-export type AppIconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'creditCard' | 'settings' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight' | 'logout'
+export type AppIconName = 'plus' | 'home' | 'activity' | 'route' | 'wallet' | 'creditCard' | 'settings' | 'more' | 'bell' | 'user' | 'eye' | 'eyeOff' | 'expense' | 'income' | 'transfer' | 'store' | 'salary' | 'house' | 'chevronLeft' | 'chevronRight' | 'logout' | 'shield' | 'database' | 'info' | 'tag' | 'sun' | 'moon' | 'monitor'
 
 const iconPaths: Record<AppIconName, string> = {
   plus: 'M12 5v14M5 12h14',
@@ -22,6 +22,13 @@ const iconPaths: Record<AppIconName, string> = {
   chevronLeft: 'm15 18-6-6 6-6',
   chevronRight: 'm9 18 6-6-6-6',
   logout: 'M10 17l5-5-5-5m5 5H3m9-9h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6',
+  shield: 'M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-3Zm-3.5 9 2.3 2.3 4.7-4.7',
+  database: 'M4 5c0-1.1 3.6-2 8-2s8 .9 8 2-3.6 2-8 2-8-.9-8-2Zm0 0v14c0 1.1 3.6 2 8 2s8-.9 8-2V5m-16 7c0 1.1 3.6 2 8 2s8-.9 8-2m-16 5c0 1.1 3.6 2 8 2s8-.9 8-2',
+  info: 'M12 11v6m0-10h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+  tag: 'm20 13-7 7-10-10V3h7l10 10Zm-12-6h.01',
+  sun: 'M12 3v2m0 14v2M3 12h2m14 0h2M5.6 5.6 7 7m10 10 1.4 1.4M18.4 5.6 17 7M7 17l-1.4 1.4M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+  moon: 'M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z',
+  monitor: 'M3 4h18v13H3zM8 21h8m-4-4v4',
 }
 
 export function AppIcon({ name, size = 18, color = 'currentColor', strokeWidth = 1.8 }: { name: AppIconName; size?: number; color?: string; strokeWidth?: number }) {
