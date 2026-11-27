@@ -10,7 +10,7 @@ export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
   const { symbol } = useCurrency()
   return <div className="route-table-wrap">
     <table className="route-table">
-      <thead><tr><th>Dia</th><th>Entrada</th><th>Saída</th><th>Saldo</th></tr></thead>
+      <thead><tr><th>Dia</th><th>Ganho</th><th>Gasto</th><th>Saldo</th></tr></thead>
       <tbody>
         {days.map((day) => <tr key={day.date} className={day.operations.length ? 'has-movements' : ''}>
           <td><button className="route-day-button" type="button" onClick={() => onSelectDay(day.date)}>{formatDay(day.date)}</button></td>
