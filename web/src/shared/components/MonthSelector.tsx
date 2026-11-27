@@ -36,4 +36,5 @@ export function MonthSelector({ month, onMonthChange, minMonth, maxMonth, classN
         </button>
       </div>
     </div>
+  )
 }
