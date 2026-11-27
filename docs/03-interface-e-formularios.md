@@ -1258,7 +1258,7 @@ Regras obrigatórias para todas as páginas:
 - Composição padrão A: primeira linha com título à esquerda e controlo de tema à direita; segunda linha com mês abreviado + ano alinhado à esquerda e setas de navegação à direita.
 - O seletor mensal é discreto, sem superfície ou borda própria; setas mantêm área de toque acessível.
 - O padrão é implementado no componente partilhado PageHeader e MonthSelector, não em CSS/markup isolado de cada página.
-- Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de três meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
+- Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de 24 meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
 
 
 ### Card de saldo do Dashboard — consistência de tema
