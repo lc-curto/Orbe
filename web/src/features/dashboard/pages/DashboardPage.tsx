@@ -72,19 +72,19 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
             </Row>
 
             <Card className="desktop-categories-card" {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
-              <Row width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={16}>
+              <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={16}>
                 <Stack gap={3}><Text fontSize={18} fontWeight="700">Gastos por categoria</Text><Text color="#667085" fontSize={13}>Distribuição dos gastos em {period.label}</Text></Stack>
-                <Button onPress={() => notify('A mostrar despesas por categoria')} aria-label="Ver todas as despesas por categoria" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver todas →</Button>
+                <Button className="dashboard-card-view-all" onPress={() => notify('A mostrar despesas por categoria')} aria-label="Ver todas as despesas por categoria" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver todas →</Button>
               </Row>
               <Row gap={28} flexWrap="wrap">
-                {[['Casa', '€ 162,00', '82%', '#175cd3'], ['Juros', '€ 1,00', '12%', '#087f70']].map(([label, value, width, color]) => <Stack key={label} flex={1} minWidth={220} gap={7}><Row style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={13}>{label}</Text><Text color="#101828" fontSize={13} fontWeight="700">{String(value).replace(/€/g, currencySymbol)}</Text></Row><Stack height={7} borderRadius={99} backgroundColor="#eef2f6"><Stack width={width} height={7} borderRadius={99} backgroundColor={color} /></Stack></Stack>)}
+                {[['Casa', '€ 162,00', '82%', '#175cd3'], ['Juros', '€ 1,00', '12%', '#087f70']].map(([label, value, width, color]) => <Stack key={label} flex={1} minWidth={220} gap={7}><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={13}>{label}</Text><Text color="#101828" fontSize={13} fontWeight="700">{String(value).replace(/€/g, currencySymbol)}</Text></Row><Stack height={7} borderRadius={99} backgroundColor="#eef2f6"><Stack width={width} height={7} borderRadius={99} backgroundColor={color} /></Stack></Stack>)}
               </Row>
             </Card>
 
             <Card {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
-              <Row width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}>
+              <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}>
                 <Text fontSize={18} fontWeight="700">Cartões</Text>
-                <Button onPress={() => setActiveKey('Cartões')} aria-label="Ver todos os cartões" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver todos →</Button>
+                <Button className="dashboard-card-view-all" onPress={() => setActiveKey('Cartões')} aria-label="Ver todos os cartões" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver todos →</Button>
               </Row>
               {card ? <Row padding={12} borderRadius={12} backgroundColor="#f7f9fc" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
                 <Stack gap={4}>
@@ -96,9 +96,9 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
             </Card>
 
             <Card {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
-              <Row width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={8}>
+              <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={8}>
                 <Text fontSize={18} fontWeight="700">Últimos movimentos</Text>
-                <Button onPress={() => { setActiveKey('Movimentos') }} aria-label="Ver todos os movimentos" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver todos →</Button>
+                <Button className="dashboard-card-view-all" onPress={() => { setActiveKey('Movimentos') }} aria-label="Ver todos os movimentos" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver todos →</Button>
               </Row>
               <Stack>
                 {movements.length === 0 ? <Text color="#667085" paddingVertical={16}>Sem movimentos disponíveis.</Text> : movements.map((movement, index) => (
