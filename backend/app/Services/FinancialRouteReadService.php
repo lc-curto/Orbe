@@ -66,6 +66,7 @@ final class FinancialRouteReadService
                 }
 
                 if ($effectiveDate > $today) {
+                    $projectionValid = false;
                     continue;
                 }
 
@@ -99,6 +100,7 @@ final class FinancialRouteReadService
 
                 $nature = $operation->operation_type === 'INCOME' ? 'INCOME' : 'EXPENSE';
                 if ($date === null) {
+                    $projectionValid = false;
                     $overdueItems[] = $this->overdueOperation($operation, null, $amount, $nature);
                     continue;
                 }
@@ -129,6 +131,9 @@ final class FinancialRouteReadService
 
                 $dueDate = $invoice->due_date?->toDateString();
                 if ($dueDate === null || $dueDate < $today) {
+                    if ($dueDate === null) {
+                        $projectionValid = false;
+                    }
                     $overdueItems[] = [
                         'id' => 'invoice-' . $invoice->id,
                         'type' => 'invoice',
