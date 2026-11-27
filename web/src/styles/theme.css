@@ -24,21 +24,26 @@
 [data-theme="dark"] .cards-mobile-shell { background: var(--orbe-bg) !important; color: var(--orbe-text); }
 [data-theme="dark"] .main-content { color: var(--orbe-text); }
 
-/* Desktop sidebar and mobile navigation. */
+/* Desktop sidebar uses semantic theme tokens; no inline-color overrides needed. */
 [data-theme="dark"] .desktop-sidebar {
-  background: var(--orbe-surface) !important;
-  border-right-color: var(--orbe-border) !important;
-  color: var(--orbe-text) !important;
+  background: var(--orbe-surface);
+  border-right-color: var(--orbe-border);
+  color: var(--orbe-text);
 }
-[data-theme="dark"] .desktop-sidebar button,
-[data-theme="dark"] .desktop-sidebar span,
-[data-theme="dark"] .desktop-sidebar strong { color: var(--orbe-text) !important; }
-[data-theme="dark"] .desktop-sidebar button[aria-current="page"] { background: #203b38 !important; color: var(--orbe-teal) !important; }
-[data-theme="dark"] .desktop-sidebar button[aria-current="page"] span { color: var(--orbe-teal) !important; }
-[data-theme="dark"] .desktop-sidebar button[aria-label="Recolher menu"],
-[data-theme="dark"] .desktop-sidebar button[aria-label="Expandir menu"] {
-  border-color: var(--orbe-border) !important; background: var(--orbe-bg) !important;
+[data-theme="dark"] .desktop-sidebar .sidebar-nav-button { color: var(--orbe-text); }
+[data-theme="dark"] .desktop-sidebar .sidebar-nav-button[aria-current="page"] {
+  background: color-mix(in srgb, var(--orbe-teal) 16%, var(--orbe-surface));
+  color: var(--orbe-teal);
 }
+[data-theme="dark"] .desktop-sidebar .sidebar-nav-button[aria-current="page"] .orbe-text { color: var(--orbe-teal); }
+[data-theme="dark"] .desktop-sidebar .sidebar-footer-action { color: var(--orbe-text); }
+[data-theme="dark"] .desktop-sidebar .sidebar-logout-action { color: var(--orbe-danger); }
+[data-theme="dark"] .desktop-sidebar .desktop-sidebar-collapse-button {
+  border-color: var(--orbe-border);
+  background: var(--orbe-bg);
+  color: var(--orbe-muted);
+}
+[data-theme="dark"] .desktop-sidebar .desktop-sidebar-brand { color: var(--orbe-text); }
 [data-theme="dark"] .mobile-dashboard-nav,
 [data-theme="dark"] .mobile-bottom-bar {
   background: var(--orbe-surface) !important; border-top-color: var(--orbe-border) !important; color: var(--orbe-text) !important;
@@ -55,8 +60,8 @@
 [data-theme="dark"] .mobile-bottom-bar button[aria-current="page"] * { color: var(--orbe-teal) !important; }
 
 /* Shared cards, lists, forms and popovers. */
-[data-theme="dark"] .main-content [class*="Card"]:not(.mobile-balance-card),
-[data-theme="dark"] .main-content [class*="-card"]:not(.mobile-balance-card),
+[data-theme="dark"] .main-content [class*="Card"]:not(.mobile-balance-card):not(.orbe-financial-highlight-card),
+[data-theme="dark"] .main-content [class*="-card"]:not(.mobile-balance-card):not(.orbe-financial-highlight-card),
 [data-theme="dark"] .main-content .movement-kpi,
 [data-theme="dark"] .main-content .movement-list,
 [data-theme="dark"] .main-content .schedule-list,
@@ -70,9 +75,9 @@
 [data-theme="dark"] .main-content .route-month-card,
 [data-theme="dark"] .main-content .route-table-wrap,
 [data-theme="dark"] .main-content .route-day-modal,
-[data-theme="dark"] .main-content .route-mobile-summary,
-[data-theme="dark"] .main-content .accounts-total-card,
-[data-theme="dark"] .main-content .cards-total-card,
+[data-theme="dark"] .main-content .route-mobile-summary:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .main-content .accounts-total-card:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .main-content .cards-total-card:not(.orbe-financial-highlight-card),
 [data-theme="dark"] .main-content .cards-detail-summary {
   background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text);
 }
@@ -210,29 +215,28 @@
 [data-theme="dark"] .mobile-more-account strong { color: var(--orbe-text); }
 [data-theme="dark"] .mobile-more-account small { color: var(--orbe-muted); }
 [data-theme="dark"] .mobile-more-divider { background: var(--orbe-border); }
-[data-theme="dark"] .sidebar-logout-action { color: var(--orbe-danger) !important; }
 
 
 /* Theme-aware surfaces across desktop, tablet and mobile feature shells. */
-[data-theme="dark"] .mobile-page-shell .orbe-card,
+[data-theme="dark"] .mobile-page-shell .orbe-card:not(.orbe-financial-highlight-card),
 [data-theme="dark"] .mobile-page-shell .movement-kpi,
 [data-theme="dark"] .mobile-page-shell .movement-list,
 [data-theme="dark"] .mobile-page-shell .schedule-list,
-[data-theme="dark"] .mobile-page-shell .accounts-total-card,
+[data-theme="dark"] .mobile-page-shell .accounts-total-card:not(.orbe-financial-highlight-card),
 [data-theme="dark"] .mobile-page-shell .accounts-list,
-[data-theme="dark"] .mobile-page-shell .cards-total-card,
-[data-theme="dark"] .mobile-page-shell .cards-detail-summary,
+[data-theme="dark"] .mobile-page-shell .cards-total-card:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .mobile-page-shell .cards-detail-summary:not(.orbe-financial-highlight-card),
 [data-theme="dark"] .mobile-page-shell .cards-invoices-list,
 [data-theme="dark"] .mobile-page-shell .report-panel,
 [data-theme="dark"] .mobile-page-shell .route-month-card,
-[data-theme="dark"] .mobile-page-shell .route-mobile-summary,
+[data-theme="dark"] .mobile-page-shell .route-mobile-summary:not(.orbe-financial-highlight-card),
 [data-theme="dark"] .mobile-page-shell .route-table-wrap,
 [data-theme="dark"] .mobile-page-shell .settings-section,
 [data-theme="dark"] .mobile-page-shell .settings-preference-group,
 [data-theme="dark"] .mobile-page-shell .settings-detail-card,
 [data-theme="dark"] .mobile-page-shell .settings-information-panel,
 [data-theme="dark"] .mobile-page-shell .settings-profile-card,
-[data-theme="dark"] .mobile-dashboard-shell .orbe-card {
+[data-theme="dark"] .mobile-dashboard-shell .orbe-card:not(.orbe-financial-highlight-card) {
   background: var(--orbe-surface) !important;
   color: var(--orbe-text) !important;
   border-color: var(--orbe-border) !important;
