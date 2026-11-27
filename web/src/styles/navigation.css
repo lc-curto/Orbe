@@ -97,3 +97,51 @@
     display: flex !important;
   }
 }
+
+/* Responsive dashboard shell: the mobile tree must never escape its visibility wrapper.
+   Stack primitives set display:flex inline, so hiding the inner component with CSS alone
+   is insufficient. The outer .mobile-page-shell owns the breakpoint visibility. */
+.mobile-dashboard-shell {
+  display: none !important;
+}
+@media (max-width: 1024px) {
+  .mobile-dashboard-shell {
+    display: block !important;
+    width: 100%;
+    min-width: 0;
+  }
+  .mobile-dashboard-shell > .mobile-dashboard {
+    display: flex !important;
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* Collapsed sidebar keeps a full-size, centered hit target and legible glyphs. */
+.desktop-sidebar-navigation .orbe-button {
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+}
+.desktop-sidebar-navigation .orbe-button svg,
+.sidebar-footer .orbe-button svg {
+  display: block;
+  flex: 0 0 auto;
+  width: 20px !important;
+  height: 20px !important;
+}
+.desktop-sidebar.collapsed .desktop-sidebar-navigation .orbe-button {
+  justify-content: center !important;
+  padding: 0 !important;
+}
+.desktop-sidebar.collapsed .desktop-sidebar-navigation .orbe-button > div {
+  width: 100%;
+  justify-content: center !important;
+  gap: 0 !important;
+}
+.desktop-sidebar.collapsed .sidebar-footer .orbe-button {
+  width: 100%;
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
