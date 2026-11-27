@@ -383,15 +383,15 @@ Este documento é um mapa de execução, não substitui as especificações func
 - O menu contextual `⋮` dos movimentos tem composição aprovada em `docs/03-interface-e-formularios.md`; a implementação e as ações por estado dependem dos contratos API pendentes.
 - A linha de uma compra parcelada apresenta o valor da prestação do período; o valor total da compra só é mostrado ao abrir o detalhe. A indicação de prestações pagas é secundária/discreta.
 - O menu contextual `⋮` dos movimentos tem hierarquia aprovada: Editar, Duplicar, ação de estado, ações específicas do tipo, separador e ação destrutiva final (Eliminar se elegível; Estornar para operação realizada). A composição está aprovada; contratos de permissões, transições, endpoints e fluxos de pagamento/estorno continuam pendentes.
-- Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios e Configurações têm interface implementada na branch feature/reports-settings-ui-clean; lint e build passam no CI (run 45880748947), enquanto QA responsivo continua pendente. A página autónoma de Dívidas está descontinuada.
+- Ações sem formulário/contrato não são executáveis nem criam registos fictícios. Relatórios e Configurações têm interface implementada na branch feature/reports-settings-ui-clean; lint, TypeScript e build de produção passaram no CI atualizado (run 45975362442, commit 1e8a55b), enquanto QA visual no browser continua pendente. A página autónoma de Dívidas está descontinuada.
 
 
-## Implementação frontend — Relatórios e Configurações (branch `feature/reports-settings-ui-clean`, PR #9, 2026-11-26)
+## Implementação frontend — Relatórios e Configurações (branch `feature/reports-settings-ui-clean`, PR #9, atualização 2026-11-27)
 - Criadas páginas React/TypeScript dedicadas e integradas nas variantes desktop e mobile do shell existente.
 - Relatórios usa o componente MonthSelector existente; a agregação de operações realizadas foi isolada em `features/reports/utils.ts`. Apresenta apenas dimensões suportadas pelos dados atuais. A análise de obrigações sem read model disponível é explicitamente indisponível; não há valores fictícios.
 - Configurações apresenta os grupos aprovados. A preferência de símbolo é funcional e guardada no navegador; as opções sem contratos/painéis próprios são informativas, não ações simuladas.
 - Regra aprovada: a alteração de símbolo não converte nem altera valores, dados, saldos, cálculos, escala ou precisão.
-- Lint e build de produção passaram no CI da branch (run 45880748947, commit `960c156`). A QA visual/responsiva e a revisão final continuam pendentes antes de integrar na main.
+- Lint, TypeScript e build de produção passaram no CI da branch (run 45975362442, commit `1e8a55b`). A QA visual/responsiva em browser e a revisão final continuam pendentes antes de integrar na main.
 
 
 ## Organização frontend — branch `feature/reports-settings-ui-clean` (PR #9, 2026-11-26)
