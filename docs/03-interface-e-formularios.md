@@ -1238,3 +1238,6 @@ Regras obrigatórias para todas as páginas:
 
 - O card de saldo mantém exatamente o mesmo fundo verde em light e dark mode.
 - Não aplicar overrides de cor ou gradiente específicos do tema ao `mobile-balance-card`; a tipografia interna já usa cores explícitas de alto contraste.
+
+
+- Robustness: o fundo verde do card de saldo é definido explicitamente no próprio card e reforçado por uma regra dark-mode específica com prioridade; outros cards continuam a usar os tokens de tema.
