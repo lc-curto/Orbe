@@ -129,9 +129,9 @@ export function buildFinancialRouteProjection(
   let referenceBalanceValid = true
 
   for (const operation of operations) {
-    if (operation.state === 'CANCELLED') continue
+    const isCancelled = operation.state === 'CANCELLED'
 
-    if (operation.state === 'PENDING' && (operation.operation_type === 'EXPENSE' || operation.operation_type === 'INCOME')) {
+    if (!isCancelled && operation.state === 'PENDING' && (operation.operation_type === 'EXPENSE' || operation.operation_type === 'INCOME')) {
       const date = projectionDateKey(operation.planned_at)
       const amount = positiveAmount(operation.amount)
       if (date && amount !== null) {
@@ -176,12 +176,7 @@ export function buildFinancialRouteProjection(
       if (date <= today && operation.operation_type !== 'TRANSFER' && operation.operation_type !== 'ACCOUNT_OPENING_BALANCE') {
         addFlow(actualFlowByDate, date, entry.effect === 'INCREASE' ? 'INCOME' : 'EXPENSE', amount)
       }
-    }
-
-    if ((operation.state === 'REALIZED' || operation.state === 'PARTIAL') &&
-      (operation.operation_type === 'INCOME' || operation.operation_type === 'EXPENSE' || operation.operation_type === 'TRANSFER')) {
-      const date = operationDate(operation)
-      if (date && date <= today) {
+      if (date <= today && operation.operation_type !== 'ACCOUNT_OPENING_BALANCE') {
         const dayOperations = operationsByDate.get(date) ?? []
         if (!dayOperations.some((item) => item.id === operation.id)) dayOperations.push(operation)
         operationsByDate.set(date, dayOperations)
