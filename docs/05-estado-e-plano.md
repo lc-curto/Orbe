@@ -588,3 +588,12 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - O padrão é aplicado por uma classe partilhada, com gradiente e cores explícitos que não mudam em dark mode. Não afeta cards secundários, listas ou tabelas.
 - Ícone da página Configurações alterado de símbolo tipo sol para engrenagem, distinguindo-o do controlo de tema.
 - Implementação na branch do PR #12; pendente de CI e validação visual manual. Não integrada na main.
+
+## Desktop visual consistency — PR #12
+
+- Aprovada a proposta de desktop: sidebar alinhada à esquerda, cabeçalho e conteúdo mais compactos, melhor aproveitamento entre 1025 e 1199px.
+- Implementação na branch feature/movements-write-flows: alinhamento da sidebar através de props dos primitives; geometria desktop por tokens partilhados; controlo de tema no PageHeader em todos os breakpoints; removido o botão duplicado do shell.
+- Criada a variante partilhada orbe-financial-highlight-card no design system, aplicada ao saldo do Dashboard desktop/mobile e aos resumos financeiros aprovados. O tema escuro exclui esta variante das regras genéricas de superfície.
+- Corrigidos os overrides important introduzidos na camada de polimento dos cards e removido o override duplicado do seletor de período da Rota Financeira.
+- Finding legado: theme.css e a navegação mobile ainda contêm overrides important preexistentes para componentes com estilos inline/estilos de feature. Os seletores afetados pela sidebar desktop e pelo card de destaque foram corrigidos estruturalmente nesta tarefa. A remoção global dos restantes exige migrar esses componentes para tokens/estilos semânticos; não foi expandida para não alterar comportamentos visuais fora do escopo desktop aprovado.
+- Não integrado na main; pendente CI e QA visual manual em desktop e nos dois temas.
