@@ -18,6 +18,16 @@ Regista decisões aprovadas das páginas principais. Não substitui os mockups v
 - Breakpoint da navegação global: **desktop > 1024 px** (sidebar, sem bottom bar); **tablet/mobile ≤ 1024 px** (bottom bar fixa, sem sidebar). O layout deve renderizar apenas uma variante de página visível por breakpoint; os wrappers responsivos não devem aplicar `display:flex` inline, e a bottom bar usa o tema/superfície atual.
 - O Dashboard mobile deve permanecer dentro de `.mobile-page-shell` (wrapper externo controlado por CSS). Componentes `Stack` aplicam `display:flex` inline, portanto não podem depender apenas de `display:none` no próprio componente para serem ocultados no desktop. Não renderizar a variante mobile fora do wrapper responsivo.
 
+## Configurações — mobile first
+- Ecrã inicial com título/subtítulo, cartão de perfil e lista de categorias: Preferências, Conta, Segurança, Dados e privacidade, Sobre o Orbe.
+- Mobile: a lista é o ecrã principal; selecionar uma categoria abre um ecrã de detalhe com ação de voltar. Não apresentar overview e detalhe ao mesmo tempo.
+- Desktop (>1024 px): usar a mesma arquitetura de categorias com navegação local à esquerda e conteúdo da categoria à direita. Não criar uma segunda implementação funcional nem duplicar o conteúdo dentro da página.
+- Preferências: moeda de apresentação (símbolo apenas, sem conversão) e aparência. Categorias mantêm-se em consulta, acessíveis a partir de Preferências.
+- Aparência oferece Claro, Escuro e Sistema. Sistema segue `prefers-color-scheme`; a preferência selecionada é persistida localmente através do ThemeProvider existente.
+- Conta apresenta os dados do perfil existentes; Segurança comunica que as opções são geridas pela conta; Dados e privacidade informa que exportação/restauro não estão disponíveis; Sobre apresenta informação da aplicação.
+- Reutilizar providers de moeda/tema, tokens semânticos e AppIcon. Não introduzir biblioteca de UI, novo estado de backend ou funcionalidades de segurança/exportação não suportadas.
+- Categorias e conteúdo devem respeitar teclado, foco visível, labels acessíveis, alvos de toque adequados, safe area e largura mínima de 320 px.
+
 ## Dashboard — aprovado
 - Saudação dinâmica Bom dia/Boa tarde/Boa noite com primeiro nome.
 - Data resumida (ex.: Seg, 23 Nov); ícones de notificações e perfil.
