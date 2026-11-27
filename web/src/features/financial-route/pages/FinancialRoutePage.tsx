@@ -53,7 +53,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
 
   const filteredMonths = useMemo(() => months.map((item) => {
     let days = onlyMovementDays
-      ? item.days.filter((day) => day.operations.length > 0 || day.invoices.length > 0 || hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
+      ? item.days.filter((day) => hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
       : item.days
     if (flowFilter === 'INCOME') days = days.filter((day) => hasPositiveAmount(day.income))
     if (flowFilter === 'EXPENSE') days = days.filter((day) => hasPositiveAmount(day.expenses))
