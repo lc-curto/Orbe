@@ -553,3 +553,13 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - A camada visual é uma primeira harmonização; ainda requer revisão de regressões, QA em browser e eventual ajuste de componentes com estilos inline legados.
 - Não foram alteradas regras financeiras nem contratos API.
 - Lint/build e QA visual local ainda não executados nesta sessão; aguardar CI e validação manual do utilizador antes de considerar aprovado.
+
+
+### Refinamento transversal de interface — 27/11/2026
+
+- Cabeçalho principal sem descrição ou texto auxiliar imediatamente abaixo do título, aplicado pelo componente `PageHeader`.
+- Seletor de mês partilhado no padrão opção C: mês à esquerda, navegação anterior/seguinte agrupada à direita.
+- Na Rota Financeira mobile, o resumo mensal fica antes dos filtros de visualização.
+- Regras transversais de ordem de KPIs/cards, pesquisa e filtros, além dos critérios de light/dark mode, registadas em `docs/03-interface-e-formularios.md`.
+- A correção de dark mode cobre também o shell mobile (`mobile-page-shell`), onde cards/KPIs e estados vazios não eram abrangidos por seletores anteriores.
+- Estado desta revisão: implementada na branch do PR para QA visual manual; não integrada na main. A aprovação visual em diferentes larguras e temas continua pendente.
