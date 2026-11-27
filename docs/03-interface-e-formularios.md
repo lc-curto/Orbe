@@ -1274,3 +1274,9 @@ Regras obrigatórias para todas as páginas:
 - O bottom sheet da Rota Financeira deve usar superfície, texto, texto secundário, bordas e estados de filtro explícitos do tema escuro.
 - O modal mobile pode não estar dentro de `.main-content`; regras de tema devem selecionar `.route-day-modal` diretamente, sem depender desse ancestral.
 - O estado ativo dos filtros deve ter contraste próprio, e o estado vazio deve usar o token muted sobre a superfície escura.
+
+### Sidebar e menus da conta — dark mode
+
+- O painel mobile “Mais” usa a superfície escura opaca (`--orbe-surface`), texto principal/secundário e bordas semânticas; não usar mistura translúcida com teal como fundo base.
+- Itens, ícones, identidade da conta, ação de tema e logout devem ter cores explícitas para o tema; hover/focus usam uma superfície de destaque derivada de tokens.
+- Popover da conta desktop deve aplicar os mesmos tokens independentemente do portal estar montado em `document.body`.
