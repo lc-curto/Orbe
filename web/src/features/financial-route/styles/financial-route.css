@@ -193,4 +193,66 @@
 }
 .sidebar-account-menu-action:disabled { cursor: not-allowed; opacity: .5; }
 
-
+/* Mobile route: one month, full-width controls and readable table columns. */
+.route-mobile-flow-filters { display: none; }
+@media (max-width: 1024px) {
+  .route-mobile-shell .financial-route-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    justify-content: stretch;
+    gap: 12px;
+  }
+  .route-mobile-shell .financial-route-title { width: 100%; }
+  .route-mobile-shell .route-month-selector-mobile {
+    width: fit-content;
+    max-width: 100%;
+    justify-self: start;
+  }
+  .route-mobile-flow-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 0 0 12px;
+  }
+  .route-mobile-flow-filters button {
+    min-height: 34px;
+    padding: 0 14px;
+    border: 1px solid var(--orbe-border);
+    border-radius: 999px;
+    background: var(--orbe-surface);
+    color: var(--orbe-text);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .route-mobile-flow-filters button.active {
+    border-color: var(--orbe-text);
+    background: var(--orbe-text);
+    color: var(--orbe-surface);
+  }
+  .route-month-card-mobile,
+  .route-month-card-mobile .route-table-wrap,
+  .route-month-card-mobile .route-table { width: 100%; min-width: 0; }
+  .route-month-card-mobile .route-table { table-layout: fixed; }
+  .route-month-card-mobile .route-table th,
+  .route-month-card-mobile .route-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .route-month-card-mobile .route-table th:nth-child(1),
+  .route-month-card-mobile .route-table td:nth-child(1) { width: 18%; }
+  .route-month-card-mobile .route-table th:nth-child(2),
+  .route-month-card-mobile .route-table td:nth-child(2) { width: 28%; }
+  .route-month-card-mobile .route-table th:nth-child(3),
+  .route-month-card-mobile .route-table td:nth-child(3) { width: 28%; }
+  .route-month-card-mobile .route-table th:nth-child(4),
+  .route-month-card-mobile .route-table td:nth-child(4) { width: 26%; }
+}
+@media (max-width: 380px) {
+  .route-mobile-shell .financial-route-title h1 { font-size: 26px; }
+  .route-month-card-mobile .route-table th,
+  .route-month-card-mobile .route-table td { padding-inline: 4px; font-size: 9px; }
+  .route-month-card-mobile .route-day-button { font-size: 10px; }
+}
