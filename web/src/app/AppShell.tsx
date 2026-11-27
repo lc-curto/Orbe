@@ -13,3 +13,10 @@ type MobilePageFrameProps = { children: ReactNode; className?: string }
 export function MobilePageFrame({ children, className = '' }: MobilePageFrameProps) {
   return <div className={`mobile-page-shell ${className}`}><div className="mobile-page-content">{children}</div></div>
 }
+
+type DesktopPageFrameProps = { children: ReactNode }
+
+/** Shared desktop content frame used by every authenticated feature page. */
+export function DesktopPageFrame({ children }: DesktopPageFrameProps) {
+  return <div className="desktop-page-content">{children}</div>
+}
