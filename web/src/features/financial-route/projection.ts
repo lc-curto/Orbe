@@ -84,8 +84,8 @@ function addNet(map: DailyMap<bigint>, date: string, amount: bigint) {
   map.set(date, (map.get(date) ?? 0n) + amount)
 }
 
-function accountIdForEntry(entry: FinancialEntry, operation: Operation): number | null {
-  return entry.account?.id ?? entry.account_id ?? operation.account?.id ?? operation.account_id ?? null
+function accountIdForEntry(entry: FinancialEntry): number | null {
+  return entry.account?.id ?? entry.account_id ?? null
 }
 
 function signedEntryAmount(entry: FinancialEntry, amount: bigint): bigint | null {
@@ -157,11 +157,11 @@ export function buildFinancialRouteProjection(
 
     for (const entry of operation.entries ?? []) {
       if (entry.state !== 'REALIZED') continue
-      const accountId = accountIdForEntry(entry, operation)
+      const accountId = accountIdForEntry(entry)
       if (accountId === null || !accountIds.has(accountId)) continue
       const date = projectionDateKey(entry.effective_at ?? operation.effective_at)
       const amount = parseMoneyUnits(entry.amount)
-      if (!date || amount === null) {
+      if (!date || amount === null || amount < 0n) {
         referenceBalanceValid = false
         continue
       }
