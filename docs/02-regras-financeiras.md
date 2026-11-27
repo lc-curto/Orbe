@@ -22,6 +22,14 @@ Este cálculo é uma projeção, não um saldo efetivo nem uma nova regra de neg
 
 Quando uma operação planeada é realizada, o seu efeito projetado correspondente é substituído pelo efeito efetivo na data efetiva, sem duplicação. Alterações e cancelamentos válidos recalculam a projeção segundo as regras centrais do sistema.
 
+### Janela temporal, histórico e atualização da projeção
+
+- A abertura padrão usa o mês local atual como primeiro mês e apresenta 24 meses consecutivos: mês atual + 23 meses seguintes.
+- A janela é móvel: ao avançar o calendário, o mês atual passa a ser o primeiro mês e o horizonte estende-se automaticamente mais um mês. A navegação de período desloca a janela mês a mês; ao consultar um mês anterior, o respetivo histórico continua consultável.
+- Meses anteriores não são apagados nem convertidos em projeções fixas. Permanecem consultáveis através da navegação mensal e refletem os efeitos efetivos registados.
+- A edição, realização ou cancelamento de uma operação histórica válida atualiza os dados financeiros comuns e provoca novo cálculo do read model. O futuro é recalculado a partir do saldo de referência atualizado e dos efeitos ainda não incorporados nele.
+- Um efeito realizado já incluído no saldo de referência não pode ser aplicado novamente. Operações pendentes vencidas continuam pendentes/vencidas; não são automaticamente realizadas nem reagendadas.
+
 ## Dados partilhados entre Movimentos e Rota Financeira
 
 - Movimentos e Rota Financeira partem do mesmo conjunto de operações e efeitos financeiros válidos; a Rota não mantém um registo financeiro paralelo.
