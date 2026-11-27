@@ -174,7 +174,7 @@ function dateFromOffset(offset: number) {
 
 export function DateInput({ id, value, onChange, disabled }: { id: string; value: string; onChange: (value: string) => void; disabled?: boolean }) {
   const shortcuts = [{ label: 'Hoje', value: dateFromOffset(0) }, { label: 'Ontem', value: dateFromOffset(-1) }]
-  return <div className="orbe-date-control"><input id={id} name={id} className="orbe-input" type="date" value={value} onChange={(event) => onChange(event.target.value)} disabled={disabled} /><div className="orbe-date-shortcuts" aria-label="Atalhos de data">{shortcuts.map((shortcut) => <button key={shortcut.label} type="button" className={`orbe-shortcut ${value === shortcut.value ? 'is-selected' : ''}`} onClick={() => onChange(shortcut.value)} disabled={disabled}>{shortcut.label}</button>)}<button type="button" className={`orbe-shortcut ${value !== shortcuts[0].value && value !== shortcuts[1].value ? 'is-selected' : ''}`} onClick={() => document.getElementById(id)?.focus()} disabled={disabled}>Escolher data</button></div></div>
+  return <div className="orbe-date-control"><input id={id} name={id} className="orbe-input" type="date" value={value} onChange={(event) => onChange(event.target.value)} disabled={disabled} /><div className="orbe-date-shortcuts" aria-label="Atalhos de data">{shortcuts.map((shortcut) => <button key={shortcut.label} type="button" className={`orbe-shortcut ${value === shortcut.value ? 'is-selected' : ''}`} onClick={() => onChange(shortcut.value)} disabled={disabled}>{shortcut.label}</button>)}</div></div>
 }
 
 function OptionList({ id, value, onChange, options, emptyMessage }: { id: string; value: string; onChange: (value: string) => void; options: SelectOption[]; emptyMessage: string }) {
@@ -453,11 +453,11 @@ export function MovementForm({
           <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
         </FormField>
         <FormField label="Conta de origem" name="account" required error={errors.account}>
-          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Selecionar conta de origem" disabled={submitting} />
+          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder={accounts.length ? "Selecionar conta de origem" : "Não existem contas ativas."} disabled={submitting} />
         </FormField>
         <div className="orbe-transfer-direction" aria-hidden="true"><span />↓<span /></div>
         <FormField label="Conta de destino" name="destination" required error={errors.destination}>
-          <SelectInput id="destination" value={destination} onChange={setDestination} options={accounts.filter((item) => item.value !== account)} placeholder="Selecionar conta de destino" disabled={submitting || !account} />
+          <SelectInput id="destination" value={destination} onChange={setDestination} options={accounts.filter((item) => item.value !== account)} placeholder={accounts.length === 0 ? "Não existem contas ativas." : account ? "Selecionar conta de destino" : "Seleciona primeiro a origem"} disabled={submitting || !account} />
         </FormField>
         <OrbeDisclosure title="Mais detalhes" description={transferDetailsSummary} open={transferDetailsOpen} onOpenChange={setTransferDetailsOpen}>
           <OrbeFormToggle id="outStatePending" label="Marcar saída como pendente" description="A saída ainda não foi realizada." checked={outState === 'PENDING'} onChange={(checked) => setOutState(checked ? 'PENDING' : 'REALIZED')} disabled={submitting} />
@@ -480,10 +480,10 @@ export function MovementForm({
           <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
         </FormField>
         <FormField label="Categoria" name="category" required error={errors.category}>
-          <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder="Selecionar categoria" disabled={submitting} />
+          <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder={categories.length ? "Selecionar categoria" : `Não existem categorias ativas de ${kind === "income" ? "rendimento" : "gasto"}.`} disabled={submitting} />
         </FormField>
         {!isRecurring && operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
-          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Selecionar conta" disabled={submitting} />
+          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder={accounts.length ? "Selecionar conta" : "Não existem contas ativas."} disabled={submitting} />
         </FormField> : null}
         <FormField label={isRecurring ? 'Primeira ocorrência' : operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
           <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
