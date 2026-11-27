@@ -970,6 +970,7 @@ A composição do menu está aprovada como decisão de interface. Permissões, t
 ## Implementação funcional — Movimentos (Fase 2)
 
 - Gasto e rendimento usam contas/categorias ativas obtidas da API, sem opções fictícias.
+- Dentro do fluxo de gasto/rendimento, o utilizador pode escolher movimento único ou programação recorrente; a recorrência usa periodicidade e primeira ocorrência, com data de fim opcional, sem criar operação efetiva ao guardar a programação.
 - O formulário suporta `REALIZED` e `PENDING`: realizado exige conta e data efetiva; pendente não apresenta nem envia conta e usa data prevista.
 - Transferência cria uma operação com duas pernas; origem e destino devem ser contas diferentes. Cada perna tem estado e data próprios, conforme o contrato API.
 - A submissão apresenta loading, impede submissões simultâneas, usa idempotência, mantém o formulário aberto em erros de API e atualiza os dados após sucesso.
