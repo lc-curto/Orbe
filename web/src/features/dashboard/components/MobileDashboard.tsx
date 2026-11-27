@@ -33,7 +33,16 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           period={<MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />}
         />
         {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
-        <UiCard className="mobile-balance-card" borderRadius={18} padding={18}>
+        <UiCard
+          className="mobile-balance-card"
+          borderRadius={18}
+          padding={18}
+          style={{
+            background: 'linear-gradient(135deg, #0f766e 0%, #115e59 100%)',
+            backgroundColor: '#0f766e',
+            boxShadow: '0 8px 22px rgba(15, 118, 110, 0.16)',
+          }}
+        >
           <Stack gap={12}>
             <Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text>
             <Text color="#ffffff" fontSize={28} fontWeight="800">Indisponível</Text>
