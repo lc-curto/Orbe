@@ -84,7 +84,8 @@
   .route-mobile-shell .route-month-selector-mobile .orbe-month-selector-label { min-width: 40px; }
   .route-mobile-shell .route-desktop-controls, .route-mobile-shell .route-desktop-months { display: none; }
   .route-mobile-shell .route-mobile-month { display: block; }
-  .route-mobile-summary { margin-bottom: 14px; padding: 13px 14px; border: 1px solid var(--orbe-border); border-radius: 13px; background: #fff; }
+  .route-mobile-shell > .route-mobile-summary { display: block; }
+  .route-mobile-summary { display: none; margin-bottom: 14px; padding: 13px 14px; border: 1px solid var(--orbe-border); border-radius: 13px; background: #fff; }
   .route-mobile-ending { display: flex; flex-direction: column; gap: 3px; margin-bottom: 8px; }
   .route-mobile-ending strong { color: var(--orbe-text); font-size: 23px; font-weight: 800; }
   .route-mobile-totals { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; font-size: 11px; }
