@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 final class FinancialRouteReadService
 {
     private const PROJECTION_MONTHS = 24;
+
     public function __construct(private readonly CardInvoiceSummaryService $invoiceSummaries) {}
 
     /** @return array<string, mixed> */
