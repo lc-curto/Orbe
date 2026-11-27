@@ -315,14 +315,29 @@ Testar domínio sem interface, persistência/constraints, transações/concorrê
 
 ## Frontend Web
 
-Para páginas React/TypeScript:
+### Padrões de implementação React/TypeScript
 - A página compõe a interface; componentes visuais recebem dados e callbacks por props.
 - Colocar lógica derivada em hook da feature ou função pura; não duplicar regras financeiras na UI.
 - Manter estado no menor âmbito adequado e não guardar estado que possa ser derivado.
 - Reutilizar design system, tokens e componentes existentes; CSS local só para necessidades específicas.
 - Organizar por feature quando houver responsabilidades distintas; criar apenas os módulos necessários.
 - Adaptar referências visuais ao padrão React; não copiar protótipos monolíticos.
-- Não refatorar páginas fora do escopo. Validar build, lint e estados responsivos relevantes; declarar o que não foi testado.
+- Seguir as Rules of Hooks, manter renderização pura e não usar efeitos para sincronizar valores que podem ser derivados durante render.
+- Evitar `any`, casts e supressões de lint sem motivo documentado; tipos devem refletir contratos reais.
+- Evitar duplicação de variantes desktop/mobile quando a mesma composição responsiva resolve; quando variantes distintas forem necessárias, manter paridade de conteúdo/ações através de props ou lógica partilhada.
+- Testar estados de carregamento, erro, vazio e dados; validar navegação por teclado, semântica, foco, tema e breakpoints.
+
+### Política obrigatória de refatoração oportuna
+A refatoração local segura é parte da implementação, não uma tarefa opcional posterior. Sempre que um agente tocar numa feature, deve avaliar e corrigir problemas diretamente relacionados e de baixo risco: duplicação, responsabilidades misturadas, estado derivável, lógica não testável, estilos/tokens contraditórios, componentes inadequadamente acoplados, APIs obsoletas e violações das convenções React/TypeScript.
+
+- Refatorar incrementalmente, com escopo explícito, sem alterar comportamento aprovado nem contratos.
+- Reutilizar componentes/hooks/utils existentes antes de criar novos; abstrair apenas quando houver responsabilidade e reutilização reais.
+- Não perpetuar código inadequado com a justificação genérica “fora do escopo”.
+- Refatorações transversais, mudanças de arquitetura, dependências novas ou alterações de comportamento exigem plano separado, justificação, critérios de aceitação e validação.
+- Findings que não possam ser corrigidos com segurança devem ficar registados como trabalho aberto com área, impacto, dependência e critério de conclusão; não declarar a área plenamente conforme enquanto permanecerem.
+- Antes de concluir, rever o diff e reportar explicitamente a avaliação de refatoração, o que foi corrigido, o que foi adiado e porquê.
+
+Aplicar os Gates A/B/C obrigatórios de `AGENTS.md`. Validar lint, TypeScript/build, testes relevantes e QA responsiva; declarar tudo o que não foi executado.
 
 ---
 
