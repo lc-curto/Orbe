@@ -7,7 +7,8 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: color-mix(in srgb, var(--orbe-form-text) 42%, transparent);
+  background: rgba(7, 15, 14, .62);
+  backdrop-filter: blur(4px);
 }
 
 .orbe-form-container {
@@ -114,7 +115,7 @@
   color: var(--orbe-form-text);
   font: inherit;
   font-size: 14px;
-  background: var(--orbe-form-surface);
+  background: var(--orbe-form-input, var(--orbe-form-surface));
   border: 1px solid var(--orbe-form-border);
   border-radius: var(--orbe-form-radius-control, 12px);
   outline: 0;
@@ -180,7 +181,7 @@
   color: var(--orbe-form-danger);
   font-size: 13px;
   background: var(--orbe-form-danger-soft);
-  border: 1px solid color-mix(in srgb, var(--orbe-form-danger) 42%, white);
+  border: 1px solid color-mix(in srgb, var(--orbe-form-danger) 42%, var(--orbe-form-surface));
   border-radius: var(--orbe-form-radius-control, 12px);
 }
 
@@ -243,7 +244,7 @@
   width: 28px;
   height: 28px;
   color: currentColor;
-  background: color-mix(in srgb, var(--orbe-form-primary-soft) 75%, white);
+  background: color-mix(in srgb, var(--orbe-form-primary-soft) 75%, var(--orbe-form-surface));
   border-radius: 9px;
 }
 
@@ -368,7 +369,7 @@
 }
 
 .orbe-button-primary {
-  color: white;
+  color: var(--orbe-form-primary-button-text, white);
   background: var(--orbe-form-primary);
 }
 
@@ -587,4 +588,10 @@
     transition: none;
     animation: none;
   }
+}
+
+/* Portalled form controls inherit semantic theme tokens from the document root. */
+.orbe-form-scroll {
+  scrollbar-color: var(--orbe-form-muted) var(--orbe-form-surface);
+  scrollbar-width: thin;
 }
