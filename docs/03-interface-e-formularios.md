@@ -201,6 +201,19 @@ Usar os tokens já definidos no Design System. A referência visual conhecida in
 
 Os valores acima são referências do sistema atual, não autorização para duplicar cores hardcoded. Procurar e utilizar os tokens reais do projeto. Se os tokens tiverem evoluído, prevalece o Design System atual.
 
+### 2.2.1 Consistência de layout e spacing — regra obrigatória
+
+- Antes de criar ou alterar margens, padding, gaps, largura de conteúdo ou alinhamentos, localizar os tokens, containers e padrões já usados no Design System e no AppShell.
+- Usar uma escala central de spacing e os containers/gutters partilhados. Não criar uma escala paralela por página nem repetir valores arbitrários em CSS/JSX.
+- Elementos equivalentes (cabeçalhos, cards, painéis, filtros, tabelas e estados vazios) devem usar o mesmo padrão de margem/padding. Diferenças só são permitidas por densidade, hierarquia ou breakpoint com razão funcional explícita.
+- CSS local deve expressar uma exceção real da feature, não corrigir inconsistências do sistema com overrides ad hoc.
+- Não usar `!important` para estabelecer a arquitetura de spacing; se já existir, avaliar e remover ao consolidar o estilo afetado, sem provocar regressões.
+- Não acrescentar tokens duplicados se já houver token equivalente. Se a escala atual estiver incompleta ou contraditória, consolidar a fonte única e atualizar os usos relevantes no escopo tocado.
+- Ao tocar numa página, verificar pelo menos a página e uma página comparável; comparar desktop/tablet/mobile e temas suportados.
+- Qualquer exceção não corrigida deve ficar documentada com página/componente, motivo e condição para remoção.
+
+**Critério de aceite:** o diff não adiciona uma nova camada de margens/paddings contraditórios; valores equivalentes vêm de tokens/padrões comuns; exceções são justificadas; lint/build e QA visual aplicável são reportados.
+
 ### 2.3 Campos e etiquetas
 
 - Todos os campos usam apresentação contornada (outlined).
