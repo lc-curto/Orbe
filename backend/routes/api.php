@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
     Route::get('/cards/{card}', [ReadController::class, 'card']);
     Route::get('/invoices', [ReadController::class, 'invoices']);
     Route::get('/operations', [ReadController::class, 'operations']);
+    Route::get('/financial-route', [FinancialRouteController::class, 'index']);
     Route::get('/accounts', [BasicOperationsController::class, 'accounts']);
     Route::post('/accounts', [BasicOperationsController::class, 'storeAccount']);
     Route::get('/categories', [BasicOperationsController::class, 'categories']);
