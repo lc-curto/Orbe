@@ -279,3 +279,124 @@
 @media (min-width: 768px) and (max-width: 1024px) {
   .mobile-page-shell { padding-inline: var(--orbe-page-gutter-tablet); }
 }
+
+/* Unified page-level structure shared by every feature page. */
+.orbe-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--orbe-space-4);
+  width: 100%;
+  min-width: 0;
+  margin: 0 0 var(--orbe-page-section-gap);
+  padding: 0;
+  box-sizing: border-box;
+}
+.orbe-page-header-copy {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--orbe-space-2);
+  min-width: 0;
+}
+.orbe-page-header-copy h1 {
+  margin: 0;
+  color: var(--orbe-text);
+  font-size: clamp(26px, 2.4vw, 34px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -.7px;
+  overflow-wrap: anywhere;
+}
+.orbe-page-header-copy p {
+  margin: 0;
+  color: var(--orbe-text-muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.orbe-page-header-actions {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--orbe-space-2);
+  min-width: 0;
+  max-width: 100%;
+}
+.accounts-page-header,
+.cards-page .accounts-page-header,
+.movements-header,
+.financial-route-header,
+.reports-header,
+.settings-page-header {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+.accounts-page-header .accounts-page-subtitle { margin: 0; }
+
+@media (max-width: 1024px) {
+  .orbe-page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    justify-content: stretch;
+    align-items: start;
+    gap: var(--orbe-space-3);
+    margin-bottom: var(--orbe-page-section-gap);
+  }
+  .orbe-page-header-copy,
+  .orbe-page-header-actions {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .orbe-page-header-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .orbe-page-header-copy h1 {
+    font-size: clamp(25px, 6.5vw, 30px);
+    line-height: 1.15;
+    letter-spacing: -.6px;
+  }
+  .mobile-page-shell .movements-page,
+  .mobile-page-shell .financial-route-page,
+  .mobile-page-shell .settings-page,
+  .mobile-page-shell .accounts-page,
+  .mobile-page-shell .cards-page,
+  .mobile-page-shell .reports-page {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .mobile-page-shell .movements-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--orbe-space-3);
+    padding: 0;
+    margin: 0 0 var(--orbe-page-section-gap);
+  }
+  .mobile-page-shell .movements-header .orbe-page-header-copy,
+  .mobile-page-shell .movements-header .orbe-page-header-actions {
+    width: 100%;
+    min-width: 0;
+  }
+  .mobile-page-shell .settings-page-header { margin-bottom: var(--orbe-page-section-gap); }
+  .mobile-page-shell .settings-mobile-overview,
+  .mobile-page-shell .settings-mobile-detail,
+  .mobile-page-shell .settings-profile-card,
+  .mobile-page-shell .settings-mobile-category-list {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  .mobile-page-shell .settings-profile-copy,
+  .mobile-page-shell .settings-nav-item-copy {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
