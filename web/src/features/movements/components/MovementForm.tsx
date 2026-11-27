@@ -302,7 +302,8 @@ export function MovementForm({
       if (!account) next.account = 'Seleciona uma conta de origem.'
       if (!destination) next.destination = 'Seleciona uma conta de destino.'
       if (account && destination && account === destination) next.destination = 'A conta de origem e a conta de destino devem ser diferentes.'
-      if (!date) next.date = 'Introduz uma data válida.'
+      if (!outDate) next.outDate = 'Introduz uma data válida para a saída.'
+      if (!inDate) next.inDate = 'Introduz uma data válida para a entrada.'
     } else {
       if (!description.trim()) next.description = 'Introduz uma descrição.'
       if (!category) next.category = 'Seleciona uma categoria.'
@@ -363,6 +364,10 @@ export function MovementForm({
           account_id: 'account',
           'legs.out.account_id': 'account',
           'legs.in.account_id': 'destination',
+          'legs.out.effective_at': 'outDate',
+          'legs.out.planned_at': 'outDate',
+          'legs.in.effective_at': 'inDate',
+          'legs.in.planned_at': 'inDate',
           effective_at: 'date',
           planned_at: 'date',
           financial: 'form',
@@ -398,7 +403,7 @@ export function MovementForm({
         <FormField label="Estado da saída" name="outState" required>
           <SelectInput id="outState" value={outState} onChange={(value) => setOutState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
         </FormField>
-        <FormField label={legDateLabel(outState, 'out')} name="outDate" required error={errors.date}>
+        <FormField label={legDateLabel(outState, 'out')} name="outDate" required error={errors.outDate}>
           <DateInput id="outDate" value={outDate} onChange={setOutDate} disabled={submitting} />
         </FormField>
         <div className="orbe-transfer-direction" aria-hidden="true"><span />↓<span /></div>
@@ -408,12 +413,12 @@ export function MovementForm({
         <FormField label="Estado da entrada" name="inState" required>
           <SelectInput id="inState" value={inState} onChange={(value) => setInState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
         </FormField>
-        <FormField label={legDateLabel(inState, 'in')} name="inDate" required error={errors.date}>
+        <FormField label={legDateLabel(inState, 'in')} name="inDate" required error={errors.inDate}>
           <DateInput id="inDate" value={inDate} onChange={setInDate} disabled={submitting} />
         </FormField>
       </> : <>
         <FormField label="Descrição" name="description" required error={errors.description}>
-          <TextInput id="description" value={description} onChange={setDescription} maxLength={191} placeholder={kind === 'income' ? 'Ex.: Salário' : 'Ex.: Supermercado'} disabled={submitting} />
+          <TextInput id="description" value={description} onChange={setDescription} maxLength={500} placeholder={kind === 'income' ? 'Ex.: Salário' : 'Ex.: Supermercado'} disabled={submitting} />
         </FormField>
         <FormField label="Categoria" name="category" required error={errors.category}>
           <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder={`Não existem categorias ativas de ${kind === 'income' ? 'rendimento' : 'gasto'}.`} disabled={submitting} />
@@ -432,7 +437,7 @@ export function MovementForm({
         <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
       </FormField>
       {isTransfer ? <FormField label="Descrição (opcional)" name="description" error={errors.description}>
-        <Textarea id="description" value={description} onChange={setDescription} maxLength={191} disabled={submitting} />
+        <Textarea id="description" value={description} onChange={setDescription} maxLength={500} disabled={submitting} />
       </FormField> : null}
       <FormActions onCancel={onClose} loading={submitting} />
     </form>
