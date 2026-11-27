@@ -1,4 +1,5 @@
-import { Card, Heading, Paragraph, Text, Row, Stack } from '../../../design-system/primitives'
+import { PageHeader } from '../../../shared/components/PageHeader'
+import { Card, Text, Row, Stack } from '../../../design-system/primitives'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import type { CurrencySymbol } from '../../currency/types'
 import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
@@ -41,13 +42,7 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
 
 export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, categories, loading, card, invoice, setActiveKey, authError, logoutError }: DashboardPageProps) {
   return <>
-<Row className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
-              <Stack gap={4} flex={1} minWidth={0}>
-                <Heading fontSize={36} letterSpacing={-1.2}>Bom dia, {userName.split(' ')[0]}</Heading>
-                <Paragraph color="#667085" margin={0}>{period.date}</Paragraph>
-              </Stack>
-              <MonthSelector month={month} onMonthChange={onMonthChange} className="desktop-month-selector" />
-            </Row>
+<PageHeader title={`Bom dia, ${userName.split(' ')[0]}`} description={period.date} className="desktop-dashboard-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="desktop-month-selector" />} />
 
             {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
 
