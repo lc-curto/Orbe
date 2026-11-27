@@ -31,10 +31,8 @@
   min-height: 44px;
   padding-inline: 12px;
   color: var(--orbe-text);
-  background: transparent;
 }
 .sidebar-nav-button[aria-current="page"] {
-  background: color-mix(in srgb, var(--orbe-teal) 13%, var(--orbe-surface));
   color: var(--orbe-teal);
 }
 .sidebar-nav-group { width: 100%; min-width: 0; }
@@ -54,10 +52,8 @@
   min-height: 42px;
   padding-inline: 12px;
   color: var(--orbe-text);
-  background: transparent;
 }
 .sidebar-logout-action { color: var(--orbe-danger); }
-.sidebar-profile-button.is-open { background: color-mix(in srgb, var(--orbe-muted) 10%, var(--orbe-surface)); }
 .desktop-sidebar-collapse-button {
   display: inline-flex;
   width: 40px;
@@ -68,13 +64,13 @@
   padding: 0;
   border: 1px solid var(--orbe-border);
   border-radius: var(--orbe-radius-control);
-  background: var(--orbe-bg);
   color: var(--orbe-muted);
 }
 .desktop-sidebar-brand { color: var(--orbe-text); font-size: 28px; font-weight: 800; }
 .desktop-sidebar.collapsed .sidebar-nav-button { justify-content: center; padding-inline: 0; }
 .desktop-sidebar.collapsed .sidebar-nav-row { justify-content: center; gap: 0; }
 .desktop-sidebar.collapsed .sidebar-footer-action { justify-content: center; padding-inline: 0; }
+.desktop-sidebar.collapsed .sidebar-profile-copy { justify-content: center; }
 
 .app-add-fab {
   position: fixed; right: calc(24px + env(safe-area-inset-right)); bottom: calc(24px + env(safe-area-inset-bottom));
