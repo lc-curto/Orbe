@@ -19,6 +19,10 @@ O Orbe é uma aplicação de gestão financeira pessoal, organizada num monorepo
 
 A interface não deve criar dados fictícios nem apresentar projeções como saldos realizados. Consultar [docs/05 — Estado e plano](docs/05-estado-e-plano.md) para o estado detalhado e as pendências.
 
+## Regra de desenvolvimento — refatoração oportuna
+
+A refatoração local segura e a conformidade com as boas práticas da stack são obrigatórias em toda alteração. Não perpetuar duplicação, estado derivável, padrões obsoletos ou estilos contraditórios apenas porque não foram mencionados no pedido. Aplicar os Gates A/B/C de [AGENTS.md](AGENTS.md), os padrões da arquitetura ([docs/04](docs/04-arquitetura-modelo-e-auditoria.md)) e as regras de UI ([docs/03](docs/03-interface-e-formularios.md)). Mudanças estruturais ou de comportamento devem ser separadas, justificadas e registadas; findings relevantes não corrigidos impedem declarar a tarefa concluída.
+
 ## Requisitos de desenvolvimento
 
 - PHP `^8.3` e Composer.
