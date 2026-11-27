@@ -32,7 +32,6 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           className="mobile-dashboard-header"
         />
         <div className="mobile-dashboard-period-row">
-          <span className="mobile-dashboard-period-label">Período</span>
           <MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />
         </div>
         {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
