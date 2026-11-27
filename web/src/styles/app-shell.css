@@ -58,7 +58,7 @@
 .mobile-dashboard-greeting-text { font-size: clamp(18px, 4.2vw, 26px); line-height: 1.2; }
 .mobile-dashboard-date { line-height: 1.4; }
 .mobile-balance-card { border-radius: var(--orbe-radius-card); }
-.desktop-dashboard-header { width: 100%; min-height: 72px; align-items: center; margin-bottom: 0; }
+.desktop-dashboard-header { width: 100%; min-height: 64px; align-items: center; margin-bottom: 0; }
 .desktop-dashboard-header h1 { margin: 0; line-height: 1.15; }
 .dashboard-kpi-row { align-items: stretch; gap: var(--orbe-space-4); }
 .dashboard-kpi-row > * { flex: 1 1 0; min-width: 0; min-height: 144px; }
