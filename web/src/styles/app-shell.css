@@ -353,3 +353,76 @@
   justify-content: flex-end !important;
   text-align: right !important;
 }
+
+
+/* Fase 1 — geometria e spacing consistentes entre páginas. */
+:root {
+  --orbe-page-gutter-desktop: 32px;
+  --orbe-page-gutter-tablet: 24px;
+  --orbe-page-gutter-mobile: 16px;
+  --orbe-page-content-max: 1200px;
+  --orbe-page-section-gap: 24px;
+  --orbe-panel-padding: 20px;
+  --orbe-panel-padding-mobile: 16px;
+}
+
+.main-content {
+  max-width: 1360px !important;
+  padding: var(--orbe-page-gutter-desktop) !important;
+  gap: var(--orbe-page-section-gap) !important;
+}
+.main-content.route-mode { max-width: 1360px !important; }
+.main-content > .cards-page,
+.main-content > .accounts-page,
+.main-content > .reports-page,
+.main-content > .financial-route-page {
+  width: 100%;
+  max-width: var(--orbe-page-content-max);
+  margin-inline: auto;
+}
+.main-content.cards-mode,
+.main-content.accounts-mode,
+.main-content.reports-mode,
+.main-content.route-mode { padding-inline: var(--orbe-page-gutter-desktop) !important; }
+
+.mobile-page-shell.cards-mobile-shell,
+.mobile-page-shell.accounts-mobile-shell {
+  padding: 20px var(--orbe-page-gutter-tablet) calc(92px + env(safe-area-inset-bottom)) !important;
+}
+.mobile-page-shell.route-mobile-shell { padding-inline: var(--orbe-page-gutter-tablet) !important; }
+.mobile-page-shell .cards-page,
+.mobile-page-shell .accounts-page,
+.mobile-page-shell .reports-page,
+.mobile-page-shell .financial-route-page {
+  width: 100%;
+  max-width: var(--orbe-page-content-max);
+  margin-inline: auto;
+  padding-inline: 0 !important;
+}
+.mobile-page-shell .reports-page.reports-page,
+.mobile-page-shell .financial-route-page.financial-route-page { padding-top: 0 !important; }
+.mobile-page-shell .reports-grid { gap: 12px; }
+.mobile-page-shell .report-panel { padding: var(--orbe-panel-padding-mobile); }
+
+@media (max-width: 1024px) {
+  .main-content.cards-mode,
+  .main-content.accounts-mode,
+  .main-content.reports-mode,
+  .main-content.route-mode { padding-inline: var(--orbe-page-gutter-tablet) !important; }
+  .mobile-page-shell.cards-mobile-shell,
+  .mobile-page-shell.accounts-mobile-shell { padding-inline: var(--orbe-page-gutter-tablet) !important; }
+  .mobile-page-shell.route-mobile-shell { padding-inline: var(--orbe-page-gutter-tablet) !important; }
+  .mobile-page-shell .reports-page .reports-header { margin-bottom: 16px; }
+  .mobile-page-shell .financial-route-page .financial-route-header { margin-top: 0; margin-bottom: 16px; }
+}
+@media (max-width: 767px) {
+  .main-content { padding: 20px var(--orbe-page-gutter-mobile) !important; }
+  .main-content.cards-mode,
+  .main-content.accounts-mode,
+  .main-content.reports-mode,
+  .main-content.route-mode { padding-inline: var(--orbe-page-gutter-mobile) !important; }
+  .mobile-page-shell.cards-mobile-shell,
+  .mobile-page-shell.accounts-mobile-shell { padding-inline: var(--orbe-page-gutter-mobile) !important; }
+  .mobile-page-shell.route-mobile-shell { padding-inline: var(--orbe-page-gutter-mobile) !important; }
+  .mobile-page-shell .report-panel { padding: var(--orbe-panel-padding-mobile); }
+}
