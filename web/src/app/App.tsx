@@ -282,18 +282,18 @@ export default function App() {
             <Stack className="desktop-sidebar-navigation" gap={18} flex={1}>
               {sidebarGroups.map((group) => <Stack key={group.title} gap={7}>
                 {sidebarOpen ? <Text color="#98a2b3" fontSize={10} fontWeight="800" letterSpacing={1}>{group.title.toUpperCase()}</Text> : null}
-                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} style={{ justifyContent: sidebarOpen ? 'flex-start' : 'center' }} borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
-                  <Row gap={10} style={{ alignItems: 'center', justifyContent: sidebarOpen ? 'flex-start' : 'center' }}><AppIcon name={item.icon} size={sidebarOpen ? 18 : 20} strokeWidth={2} />{sidebarOpen ? <Text>{item.label}</Text> : null}</Row>
+                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} className="sidebar-nav-button" borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
+                  <Row className="sidebar-nav-row" style={{ alignItems: 'center' }}><AppIcon name={item.icon} size={sidebarOpen ? 18 : 20} strokeWidth={2} />{sidebarOpen ? <Text>{item.label}</Text> : null}</Row>
                 </Button>)}
               </Stack>)}
             </Stack>
             <Stack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
-              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" borderWidth={0} backgroundColor="transparent" color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={42} justifyContent={sidebarOpen ? "flex-start" : "center"}>
+              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" className="sidebar-footer-action" borderWidth={0} backgroundColor="transparent" color="#475467" height={42}>
                 <Row alignItems="center" gap={10}><AppIcon name="bell" size={20} strokeWidth={2} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</Row>
               </Button>
               <Stack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
                 <span ref={accountMenuAnchorRef} className="account-menu-anchor">
-                  <Button className="sidebar-profile-button" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" paddingHorizontal={sidebarOpen ? 12 : 0} height={44} justifyContent={sidebarOpen ? "flex-start" : "center"}>
+                  <Button className="sidebar-profile-button sidebar-footer-action" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" height={44}>
                     <Row className="sidebar-profile-copy" alignItems="center" gap={10}><AppIcon name="user" size={20} strokeWidth={2} />{sidebarOpen ? <Stack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></Stack> : null}</Row>
                   </Button>
                 </span>
