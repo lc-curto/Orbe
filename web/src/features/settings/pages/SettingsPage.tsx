@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { AuthUser, Category } from '../../../api/types'
 import { AppIcon } from '../../../shared/components/AppIcon'
 import type { AppIconName } from '../../../shared/components/AppIcon'
@@ -109,11 +109,19 @@ function SettingsCategoryContent({ category, user, categories, onSelectCategory 
 export function SettingsPage({ user, categories }: Props) {
   const [activeCategory, setActiveCategory] = useState<SettingsCategory>('preferences')
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches)
   const activeItem = settingsCategories.find((item) => item.id === activeCategory) ?? settingsCategories[0]
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 1024px)')
+    const updateViewport = () => setIsMobile(media.matches)
+    updateViewport()
+    media.addEventListener('change', updateViewport)
+    return () => media.removeEventListener('change', updateViewport)
+  }, [])
 
   const selectCategory = (category: SettingsCategory) => {
     setActiveCategory(category)
-    const isMobile = typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches
     setMobileDetailOpen(isMobile)
     if (isMobile) window.scrollTo({ top: 0, behavior: 'auto' })
   }
@@ -121,29 +129,30 @@ export function SettingsPage({ user, categories }: Props) {
   const returnToOverview = () => {
     setMobileDetailOpen(false)
     setActiveCategory('preferences')
-    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'auto' })
+    window.scrollTo({ top: 0, behavior: 'auto' })
   }
 
-  const categoryContent = <SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} />
-
-  return <section className="settings-page" data-mobile-detail-open={mobileDetailOpen} aria-labelledby="settings-page-title">
+  return <section className="settings-page" aria-labelledby="settings-page-title">
     <header className="settings-page-header"><h1 id="settings-page-title">Configurações</h1><p>Personaliza a tua experiência no Orbe.</p></header>
-    <div className="settings-mobile-overview">
-      <SettingsProfile user={user} onSelect={() => selectCategory('account')} />
-      <nav className="settings-mobile-category-list" aria-label="Categorias de configurações">
-        {settingsCategories.map((item) => <SettingsNavItem key={item.id} item={item} selected={false} onSelect={() => selectCategory(item.id)} />)}
-      </nav>
-    </div>
-    <div className="settings-desktop-layout">
-      <aside className="settings-sidebar" aria-label="Navegação de configurações">
-        <SettingsProfile user={user} onSelect={() => selectCategory('account')} />
-        <nav className="settings-sidebar-nav">{settingsCategories.map((item) => <SettingsNavItem key={item.id} item={item} selected={activeCategory === item.id} onSelect={() => selectCategory(item.id)} />)}</nav>
-      </aside>
-      <div className="settings-category-panel"><SettingsPageTitle title={activeItem.title} description={activeItem.description} />{categoryContent}</div>
-    </div>
-    <div className="settings-mobile-detail" aria-live="polite">
-      <div className="settings-mobile-back"><button type="button" onClick={returnToOverview} aria-label="Voltar às configurações"><AppIcon name="chevronLeft" size={20} /><span>Configurações</span></button></div>
-      <SettingsPageTitle title={activeItem.title} description={activeItem.description} />{categoryContent}
-    </div>
+    {isMobile
+      ? mobileDetailOpen
+        ? <div className="settings-mobile-detail">
+            <div className="settings-mobile-back"><button type="button" onClick={returnToOverview} aria-label="Voltar às configurações"><AppIcon name="chevronLeft" size={20} /><span>Configurações</span></button></div>
+            <SettingsPageTitle title={activeItem.title} description={activeItem.description} />
+            <SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} />
+          </div>
+        : <div className="settings-mobile-overview">
+            <SettingsProfile user={user} onSelect={() => selectCategory('account')} />
+            <nav className="settings-mobile-category-list" aria-label="Categorias de configurações">
+              {settingsCategories.map((item) => <SettingsNavItem key={item.id} item={item} selected={false} onSelect={() => selectCategory(item.id)} />)}
+            </nav>
+          </div>
+      : <div className="settings-desktop-layout">
+          <aside className="settings-sidebar" aria-label="Navegação de configurações">
+            <SettingsProfile user={user} onSelect={() => selectCategory('account')} />
+            <nav className="settings-sidebar-nav">{settingsCategories.map((item) => <SettingsNavItem key={item.id} item={item} selected={activeCategory === item.id} onSelect={() => selectCategory(item.id)} />)}</nav>
+          </aside>
+          <div className="settings-category-panel"><SettingsPageTitle title={activeItem.title} description={activeItem.description} /><SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} /></div>
+        </div>}
   </section>
 }
