@@ -289,15 +289,7 @@ export default function App() {
 
   return (
     <AppShell>
-        <button
-          className="global-theme-toggle"
-          type="button"
-          onClick={toggleTheme}
-          aria-label={document.documentElement.dataset.theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
-          title={document.documentElement.dataset.theme === 'dark' ? 'Tema claro' : 'Tema escuro'}
-        >
-          <AppIcon name={document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon'} size={18} />
-        </button>
+        
         <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <div className="desktop-layout">
           <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} borderRightWidth={1} borderRightColor="var(--orbe-border)">
