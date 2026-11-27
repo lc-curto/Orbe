@@ -170,7 +170,7 @@ final class FinancialRouteReadService
                 if (array_key_exists($date, $balanceCache)) {
                     return $balanceCache[$date];
                 }
-                if (! $referenceBalanceValid) {
+                if ($referenceBalanceValid === false) {
                     return null;
                 }
 
@@ -183,7 +183,7 @@ final class FinancialRouteReadService
                     }
                     $balance = bcsub($referenceBalance, $netAfter, 4);
                 } else {
-                    if (! $projectionValid) {
+                    if ($projectionValid === false) {
                         return null;
                     }
                     $balance = bcadd($referenceBalance, $plannedNetByDate[$today] ?? '0.0000', 4);
@@ -295,6 +295,7 @@ final class FinancialRouteReadService
     private function monthBounds(string $month): array
     {
         $first = new \DateTimeImmutable($month.'-01');
+
         return [
             'first' => $first->format('Y-m-01'),
             'prefix' => $first->format('Y-m-'),
