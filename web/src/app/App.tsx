@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Button, Text, Row, Stack } from '../design-system/primitives'
 import { MovementForm } from '../features/movements/components/MovementForm'
-import { AppShell, MobilePageFrame } from './AppShell'
+import { AppShell, DesktopPageFrame, MobilePageFrame } from './AppShell'
 import { AppIcon, type AppIconName } from '../shared/components/AppIcon'
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { LoginScreen } from '../features/auth/pages/LoginScreen'
@@ -335,12 +335,14 @@ export default function App() {
           </Stack>
 
           <Stack className={`main-content ${activeKey === 'Movimentos' ? 'movements-mode' : ''} ${activeKey === 'Rota' ? 'route-mode' : ''} ${activeKey === 'Contas' ? 'accounts-mode' : ''} ${activeKey === 'Cartões' ? 'cards-mode' : ''} ${activeKey === 'Relatórios' ? 'reports-mode' : ''} ${activeKey === 'Configurações' ? 'settings-mode' : ''}`} flex={1}>
+            <DesktopPageFrame>
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}            {activeKey === 'Relatórios' ? <ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /> : null}
             {activeKey === 'Configurações' ? <SettingsPage user={user} categories={finance.data.categories} /> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={periodMonth} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
             {activeKey === 'Início' ? <DashboardPage period={period} userName={user.name} displayPeriod={displayPeriod} month={periodMonth} onMonthChange={changeMovementMonth} currencySymbol={currencySymbol} movements={movements} categories={dashboardCategories} loading={finance.loading} card={card} invoice={invoice} setActiveKey={navigateTo} authError={authError} logoutError={logoutError} /> : null}
+            </DesktopPageFrame>
           </Stack>
         </div>
         {activeKey === 'Cartões' ? <MobilePageFrame className="cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></MobilePageFrame> : activeKey === 'Contas' ? <MobilePageFrame className="accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></MobilePageFrame> : activeKey === 'Movimentos' ? <MobilePageFrame><MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={periodMonth} onMonthChange={changeMovementMonth} onNotify={notify} /></MobilePageFrame> : activeKey === 'Rota' ? <MobilePageFrame className="route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></MobilePageFrame> : activeKey === 'Relatórios' ? <MobilePageFrame className="reports-mobile-shell"><ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /></MobilePageFrame> : activeKey === 'Configurações' ? <MobilePageFrame><SettingsPage user={user} categories={finance.data.categories} /></MobilePageFrame> : <MobilePageFrame className="mobile-dashboard-shell"><MobileDashboard period={displayPeriod} month={periodMonth} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={navigateTo} userName={user.name} authError={authError} logoutError={logoutError} currencySymbol={currencySymbol} movements={movements} categories={dashboardCategories} loading={finance.loading} /></MobilePageFrame>}
