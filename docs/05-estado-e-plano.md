@@ -739,4 +739,4 @@ Implementado no PR #13, branch `docs/financial-route-projection-rules` (PR abert
 
 **Limitação de escala explicitamente registada:** o agregado de saldo de referência ainda percorre os lançamentos históricos elegíveis dentro do MySQL, embora não os hidrate individualmente em PHP. Para latência previsível com históricos muito grandes, falta implementar snapshots/checkpoints transacionais de saldo, com atualização atómica em todos os fluxos de escrita e reconciliação. Não usar cache persistente de saldo antes dessa garantia.
 
-CI Backend, Web e PR Quality Gate passaram no commit `cbc615da64cfc507d4707dca4b69eb39fd68bfc9`. Esta atualização documental deve gerar nova execução de CI. QA visual manual e medição de latência com volume de dados sintético continuam pendentes. Não integrar na `main` sem aprovação.
+CI Backend, Web e PR Quality Gate passaram no commit `631aa2e83246ebae3df93691b5593416773f6f31` (Backend CI `46062138308`, Web CI `46062138305`, PR Quality Gate `46062138314`). QA visual manual e medição de latência com volume de dados sintético continuam pendentes. Não integrar na `main` sem aprovação.
