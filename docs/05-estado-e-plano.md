@@ -628,9 +628,11 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 
 - Criados no design system os componentes reutilizáveis OrbeDisclosure (secção recolhida por defeito, semântica nativa details/summary) e OrbeFormToggle (checkbox opt-in com label/descrição).
 - Formulário de Movimentos simplificado: descrição, valor, categoria, conta (quando necessária) e data permanecem no fluxo principal; recorrência, estado pendente e detalhes da transferência ficam em disclosure.
-- Recorrência começa desligada; “Marcar como pendente” começa desligado; estados de transferência começam realizados e podem ser marcados como pendentes explicitamente. Data de fim e descrição opcional começam vazias.
+- Princípio global registado: para decisões com impacto material, usar o estado mais seguro, reversível e de menor compromisso; não assumir consentimento/execução e exigir intenção explícita para avançar. Se faltar informação, não inferir nem executar.
+- Movimentos de gasto/rendimento começam PENDENTES. O utilizador tem de ativar “Registar como realizado” para declarar que a operação já aconteceu; a conta só é exigida no estado realizado. Transferências começam com saída e entrada pendentes, cada uma com ação explícita “Registar ... como realizada”.
+- Recorrência começa desligada. Data de fim e descrição opcional começam vazias. Ao ativar recorrência, o formulário mantém o estado conservador e não marca a operação como realizada.
 - Seletores de categoria/conta/frequência passam a usar select nativo e acessível, evitando listas verticais extensas de opções. Estado vazio e seleção de destino dependente da origem têm mensagens explícitas.
 - Datas e estados da transferência ficam recolhidos com resumo do valor predefinido; validações de data abrem automaticamente os detalhes. Erros de fim de recorrência abrem “Mais opções”.
 - DateInput mantém apenas atalhos úteis Hoje/Ontem; removido “Escolher data” redundante, pois o input date já permite escolher.
 - Sem mudança de API/payloads/regra de negócio. Contas e Cartões/Faturas ainda não dispõem de formulários de criação/edição nesta fase; o padrão fica pronto para reutilização quando esses fluxos forem implementados.
-- QA automatizado pendente após commit; QA visual manual em light/dark e 320–1024+ px necessário antes do merge.
+- CI executado no commit anterior passou; após esta correção de defaults, CI deve voltar a executar e QA manual de estados pendentes/realizados em light/dark e 320–1024+ px continua necessário antes do merge.
