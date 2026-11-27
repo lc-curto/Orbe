@@ -464,7 +464,7 @@ A política foi formalizada nos pontos de controlo do repositório:
 - `README.md`, `web/README.md` e `backend/README.md`: resumo operacional por aplicação.
 - `.github/pull_request_template.md`: checklist obrigatória a preencher em cada PR, incluindo findings adiados e validações não executadas.
 
-Esta documentação reduz esquecimentos, mas não torna o processo automaticamente infalível: a checklist é uma barreira de revisão humana; lint, build e testes continuam a ser barreiras automatizadas separadas. Nenhuma tarefa pode ser marcada como concluída se os gates forem ignorados ou se findings relevantes ficarem sem registo.
+Para reduzir esquecimentos, o workflow `.github/workflows/pr-quality-gate.yml` valida automaticamente a descrição da PR: exige as secções obrigatórias e falha se houver checkbox por concluir. A checklist preenchida continua a ser uma declaração de revisão, não prova de execução; lint/build/testes e QA visual são barreiras distintas. A pessoa responsável deve assinalar e explicar pendências/N/A sem alegar execução. Nenhuma tarefa pode ser marcada como concluída se os gates forem ignorados ou se findings relevantes ficarem sem registo.
 
 **Finding específico da Fase 1:** os overrides de spacing acrescentados a `web/src/styles/app-shell.css` são uma primeira tentativa de uniformização, não a consolidação definitiva. Antes de fechar a Fase 1, inspecionar os tokens e regras já existentes, eliminar duplicação/contradições e reduzir/remover `!important` estruturalmente, preservando o resultado visual aprovado. A QA deve comprovar que páginas equivalentes usam a mesma fonte de spacing e que exceções estão justificadas.
 
