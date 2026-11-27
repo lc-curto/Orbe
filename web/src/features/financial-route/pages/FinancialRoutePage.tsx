@@ -38,10 +38,10 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   const desktopMonthsRef = useRef<HTMLDivElement>(null)
   const mobileMonthRef = useRef<HTMLDivElement>(null)
   const initialTodayPositioned = useRef(false)
-  const routeData = useFinancialRouteData(month, operations, invoices)
+  const [isDesktopRoute, setIsDesktopRoute] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1025px)').matches)
+  const routeData = useFinancialRouteData(month, operations, invoices, isDesktopRoute ? FINANCIAL_ROUTE_MONTHS : 1)
   const projection = routeData.projection
   const months = projection?.months
-  const [isDesktopRoute, setIsDesktopRoute] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1025px)').matches)
 
   useEffect(() => {
     const media = window.matchMedia('(min-width: 1025px)')
