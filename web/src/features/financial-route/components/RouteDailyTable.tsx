@@ -27,8 +27,9 @@ export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
           const income = formatAmount(day.income)
           const expenses = formatAmount(day.expenses)
           const balance = formatAmount(day.balance)
-          return <tr key={day.date} className={hasMovements ? 'has-movements' : ''}>
-            <td><button className="route-day-button" type="button" onClick={() => onSelectDay(day.date)}>{formatDay(day.date)}</button></td>
+          const isToday = day.date === (() => { const now = new Date(); return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}` })()
+          return <tr key={day.date} data-route-date={day.date} className={[hasMovements ? 'has-movements' : '', isToday ? 'route-today' : ''].filter(Boolean).join(' ')}>
+            <td><button className="route-day-button" type="button" aria-current={isToday ? "date" : undefined} onClick={() => onSelectDay(day.date)}>{formatDay(day.date)}</button></td>
             <td className="route-income-cell">{flowFilter === 'EXPENSE' || incomeUnits === null || incomeUnits === 0n ? '—' : '+ ' + income + ' ' + symbol}</td>
             <td className="route-expense-cell">{flowFilter === 'INCOME' || expensesUnits === null || expensesUnits === 0n ? '—' : '− ' + expenses + ' ' + symbol}</td>
             <td className={balanceNegative ? 'route-balance-cell route-balance-negative' : 'route-balance-cell'} aria-label={day.balance === null ? 'Saldo indisponível' : 'Saldo projetado'}>
