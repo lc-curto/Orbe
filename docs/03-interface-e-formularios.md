@@ -1280,3 +1280,9 @@ Regras obrigatórias para todas as páginas:
 - O painel mobile “Mais” usa a superfície escura opaca (`--orbe-surface`), texto principal/secundário e bordas semânticas; não usar mistura translúcida com teal como fundo base.
 - Itens, ícones, identidade da conta, ação de tema e logout devem ter cores explícitas para o tema; hover/focus usam uma superfície de destaque derivada de tokens.
 - Popover da conta desktop deve aplicar os mesmos tokens independentemente do portal estar montado em `document.body`.
+
+### Resumo financeiro de Movimentos
+
+- A página Movimentos usa o card partilhado `orbe-financial-highlight-card` para destacar o Resultado no topo.
+- Ganhos e Gastos ficam numa linha de decomposição abaixo, separados por divisor; valores e labels mantêm contraste branco no fundo verde em light e dark mode.
+- A ordem do conteúdo é: tabs da página, resumo financeiro, pesquisa, filtros e lista. Não reordenar pesquisa/filtros acima dos KPIs.
