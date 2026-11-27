@@ -359,7 +359,7 @@ export default function App() {
             <DesktopPageFrame>
             {activeKey === 'Contas' ? <AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /> : null}
             {activeKey === 'Cartões' ? <CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /> : null}
-            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /> : null}
+            {activeKey === 'Rota' ? <FinancialRoutePage operations={finance.data.operations} accounts={finance.data.accounts} invoices={finance.data.invoices} loading={finance.loading} error={finance.error} month={routeMonth} onMonthChange={setRouteMonth} /> : null}
             {activeKey === 'Relatórios' ? <ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /> : null}
             {activeKey === 'Configurações' ? <SettingsPage user={user} categories={finance.data.categories} /> : null}
             {activeKey === 'Movimentos' ? <MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={periodMonth} onMonthChange={changeMovementMonth} onNotify={notify} /> : null}
