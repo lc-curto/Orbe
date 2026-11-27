@@ -453,6 +453,8 @@ As capturas de Cartões, Rota Financeira e Relatórios mostram diferenças de ma
 
 **Implementação CSS na branch da Fase 1:** tokens centrais para gutters (32 px desktop, 24 px tablet, 16 px mobile), largura de conteúdo (1200 px), gap vertical (24 px) e padding de painéis (20 px desktop / 16 px mobile). Cartões, Contas, Relatórios e Rota usam containers e gutters comuns; exceções de densidade em linhas/tabelas mantêm-se intencionais.
 
+**Continuação da estabilização:** `DashboardSections` partilha categorias, cartões e movimentos entre desktop/mobile; os movimentos do Dashboard passaram a usar `operation.id` como chave React estável. Os overrides redundantes de `!important` foram removidos do seletor mensal, dos filtros de pesquisa e de hover de Rota/Configurações/menu mobile. O alinhamento do cabeçalho de Movimentos foi consolidado no shell responsivo.
+
 Critério de aceitação visual: confirmar no browser que as páginas seguem esta geometria sem overflow nem margens/paddings locais contraditórios nos viewports definidos.
 
 ### Política de refatoração oportuna e controlo de omissões — obrigatória
@@ -466,11 +468,17 @@ A política foi formalizada nos pontos de controlo do repositório:
 
 Para reduzir esquecimentos, o workflow `.github/workflows/pr-quality-gate.yml` valida automaticamente a descrição da PR: exige as secções obrigatórias e falha se houver checkbox por concluir. A checklist preenchida continua a ser uma declaração de revisão, não prova de execução; lint/build/testes e QA visual são barreiras distintas. A pessoa responsável deve assinalar e explicar pendências/N/A sem alegar execução. Nenhuma tarefa pode ser marcada como concluída se os gates forem ignorados ou se findings relevantes ficarem sem registo.
 
-**Finding específico da Fase 1:** os overrides de spacing acrescentados a `web/src/styles/app-shell.css` são uma primeira tentativa de uniformização, não a consolidação definitiva. Antes de fechar a Fase 1, inspecionar os tokens e regras já existentes, eliminar duplicação/contradições e reduzir/remover `!important` estruturalmente, preservando o resultado visual aprovado. A QA deve comprovar que páginas equivalentes usam a mesma fonte de spacing e que exceções estão justificadas.
+**Findings específicos da Fase 1:**
+- A consolidação de spacing em `web/src/styles/app-shell.css` é uma primeira harmonização, não a auditoria final. Ainda é necessário reconciliar as regras antigas das features com os tokens e eliminar duplicação/contradições sem regressão visual.
+- A revisão estática atual encontrou 60 declarações `!important` em `web/src/styles/theme.css` e quatro declarações de acessibilidade de movimento reduzido em `web/src/styles/base.css`. As declarações de tema são legado de compatibilidade entre estilos de tema e estilos de apresentação inline; não devem ser ampliadas. Migrar progressivamente os estilos inline para tokens/classes semânticos e remover cada override que deixe de ser necessário. A regra obrigatória está em `AGENTS.md` e `docs/03-interface-e-formularios.md`: `!important` é último recurso e cada nova ocorrência exige justificação explícita.
+- A branch não declara paridade visual aprovada: o cabeçalho/KPIs de Dashboard ainda têm composição desktop/mobile distinta, embora as secções inferiores sejam partilhadas.
+- O `App.tsx` continua a concentrar navegação, estados e composição de páginas; a decomposição deve ser incremental, sem reescrita nem alteração de comportamento.
 
 ### QA visual ainda por executar em browser
 
 Validar todas as páginas primárias em 320, 390, 768, 1024, 1025, 1280 e 1440 px, nos temas claro/escuro, incluindo navegação, safe areas, foco/teclado, loading, erro, vazio, filtros, seletor mensal, menus, FAB e persistência de preferências. Não marcar a fase como concluída apenas com lint/build.
+
+**CI remoto:** lint, TypeScript (`tsc -b`) e build Vite passaram na branch `qa/phase-1-frontend-stabilization`, commit `4ab231e5c1feb18f9ced8379fa59b49824ffabaa` (Web CI run `45985677772`). O PR Quality Gate também passou. Não foram executados localmente nem substituem QA visual em browser.
 
 ### Condição de conclusão
 
