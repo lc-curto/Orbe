@@ -93,28 +93,29 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - A edição e as ações sobre programações/ocorrências usam botões dedicados e não permitem edição inline.
 
 ## Rota Financeira — aprovado
-- Desktop: mostrar pelo menos três meses consecutivos lado a lado; navegação anterior/seguinte desloca o período um mês.
-- Cada mês apresenta título, totais de entradas/saídas, indicação do saldo final e tabela diária.
+- Desktop: apresentar três meses consecutivos lado a lado; navegação anterior/seguinte desloca o período um mês. O período visível é de três meses, navegável para qualquer mês; não é um limite máximo de projeção.
+- Cada mês apresenta título, totais de entradas/saídas, saldo final projetado e tabela diária.
 - Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura. A lista cresce com a página (sem scroll interno) e termina junto da área reservada à bottom bar; o FAB global fica fixo no viewport e sobrepõe a lista.
 - Cabeçalho mobile segue o padrão de Movimentos: título alinhado à esquerda e seletor mensal partilhado alinhado à direita; ocultar subtítulo neste breakpoint.
 - Tabela diária: Dia, Entradas, Saídas, Saldo; incluir todos os dias do mês quando o switch está desligado.
-- O switch ligado mostra apenas dias com movimentos realizados elegíveis.
+- O switch ligado mostra dias com movimentos realizados elegíveis, operações pendentes projetadas ou faturas projetadas no vencimento.
 - Selecionar a data abre modal de detalhe; filtros numa linha e nesta ordem: Todos, Receitas, G. fixos, G. variáveis.
-- KPIs/totais apenas Entradas e Saídas; sem KPI de saldo inicial.
+- Totais mensais apenas Entradas e Saídas; sem KPI de saldo inicial.
 - Sem gráfico e sem distinção fixa/variável na tabela principal.
-- Entradas e saídas realizadas são agregadas; transferências não alteram esses totais, mas aparecem no detalhe diário como operação neutra. Estados não realizados não entram na tabela nem nos totais.
-- Movimentos e Rota Financeira usam as mesmas operações e efeitos financeiros válidos; a Rota altera a apresentação e agrega os efeitos por data, não cria movimentos diferentes.
-- Em Movimentos, os movimentos do cartão de crédito são apresentados individualmente. Na Rota, as compras do cartão não aparecem como saídas individuais: cada fatura é projetada uma única vez pelo seu valor total a pagar, na data prevista da fatura, esteja aberta ou fechada. Assim, a Rota não duplica a compra individual e o total da fatura.
-- O saldo de partida da Rota é a soma dos saldos atuais de contas bancárias e dinheiro, excluindo cartões de crédito. Operações pendentes entram na projeção mesmo sem conta associada; operações realizadas já refletidas no saldo não voltam a ser somadas como projeções.
-- **Regra central do saldo projetado:** saldo projetado do dia = saldo projetado do dia anterior + entradas planeadas − saídas planeadas. A projeção acumula os efeitos elegíveis por data, partindo do saldo efetivo de referência e incluindo operações planeadas ainda não realizadas.
-- A Rota é uma representação calculada do cenário financeiro, não uma fonte de verdade nem um módulo financeiro independente. Consulta a mesma base de dados, operações, efeitos e regras de negócio comuns do Orbe; não cria entidades, operações, regras ou persistência financeira paralelas.
+- Entradas e saídas representam efeitos de caixa em contas elegíveis. Transferências não alteram os totais agregados (as duas pernas compensam-se), mas aparecem no detalhe diário como operação neutra. Saldo inicial de conta não é entrada/saída do período.
+- Operações realizadas já incluídas no saldo de referência não voltam a alterar o saldo projetado. Os seus efeitos de caixa aparecem na data efetiva para consulta histórica.
+- Operações pendentes de gasto/ganho entram na projeção pela data prevista, mesmo sem conta associada. Pendentes com data passada permanecem vencidas/por confirmar; não são deslocadas automaticamente para hoje ou para uma data futura.
+- Em Movimentos, compras do cartão são apresentadas individualmente. Na Rota, compra do cartão não é saída de caixa individual: cada fatura é projetada uma única vez pelo seu valor ainda por pagar (`open_amount`), na data de vencimento, esteja aberta ou fechada. A fatura é apresentada no detalhe do dia. Faturas vencidas permanecem vencidas, aparecem agrupadas no resumo e não são reagendadas automaticamente.
+- O saldo de referência é calculado a partir dos lançamentos realizados válidos dirigidos a contas bancárias, dinheiro e carteiras digitais (tratadas como equivalentes de caixa); cartões de crédito ficam excluídos. A referência considera efeitos efetivos até à data local de cálculo.
+- **Regra central do saldo projetado:** saldo projetado do dia = saldo projetado do dia anterior + entradas planeadas − saídas planeadas. O saldo de hoje parte do saldo de referência e adiciona apenas projeções pendentes para hoje; os dias seguintes acumulam os efeitos previstos nas respetivas datas.
+- Para dias anteriores à referência, o saldo histórico é reconstruído retrocedendo os efeitos realizados posteriores à data. Para dias futuros, a projeção avança a partir do saldo de referência. A passagem entre meses é uma sequência contínua: o saldo final de um mês é o saldo de partida do dia seguinte, sem reinicialização mensal.
+- O horizonte visível é de três meses consecutivos; navegar para outro mês recalcula a janela de três meses. Operações e faturas fora da janela continuam no mesmo read model e tornam-se visíveis ao navegar para o respetivo período.
+- A Rota é uma representação calculada do cenário financeiro, não uma fonte de verdade nem um módulo financeiro independente. Consulta a mesma base de dados, operações, lançamentos, faturas e regras comuns do Orbe; não cria entidades, operações, regras ou persistência financeira paralelas.
 - Quando uma operação planeada é confirmada como realizada, o efeito projetado correspondente é substituído pelo efeito efetivo na data efetiva, sem dupla contagem. Alterações/cancelamentos recalculam o cenário conforme as regras centrais.
-- Uma operação realizada só pode ter data efetiva de hoje ou passada; não é possível registar um pagamento futuro como já realizado. A Rota usa a data real do pagamento. Se a data for anterior à data de referência do saldo atual, o efeito já está incorporado no saldo e não volta a ser projetado.
+- Uma operação realizada só pode ter data efetiva de hoje ou passada; não é possível registar um pagamento futuro como já realizado. A Rota usa a data real do pagamento. Efeitos realizados já incorporados no saldo de referência não são reaplicados.
 - Crédito/estorno de cartão segue o extrato e a aplicação efetiva do emissor: reduz a fatura/ciclo em que o emissor o lançou; não se presume abatimento à fatura mais antiga. Crédito mantido no cartão continua como crédito do cartão e é compensado conforme o emissor; devolução para conta bancária é entrada nessa conta na data real.
-
-- Saldo diário e saldo final/projeção só são apresentados quando o contrato financeiro fornecer valores válidos. Até lá, indicar indisponibilidade, sem inventar números.
-- Cor só na célula/valor Saldo quando houver cálculo fiável, nunca na linha. Sem badges, legendas ou etiquetas coloridas.
-- Saldo projetado final recebe cor apenas quando negativo.
+- Saldo diário e saldo final são apresentados apenas quando o saldo de referência e os efeitos necessários são válidos; em caso de dados financeiros inválidos, indicar indisponibilidade em vez de inventar valores.
+- Cor apenas no valor/célula do saldo, nunca na linha nem em badges/legendas. Saldo diário negativo recebe cor de perigo; saldo não negativo mantém cor neutra. Saldo final do mês recebe cor apenas quando negativo.
 - O FAB global é o único ponto de criação; não adicionar botão + local.
 
 ## Contas — aprovado
