@@ -76,7 +76,10 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 
 ## Transferências e contas
 - Transferência tem saída e entrada associadas.
-- Valor e associação são coerentes; datas e estados podem ser independentes.
+- Valor e associação são coerentes; as duas pernas pertencem à mesma operação.
+- O formulário de Movimentos regista apenas transferências efetivamente realizadas: a submissão confirma a execução, cria ambas as pernas como REALIZED e usa a mesma data efetiva automática (data do registo).
+- O formulário não permite programar transferências, criar pernas pendentes nem definir datas/estados independentes. A capacidade técnica/API de estados e datas por perna mantém-se para compatibilidade com operações já existentes e fluxos fora deste formulário; não deve ser exposta como programação de transferência na interface.
+- O formulário contém valor, conta de origem, conta de destino e observações opcionais (description). Origem e destino têm de ser contas distintas.
 - Transferência não é receita nem despesa.
 
 ### Saldo inicial de conta
