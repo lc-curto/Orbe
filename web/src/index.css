@@ -1,7 +1,6 @@
 @import './styles/base.css';
 @import './design-system/primitives.css';
 @import './features/movements/styles/movements.css';
-@import './styles/app-shell.css';
 @import './shared/components/month-selector.css';
 @import './features/movements/styles/movement-filters.css';
 @import './features/accounts/styles/accounts.css';
@@ -11,3 +10,4 @@
 @import './features/reports/styles/reports.css';
 @import './features/settings/styles/settings.css';
 @import './styles/theme.css';
+@import './styles/app-shell.css';
