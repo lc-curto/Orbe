@@ -603,3 +603,9 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Causa: regra dark anterior estava condicionada ao ancestral `.main-content`; o modal mobile não garante esse ancestral.
 - Corrigido em `theme.css` com superfície/foregrounds explícitos e estados de filtro/bordas theme-aware, sem alterar lógica ou markup funcional.
 - Aguardar reteste visual do utilizador em dark mode; alteração na branch do PR #12, não integrada na main.
+
+### QA visual — sidebar/menus dark mode
+
+- Finding complementar: aplicar a mesma correção de contraste ao painel mobile “Mais” e ao popover de conta da sidebar desktop; não depender de herança do container principal porque o popover é renderizado em portal.
+- Corrigido em `theme.css`: superfície opaca por token, foregrounds para textos/ícones, divisores, hover/focus e logout semânticos. Não altera navegação ou ações.
+- QA visual manual em mobile e desktop, light/dark, pendente.
