@@ -666,3 +666,29 @@ O fluxo visual completo foi aprovado pelo utilizador. A documentação de interf
 Estado: decisão de UX aprovada; especificação documental atualizada; extensão de modelo/API por definir/implementar; formulário ainda não implementado.
 
 ---
+
+
+## Estado atualizado — interface dos formulários de gastos e ganhos (27/11/2026)
+
+**Interface implementada na branch `feature/movements-write-flows`; integração financeira completa ainda pendente.** Esta atualização substitui a indicação anterior de que o formulário ainda não tinha sido implementado. A documentação de UX aprovada permanece válida.
+
+### Implementado na interface
+- Gasto: Conta/Cartão; Conta com Imediato/Data futura/Prestações; quantidade e primeira prestação já paga; compra de cartão única/parcelada; campos de datas e contas contextualizados.
+- Ganho: fluxo próprio recebido/pendente, sem seletor Conta/Cartão.
+- Cartões e contas ativos provenientes do read model real.
+- Notas opcionais no campo «Mais opções».
+- Modalidades que ainda não têm contrato backend são bloqueadas na submissão, sem enviar payload incorreto nem simular persistência.
+- Conta/Imediato e o fluxo existente de ganho continuam ligados aos endpoints já implementados.
+
+### Pendências para tornar os formulários funcionais
+1. **Modelo físico:** guardar conta prevista separada da conta efetiva; representar plano de prestações e vencimentos individuais; suportar compra de cartão e alocações automáticas; persistir notas.
+2. **Serviços Laravel:** criação transacional/idempotente de plano e prestações; pagamento inicial opcional da primeira prestação; impedir duplicação de despesa e garantir valores/arredondamentos exatos.
+3. **API:** ampliar contrato de gastos por Conta/Cartão e alterar criação de compras de cartão para receber cartão/data/quantidade, não alocações manuais de fatura; expor erros de validação por campo.
+4. **Read models:** Movimentos mostra compra de cartão individual e prestações/obrigações no contexto correto; Contas mostra apenas efeitos realizados; Cartões/Faturas mostra compras alocadas e pagamentos; Rota Financeira projeta conta prevista e total de cada fatura uma única vez.
+5. **Ganhos/notas:** adicionar persistência de notas sem alterar o fluxo próprio de receita; confirmar data prevista/efetiva no contrato e read model.
+6. **Testes:** isolamento por utilizador, conta/cartão ativo, idempotência, atomicidade, arredondamento residual, ciclos de fatura, primeira prestação paga, sem dupla contabilização, projeção vs saldo real.
+7. **Frontend final:** ligar os novos contratos, remover bloqueios de modalidades suportadas, atualizar o read model após sucesso e tratar 422/erros de servidor sem fechar o formulário.
+8. **QA:** executar testes backend, Pint nos ficheiros alterados, ESLint, TypeScript/build e QA manual desktop/tablet/mobile + light/dark.
+
+### Sequência
+Modelo e migrations → serviços transacionais/testes → API e read models → ligar frontend/remover bloqueios → QA local → revisão do PR. Não integrar na `main` sem validação explícita.
