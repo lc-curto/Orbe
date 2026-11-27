@@ -8,10 +8,11 @@ import type { RouteDay, RouteFlowFilter } from '../types'
 import { formatAmount, formatMonthRange, shiftMonth } from '../utils'
 import { useCurrency } from '../../currency/useCurrency'
 
-export function FinancialRoutePage({ operations, month, onMonthChange }: {
+export function FinancialRoutePage({ operations, month, onMonthChange, onAddClick }: {
   operations: Operation[]
   month: string
   onMonthChange: (month: string) => void
+  onAddClick: () => void
 }) {
   const { symbol } = useCurrency()
   const firstMonth = month
@@ -55,6 +56,7 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
         <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
       </div>
       <MonthSelector month={firstMonth} onMonthChange={onMonthChange} className="route-month-selector-mobile" />
+      <button type="button" className="route-mobile-add-action" onClick={onAddClick} aria-label="Abrir opções para adicionar um movimento">+ Adicionar</button>
     </header>
 
     <div className="route-desktop-controls">
