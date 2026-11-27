@@ -455,6 +455,19 @@ As capturas de Cartões, Rota Financeira e Relatórios mostram diferenças de ma
 
 Critério de aceitação visual: confirmar no browser que as páginas seguem esta geometria sem overflow nem margens/paddings locais contraditórios nos viewports definidos.
 
+### Política de refatoração oportuna e controlo de omissões — obrigatória
+
+A política foi formalizada nos pontos de controlo do repositório:
+- `AGENTS.md`: regra global, Gates A/B/C antes/durante/depois de cada alteração, práticas por stack e bloqueio de conclusão.
+- `docs/04-arquitetura-modelo-e-auditoria.md`: padrões técnicos e refatoração incremental para React/TypeScript.
+- `docs/03-interface-e-formularios.md`: regras de reutilização do design system, spacing e exceções de layout.
+- `README.md`, `web/README.md` e `backend/README.md`: resumo operacional por aplicação.
+- `.github/pull_request_template.md`: checklist obrigatória a preencher em cada PR, incluindo findings adiados e validações não executadas.
+
+Esta documentação reduz esquecimentos, mas não torna o processo automaticamente infalível: a checklist é uma barreira de revisão humana; lint, build e testes continuam a ser barreiras automatizadas separadas. Nenhuma tarefa pode ser marcada como concluída se os gates forem ignorados ou se findings relevantes ficarem sem registo.
+
+**Finding específico da Fase 1:** os overrides de spacing acrescentados a `web/src/styles/app-shell.css` são uma primeira tentativa de uniformização, não a consolidação definitiva. Antes de fechar a Fase 1, inspecionar os tokens e regras já existentes, eliminar duplicação/contradições e reduzir/remover `!important` estruturalmente, preservando o resultado visual aprovado. A QA deve comprovar que páginas equivalentes usam a mesma fonte de spacing e que exceções estão justificadas.
+
 ### QA visual ainda por executar em browser
 
 Validar todas as páginas primárias em 320, 390, 768, 1024, 1025, 1280 e 1440 px, nos temas claro/escuro, incluindo navegação, safe areas, foco/teclado, loading, erro, vazio, filtros, seletor mensal, menus, FAB e persistência de preferências. Não marcar a fase como concluída apenas com lint/build.
