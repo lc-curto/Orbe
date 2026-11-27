@@ -183,3 +183,22 @@
 [data-theme="dark"] .auth-screen { background: var(--orbe-bg) !important; }
 [data-theme="dark"] .auth-card { background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
 [data-theme="dark"] .feedback-toast { background: #e7edf5 !important; color: #101720 !important; }
+
+
+/* Account actions and the global theme control remain legible in dark mode. */
+[data-theme="dark"] .global-theme-toggle {
+  background: var(--orbe-surface);
+  border-color: var(--orbe-border);
+  color: var(--orbe-muted);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, .18);
+}
+[data-theme="dark"] .global-theme-toggle:hover {
+  background: #263445;
+  color: var(--orbe-text);
+  border-color: #46576b;
+}
+[data-theme="dark"] .mobile-more-account { border-bottom-color: var(--orbe-border); }
+[data-theme="dark"] .mobile-more-account strong { color: var(--orbe-text); }
+[data-theme="dark"] .mobile-more-account small { color: var(--orbe-muted); }
+[data-theme="dark"] .mobile-more-divider { background: var(--orbe-border); }
+[data-theme="dark"] .sidebar-logout-action { color: var(--orbe-danger) !important; }
