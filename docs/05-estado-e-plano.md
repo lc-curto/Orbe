@@ -596,3 +596,10 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Corrigidos os overrides important introduzidos na camada de polimento dos cards e removido o override duplicado do seletor de período da Rota Financeira.
 - Finding legado: theme.css mantém 111 ocorrências `!important` preexistentes para superfícies, formulários e componentes mobile; navigation.css mantém 5 ocorrências de estados da navegação mobile. Impacto: a cascata é mais difícil de manter e estilos semânticos podem exigir exceções. Os seletores afetados pela sidebar desktop e pelo card de destaque foram corrigidos estruturalmente. Critério de remoção dos restantes: migrar cada componente afetado de estilos inline/hardcoded para tokens/classes semânticas e eliminar o override no mesmo PR de migração. base.css mantém 4 declarações no bloco prefers-reduced-motion, usadas como override de acessibilidade para respeitar a preferência do sistema. Não expandido para mobile nesta alteração desktop.
 - Web CI (run 46012020608) e PR Quality Gate (run 46012020106) passaram no commit c4483165. QA visual manual em desktop e nos dois temas continua pendente; não integrado na main.
+
+### QA visual — correção do painel de movimentos do dia
+
+- Finding reportado durante QA: em dark mode, o bottom sheet mobile da Rota Financeira mantinha fundo claro enquanto textos e estados herdavam tokens escuros, causando baixo contraste.
+- Causa: regra dark anterior estava condicionada ao ancestral `.main-content`; o modal mobile não garante esse ancestral.
+- Corrigido em `theme.css` com superfície/foregrounds explícitos e estados de filtro/bordas theme-aware, sem alterar lógica ou markup funcional.
+- Aguardar reteste visual do utilizador em dark mode; alteração na branch do PR #12, não integrada na main.
