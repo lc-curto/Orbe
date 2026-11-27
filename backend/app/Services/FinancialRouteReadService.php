@@ -61,8 +61,8 @@ final class FinancialRouteReadService
                     ->whereIn('account_id', $accountIds)
                     ->where('state', 'REALIZED')
                     ->whereNotNull('effective_at')
-                    ->whereDate('effective_at', '<', $windowStart)
-                    ->whereDate('effective_at', '<=', $today)
+                    ->where('effective_at', '<', $windowStart.' 00:00:00')
+                    ->where('effective_at', '<=', $today.' 23:59:59')
                     ->where('amount', '>=', 0)
                     ->whereIn('effect', ['INCREASE', 'DECREASE'])
                     ->selectRaw("COALESCE(SUM(CASE WHEN effect = 'INCREASE' THEN amount WHEN effect = 'DECREASE' THEN -amount ELSE 0 END), 0) as balance")
@@ -74,8 +74,8 @@ final class FinancialRouteReadService
                     ->whereIn('account_id', $accountIds)
                     ->where('state', 'REALIZED')
                     ->whereNotNull('effective_at')
-                    ->whereDate('effective_at', '>=', $windowStart)
-                    ->whereDate('effective_at', '<=', $actualWindowEnd)
+                    ->where('effective_at', '>=', $windowStart.' 00:00:00')
+                    ->where('effective_at', '<', $this->shiftDate($actualWindowEnd, 1).' 00:00:00')
                     ->where('amount', '>=', 0)
                     ->whereIn('effect', ['INCREASE', 'DECREASE'])
                     ->with('operation:id,operation_type,state')
@@ -109,7 +109,7 @@ final class FinancialRouteReadService
             $pendingOperations = Operation::query()
                 ->where('user_id', $userId)
                 ->where(function ($query) use ($windowEnd): void {
-                    $query->whereNull('planned_at')->orWhereDate('planned_at', '<=', $windowEnd);
+                    $query->whereNull('planned_at')->orWhere('planned_at', '<=', $windowEnd.' 23:59:59');
                 })
                 ->where('state', 'PENDING')
                 ->whereIn('operation_type', ['EXPENSE', 'INCOME'])
@@ -147,7 +147,7 @@ final class FinancialRouteReadService
             $invoices = CardInvoice::query()
                 ->where('user_id', $userId)
                 ->where(function ($query) use ($windowEnd): void {
-                    $query->whereNull('due_date')->orWhereDate('due_date', '<=', $windowEnd);
+                    $query->whereNull('due_date')->orWhere('due_date', '<=', $windowEnd);
                 })
                 ->with('card:id,name')
                 ->orderBy('due_date')
