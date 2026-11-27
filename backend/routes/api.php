@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BasicOperationsController;
 use App\Http\Controllers\Api\FinancialController;
 use App\Http\Controllers\Api\FinancialRouteController;
-use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ReadController;
-use App\Http\Controllers\Api\BasicOperationsController;
-use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\RecurrenceController;
+use App\Http\Controllers\Api\TransferController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('throttle:auth')->post('/auth/login', [AuthController::class, 'login']);
