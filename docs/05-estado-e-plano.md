@@ -523,3 +523,13 @@ A regra de reutilização dos frames, cabeçalho e tokens está formalizada em `
 
 Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratadas como trabalho técnico incremental e registadas nas tarefas/PRs correspondentes.
 
+
+
+## Acessibilidade global — sessão e tema
+
+- Logout desktop acessível diretamente no rodapé da sidebar, inclusive recolhida.
+- Logout em viewport mobile/tablet acessível pelo painel **Mais** da bottom bar.
+- Alternância claro/escuro disponível globalmente no canto superior direito em páginas autenticadas.
+- Tema continua a usar a preferência local e o `ThemeProvider` existente.
+- Validação visual desktop/tablet/mobile ainda necessária após atualização da branch.
+
