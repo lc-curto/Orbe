@@ -231,9 +231,7 @@
   .mobile-more-page-item:hover { background: #f2f4f7; box-shadow: none; }
 }
 
-
-/* Responsive shell must override component-level base display rules.
-   Exactly one navigation/layout tree is rendered at each breakpoint. */
+/* Shared responsive page frame: one gutter, content width and bottom safe area. */
 @media (min-width: 1025px) {
   .desktop-layout { display: flex; }
   .mobile-page-shell,
@@ -242,11 +240,42 @@
 }
 @media (max-width: 1024px) {
   .desktop-layout { display: none; }
-  .mobile-page-shell { display: block; }
-  .mobile-dashboard-shell { display: block; }
-  .mobile-bottom-bar { display: flex; }
-  .mobile-page-shell.route-mobile-shell {
-    padding-bottom: calc(160px + env(safe-area-inset-bottom));
+  .mobile-page-shell {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    padding: var(--orbe-space-5) var(--orbe-page-gutter-mobile) calc(160px + env(safe-area-inset-bottom));
+    overflow-x: clip;
+    background: var(--orbe-bg);
   }
-  .app-add-fab.route-add-fab { display: none; }
+  .mobile-page-content {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 720px;
+    min-width: 0;
+    margin-inline: auto;
+  }
+  .mobile-page-content > * { min-width: 0; max-width: 100%; }
+  .mobile-dashboard-shell { display: block; }
+  .mobile-dashboard-shell > .mobile-page-content > .mobile-dashboard { width: 100%; min-width: 0; min-height: 0; }
+  .mobile-dashboard-content { width: 100%; max-width: none; padding: 0; }
+  .mobile-page-shell .movements-page { width: 100%; max-width: none; margin: 0; padding: 0; }
+  .mobile-page-shell .financial-route-page { width: 100%; max-width: none; margin: 0; padding: 0; }
+  .mobile-page-shell .settings-page { width: 100%; max-width: none; margin: 0; padding: 0; }
+  .mobile-page-shell .cards-page,
+  .mobile-page-shell .accounts-page,
+  .mobile-page-shell .reports-page { width: 100%; max-width: none; margin: 0; padding: 0; }
+  .mobile-page-shell .mobile-dashboard-greeting-text { font-size: clamp(20px, 5.4vw, 24px); line-height: 1.2; }
+  .mobile-page-shell .movements-header h1,
+  .mobile-page-shell .financial-route-title h1,
+  .mobile-page-shell .settings-page-header h1 { font-size: 28px; line-height: 1.2; letter-spacing: -.7px; }
+  .mobile-page-shell .movements-page { padding-top: 0; }
+  .mobile-page-shell .movements-brand { margin-top: 0; }
+  .mobile-page-shell.route-mobile-shell { padding-bottom: calc(160px + env(safe-area-inset-bottom)); }
+  .mobile-bottom-bar { display: flex; }
+}
+@media (min-width: 768px) and (max-width: 1024px) {
+  .mobile-page-shell { padding-inline: var(--orbe-page-gutter-tablet); }
 }
