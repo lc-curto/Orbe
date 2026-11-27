@@ -119,8 +119,12 @@ export function useFinancialRouteData(
         if (prefetchCount > 0) {
           const prefetchMonth = shiftMonth(month, visibleCount)
           if (!cachedResponse(prefetchMonth, prefetchCount)) {
-            const response = await fetchFinancialRouteReadModel(prefetchMonth, controller.signal, prefetchCount)
-            if (!controller.signal.aborted) storeResponse(response)
+            try {
+              const response = await fetchFinancialRouteReadModel(prefetchMonth, controller.signal, prefetchCount)
+              if (!controller.signal.aborted) storeResponse(response)
+            } catch {
+              // A falha no pré-carregamento não deve ocultar o mês visível já carregado.
+            }
           }
         }
       } catch (error) {
