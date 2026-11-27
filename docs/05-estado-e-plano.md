@@ -424,4 +424,4 @@ Correção estrutural:
 - A bottom bar usa as variáveis de superfície e borda do tema ativo.
 - Os breakpoints das páginas e componentes foram alinhados ao limite de 1024 px.
 
-**Validação:** CI pendente após esta correção. QA visual em larguras 1440, 1280, 1024, 768, 390 e 320 px permanece necessária antes de integrar na `main`.
+**Validação:** ESLint e build TypeScript/Vite passaram no [CI run 45972363992](https://github.com/lc-curto/Orbe/actions/runs/45972363992), commit `80a308a`. QA visual em larguras 1440, 1280, 1024, 768, 390 e 320 px permanece necessária antes de integrar na `main`.

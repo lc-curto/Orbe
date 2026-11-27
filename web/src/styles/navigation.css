@@ -75,7 +75,7 @@
  * Navigation breakpoint contract:
  * - Desktop (> 1024px): sidebar only.
  * - Tablet/mobile (<= 1024px): bottom navigation only.
- * These declarations must override the inline display:flex applied by Row.
+ * The responsive wrappers have no inline display style; CSS owns visibility.
  */
 @media (min-width: 1025px) {
   .desktop-layout {
