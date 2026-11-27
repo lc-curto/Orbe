@@ -571,4 +571,4 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Mês abreviado + ano na linha seguinte, alinhado à esquerda; setas mínimas alinhadas à direita.
 - Composição aplicada no PageHeader e MonthSelector partilhados para Dashboard, Movimentos e Relatórios.
 - Rota Financeira mantém comportamento diferenciado: intervalo de 3 meses no desktop e mês único no mobile, sem duplicação.
-- Implementação na branch do PR #12; aguardando CI e validação visual do utilizador, sem integração na main.
+- CI passou (Web CI e PR Quality Gate); validação visual manual do utilizador ainda pendente. Implementado na branch do PR #12, sem integração na main.
