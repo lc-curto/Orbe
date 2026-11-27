@@ -112,3 +112,17 @@
 .mobile-more-divider { height: 1px; margin: 8px 4px; background: var(--orbe-border); }
 .mobile-more-logout { color: var(--orbe-danger) !important; }
 .mobile-more-logout:disabled { opacity: .55; cursor: wait; }
+
+
+/* Mobile navigation: only one destination is active at a time. */
+.mobile-bottom-bar .mobile-nav-item {
+  background: transparent !important;
+  color: var(--orbe-muted) !important;
+}
+.mobile-bottom-bar .mobile-nav-item[aria-current="page"] {
+  background: color-mix(in srgb, var(--orbe-teal) 13%, var(--orbe-surface)) !important;
+  color: var(--orbe-teal) !important;
+}
+.mobile-bottom-bar .mobile-nav-item[aria-current="page"] svg {
+  color: var(--orbe-teal);
+}
