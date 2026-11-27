@@ -34,9 +34,8 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
             <Text className="mobile-dashboard-greeting-text" color="#101828" fontWeight="800" numberOfLines={1}>Bom dia, {userName.split(' ')[0]}</Text>
             <Text className="mobile-dashboard-date" color="#667085" fontSize={13}>{period.date}</Text>
           </Stack>
-          <MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="dashboard-month-selector" />
+          <MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />
         </Row>
-        <UiCard className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
         <UiCard className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <Stack gap={12}>
             <Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text>
@@ -45,7 +44,6 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
             <Separator borderColor="rgba(255,255,255,0.24)" />
             <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}>{[['Ganhos', period.income], ['Gastos', period.expenses]].map(([label, value]) => <Stack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{value}</Text></Stack>)}</Row>
           </Stack>
-        </UiCard>
         </UiCard>
         <UiCard {...border} borderRadius={16} padding={16} backgroundColor="#ffffff">
           <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}>
