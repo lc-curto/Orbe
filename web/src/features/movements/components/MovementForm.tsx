@@ -289,13 +289,8 @@ export function MovementForm({
   const [firstInstallmentPaid, setFirstInstallmentPaid] = useState(false)
   const [firstPaidAccount, setFirstPaidAccount] = useState('')
   const [firstPaidDate, setFirstPaidDate] = useState(today)
-  const [outState, setOutState] = useState<'REALIZED' | 'PENDING'>('PENDING')
-  const [inState, setInState] = useState<'REALIZED' | 'PENDING'>('PENDING')
-  const [outDate, setOutDate] = useState(today)
-  const [inDate, setInDate] = useState(today)
-  const [moreOptionsOpen, setMoreOptionsOpen] = useState(false)
-  const [transferDetailsOpen, setTransferDetailsOpen] = useState(false)
-  const [errors, setErrors] = useState<FieldErrors>({})
+   const [moreOptionsOpen, setMoreOptionsOpen] = useState(false)
+   const [errors, setErrors] = useState<FieldErrors>({})
   const [submitting, setSubmitting] = useState(false)
   const idempotencyKey = useRef(`orbe-movement-${window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`}`)
   const isTransfer = kind === 'transfer'
@@ -329,8 +324,7 @@ export function MovementForm({
     || entryMode !== 'single' || frequency !== 'MONTHLY' || paymentMethod !== 'account' || accountMode !== 'immediate'
     || purchaseType !== 'single' || installmentCount !== '2' || firstInstallmentPaid || firstPaidAccount || firstPaidDate !== today()
     || (kind === 'income' ? operationState !== 'PENDING' : kind === 'expense' ? operationState !== 'REALIZED' : false)
-    || outState !== 'PENDING' || inState !== 'PENDING'
-    || outDate !== today() || inDate !== today() || date !== today() || expenseDate !== today())
+    || date !== today() || expenseDate !== today())
 
   function toggleRecurrence(enabled: boolean) {
     setEntryMode(enabled ? 'recurrence' : 'single')
@@ -356,9 +350,7 @@ export function MovementForm({
       if (!account) next.account = 'Seleciona uma conta de origem.'
       if (!destination) next.destination = 'Seleciona uma conta de destino.'
       if (account && destination && account === destination) next.destination = 'A conta de origem e a conta de destino devem ser diferentes.'
-      if (!outDate) next.outDate = 'Introduz uma data válida para a saída.'
-      if (!inDate) next.inDate = 'Introduz uma data válida para a entrada.'
-    } else {
+     } else {
       if (!description.trim()) next.description = 'Introduz uma descrição.'
       if (!category) next.category = 'Seleciona uma categoria.'
       if (isRecurring) {
@@ -383,8 +375,7 @@ export function MovementForm({
     if (!validMoney(amount)) next.amount = 'O valor deve ser superior a zero.'
     setErrors(next)
     if (next.endAt) setMoreOptionsOpen(true)
-    if (isTransfer && (next.outDate || next.inDate)) setTransferDetailsOpen(true)
-    return Object.keys(next).length === 0
+     return Object.keys(next).length === 0
   }
 
   async function submit(event: FormEvent) {
@@ -411,21 +402,14 @@ export function MovementForm({
         })
         onSuccess(kind === 'income' ? 'Programação de rendimento criada.' : 'Programação de gasto criada.')
       } else if (isTransfer) {
+        const effectiveAt = today()
         await createTransfer({
           amount: normalizedAmount,
           description: description.trim() || undefined,
           idempotency_key: idempotencyKey.current,
           legs: {
-            out: {
-              account_id: Number(account),
-              state: outState,
-              ...(outState === 'REALIZED' ? { effective_at: outDate } : { planned_at: outDate }),
-            },
-            in: {
-              account_id: Number(destination),
-              state: inState,
-              ...(inState === 'REALIZED' ? { effective_at: inDate } : { planned_at: inDate }),
-            },
+            out: { account_id: Number(account), state: 'REALIZED', effective_at: effectiveAt },
+            in: { account_id: Number(destination), state: 'REALIZED', effective_at: effectiveAt },
           },
         })
         onSuccess('Transferência registada com sucesso.')
@@ -452,11 +436,7 @@ export function MovementForm({
           account_id: 'account',
           'legs.out.account_id': 'account',
           'legs.in.account_id': 'destination',
-          'legs.out.effective_at': 'outDate',
-          'legs.out.planned_at': 'outDate',
-          'legs.in.effective_at': 'inDate',
-          'legs.in.planned_at': 'inDate',
-          effective_at: 'date',
+           effective_at: 'date',
           planned_at: 'date',
           first_occurrence_at: 'date',
           end_at: 'endAt',
@@ -469,8 +449,7 @@ export function MovementForm({
         })
         setErrors(next)
         if (next.endAt) setMoreOptionsOpen(true)
-        if (isTransfer && (next.outDate || next.inDate)) setTransferDetailsOpen(true)
-      } else {
+       } else {
         setErrors({ form: error instanceof Error ? error.message : 'Não foi possível guardar o movimento. Tenta novamente.' })
       }
     } finally {
@@ -478,15 +457,7 @@ export function MovementForm({
     }
   }
 
-  const legDateLabel = (state: 'REALIZED' | 'PENDING', direction: 'out' | 'in') =>
-    `Data ${state === 'REALIZED' ? 'efetiva' : 'prevista'} da ${direction === 'out' ? 'saída' : 'entrada'}`
-  const transferDetailsSummary = outState === 'REALIZED' && inState === 'REALIZED'
-    ? outDate === today() && inDate === today() ? 'Hoje · ambas realizadas' : 'Ambas realizadas · datas personalizadas'
-    : outState === 'PENDING' && inState === 'PENDING'
-      ? 'Ambas pendentes · datas previstas'
-      : `${outState === 'REALIZED' ? 'Saída realizada' : 'Saída pendente'} · ${inState === 'REALIZED' ? 'entrada realizada' : 'entrada pendente'}`
-
-  return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : kind === 'expense' ? 'Regista o gasto e define como será pago.' : 'Regista o rendimento e indica se já foi recebido.'} onClose={onClose} dirty={dirty} submitting={submitting}>
+   return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : kind === 'expense' ? 'Regista o gasto e define como será pago.' : 'Regista o rendimento e indica se já foi recebido.'} onClose={onClose} dirty={dirty} submitting={submitting}>
     <form className="orbe-movement-form" onSubmit={submit} noValidate>
       <FormErrorSummary errors={errors} />
       {isTransfer ? <>
@@ -494,25 +465,15 @@ export function MovementForm({
           <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
         </FormField>
         <FormField label="Conta de origem" name="account" required error={errors.account}>
-          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder={accounts.length ? "Selecionar conta de origem" : "Não existem contas ativas."} disabled={submitting} />
+          <SelectInput id="account" value={account} onChange={(value) => { setAccount(value); if (value === destination) setDestination('') }} options={accounts} placeholder={accounts.length ? "Selecionar conta de origem" : "Não existem contas ativas."} disabled={submitting} />
         </FormField>
         <div className="orbe-transfer-direction" aria-hidden="true"><span />↓<span /></div>
         <FormField label="Conta de destino" name="destination" required error={errors.destination}>
           <SelectInput id="destination" value={destination} onChange={setDestination} options={accounts.filter((item) => item.value !== account)} placeholder={accounts.length === 0 ? "Não existem contas ativas." : account ? "Selecionar conta de destino" : "Seleciona primeiro a origem"} disabled={submitting || !account} />
         </FormField>
-        <OrbeDisclosure title="Mais detalhes" description={transferDetailsSummary} open={transferDetailsOpen} onOpenChange={setTransferDetailsOpen}>
-          <OrbeFormToggle id="outStateRealized" label="Registar saída como realizada" description="Confirma que o dinheiro já saiu da conta." checked={outState === 'REALIZED'} onChange={(checked) => setOutState(checked ? 'REALIZED' : 'PENDING')} disabled={submitting} />
-          <FormField label={legDateLabel(outState, 'out')} name="outDate" required error={errors.outDate}>
-            <DateInput id="outDate" value={outDate} onChange={setOutDate} disabled={submitting} />
-          </FormField>
-          <OrbeFormToggle id="inStateRealized" label="Registar entrada como realizada" description="Confirma que o dinheiro já entrou na conta." checked={inState === 'REALIZED'} onChange={(checked) => setInState(checked ? 'REALIZED' : 'PENDING')} disabled={submitting} />
-          <FormField label={legDateLabel(inState, 'in')} name="inDate" required error={errors.inDate}>
-            <DateInput id="inDate" value={inDate} onChange={setInDate} disabled={submitting} />
-          </FormField>
-          <FormField label="Descrição (opcional)" name="description" error={errors.description}>
-            <Textarea id="description" value={description} onChange={setDescription} maxLength={500} disabled={submitting} />
-          </FormField>
-        </OrbeDisclosure>
+        <FormField label="Observações (opcional)" name="description" error={errors.description}>
+          <Textarea id="description" value={description} onChange={setDescription} maxLength={500} disabled={submitting} />
+        </FormField>
       </> : <>
         <FormField label="Descrição" name="description" required error={errors.description}>
           <TextInput id="description" value={description} onChange={setDescription} maxLength={500} placeholder={kind === 'income' ? 'Ex.: Salário' : 'Ex.: Supermercado'} disabled={submitting} />
