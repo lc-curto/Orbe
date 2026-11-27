@@ -17,9 +17,9 @@ final class FinancialRouteReadService
     public function __construct(private readonly CardInvoiceSummaryService $invoiceSummaries) {}
 
     /** @return array<string, mixed> */
-    public function build(int $userId, string $firstMonth): array
+    public function build(int $userId, string $firstMonth, int $projectionMonths = self::PROJECTION_MONTHS): array
     {
-        return DB::transaction(function () use ($userId, $firstMonth): array {
+        return DB::transaction(function () use ($userId, $firstMonth, $projectionMonths): array {
             $today = now()->toDateString();
             $accountIds = FinancialAccount::query()
                 ->where('user_id', $userId)
@@ -232,7 +232,7 @@ final class FinancialRouteReadService
             };
 
             $months = [];
-            for ($index = 0; $index < self::PROJECTION_MONTHS; $index++) {
+            for ($index = 0; $index < $projectionMonths; $index++) {
                 $month = $this->shiftMonth($firstMonth, $index);
                 $bounds = $this->monthBounds($month);
                 $days = [];
