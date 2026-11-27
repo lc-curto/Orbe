@@ -177,7 +177,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Implementar endpoint mínimo de transferências com confirmação de pernas pendentes.
 - [x] Implementar endpoints de recorrências, geração idempotente, materialização e alterações de ocorrências.
 - [ ] Implementar endpoints de edição, cancelamento, eliminação e reversão contextual.
-- [ ] Integrar o frontend com a API e a autenticação.
+- [x] Integrar frontend com API e autenticação para leitura e criação básica de Movimentos; ações contextuais e restantes formulários continuam pendentes.
 
 ## 4. Dashboard e Design System
 
