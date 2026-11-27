@@ -9,9 +9,9 @@ A política e os Gates A/B/C de `AGENTS.md` aplicam-se a todas as PRs. Não deix
 
 - [ ] Inspecionei os padrões existentes no módulo e os documentos técnicos aplicáveis.
 - [ ] Avaliei duplicação, estado derivável, acoplamento, responsabilidades, APIs obsoletas e violações da stack.
-- [ ] Corrigi os problemas locais, relacionados e de baixo risco encontrados.
+- [ ] Corrigi os problemas locais, relacionados e de baixo risco encontrados; qualquer exceção está registada abaixo.
 - [ ] Reutilizei componentes, serviços, tokens e padrões existentes quando adequados.
-- [ ] Não introduzi abstração, dependência, override ou arquitetura sem necessidade demonstrada.
+- [ ] Não introduzi abstração, dependência, override ou arquitetura sem justificação; qualquer exceção está registada abaixo.
 - [ ] Findings não corrigidos estão registados com motivo, impacto, dependência e critério de aceitação (ou indique “Nenhum” abaixo).
 - [ ] Revisei o diff final à procura de código/estilos duplicados, alterações incidentais e inconsistências.
 
