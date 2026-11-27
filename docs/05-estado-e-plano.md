@@ -61,10 +61,10 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 | Tema | Decisão pendente |
 |---|---|
-| Planos de fatura vencidos | Se existe débito automático ou reagendamento automático após o vencimento; sem aprovação, não inventar nova data. |
-| Faturas anteriores | Como apresentar faturas de ciclos anteriores que continuam com obrigação em aberto. |
-| Compra no dia do fecho | Regra de atribuição ao ciclo quando a compra ocorre na data de fecho. |
-| Crédito negativo de fatura | Se é permitido, como transita para ciclos seguintes e em que condições pode ser devolvido à conta. |
+| Planos de fatura vencidos | **Decidido:** não existe débito automático nem reagendamento automático; pagamento é registado pelo utilizador quando ocorre e a obrigação permanece vencida até confirmação. |
+| Faturas anteriores | **Decidido:** faturas de ciclos anteriores com saldo em dívida são agrupadas como vencidas no resumo, mantendo cada fatura consultável. |
+| Compra no dia do fecho | **Decidido:** segue a configuração/ciclo do cartão e a fatura efetivamente atribuída pelo sistema. |
+| Crédito/estorno de cartão | **Decidido:** seguir o lançamento real do emissor e a fatura/ciclo em que o crédito foi aplicado; não assumir abatimento à fatura mais antiga. Se permanecer crédito no cartão, transportar conforme o emissor; se for devolvido à conta, registar entrada na conta pela data real. |
 | Estimativa variável da Rota | Categorias iniciais, janela histórica, fórmula, distribuição diária e comunicação de dados `UNCLASSIFIED`. |
 | Moeda | Se a moeda principal pode mudar depois de existirem movimentos. A precisão e o arredondamento do núcleo estão aprovados em ARC-003 (`DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas). |
 | Saldo inicial de conta | **Decidido:** informar o saldo existente ao iniciar a utilização da conta no Orbe; registar como abertura, não como receita/despesa. |
@@ -85,8 +85,8 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 - Plano parcial projeta parcelas nas datas planeadas e apenas o residual não reservado no vencimento da fatura.
 
 **Questões ainda em aberto:**
-- Crédito negativo de fatura: proposta a validar — aplicar o crédito à obrigação em aberto mais antiga do mesmo cartão, avançando para obrigações seguintes se o crédito exceder a mais antiga. Se todas as obrigações estiverem liquidadas e sobrar crédito, mantê-lo como crédito disponível no cartão, sem criar entrada em conta.
-- Operações registadas como realizadas com data efetiva futura: clarificar se este estado/data é permitido no produto e, se for, como o efeito deve aparecer antes da data efetiva.
+- **Crédito/estorno de cartão:** a aplicação do crédito é determinada pelo extrato e pelas regras reais do emissor. O Orbe não escolhe uma fatura por antiguidade nem inventa transferência para conta; regista o efeito na fatura/ciclo ou conta em que o emissor efetivamente o liquidou.
+- **Data de pagamento:** resolvido. Pagamento realizado só pode ter data de hoje ou passada. A Rota considera a data efetiva real; efeitos anteriores à data de referência já estão incluídos no saldo atual e não são reaplicados na projeção.
 
 **Resolvido nesta revisão:** definição do saldo inicial, fórmula acumulada diária, continuidade entre dias/períodos e princípio de cálculo/read model comum. O read model deve expor/calcular os efeitos elegíveis por data a partir do domínio financeiro central; não é uma fonte financeira paralela.
 
