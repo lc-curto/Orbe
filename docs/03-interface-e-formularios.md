@@ -1241,3 +1241,11 @@ Regras obrigatórias para todas as páginas:
 
 
 - Robustness: o fundo verde do card de saldo é definido explicitamente no próprio card e reforçado por uma regra dark-mode específica com prioridade; outros cards continuam a usar os tokens de tema.
+
+
+### Navegação mobile — estado do item Mais e painel
+
+- Ao abrir o painel Mais, o item Mais é o único item da navegação inferior marcado como ativo; a página subjacente deixa de manter o destaque simultâneo.
+- O painel Mais usa superfície de tema, pega visual superior, borda de acento e sombra; o fundo recebe overlay com blur para tornar explícita a separação.
+- O contraste do painel e do overlay é ajustado também para dark mode.
+- O destaque do bottom navigation usa tokens de tema, sem cores light-mode fixas em inline styles.
