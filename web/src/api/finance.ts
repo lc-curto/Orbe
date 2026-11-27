@@ -1,5 +1,5 @@
 import { apiRequest } from './client'
-import type { Account, ApiEnvelope, Card, CardInvoice, Category, Operation, RecurrenceOccurrence, RecurrenceSchedule } from './types'
+import type { Account, ApiEnvelope, Card, CardInvoice, Category, FinancialRouteReadModel, Operation, RecurrenceOccurrence, RecurrenceSchedule } from './types'
 
 export async function fetchCards(): Promise<Card[]> {
   return apiRequest<Card[]>('/cards')
