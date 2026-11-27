@@ -387,11 +387,11 @@
   }
   .mobile-page-shell .orbe-page-header-actions .orbe-month-selector {
     flex: 0 0 auto;
-    min-width: 104px;
+    min-width: 0;
     margin: 0;
   }
   .orbe-page-header-copy h1 {
-    font-size: clamp(25px, 6.5vw, 30px);
+    font-size: clamp(22px, 6.5vw, 30px);
     line-height: 1.15;
     letter-spacing: -.6px;
   }
@@ -530,7 +530,7 @@
   .mobile-dashboard-period-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: var(--orbe-space-3);
     width: 100%;
     min-width: 0;
@@ -544,7 +544,7 @@
   }
   .mobile-dashboard-period-row .dashboard-month-selector {
     flex: 0 0 auto;
-    min-width: 132px;
+    min-width: 0;
     margin: 0;
   }
   .mobile-dashboard-period-row .orbe-month-selector-label {
