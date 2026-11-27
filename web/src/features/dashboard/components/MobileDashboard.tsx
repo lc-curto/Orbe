@@ -1,6 +1,7 @@
 import { Card as UiCard, Text, Row, Stack } from '../../../design-system/primitives'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { DashboardSections } from './DashboardSections'
+import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
 import type { DashboardMovement } from './DashboardSections'
 
 const border = { borderWidth: 1, borderColor: '#e4e7ec' as const }
@@ -9,15 +10,17 @@ function formatMoney(amount: string, symbol: CurrencySymbol): string {
   return formatCurrency(amount, symbol)
 }
 
-export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading }: {
+export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading, authError, logoutError }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
-  card?: import('../../../api/types').Card
-  invoice?: import('../../../api/types').CardInvoice
+  card?: FinancialCard
+  invoice?: CardInvoice
   setActiveKey: (value: string) => void
   categories: Array<{ name: string; amount: string; percentage: number }>
   loading: boolean
+  authError: string | null
+  logoutError: string | null
   userName: string
   movements: DashboardMovement[]
 }) {
@@ -32,6 +35,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           </Stack>
           <MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />
         </Row>
+        {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
         <UiCard className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <Stack gap={12}>
             <Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text>
