@@ -15,6 +15,7 @@
   --orbe-financial-highlight-muted: #dbeafe;
   --orbe-financial-highlight-border: rgba(255, 255, 255, 0.18);
   --orbe-financial-highlight-shadow: 0 8px 22px rgba(15, 118, 110, 0.16);
+  --orbe-financial-highlight-padding: 20px;
   --orbe-radius-card: 16px;
   --orbe-radius-control: 10px;
   --orbe-nav-height: 72px;
