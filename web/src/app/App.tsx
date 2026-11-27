@@ -300,17 +300,17 @@ export default function App() {
         </button>
         <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <div className="desktop-layout">
-          <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`}>
+          <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} borderRightWidth={1} borderRightColor="var(--orbe-border)">
             <Row style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom={28}>
               {sidebarOpen ? <Text className="desktop-sidebar-brand" fontSize={28} fontWeight="800">Orbe</Text> : null}
-              <Button className="desktop-sidebar-collapse-button" onPress={toggleSidebar} aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'}>
+              <Button className="desktop-sidebar-collapse-button" onPress={toggleSidebar} aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'} borderWidth={1} backgroundColor="var(--orbe-bg)">
                 <AppIcon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} />
               </Button>
             </Row>
             <Stack className="desktop-sidebar-navigation" gap={18} flex={1}>
               {sidebarGroups.map((group) => <Stack key={group.title} className="sidebar-nav-group" gap={7}>
                 {sidebarOpen ? <Text className="sidebar-group-title">{group.title.toUpperCase()}</Text> : null}
-                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} className="sidebar-nav-button" justifyContent={sidebarOpen ? 'flex-start' : 'center'}>
+                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} className="sidebar-nav-button" justifyContent={sidebarOpen ? 'flex-start' : 'center'} backgroundColor={activeKey === item.label ? 'color-mix(in srgb, var(--orbe-teal) 13%, var(--orbe-surface))' : 'transparent'}>
                   <Row className="sidebar-nav-row" width="100%" style={{ alignItems: 'center' }}><AppIcon name={item.icon} size={sidebarOpen ? 18 : 20} strokeWidth={2} />{sidebarOpen ? <Text>{item.label}</Text> : null}</Row>
                 </Button>)}
               </Stack>)}
@@ -324,7 +324,7 @@ export default function App() {
               </Button>
               <Stack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
                 <span ref={accountMenuAnchorRef} className="account-menu-anchor">
-                  <Button className={`sidebar-profile-button sidebar-footer-action${accountMenuOpen ? ' is-open' : ''}`} onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} justifyContent={sidebarOpen ? 'flex-start' : 'center'}>
+                  <Button className={`sidebar-profile-button sidebar-footer-action${accountMenuOpen ? ' is-open' : ''}`} onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} justifyContent={sidebarOpen ? 'flex-start' : 'center'} backgroundColor={accountMenuOpen ? 'color-mix(in srgb, var(--orbe-muted) 10%, var(--orbe-surface))' : 'transparent'}>
                     <Row className="sidebar-profile-copy" alignItems="center" gap={10} width="100%"><AppIcon name="user" size={20} strokeWidth={2} />{sidebarOpen ? <Stack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></Stack> : null}</Row>
                   </Button>
                 </span>
