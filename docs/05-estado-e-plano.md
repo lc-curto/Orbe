@@ -580,3 +580,11 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Reforçada a distinção do bottom sheet Mais com pega, borda superior teal, sombra e overlay/blur do conteúdo atrás.
 - Cores de seleção da navegação passam a respeitar tokens de light/dark mode.
 - Alteração na branch do PR #12; não integrada na main, pendente de QA visual manual.
+
+
+### Padrão de cards financeiros e ícone Configurações
+
+- Reutilizado o destaque verde do Dashboard nos resumos de saldo final da Rota Financeira (mobile), saldo total de Contas, total em dívida de Cartões e resumo da fatura selecionada.
+- O padrão é aplicado por uma classe partilhada, com gradiente e cores explícitos que não mudam em dark mode. Não afeta cards secundários, listas ou tabelas.
+- Ícone da página Configurações alterado de símbolo tipo sol para engrenagem, distinguindo-o do controlo de tema.
+- Implementação na branch do PR #12; pendente de CI e validação visual manual. Não integrada na main.
