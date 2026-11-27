@@ -411,3 +411,13 @@ Este documento é um mapa de execução, não substitui as especificações func
 Tamagui foi removido da stack web. A interface utiliza React, TypeScript, HTML semântico, CSS e primitives próprias do design system em `web/src/design-system/primitives.tsx`. O tema global permanece baseado em `data-theme` e tokens CSS. Foram removidos Tamagui Provider/configuração/plugin, alias React Native Web e dependências Tamagui/react-native-web. A página de Configurações foi restaurada ao commit anterior à migração Tamagui; os restantes componentes que dependiam da biblioteca foram desacoplados de forma explícita.
 
 **Validação CI:** `npm ci`, ESLint e build TypeScript/Vite passaram no run [45886977125](https://github.com/lc-curto/Orbe/actions/runs/45886977125). **QA visual desktop/mobile permanece pendente**.
+
+
+### Correção responsiva da navegação (27/11/2026)
+
+Corrigida a coexistência da sidebar e da bottom bar: os componentes de layout aplicavam `display:flex` inline, que anulava a regra CSS de ocultação. A visibilidade agora é explicitamente controlada com regras de breakpoint e `!important`:
+
+- Desktop (≥1024 px): sidebar/layout desktop visível; bottom bar oculta.
+- Tablet e mobile (≤1023 px): sidebar/layout desktop ocultos; bottom bar visível.
+
+**Validação:** código e contrato de breakpoint revistos; lint/build CI pendentes para este commit. QA visual real nos tamanhos desktop/tablet/mobile continua necessária.
