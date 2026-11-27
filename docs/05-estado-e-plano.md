@@ -647,23 +647,25 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 
 ## Decisão aprovada — formulário completo de gasto (2026-11-27)
 
-O fluxo visual completo foi aprovado pelo utilizador. A documentação de interface, regras financeiras, modelo e API foi adaptada para refletir a decisão; **a implementação ainda não está autorizada a começar sem fechar os contratos e atualizar o modelo**.
+O fluxo visual completo foi aprovado pelo utilizador. **A interface está implementada no PR #12**; o modelo físico, serviços e contratos necessários para persistir todas as modalidades ainda precisam de ser implementados.
 
 - Método: Conta ou Cartão; «A prazo» é modalidade, não método.
-- Conta: modalidades Imediato, Data futura e Prestações. Conta prevista separada da conta efetiva; vencimento separado da data do lançamento e da data efetiva de pagamento.
+- Conta: modalidades Imediato, Data futura e Prestações. Conta prevista separada da conta efetiva; vencimento separado da data do gasto e da data efetiva de pagamento.
 - Em prestações por Conta, permitir marcar primeira prestação já paga e recolher conta efetiva + data efetiva. O pagamento inicial liquida a prestação sem duplicar despesa.
 - Cartão: cartão + compra única/parcelada + número de prestações. Faturas/vencimentos calculados pelo ciclo; sem vencimento manual e sem checkbox de primeira prestação paga no formulário.
-- Contas e cartões devem ser carregados das entidades reais do utilizador; protótipo não representa persistência.
+- Contas e cartões são carregados das entidades reais do utilizador; não são usadas opções mockadas.
+- As modalidades ainda sem suporte API ficam bloqueadas no submit, evitando persistência parcial ou perda silenciosa.
 
-### Trabalho necessário antes da implementação
-1. Atualizar modelo ER/UML e esquema físico para modalidade, plano/prestações e conta prevista.
-2. Definir e implementar contratos API para criação pendente com conta prevista, plano parcelado e liquidação inicial opcional.
-3. Definir o cálculo de alocação de compra de cartão às faturas e o read model da pré-visualização.
-4. Atualizar regras de confirmação/pagamento e ações de Movimentos/Cartões para refletir prestações e conta prevista.
-5. Implementar testes de integridade, idempotência, arredondamento, ciclo do cartão e ausência de dupla contagem.
-6. Só depois implementar o formulário aprovado e realizar QA visual/funcional desktop, tablet e mobile.
+### Trabalho restante no backend
+1. Atualizar modelo ER/UML e esquema físico para conta prevista, plano e prestações individuais.
+2. Implementar serviços transacionais/idempotentes para plano parcelado e pagamento inicial opcional.
+3. Alterar contratos API para gasto pendente com conta prevista e compra de cartão calculada pelo backend.
+4. Persistir notas e distinguir data do gasto, vencimento e data efetiva.
+5. Atualizar regras/read models de Movimentos, Contas, Cartões/Faturas e Rota Financeira.
+6. Implementar testes de integridade, idempotência, arredondamento, ciclo do cartão e ausência de dupla contagem.
+7. Ligar os contratos no frontend, remover os bloqueios das modalidades já suportadas e executar QA visual/funcional desktop, tablet e mobile.
 
-Estado: decisão de UX aprovada; especificação documental atualizada; extensão de modelo/API por definir/implementar; formulário ainda não implementado.
+Estado: UX aprovada; interface implementada no PR #12; integração financeira completa pendente.
 
 ---
 
