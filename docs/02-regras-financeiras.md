@@ -38,6 +38,8 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Gasto ou ganho pendente pode ser guardado sem destino financeiro: não exige nem apresenta conta, cartão, fatura ou outro meio de liquidação.
 - Gasto ou ganho realizado exige selecionar o destino/instrumento adequado ao fluxo antes de guardar. Se a operação estava pendente, essa associação é recolhida ao confirmá-la como realizado.
 - Data prevista não confirma pagamento ou recebimento.
+- Uma operação só pode ser registada como realizada quando o pagamento/recebimento já ocorreu: a data efetiva é hoje ou uma data passada, nunca futura.
+- A data efetiva do pagamento determina quando o efeito ocorreu. Se for anterior ou igual à data de referência do saldo atual, o efeito já está refletido no saldo atual e não pode ser novamente projetado; se for hoje, a Rota considera-o no dia efetivo, sem o deslocar para o vencimento.
 - Pendentes e projeções não alteram saldos efetivos.
 - Cancelamento preserva histórico e retira a operação da projeção.
 - Apenas a Rota Financeira apresenta projeções.
@@ -59,6 +61,9 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - A redução de cada fatura é alocada explicitamente a um ou mais lançamentos de obrigação dessa mesma fatura, sem exceder o saldo de cada obrigação.
 - Um único pagamento pode abranger várias faturas: uma saída total na conta e uma redução por fatura; todos os efeitos e alocações são atómicos.
 - Reembolsos mantêm ligação à operação de origem e o respetivo destino é determinado pelos lançamentos ARC-001.
+- Crédito/estorno de uma compra no cartão deve reproduzir o lançamento real do emissor: reduzir a obrigação da fatura/ciclo em que o crédito foi efetivamente aplicado pelo emissor. Não aplicar automaticamente o crédito à fatura mais antiga nem escolher um ciclo por regra interna do Orbe.
+- Se o emissor mantiver o valor como crédito disponível no cartão, registá-lo como crédito do cartão e transportá-lo/compensá-lo nas faturas seguintes conforme o extrato e as regras reais do emissor; não criar entrada fictícia numa conta bancária.
+- Se o emissor devolver o valor à conta bancária, registar a entrada nessa conta pela data efetiva da devolução. A origem do reembolso permanece ligada à compra original. A Rota reflete o destino e a data efetivos, sem duplicar a despesa original.
 
 ### Saldo inicial de cartões
 - O saldo já utilizado antes da entrada no Orbe é registado por uma operação própria, sem natureza de receita/despesa e sem saída de conta.
@@ -92,6 +97,7 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Não existe débito automático na Rota Financeira. O sistema não presume execução nem cria reagendamento automático; o utilizador deve registar a ação efetiva de pagamento. Até essa confirmação, a obrigação permanece vencida e não é deslocada para uma nova data projetada.
 - A data de uma compra no cartão segue a regra e a configuração do ciclo do próprio cartão. A Rota utiliza a fatura à qual a compra foi efetivamente alocada pelo sistema, sem impor uma regra universal para compras no dia do fecho.
 - Um pagamento confirmado substitui o valor correspondente da projeção por lançamentos efetivos, sem duplicação.
+- Pagamento realizado não pode ter data efetiva futura. A data efetiva é a data real em que o pagamento aconteceu (hoje ou no passado); a Rota considera essa data, nunca uma data futura prevista nem o vencimento como se fossem pagamento.
 - O valor projetado para uma fatura nunca pode contar duas vezes a mesma parcela da obrigação.
 
 ### Ciclos de faturação
