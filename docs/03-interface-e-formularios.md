@@ -127,19 +127,10 @@ Reutiliza estrutura de Contas.
 ## Configurações — aprovado
 - Preferências: Perfil, Moeda de apresentação, Categorias, Aparência e preferências.
 - Moeda de apresentação: lista de 10 símbolos monetários, incluindo Real brasileiro (BRL, R$); a seleção altera apenas o símbolo apresentado, sem conversão nem alteração de valor.
-- Aparência: alternar entre tema claro e escuro; preferência guardada localmente e aplicada à interface.
+- Aparência: Claro, Escuro e Sistema; preferência guardada localmente e aplicada globalmente. Sistema acompanha `prefers-color-scheme`.
 - Segurança e Dados: Segurança, Dados e cópias de segurança.
 - Sobre o Orbe.
 - Não editar movimentos, contas, cartões ou obrigações diretamente nesta página.
-
-### Comportamento aprovado — Relatórios e moeda (2026-11-26)
-- O seletor de mês/ano de Relatórios reutiliza o componente e o padrão responsivo de posicionamento/alinhamento já adotado em Movimentos. Não criar um novo padrão de cabeçalho ou deslocar o seletor.
-- Relatórios apresenta apenas operações realizadas no período selecionado; não inclui pendentes, canceladas ou projeções.
-- As análises são calculadas a partir dos dados reais disponíveis na API. Quando um read model ainda não expõe uma dimensão (por exemplo, histórico de pagamentos/evolução de obrigações), apresentar um estado informativo e não estimar nem inventar valores.
-- A preferência de moeda altera exclusivamente o símbolo apresentado na interface. Não efetua câmbio, conversão, alteração de valores guardados, saldos, cálculos, precisão ou escala. É uma preferência de apresentação, não uma alteração da denominação financeira dos movimentos.
-- A implementação frontend deve centralizar a preferência e a formatação para evitar formatadores divergentes entre páginas. A escolha persistida no navegador não altera os dados da API nem implica sincronização entre dispositivos.
-- A lista de moedas inclui USD, EUR, JPY, GBP, CNY, CHF, AUD, CAD, HKD e BRL. O BRL é incluído explicitamente por preferência do produto no lugar do SGD, que integra o top 10 estrito de volume cambial do BIS 2025. Assim, a lista contém as nove moedas mais negociadas do levantamento e o BRL; não é o top 10 estrito do BIS. Fonte de referência: [BIS, tabela D11.3 — volume cambial por moeda, abril de 2025](https://data.bis.org/topics/DER/tables-and-dashboards/BIS%2CDER_D11_3%2C1.0).
-- O tema claro/escuro é uma preferência visual global, persistida no navegador. Não altera dados nem regras financeiras.
 
 ## Ordem de desenho aprovada
 Concluir páginas principais; desenhar subpáginas; definir modais; auditar consistência e reaproveitamento.
