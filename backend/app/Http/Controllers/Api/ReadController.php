@@ -67,7 +67,7 @@ final class ReadController extends Controller
     }
 
     /** @param array<int, array{obligation_amount:string,paid_amount:string,open_amount:string}> $summaries
-     *  @return array<string, mixed>
+     * @return array<string, mixed>
      */
     private function cardPayload(Card $card, array $summaries): array
     {
@@ -88,7 +88,7 @@ final class ReadController extends Controller
     }
 
     /** @param array{obligation_amount:string,paid_amount:string,open_amount:string}|null $summary
-     *  @return array<string, mixed>
+     * @return array<string, mixed>
      */
     private function invoicePayload(CardInvoice $invoice, ?array $summary): array
     {
@@ -98,6 +98,7 @@ final class ReadController extends Controller
             'paid_amount' => '0.0000',
             'open_amount' => '0.0000',
         ];
+
         return $payload;
     }
 }
