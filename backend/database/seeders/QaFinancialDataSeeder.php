@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Database\\Seeders;
+namespace Database\Seeders;
 
-use App\\Models\\Category;
-use App\\Models\\FinancialAccount;
-use App\\Models\\User;
-use Illuminate\\Database\\Seeder;
-use Illuminate\\Support\\Facades\\DB;
+use App\Models\Category;
+use App\Models\FinancialAccount;
+use App\Models\User;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Creates a predictable, non-destructive dataset for local UI/API QA.
