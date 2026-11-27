@@ -85,7 +85,7 @@ test('itens vencidos não são reagendados nem descontados novamente do saldo', 
 })
 
 test('formata moeda com arredondamento half-up sem sinal negativo em zero', () => {
-  assert.equal(formatMoneyUnits(123456789n), '12.345,68')
+  assert.equal(formatMoneyUnits(123456789n), '12 345,68')
   assert.equal(formatMoneyUnits(-49n), '0,00')
   assert.equal(formatMoneyUnits(-50n), '−0,01')
 })
