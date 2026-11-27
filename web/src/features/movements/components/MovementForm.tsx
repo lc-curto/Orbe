@@ -274,6 +274,7 @@ export function MovementForm({
   const [category, setCategory] = useState('')
   const [account, setAccount] = useState('')
   const [date, setDate] = useState(today)
+  const [expenseDate, setExpenseDate] = useState(today)
   const [entryMode, setEntryMode] = useState<'single' | 'recurrence'>('single')
   const [frequency, setFrequency] = useState<'DAILY' | 'WEEKLY' | 'MONTHLY'>('MONTHLY')
   const [endAt, setEndAt] = useState('')
@@ -320,7 +321,8 @@ export function MovementForm({
     })),
     [categoryRecords, nature],
   )
-  const unsupportedExpenseFlow = kind === 'expense' && !isRecurring && (paymentMethod === 'card' || accountMode !== 'immediate')
+  const unsupportedExpenseDate = kind === 'expense' && !isRecurring && paymentMethod === 'account' && accountMode === 'immediate' && expenseDate !== date
+  const unsupportedExpenseFlow = kind === 'expense' && !isRecurring && (paymentMethod === 'card' || accountMode !== 'immediate' || unsupportedExpenseDate)
   const unsupportedNotes = !isTransfer && Boolean(notes.trim())
   const blockedUntilBackend = unsupportedExpenseFlow || unsupportedNotes
   const dirty = Boolean(description || notes || amount || category || account || plannedAccount || selectedCard || destination || endAt
@@ -328,7 +330,7 @@ export function MovementForm({
     || purchaseType !== 'single' || installmentCount !== '2' || firstInstallmentPaid || firstPaidAccount || firstPaidDate !== today()
     || (kind === 'income' ? operationState !== 'PENDING' : kind === 'expense' ? operationState !== 'REALIZED' : false)
     || outState !== 'PENDING' || inState !== 'PENDING'
-    || outDate !== today() || inDate !== today() || date !== today())
+    || outDate !== today() || inDate !== today() || date !== today() || expenseDate !== today())
 
   function toggleRecurrence(enabled: boolean) {
     setEntryMode(enabled ? 'recurrence' : 'single')
@@ -521,6 +523,7 @@ export function MovementForm({
         <FormField label="Categoria" name="category" required error={errors.category}>
           <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder={categories.length ? "Selecionar categoria" : `Não existem categorias ativas de ${kind === "income" ? "rendimento" : "gasto"}.`} disabled={submitting} />
         </FormField>
+        {kind === 'expense' && !isRecurring ? <FormField label="Data do gasto" name="expenseDate" required error={errors.expenseDate}><DateInput id="expenseDate" value={expenseDate} onChange={setExpenseDate} disabled={submitting} /></FormField> : null}
         {(kind === 'income' || isRecurring) ? <FormField label={isRecurring ? 'Primeira ocorrência' : operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
           <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
         </FormField> : null}
@@ -556,7 +559,6 @@ export function MovementForm({
               {([{ value: 'single', label: 'Compra única' }, { value: 'installments', label: 'Compra parcelada' }] as const).map((option) => <button key={option.value} type="button" role="radio" aria-checked={purchaseType === option.value} className={`orbe-choice-card ${purchaseType === option.value ? 'is-selected' : ''}`} onClick={() => setPurchaseType(option.value)} disabled={submitting}><strong>{option.label}</strong></button>)}
             </div>
             {purchaseType === 'installments' ? <FormField label="Número de prestações" name="installmentCount" required error={errors.installmentCount}><SelectInput id="cardInstallmentCount" value={installmentCount} onChange={setInstallmentCount} options={[2,3,4,5,6,8,10,12,18,24,36,48].map((n) => ({ value: String(n), label: String(n) }))} placeholder="Selecionar número" disabled={submitting} /></FormField> : null}
-            <FormField label="Data da compra" name="date" required error={errors.date}><DateInput id="date" value={date} onChange={setDate} disabled={submitting} /></FormField>
             <p className="orbe-form-helper">O Orbe deverá distribuir a compra pelas faturas conforme o ciclo do cartão. Não é necessário escolher faturas ou vencimentos.</p>
           </>}
         </section> : null}
@@ -579,7 +581,7 @@ export function MovementForm({
           </FormField>
         </OrbeDisclosure>
       </>}
-      {blockedUntilBackend ? <p className="orbe-form-blocked-note" role="status">{unsupportedNotes ? 'As notas ainda não são guardadas pela API.' : 'Interface preparada. Esta modalidade só poderá ser guardada quando a API e o modelo financeiro forem implementados.'}</p> : null}
+      {blockedUntilBackend ? <p className="orbe-form-blocked-note" role="status">{unsupportedNotes ? 'As notas ainda não são guardadas pela API.' : unsupportedExpenseDate ? 'A data do gasto e a data efetiva ainda não são campos distintos no contrato atual.' : 'Interface preparada. Esta modalidade só poderá ser guardada quando a API e o modelo financeiro forem implementados.'}</p> : null}
       <FormActions onCancel={onClose} loading={submitting} disabled={blockedUntilBackend} submitLabel={isRecurring ? 'Criar programação' : isTransfer ? 'Guardar transferência' : kind === 'income' ? 'Guardar rendimento' : 'Guardar gasto'} />
     </form>
   </ResponsiveFormContainer>
