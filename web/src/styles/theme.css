@@ -202,3 +202,81 @@
 [data-theme="dark"] .mobile-more-account small { color: var(--orbe-muted); }
 [data-theme="dark"] .mobile-more-divider { background: var(--orbe-border); }
 [data-theme="dark"] .sidebar-logout-action { color: var(--orbe-danger) !important; }
+
+
+/* Theme-aware surfaces across desktop, tablet and mobile feature shells. */
+[data-theme="dark"] .mobile-page-shell .orbe-card,
+[data-theme="dark"] .mobile-page-shell .movement-kpi,
+[data-theme="dark"] .mobile-page-shell .movement-list,
+[data-theme="dark"] .mobile-page-shell .schedule-list,
+[data-theme="dark"] .mobile-page-shell .accounts-total-card,
+[data-theme="dark"] .mobile-page-shell .accounts-list,
+[data-theme="dark"] .mobile-page-shell .cards-total-card,
+[data-theme="dark"] .mobile-page-shell .cards-detail-summary,
+[data-theme="dark"] .mobile-page-shell .cards-invoices-list,
+[data-theme="dark"] .mobile-page-shell .report-panel,
+[data-theme="dark"] .mobile-page-shell .route-month-card,
+[data-theme="dark"] .mobile-page-shell .route-mobile-summary,
+[data-theme="dark"] .mobile-page-shell .route-table-wrap,
+[data-theme="dark"] .mobile-page-shell .settings-section,
+[data-theme="dark"] .mobile-page-shell .settings-preference-group,
+[data-theme="dark"] .mobile-page-shell .settings-detail-card,
+[data-theme="dark"] .mobile-page-shell .settings-information-panel,
+[data-theme="dark"] .mobile-page-shell .settings-profile-card,
+[data-theme="dark"] .mobile-dashboard-shell .orbe-card {
+  background: var(--orbe-surface) !important;
+  color: var(--orbe-text) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .mobile-page-shell .empty-state,
+[data-theme="dark"] .mobile-page-shell .accounts-state,
+[data-theme="dark"] .mobile-page-shell .report-empty,
+[data-theme="dark"] .mobile-page-shell .report-state,
+[data-theme="dark"] .mobile-page-shell .schedule-list-header,
+[data-theme="dark"] .mobile-page-shell .cards-invoice-day-list,
+[data-theme="dark"] .mobile-page-shell .cards-invoice-row,
+[data-theme="dark"] .mobile-page-shell .movement-row,
+[data-theme="dark"] .mobile-page-shell .accounts-row {
+  color: var(--orbe-text);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .mobile-page-shell .movement-tabs,
+[data-theme="dark"] .mobile-page-shell .movement-tabs button,
+[data-theme="dark"] .mobile-page-shell .filter-chips button,
+[data-theme="dark"] .mobile-page-shell .route-flow-filters button,
+[data-theme="dark"] .mobile-page-shell .route-mobile-flow-filters button,
+[data-theme="dark"] .mobile-page-shell .accounts-status-filter,
+[data-theme="dark"] .mobile-page-shell .cards-invoice-search {
+  background-color: var(--orbe-surface) !important;
+  color: var(--orbe-text) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .mobile-page-shell .movement-tabs button.active,
+[data-theme="dark"] .mobile-page-shell .filter-chips button.selected,
+[data-theme="dark"] .mobile-page-shell .route-flow-filters button.active,
+[data-theme="dark"] .mobile-page-shell .route-mobile-flow-filters button.active {
+  background: color-mix(in srgb, var(--orbe-primary) 16%, var(--orbe-surface)) !important;
+  color: var(--orbe-primary) !important;
+  border-color: color-mix(in srgb, var(--orbe-primary) 38%, var(--orbe-border)) !important;
+}
+[data-theme="dark"] .mobile-page-shell .app-add-fab {
+  background: var(--orbe-primary) !important;
+  color: #08231f !important;
+}
+[data-theme="dark"] .mobile-page-shell .orbe-page-theme-toggle {
+  background: var(--orbe-surface);
+  color: var(--orbe-text);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .mobile-page-shell .orbe-month-selector {
+  background: var(--orbe-surface) !important;
+  color: var(--orbe-text) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .mobile-page-shell .orbe-month-selector-label,
+[data-theme="dark"] .mobile-page-shell .orbe-month-selector-navigation button {
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .mobile-page-shell .orbe-month-selector-navigation button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-primary) 14%, var(--orbe-surface)) !important;
+}
