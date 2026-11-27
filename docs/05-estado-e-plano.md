@@ -420,4 +420,4 @@ Corrigida a coexistência da sidebar e da bottom bar: os componentes de layout a
 - Desktop (≥1024 px): sidebar/layout desktop visível; bottom bar oculta.
 - Tablet e mobile (≤1023 px): sidebar/layout desktop ocultos; bottom bar visível.
 
-**Validação:** código e contrato de breakpoint revistos; lint/build CI pendentes para este commit. QA visual real nos tamanhos desktop/tablet/mobile continua necessária.
+**Validação:** contrato de breakpoint revisto; ESLint e build TypeScript/Vite passaram no [CI run 45971276853](https://github.com/lc-curto/Orbe/actions/runs/45971276853). QA visual renderizada nos tamanhos desktop/tablet/mobile continua necessária.
