@@ -1,5 +1,4 @@
 import { Button, Card as UiCard, Separator, Text, Row, Stack } from '../../../design-system/primitives'
-import { Button, Card as UiCard, Separator, Text, Row, Stack } from '../../../design-system/primitives'
 import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { AppIcon, type AppIconName } from '../../../shared/components/AppIcon'
