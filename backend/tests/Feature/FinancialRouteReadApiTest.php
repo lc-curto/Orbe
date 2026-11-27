@@ -217,7 +217,12 @@ final class FinancialRouteReadApiTest extends TestCase
         Sanctum::actingAs($user);
 
         $this->getJson('/api/financial-route?month=2026-13')->assertUnprocessable();
-        $this->getJson('/api/financial-route?month=2026-11')->assertOk();
+        $this->getJson('/api/financial-route?month=2026-11&months=25')->assertUnprocessable();
+        $this->getJson('/api/financial-route?month=2026-11&months=1')
+            ->assertOk()
+            ->assertJsonCount(1, 'data.months')
+            ->assertJsonPath('data.months.0.month', '2026-11');
+        $this->getJson('/api/financial-route?month=2026-11')->assertOk()->assertJsonCount(24, 'data.months');
     }
 
     private function account(User $user, string $type = 'BANK'): FinancialAccount
