@@ -110,7 +110,6 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
         <div>
           <button className="cards-back-button" type="button" onClick={() => { setSelectedInvoiceId(null); setInvoiceSearch('') }}>‹ Voltar às faturas</button>
           <h1 id="cards-page-title">Fatura de {invoiceMonth(selectedInvoice.period_start)}</h1>
-          <p className="accounts-page-subtitle">{selectedCard.name} · Vence {date(selectedInvoice.due_date)}</p>
         </div>
       </header>
       <div className="cards-detail-summary">
@@ -139,7 +138,6 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
         <div>
           <button className="cards-back-button" type="button" onClick={() => { setSelectedInvoiceId(null); setSelectedCardId(null); setOpenMenuId(null) }}>‹ Cartões</button>
           <h1 id="cards-page-title">{selectedCard.name}</h1>
-          <p className="accounts-page-subtitle">Detalhes do cartão</p>
         </div>
       </header>
       <div className="cards-detail-summary">
