@@ -5,6 +5,9 @@ import type { CardInvoice, FinancialRouteReadModel, Operation } from '../../../a
 import type { RouteDay, RouteMonth, RouteProjection } from '../types'
 
 type RouteDataState = {
+  month: string | null
+  operations: Operation[] | null
+  invoices: CardInvoice[] | null
   response: FinancialRouteReadModel | null
   loading: boolean
   error: string | null
@@ -16,25 +19,31 @@ function messageFor(error: unknown): string {
 }
 
 export function useFinancialRouteData(month: string, operations: Operation[], invoices: CardInvoice[]) {
-  const [state, setState] = useState<RouteDataState>({ response: null, loading: true, error: null })
+  const [state, setState] = useState<RouteDataState>({
+    month: null,
+    operations: null,
+    invoices: null,
+    response: null,
+    loading: true,
+    error: null,
+  })
 
   useEffect(() => {
     const controller = new AbortController()
-    setState({ response: null, loading: true, error: null })
-
     void fetchFinancialRouteReadModel(month, controller.signal)
       .then((response) => {
-        if (!controller.signal.aborted) setState({ response, loading: false, error: null })
+        if (!controller.signal.aborted) setState({ month, operations, invoices, response, loading: false, error: null })
       })
       .catch((error: unknown) => {
-        if (!controller.signal.aborted) setState({ response: null, loading: false, error: messageFor(error) })
+        if (!controller.signal.aborted) setState({ month, operations, invoices, response: null, loading: false, error: messageFor(error) })
       })
 
     return () => controller.abort()
   }, [month, operations, invoices])
 
+  const stateMatchesRequest = state.month === month && state.operations === operations && state.invoices === invoices
+  const response = stateMatchesRequest ? state.response : null
   const projection = useMemo<RouteProjection | null>(() => {
-    const response = state.response
     if (!response) return null
     const operationById = new Map(operations.map((operation) => [operation.id, operation]))
     const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))
@@ -62,7 +71,11 @@ export function useFinancialRouteData(month: string, operations: Operation[], in
       overdueItems: response.overdue_items,
       overdueTotal: response.overdue_total,
     }
-  }, [state.response, operations, invoices])
+  }, [response, operations, invoices])
 
-  return { projection, loading: state.loading, error: state.error }
+  return {
+    projection,
+    loading: !stateMatchesRequest || state.loading,
+    error: stateMatchesRequest ? state.error : null,
+  }
 }
