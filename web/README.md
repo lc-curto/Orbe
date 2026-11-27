@@ -44,6 +44,19 @@ npm run preview
 
 O entrypoint é `src/main.tsx`. `src/index.css` agrega os estilos transversais e por feature, preservando a ordem de importação. Evitar páginas na raiz de `src`, imports de componentes de uma página para outra e folhas CSS globais monolíticas. Novos estilos devem ser colocados junto da feature e usar nomes de classe específicos.
 
+## Regra de refatoração e boas práticas (obrigatória)
+
+Toda alteração deve cumprir os Gates A/B/C definidos em [AGENTS.md](../AGENTS.md): inspeção antes de editar, correção de problemas locais seguros durante a implementação e checklist de revisão antes de concluir/abrir PR. Refatoração oportunista não é opcional: não perpetuar duplicação, estado derivável, lógica React inadequada, estilos/tokens contraditórios ou componentes mal acoplados só porque não foram pedidos diretamente.
+
+Padrões Web obrigatórios:
+- React: render puro, Rules of Hooks, estado mínimo, dados derivados em funções/hooks; evitar efeitos para derivação.
+- TypeScript: contratos tipados; evitar `any`, casts e supressões sem justificação.
+- UI: reutilizar primitives e tokens de `src/design-system/`; seguir container, gutters e escala de spacing partilhados; não criar escalas por página nem usar `!important` como solução estrutural.
+- CSS: estilos junto da feature, classes específicas, sem duplicar overrides globais; exceções responsivas devem ser justificadas.
+- Não adicionar biblioteca, abstração genérica ou arquitetura nova sem necessidade demonstrada e aprovação quando alterar a stack/decisão.
+
+Antes de concluir, reportar refatorações feitas, findings adiados (com motivo e item de trabalho), lint, build, testes e QA visual executados/não executados. Uma tarefa não pode ser declarada concluída com gates ignorados ou findings relevantes não registados.
+
 ## Validação contínua
 
 A workflow `Web CI` executa `npm ci`, ESLint e `npm run build` (TypeScript + Vite) em pushes e pull requests que alterem `web/**`. Pode também ser executada manualmente no GitHub Actions.
