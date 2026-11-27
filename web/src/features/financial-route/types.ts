@@ -1,13 +1,13 @@
-import type { CardInvoice, Operation } from '../../api/types'
+import type { CardInvoice, FinancialRouteOverdueItem, FinancialRouteReadModel, Operation } from '../../api/types'
 
 export type RouteFilter = 'ALL' | 'INCOME' | 'FIXED' | 'VARIABLE'
 export type RouteFlowFilter = 'ALL' | 'INCOME' | 'EXPENSE'
 
 export type RouteDay = {
   date: string
-  income: bigint
-  expenses: bigint
-  balance: bigint | null
+  income: string
+  expenses: string
+  balance: string | null
   operations: Operation[]
   invoices: CardInvoice[]
 }
@@ -15,10 +15,20 @@ export type RouteDay = {
 export type RouteMonth = {
   month: string
   days: RouteDay[]
-  totals: { income: bigint; expenses: bigint }
-  openingBalance: bigint | null
-  endingBalance: bigint | null
+  totals: { income: string; expenses: string }
+  openingBalance: string | null
+  endingBalance: string | null
 }
+
+export type RouteProjection = {
+  referenceDate: string
+  referenceBalance: string | null
+  months: RouteMonth[]
+  overdueItems: FinancialRouteOverdueItem[]
+  overdueTotal: string
+}
+
+export type RouteReadModel = FinancialRouteReadModel
 
 export const routeFilterOptions: Array<{ value: RouteFilter; label: string }> = [
   { value: 'ALL', label: 'Todos' },
