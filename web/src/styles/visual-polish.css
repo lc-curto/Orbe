@@ -13,6 +13,7 @@
   --orbe-primary-dark: #0b5f58;
   --orbe-primary-soft: #e6f5f2;
   --orbe-danger-soft: #fff0f3;
+  --orbe-success-soft: #ecfdf3;
   --orbe-input-surface: #ffffff;
   --orbe-primary-button-text: #ffffff;
   --orbe-radius-card: 18px;
@@ -36,6 +37,7 @@
   --orbe-primary-dark: #7be2d0;
   --orbe-primary-soft: #203b38;
   --orbe-danger-soft: #452a35;
+  --orbe-success-soft: #203b38;
   --orbe-input-surface: #101918;
   --orbe-primary-button-text: #10201d;
 }
