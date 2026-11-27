@@ -22,13 +22,23 @@ Todas as páginas autenticadas da aplicação devem usar a estrutura partilhada,
 
 - **Desktop:** `DesktopPageFrame` em `web/src/app/AppShell.tsx`, dentro do `main-content` global. Define largura máxima, alinhamento e ritmo vertical comuns.
 - **Mobile/tablet:** `MobilePageFrame` em `web/src/app/AppShell.tsx`, com `.mobile-page-content` para largura, gutter, scroll e espaço seguro da bottom bar. Todas as variantes mobile — incluindo Dashboard — devem renderizar dentro deste frame.
-- **Cabeçalho de página:** `PageHeader` em `web/src/shared/components/PageHeader.tsx`. Usar para título, descrição e ações nas páginas Dashboard, Movimentos, Rota Financeira, Contas, Cartões, Relatórios e Configurações. O componente inclui o controlo de tema claro/escuro partilhado em todas as páginas autenticadas no breakpoint mobile/tablet (até 1024 px); no desktop mantém-se o controlo global do shell. Não criar um botão de tema específico por página. O painel `Mais` mantém a alternativa de acesso ao tema, inclusive em vistas sem cabeçalho visível.
+- **Cabeçalho de página:** `PageHeader` em `web/src/shared/components/PageHeader.tsx`. Usar em Dashboard, Movimentos, Rota Financeira, Contas, Cartões, Relatórios e Configurações. O título não deve ter subtítulo/descrição de feature por baixo. O controlo de tema claro/escuro pertence ao próprio `PageHeader` em todos os breakpoints; não criar um controlo global duplicado nem botões de tema por página. O painel `Mais` mantém uma alternativa de acesso ao tema.
 - **Seletor mensal/período:** quando existir, fica no canto superior direito, alinhado na mesma linha do título também em mobile/tablet. O título pode quebrar em duas linhas; o seletor não deve descer para uma linha separada.
 - **Tokens:** usar a escala `--orbe-space-*`, `--orbe-page-gutter-*`, `--orbe-page-content-max`, `--orbe-page-shell-max`, `--orbe-page-section-gap`, `--orbe-panel-padding` e tokens de cor/raio já definidos. Não criar valores equivalentes por feature.
 - **Exceções de feature:** podem alterar a composição interna necessária ao fluxo (ex.: calendário mensal ou gráficos), mas não redefinir gutter, largura de página, header, tipografia base, ritmo vertical ou comportamento de safe area.
 - **QA:** testar todas as páginas autenticadas a partir de 320 px, incluindo alinhamento esquerdo/direito do header, overflow, largura dos cards, conteúdo final acessível acima da bottom bar, tema claro/escuro e estados loading/erro/vazio.
 
 A aprovação de uma página isolada não comprova consistência global. Qualquer nova página deve usar estes componentes por defeito; uma exceção exige motivo técnico/funcional registado.
+
+## Desktop visual consistency — approved
+
+- Applies only to desktop widths above 1024px; mobile/tablet behavior and feature logic remain unchanged.
+- Sidebar content is left-aligned through shared navigation primitives and semantic theme tokens. Expanded and collapsed states retain their intended alignment.
+- For 1025–1199px, use shared desktop gutter and section-gap tokens at compact values, and a 220px expanded sidebar. At 1200px and above, retain established desktop geometry.
+- The page title, theme control and period/action controls share the PageHeader row. The shell-level duplicate theme control is removed; every authenticated page uses PageHeader.
+- Rota Financeira keeps its differentiated period behavior: one quarterly/range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
+- The Dashboard available-balance card and applicable financial summary cards use the shared design-system variant orbe-financial-highlight-card. Its teal gradient is intentionally identical in light and dark mode; generic dark-theme surface rules exclude this variant.
+- Layout changes use existing tokens, shared shell styles and primitive props. No new UI dependency, feature-specific layout token, or important override is permitted.
 
 ## Princípios e navegação
 - Mobile first; desktop complementar.
