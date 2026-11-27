@@ -203,7 +203,7 @@ final class FinancialRouteReadApiTest extends TestCase
     {
         return FinancialAccount::query()->create([
             'user_id' => $user->id,
-            'name' => 'Conta ' . $type,
+            'name' => 'Conta '.$type,
             'account_type' => $type,
             'status' => 'ACTIVE',
         ]);
