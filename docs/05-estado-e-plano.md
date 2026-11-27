@@ -609,3 +609,9 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Finding complementar: aplicar a mesma correção de contraste ao painel mobile “Mais” e ao popover de conta da sidebar desktop; não depender de herança do container principal porque o popover é renderizado em portal.
 - Corrigido em `theme.css`: superfície opaca por token, foregrounds para textos/ícones, divisores, hover/focus e logout semânticos. Não altera navegação ou ações.
 - QA visual manual em mobile e desktop, light/dark, pendente.
+
+### QA visual — card de resumo em Movimentos
+
+- Substituído o trio de KPIs independentes por um resumo financeiro no padrão de destaque partilhado: Resultado em primeiro plano e Ganhos/Gastos na linha inferior.
+- A composição usa `orbe-financial-highlight-card` e estilos no design-system `financial-highlight.css`; removidos estilos antigos de KPI da página. Sem alteração no cálculo (operações realizadas, excluindo transferências) ou nos filtros.
+- Pesquisa e filtros continuam depois do card. Testar responsividade e legibilidade nos dois temas antes do merge.
