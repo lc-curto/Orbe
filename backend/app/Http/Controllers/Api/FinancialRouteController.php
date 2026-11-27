@@ -15,12 +15,14 @@ final class FinancialRouteController extends Controller
     {
         $validated = $request->validate([
             'month' => ['sometimes', 'required', 'date_format:Y-m'],
+            'months' => ['sometimes', 'required', 'integer', 'min:1', 'max:24'],
         ]);
 
         $month = $validated['month'] ?? now()->format('Y-m');
+        $months = (int) ($validated['months'] ?? 24);
 
         return response()->json([
-            'data' => $service->build((int) $request->user()->id, $month),
+            'data' => $service->build((int) $request->user()->id, $month, $months),
         ]);
     }
 }
