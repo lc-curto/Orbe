@@ -112,7 +112,7 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
           <h1 id="cards-page-title">Fatura de {invoiceMonth(selectedInvoice.period_start)}</h1>
         </div>
       </header>
-      <div className="cards-detail-summary">
+      <div className="cards-detail-summary orbe-financial-highlight-card">
         <span className="cards-summary-label">Total da fatura</span>
         <strong className="cards-available-value">{money(selectedInvoice.summary.obligation_amount, symbol)}</strong>
         <div className="cards-invoice-total-lines">
@@ -164,7 +164,7 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
       </div>
     </> : <>
       <PageHeader title="Cartões" titleId="cards-page-title" description={`${activeCards.length} ${activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}`} className="accounts-page-header" />
-      <div className="accounts-total-card cards-total-card">
+      <div className="accounts-total-card cards-total-card orbe-financial-highlight-card">
         <span className="accounts-total-label">TOTAL EM DÍVIDA</span>
         <strong className="accounts-total-value">{money(totalDebt, symbol)}</strong>
         <p className="accounts-readonly-note">{cards.length} {cards.length === 1 ? 'cartão' : 'cartões'}</p>
