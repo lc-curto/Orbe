@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../src/features/financial-route/projection.ts'
+import { localDateKey, shiftMonth } from '../src/features/financial-route/utils.ts'
 
 test('converte valores DECIMAL para unidades inteiras sem precisão binária', () => {
   assert.equal(parseMoneyUnits('123.4567'), 1234567n)
@@ -18,4 +19,10 @@ test('sinal negativo segue o valor monetário arredondado que o utilizador vê',
   assert.equal(isDisplayedNegative(-49n), false)
   assert.equal(isDisplayedNegative(-50n), true)
   assert.equal(isDisplayedNegative(50n), false)
+})
+
+test('janela móvel usa meses consecutivos e a data local do dia atual', () => {
+  assert.equal(localDateKey(new Date(2026, 10, 27, 12)), '2026-11-27')
+  assert.equal(shiftMonth('2026-11', 23), '2028-10')
+  assert.equal(shiftMonth('2026-12', 23), '2028-11')
 })
