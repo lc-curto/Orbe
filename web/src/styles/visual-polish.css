@@ -179,11 +179,6 @@ button:hover:not(:disabled) { box-shadow: none; }
   box-shadow: 0 8px 22px rgba(15, 118, 110, 0.16);
 }
 
-[data-theme="dark"] .mobile-balance-card {
-  background: linear-gradient(135deg, #155e59 0%, #123f3b 100%);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
-}
-
 [data-theme="dark"] .mobile-bottom-bar {
   background: color-mix(in srgb, var(--orbe-surface) 96%, transparent);
 }
