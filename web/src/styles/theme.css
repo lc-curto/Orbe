@@ -283,3 +283,42 @@
 [data-theme="dark"] .mobile-page-shell .orbe-month-selector-arrow:hover:not(:disabled) {
   background: color-mix(in srgb, var(--orbe-primary) 14%, transparent) !important;
 }
+
+/* Route day sheet: explicit dark surface and foreground tokens.
+   The mobile sheet is not guaranteed to be nested inside .main-content. */
+[data-theme="dark"] .route-day-modal {
+  color-scheme: dark;
+  background: var(--orbe-surface);
+  border-color: var(--orbe-border);
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .route-day-modal .route-modal-header span,
+[data-theme="dark"] .route-day-modal .route-detail-description span,
+[data-theme="dark"] .route-day-modal .route-detail-notice,
+[data-theme="dark"] .route-day-modal .route-detail-empty {
+  color: var(--orbe-muted);
+}
+[data-theme="dark"] .route-day-modal .route-modal-header h2,
+[data-theme="dark"] .route-day-modal .route-detail-description strong,
+[data-theme="dark"] .route-day-modal .route-detail-row > strong {
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .route-day-modal .route-modal-close {
+  background: var(--orbe-bg);
+  border-color: var(--orbe-border);
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .route-day-modal .route-detail-filters {
+  border-bottom-color: var(--orbe-border);
+}
+[data-theme="dark"] .route-day-modal .route-detail-filters button {
+  color: var(--orbe-muted);
+}
+[data-theme="dark"] .route-day-modal .route-detail-filters button.active {
+  background: color-mix(in srgb, var(--orbe-primary) 16%, var(--orbe-surface));
+  border-color: color-mix(in srgb, var(--orbe-primary) 38%, var(--orbe-border));
+  color: var(--orbe-primary);
+}
+[data-theme="dark"] .route-day-modal .route-detail-row {
+  border-bottom-color: var(--orbe-border);
+}
