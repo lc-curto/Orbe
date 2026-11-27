@@ -12,7 +12,7 @@ function formatMoney(amount: string, symbol: CurrencySymbol): string {
   return formatCurrency(amount, symbol)
 }
 
-export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories }: {
+export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
@@ -20,6 +20,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
   invoice?: CardInvoice
   setActiveKey: (value: string) => void
   categories: Array<{ name: string; amount: string; percentage: number }>
+  loading: boolean
   userName: string
   currencySymbol: CurrencySymbol
   movements: DashboardMovement[]
@@ -50,7 +51,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
             <Button className="dashboard-card-view-all" onPress={() => setActiveKey('Movimentos')} borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontSize={12} fontWeight="700">Ver movimentos</Button>
           </Row>
           <Stack gap={12}>
-            {categories.length === 0 ? <Text color="#667085" fontSize={13} paddingVertical={12}>Sem despesas realizadas neste mês.</Text> : categories.map((category) => <Stack key={category.name} gap={5}>
+            {loading ? <Text color="#667085" fontSize={13} paddingVertical={12}>A carregar despesas por categoria…</Text> : categories.length === 0 ? <Text color="#667085" fontSize={13} paddingVertical={12}>Sem despesas realizadas neste mês.</Text> : categories.map((category) => <Stack key={category.name} gap={5}>
               <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={12}>{category.name}</Text><Text color="#101828" fontSize={12} fontWeight="700">{category.amount}</Text></Row>
               <Stack height={5} borderRadius={99} backgroundColor="#e6f0ff"><Stack width={String(category.percentage) + '%'} height={5} borderRadius={99} backgroundColor="#175cd3" /></Stack>
             </Stack>)}
