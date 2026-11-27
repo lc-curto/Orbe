@@ -6,7 +6,7 @@ import { RouteDayModal } from '../components/RouteDayModal'
 import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
 import type { RouteDay, RouteFlowFilter } from '../types'
-import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
+import { formatFullDate, formatMonthRange, localDateKey, shiftMonth } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
@@ -48,8 +48,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   useEffect(() => {
     if (!projection || initialTodayPositioned.current) return
 
-    const now = new Date()
-    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+    const today = localDateKey()
     const isMobile = window.matchMedia('(max-width: 1024px)').matches
     const container = isMobile ? mobileMonthRef.current : desktopMonthsRef.current
     const todayRow = container?.querySelector<HTMLTableRowElement>(`[data-route-date="${today}"]`)
