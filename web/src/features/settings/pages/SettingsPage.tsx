@@ -153,7 +153,7 @@ export function SettingsPage({ user, categories }: Props) {
             <SettingsProfile user={user} onSelect={() => selectCategory('account')} />
             <nav className="settings-sidebar-nav">{settingsCategories.map((item) => <SettingsNavItem key={item.id} item={item} selected={activeCategory === item.id} onSelect={() => selectCategory(item.id)} />)}</nav>
           </aside>
-          <div className="settings-category-panel"><SettingsPageTitle title={activeItem.title} description={activeItem.description} /><SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} /></div>
+          <div className="settings-category-panel"><SettingsPageTitle title={activeItem.title} /><SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} /></div>
         </div>}
   </section>
 }
