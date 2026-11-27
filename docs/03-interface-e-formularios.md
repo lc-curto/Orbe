@@ -38,7 +38,7 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - The page title, theme control and period/action controls share the PageHeader row. The shell-level duplicate theme control is removed; every authenticated page uses PageHeader.
 - Rota Financeira keeps its differentiated period behavior: one quarterly/range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
 - The Dashboard available-balance card and applicable financial summary cards use the shared design-system variant orbe-financial-highlight-card. Its teal gradient is intentionally identical in light and dark mode; generic dark-theme surface rules exclude this variant.
-- Layout changes use existing tokens, shared shell styles and primitive props. No new UI dependency, feature-specific layout token, or important override is permitted.
+- Layout changes use existing tokens, shared shell styles and primitive props. No new UI dependency, feature-specific layout token, or `!important` override is permitted. Pre-existing legacy overrides are tracked in the state document and must be removed as affected components migrate to semantic tokens.
 
 ## Princípios e navegação
 - Mobile first; desktop complementar.
