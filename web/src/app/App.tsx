@@ -79,7 +79,7 @@ function FinanceStatus({ loading, error, authenticated }: { loading: boolean; er
 
 export default function App() {
   const { symbol: currencySymbol } = useCurrency()
-  const { theme, setTheme } = useTheme()
+  const { setTheme } = useTheme()
   const { user, loading: authLoading, error: authError, logout } = useAuth()
   const [logoutError, setLogoutError] = useState<string | null>(null)
   const finance = useFinanceData(user)
