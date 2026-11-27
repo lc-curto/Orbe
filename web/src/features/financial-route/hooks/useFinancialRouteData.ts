@@ -6,6 +6,7 @@ import type { RouteDay, RouteMonth, RouteProjection } from '../types'
 
 type RouteDataState = {
   month: string | null
+  monthsCount: number | null
   operations: Operation[] | null
   invoices: CardInvoice[] | null
   response: FinancialRouteReadModel | null
@@ -18,9 +19,10 @@ function messageFor(error: unknown): string {
   return error instanceof Error ? error.message : 'Não foi possível carregar a projeção financeira.'
 }
 
-export function useFinancialRouteData(month: string, operations: Operation[], invoices: CardInvoice[]) {
+export function useFinancialRouteData(month: string, operations: Operation[], invoices: CardInvoice[], monthsCount = 24) {
   const [state, setState] = useState<RouteDataState>({
     month: null,
+    monthsCount: null,
     operations: null,
     invoices: null,
     response: null,
@@ -30,18 +32,18 @@ export function useFinancialRouteData(month: string, operations: Operation[], in
 
   useEffect(() => {
     const controller = new AbortController()
-    void fetchFinancialRouteReadModel(month, controller.signal)
+    void fetchFinancialRouteReadModel(month, controller.signal, monthsCount)
       .then((response) => {
-        if (!controller.signal.aborted) setState({ month, operations, invoices, response, loading: false, error: null })
+        if (!controller.signal.aborted) setState({ month, monthsCount, operations, invoices, response, loading: false, error: null })
       })
       .catch((error: unknown) => {
-        if (!controller.signal.aborted) setState({ month, operations, invoices, response: null, loading: false, error: messageFor(error) })
+        if (!controller.signal.aborted) setState({ month, monthsCount, operations, invoices, response: null, loading: false, error: messageFor(error) })
       })
 
     return () => controller.abort()
-  }, [month, operations, invoices])
+  }, [month, monthsCount, operations, invoices])
 
-  const stateMatchesRequest = state.month === month && state.operations === operations && state.invoices === invoices
+  const stateMatchesRequest = state.month === month && state.monthsCount === monthsCount && state.operations === operations && state.invoices === invoices
   const response = stateMatchesRequest ? state.response : null
   const projection = useMemo<RouteProjection | null>(() => {
     if (!response) return null
