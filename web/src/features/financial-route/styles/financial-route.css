@@ -1,4 +1,4 @@
-/* Rota Financeira — desktop trimestral e mobile mensal */
+/* Rota Financeira — janela móvel de 24 meses no desktop e mês único no mobile */
 .main-content.route-mode { max-width: 1480px; }
 .financial-route-page { width: 100%; max-width: 1480px; margin: 0 auto; color: var(--orbe-text); }
 .financial-route-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 8px 0 18px; }
@@ -41,6 +41,10 @@
 .route-table td { height: 29px; padding: 5px 8px; border-top: 1px solid var(--orbe-border); color: var(--orbe-text); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: clip; }
 .route-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--orbe-bg) 70%, var(--orbe-surface)); }
 .route-table tbody tr.has-movements { background: var(--orbe-surface); }
+.route-table tbody tr.route-today { background: color-mix(in srgb, var(--orbe-teal) 7%, var(--orbe-surface)); }
+.route-table tbody tr.route-today td:first-child { box-shadow: inset 3px 0 0 color-mix(in srgb, var(--orbe-teal) 55%, var(--orbe-border)); }
+.route-table tbody tr.route-today .route-day-button { color: var(--orbe-teal); font-weight: 800; }
+.route-day-button[aria-current="date"] { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--orbe-teal) 45%, transparent); text-underline-offset: 3px; }
 .route-day-button { border: 0; background: transparent; color: var(--orbe-text); font: inherit; font-size: 10px; font-weight: 600; padding: 2px 0; cursor: pointer; text-align: left; }
 .route-day-button:hover { color: var(--orbe-primary); box-shadow: none; }
 .route-table td.route-income-cell { color: var(--orbe-success); }
