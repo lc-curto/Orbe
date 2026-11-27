@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Button, Card as UiCard, Separator, Text, Row, Stack } from '../../../design-system/primitives'
 import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
-import { AppIcon } from '../../../shared/components/AppIcon'
+import { AppIcon, type AppIconName } from '../../../shared/components/AppIcon'
 import { formatCurrency } from '../../currency/formatCurrency'
 import type { CurrencySymbol } from '../../currency/types'
-type DashboardMovement = { icon: string; name: string; meta: string; amount: string; tone: string; iconColor: string }
+type DashboardMovement = { icon: AppIconName; name: string; meta: string; amount: string; tone: string; iconColor: string }
 
 const border = { borderWidth: 1, borderColor: '#e4e7ec' as const }
 
@@ -56,7 +56,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
           <Stack>
             {movements.length === 0 ? <Text color="#667085" fontSize={13} paddingVertical={16}>Sem movimentos disponíveis.</Text> : movements.map((movement, index) => <Stack key={movement.name}>
               <Row paddingVertical={12} gap={10} style={{ alignItems: 'center' }}>
-                <Stack width={34} height={34} borderRadius={12} backgroundColor="#f2f4f7" style={{ alignItems: 'center', justifyContent: 'center' }}><AppIcon name={movement.icon as any} size={16} color={movement.iconColor} /></Stack>
+                <Stack width={34} height={34} borderRadius={12} backgroundColor="#f2f4f7" style={{ alignItems: 'center', justifyContent: 'center' }}><AppIcon name={movement.icon} size={16} color={movement.iconColor} /></Stack>
                 <Stack flex={1} gap={3}><Text color="#101828" fontSize={13} fontWeight="700">{movement.name}</Text><Text color="#667085" fontSize={11}>{movement.meta}</Text></Stack>
                 <Text color={movement.tone} fontSize={12} fontWeight="700">{movement.amount}</Text>
               </Row>
