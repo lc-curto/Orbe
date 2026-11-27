@@ -201,8 +201,8 @@ Contrato proposto para criação atómica:
 
 - `GET /api/financial-route?month=YYYY-MM&months=N`
 - `month` é opcional; por omissão usa o mês atual do backend. Quando informado, deve respeitar `YYYY-MM`; valor inválido retorna `422`.
-- `months` é opcional, inteiro entre 1 e 24; por omissão é 24. O read model devolve exatamente a quantidade solicitada de meses consecutivos a partir do mês indicado. Desktop pede 24 meses; mobile pede apenas 1 para reduzir cálculo e payload.
-- O read model não é persistido. É calculado pelo `FinancialRouteReadService` em transação de leitura, com base nos lançamentos realizados elegíveis, operações pendentes e valores ainda por pagar das faturas. React apenas apresenta os valores e resolve os IDs para detalhes carregados.
+- `months` é opcional, inteiro entre 1 e 24; por omissão é 24 para compatibilidade. O read model devolve exatamente a quantidade solicitada de meses consecutivos a partir do mês indicado. A web pede 3 meses visíveis no desktop e 1 no mobile; faz um segundo pedido cancelável em segundo plano para pré-carregar respetivamente mais 3 ou 1 mês. A cache é por mês, TTL 60 s, invalidada quando os dados financeiros são atualizados.
+- O read model não é persistido. É calculado pelo `FinancialRouteReadService` em transação de leitura, com base nos lançamentos realizados elegíveis, operações pendentes e valores ainda por pagar das faturas. Os lançamentos realizados são materializados apenas no intervalo solicitado; saldo de referência e saldo de abertura são agregados em SQL. Operações pendentes e faturas são limitadas ao horizonte e vencidos relevantes. React apenas apresenta os valores e resolve os IDs para detalhes carregados. Os agregados de saldo ainda percorrem o histórico elegível no banco; snapshots/checkpoints transacionais são uma evolução necessária antes de históricos muito grandes, não uma funcionalidade já implementada.
 
 Campos da resposta `data`:
 
