@@ -11,7 +11,29 @@
   --orbe-danger: #c2415d;
   --orbe-radius-card: 16px;
   --orbe-radius-control: 10px;
-  --orbe-nav-height: 80px;
+  --orbe-nav-height: 72px;
+
+  /* Shared spacing and page geometry: single source of truth. */
+  --orbe-space-1: 4px;
+  --orbe-space-2: 8px;
+  --orbe-space-3: 12px;
+  --orbe-space-4: 16px;
+  --orbe-space-5: 20px;
+  --orbe-space-6: 24px;
+  --orbe-space-8: 32px;
+  --orbe-page-gutter-desktop: 32px;
+  --orbe-page-gutter-tablet: 24px;
+  --orbe-page-gutter-mobile: 16px;
+  --orbe-page-content-max: 1200px;
+  --orbe-page-shell-max: 1360px;
+  --orbe-page-section-gap: 24px;
+  --orbe-panel-padding: 20px;
+  --orbe-panel-padding-mobile: 16px;
+  --orbe-dashboard-card-title: 18px;
+  --orbe-dashboard-card-subtitle: 13px;
+  --orbe-dashboard-category-gap: 24px;
+  --orbe-dashboard-row-padding: 16px;
+  --orbe-dashboard-icon-size: 38px;
 }
 
 html, body, #root { margin: 0; min-height: 100%; }
@@ -55,7 +77,7 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   color: var(--orbe-text); font: inherit; font-size: 14px; font-weight: 650;
   text-align: left; cursor: pointer;
 }
-.mobile-more-page-item:hover { background: #f2f4f7; box-shadow: none !important; }
+.mobile-more-page-item:hover:not(:disabled) { background: #f2f4f7; box-shadow: none; }
 .mobile-more-page-item:focus-visible {
   outline: 2px solid rgba(8, 127, 112, .55); outline-offset: -2px;
 }
@@ -113,9 +135,17 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 }
 
 @media (max-width: 1024px) {
+  :root {
+    --orbe-page-section-gap: 20px;
+    --orbe-dashboard-category-gap: 16px;
+    --orbe-dashboard-row-padding: 12px;
+    --orbe-dashboard-icon-size: 34px;
+    --orbe-dashboard-card-title: 16px;
+    --orbe-dashboard-card-subtitle: 12px;
+  }
   .desktop-layout { display: none; }
   .mobile-dashboard { display: flex; }
-  .mobile-dashboard-content { width: 100%; max-width: 680px; margin: 0 auto; padding: 18px 18px calc(78px + env(safe-area-inset-bottom)); }
+  .mobile-dashboard-content { width: 100%; max-width: 720px; margin: 0 auto; padding: var(--orbe-space-5) var(--orbe-page-gutter-tablet) calc(160px + env(safe-area-inset-bottom)); }
   .mobile-dashboard-nav { display: flex; position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; padding-left: calc(6px + env(safe-area-inset-left)); padding-right: calc(6px + env(safe-area-inset-right)); padding-bottom: calc(6px + env(safe-area-inset-bottom)); box-shadow: 0 -6px 20px rgba(16, 24, 40, 0.06); }
   .mobile-balance-card { box-shadow: 0 8px 20px rgba(23, 92, 211, 0.18); }
   .feedback-toast { bottom: calc(76px + env(safe-area-inset-bottom)); max-width: calc(100vw - 32px); text-align: center; }
@@ -124,12 +154,13 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .mobile-dashboard-content { max-width: none; padding: 28px 32px calc(78px + env(safe-area-inset-bottom)); }
+  .mobile-dashboard-content { max-width: none; padding-inline: var(--orbe-page-gutter-tablet); }
 }
 
-@media (max-width: 420px) {
-  .mobile-dashboard-content { padding-left: 14px; padding-right: 14px; gap: 14px; }
-  .mobile-balance-card { padding: 16px; }
+@media (max-width: 767px) {
+  :root { --orbe-page-section-gap: 16px; }
+  .mobile-dashboard-content { padding-inline: var(--orbe-page-gutter-mobile); }
+  .mobile-balance-card { padding: var(--orbe-panel-padding-mobile); }
 }
 
 @media (prefers-reduced-motion: reduce) {

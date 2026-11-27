@@ -1,3 +1,4 @@
+import { PageHeader } from '../../../shared/components/PageHeader'
 import { useMemo } from 'react'
 import type { Operation } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
@@ -121,13 +122,7 @@ export function ReportsPage({ operations, loading, error, month, onMonthChange }
   const categories = useMemo(() => expensesByCategory(monthOperations), [monthOperations])
 
   return <section className="reports-page" aria-label="Relatórios financeiros">
-    <header className="reports-header">
-      <div className="reports-heading-copy">
-        <h1>Relatórios</h1>
-        <p>Acompanha a evolução das tuas finanças.</p>
-      </div>
-      <MonthSelector month={month} onMonthChange={onMonthChange} className="movement-month-selector" />
-    </header>
+    <PageHeader title="Relatórios" description="Acompanha a evolução das tuas finanças." className="reports-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="movement-month-selector" />} />
 
     {loading ? <div className="report-state" role="status">A carregar dados financeiros…</div> : error ? <div className="report-state report-state-error" role="alert">{error}</div> : <>
       <div className="reports-grid">

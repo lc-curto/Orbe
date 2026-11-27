@@ -12,12 +12,16 @@ O Orbe é uma aplicação de gestão financeira pessoal, organizada num monorepo
 ## Estado funcional
 
 - Backend: autenticação Sanctum, contas e categorias, operações comuns pendentes/realizadas, transferências, cartões/faturas, pagamentos/reversões e recorrências nos contratos implementados.
-- Web: Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. A interface web usa React, TypeScript, Vite, HTML semântico, CSS e primitives próprias do design system; Tamagui e React Native Web não fazem parte da stack web. As preferências locais de símbolo de moeda e tema são apenas de apresentação. Lint, TypeScript e build de produção passaram no CI; QA visual responsiva de Relatórios e Configurações permanece pendente.
+- Web: Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. A interface web usa React, TypeScript, Vite, HTML semântico, CSS e primitives próprias do design system; Tamagui e React Native Web não fazem parte da stack web. As preferências locais de símbolo de moeda e tema são apenas de apresentação. Lint, TypeScript (`tsc -b`) e build de produção passaram no CI remoto da branch de estabilização (commit `4ab231e5c1feb18f9ced8379fa59b49824ffabaa`); não foram executados localmente. QA visual responsiva de todas as páginas permanece pendente. A Fase 1 corrigiu os dados do Dashboard: ganhos/gastos e categorias usam operações realizadas do mês selecionado, o saldo é mostrado como indisponível enquanto não existir read model de saldo, e os seletores mensais são dinâmicos. Também foi introduzida uma regra comum de gutters, largura de conteúdo e padding de painéis para Cartões, Contas, Relatórios e Rota Financeira; a reconciliação final com regras CSS antigas e QA visual ainda estão abertas.
 - Criação de operações: FAB global com **Novo gasto**, **Novo rendimento** e **Nova transferência** nas páginas aprovadas.
 - Dívidas/obrigações: permanecem no modelo financeiro, mas não existe página principal autónoma de Dívidas. Obrigações são relacionadas com os movimentos/faturas que lhes dão origem.
 - Mobile: stack aprovada (React Native + Expo), implementação ainda não presente.
 
 A interface não deve criar dados fictícios nem apresentar projeções como saldos realizados. Consultar [docs/05 — Estado e plano](docs/05-estado-e-plano.md) para o estado detalhado e as pendências.
+
+## Regra de desenvolvimento — refatoração oportuna
+
+A refatoração local segura e a conformidade com as boas práticas da stack são obrigatórias em toda alteração. Não perpetuar duplicação, estado derivável, padrões obsoletos ou estilos contraditórios apenas porque não foram mencionados no pedido. Aplicar os Gates A/B/C de [AGENTS.md](AGENTS.md), os padrões da arquitetura ([docs/04](docs/04-arquitetura-modelo-e-auditoria.md)) e as regras de UI ([docs/03](docs/03-interface-e-formularios.md)). Mudanças estruturais ou de comportamento devem ser separadas, justificadas e registadas; findings relevantes não corrigidos impedem declarar a tarefa concluída.
 
 ## Requisitos de desenvolvimento
 

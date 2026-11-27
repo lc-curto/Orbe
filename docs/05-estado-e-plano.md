@@ -425,3 +425,91 @@ Correção estrutural:
 - Os breakpoints das páginas e componentes foram alinhados ao limite de 1024 px.
 
 **Validação:** ESLint e build TypeScript/Vite passaram no [CI run 45972363992](https://github.com/lc-curto/Orbe/actions/runs/45972363992), commit `80a308a`. QA visual em larguras 1440, 1280, 1024, 768, 390 e 320 px permanece necessária antes de integrar na `main`.
+
+
+## Fase 1 — estabilização frontend e QA (iniciada em 2026-11-27)
+
+A fase de estabilização parte do commit atual da `main` após os PRs #9 e #10. Não alterar regras de produto ou financeiras durante a QA visual; qualquer problema funcional descoberto deve ser registado e corrigido apenas dentro de um escopo explícito.
+
+### Auditoria estática inicial
+
+- A navegação global está configurada com sidebar apenas em desktop (>1024 px) e bottom bar em tablet/mobile (≤1024 px). O CSS e os wrappers responsivos usam este limite; a validação renderizada em browser continua pendente.
+- **Dashboard — correção implementada na branch da Fase 1:** ganhos, gastos e despesas por categoria derivam agora das operações `REALIZED` com `effective_at` no mês selecionado. As categorias são agrupadas por categoria real (ou “Sem categoria”) e limitadas às cinco maiores. Não há valores de demonstração.
+- O saldo disponível não é fornecido pelo read model atual; desktop e mobile mostram explicitamente **Indisponível**, sem estimativa frontend. O acesso às despesas por categoria encaminha para Movimentos; não promete filtro por categoria que ainda não existe.
+- Os seletores do Dashboard e a Rota Financeira deixam de estar limitados a novembro/dezembro de 2026. A Rota inicia no mês corrente, sem alterar a regra de projeção nem inventar saldo final.
+- A paridade desktop/mobile continua a exigir validação visual e interação em browser.
+
+### Consistência de espaçamento — requisito da Fase 1
+
+As capturas de Cartões, Rota Financeira e Relatórios mostram diferenças de margens externas, padding dos conteúdos e alinhamento dos blocos. Tratar como finding transversal de UI, não como correções isoladas por página.
+
+- Definir/confirmar uma escala central de spacing tokens no Design System e reutilizá-la em todas as páginas.
+- Padronizar o container de página: largura, alinhamento, gutter horizontal e espaçamento vertical entre título, descrição, filtros, conteúdo e navegação.
+- Padronizar o padding interno de cards, painéis, tabelas e estados vazios; elementos equivalentes devem ter os mesmos valores.
+- Remover valores arbitrários e overrides locais de `margin`/`padding` quando duplicam ou contradizem os tokens existentes.
+- Permitir diferenças por breakpoint apenas quando justificadas pela responsividade, usando os mesmos tokens e regras previsíveis.
+- Auditar Cartões, Rota Financeira, Relatórios e restantes páginas primárias lado a lado; verificar alinhamento das bordas dos conteúdos e consistência entre desktop/tablet/mobile.
+- Não ajustar espaçamentos apenas para uma captura: corrigir a regra compartilhada ou documentar a exceção funcional.
+
+**Implementação CSS na branch da Fase 1:** tokens centrais para gutters (32 px desktop, 24 px tablet, 16 px mobile), largura de conteúdo (1200 px), gap vertical (24 px) e padding de painéis (20 px desktop / 16 px mobile). Cartões, Contas, Relatórios e Rota usam containers e gutters comuns; exceções de densidade em linhas/tabelas mantêm-se intencionais.
+
+**Continuação da estabilização:** `DashboardSections` partilha categorias, cartões e movimentos entre desktop/mobile; os movimentos do Dashboard passaram a usar `operation.id` como chave React estável. Os overrides redundantes de `!important` foram removidos do seletor mensal, dos filtros de pesquisa e de hover de Rota/Configurações/menu mobile. O alinhamento do cabeçalho de Movimentos foi consolidado no shell responsivo.
+
+Critério de aceitação visual: confirmar no browser que as páginas seguem esta geometria sem overflow nem margens/paddings locais contraditórios nos viewports definidos.
+
+### Política de refatoração oportuna e controlo de omissões — obrigatória
+
+A política foi formalizada nos pontos de controlo do repositório:
+- `AGENTS.md`: regra global, Gates A/B/C antes/durante/depois de cada alteração, práticas por stack e bloqueio de conclusão.
+- `docs/04-arquitetura-modelo-e-auditoria.md`: padrões técnicos e refatoração incremental para React/TypeScript.
+- `docs/03-interface-e-formularios.md`: regras de reutilização do design system, spacing e exceções de layout.
+- `README.md`, `web/README.md` e `backend/README.md`: resumo operacional por aplicação.
+- `.github/pull_request_template.md`: checklist obrigatória a preencher em cada PR, incluindo findings adiados e validações não executadas.
+
+Para reduzir esquecimentos, o workflow `.github/workflows/pr-quality-gate.yml` valida automaticamente a descrição da PR: exige as secções obrigatórias e falha se houver checkbox por concluir. A checklist preenchida continua a ser uma declaração de revisão, não prova de execução; lint/build/testes e QA visual são barreiras distintas. A pessoa responsável deve assinalar e explicar pendências/N/A sem alegar execução. Nenhuma tarefa pode ser marcada como concluída se os gates forem ignorados ou se findings relevantes ficarem sem registo.
+
+**Findings específicos da Fase 1:**
+- A consolidação de spacing em `web/src/styles/app-shell.css` é uma primeira harmonização, não a auditoria final. Ainda é necessário reconciliar as regras antigas das features com os tokens e eliminar duplicação/contradições sem regressão visual.
+- A revisão estática atual encontrou 60 declarações `!important` em `web/src/styles/theme.css` e quatro declarações de acessibilidade de movimento reduzido em `web/src/styles/base.css`. As declarações de tema são legado de compatibilidade entre estilos de tema e estilos de apresentação inline; não devem ser ampliadas. Migrar progressivamente os estilos inline para tokens/classes semânticos e remover cada override que deixe de ser necessário. A regra obrigatória está em `AGENTS.md` e `docs/03-interface-e-formularios.md`: `!important` é último recurso e cada nova ocorrência exige justificação explícita.
+- A composição do Dashboard foi parcialmente unificada com `PageHeader` e `DashboardSections`; manter QA de paridade desktop/mobile e consolidar os KPIs quando a validação visual justificar.
+- O `App.tsx` continua a concentrar navegação, estados e composição de páginas; a decomposição deve ser incremental, sem reescrita nem alteração de comportamento.
+
+### QA visual ainda por executar em browser
+
+Validar todas as páginas primárias em 320, 390, 768, 1024, 1025, 1280 e 1440 px, nos temas claro/escuro, incluindo navegação, safe areas, foco/teclado, loading, erro, vazio, filtros, seletor mensal, menus, FAB e persistência de preferências. Não marcar a fase como concluída apenas com lint/build.
+
+**CI remoto:** lint, TypeScript (`tsc -b`) e build Vite passaram na branch `qa/phase-1-frontend-stabilization`, commit `4ab231e5c1feb18f9ced8379fa59b49824ffabaa` (Web CI run `45985677772`). O PR Quality Gate também passou. Não foram executados localmente nem substituem QA visual em browser.
+
+### Condição de conclusão
+
+- Corrigir defeitos reproduzidos e documentar os resultados por página/viewport.
+- Confirmar que não existem valores fictícios apresentados como dados financeiros reais.
+- Executar lint e build após as correções.
+- Fazer revisão final do diff e só então preparar PR para integração.
+- QA visual real e interação em browser devem ser reportadas como pendentes até serem executadas localmente.
+
+### Findings de QA visual — correções aplicadas (27/11/2026)
+
+As capturas locais em 320, 390 e 1024 px revelaram que a sidebar/layout desktop e a variante mobile estavam visíveis simultaneamente. A causa era a regra base de `.desktop-layout` no `app-shell.css`, importada depois das regras responsivas de navegação e reintroduzindo o layout desktop.
+
+Correções aplicadas na branch de QA:
+- Reforçar no CSS final do shell a exclusividade das variantes: desktop apenas acima de 1024 px; mobile/bottom bar até 1024 px.
+- Rota Financeira: apresentar um único mês até 1024 px; manter três meses apenas acima de 1024 px.
+- Empilhar o título e o seletor mensal na versão mobile, evitando corte do período em 320/390 px.
+- Disponibilizar os filtros Todos/Entradas/Saídas também na versão mobile.
+- Ajustar as larguras das quatro colunas da tabela mensal e o truncamento dos valores, evitando cabeçalhos sobrepostos.
+- Substituir o FAB fixo sobre o calendário mobile por uma ação «+ Adicionar» no cabeçalho da Rota, ligada ao mesmo menu de criação. O FAB global permanece na versão desktop.
+- O shell mobile mantém espaço inferior para a bottom bar; Configurações deve ser revalidada para confirmar que o último cartão fica totalmente acessível por scroll.
+
+**Regra de QA da Rota:** ≤1024 px = exatamente um mês visível; >1024 px = três meses visíveis. Verificar especialmente 320, 390, 768, 1024 e 1025 px. O CI não confirma paridade visual: a aprovação final depende de nova validação no browser local.
+
+### Consolidação transversal do Design System — 27/11/2026
+
+Após os screenshots adicionais a 320 px, foi identificada inconsistência entre páginas além da Rota Financeira. Foram aplicadas na branch de QA:
+- Criado `PageHeader` partilhado em `web/src/shared/components/PageHeader.tsx`, adotado em Dashboard desktop/mobile, Movimentos, Rota, Contas, Cartões, Relatórios e Configurações.
+- Criado `DesktopPageFrame` em `web/src/app/AppShell.tsx`; todas as páginas autenticadas no layout desktop passam pelo mesmo frame.
+- `MobilePageFrame` passou a ser utilizado por todas as páginas autenticadas no layout mobile/tablet, com container interno comum.
+- CSS transversal centraliza largura, gutters, espaçamento, hierarquia de título, descrição e ações do cabeçalho; os estilos de feature ficam restritos à composição funcional.
+- Documentada em `docs/03-interface-e-formularios.md` a obrigatoriedade de reutilizar os frames, PageHeader e tokens nas novas páginas.
+
+**Ainda não declarar consistência visual concluída:** o código agora estabelece a estrutura reutilizável, mas é necessário executar novo QA local em todas as páginas, sobretudo 320 px, para confirmar que CSS legado de cada feature não contradiz o frame/header comum. Corrigir os desvios encontrados antes de integrar.

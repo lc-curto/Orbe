@@ -6,6 +6,29 @@
 
 Regista decisões aprovadas das páginas principais. Não substitui os mockups visuais originais. Não inventar pormenores visuais não especificados nem redesenhar páginas aprovadas sem autorização.
 
+## Regra obrigatória de CSS — `!important`
+
+O utilizador rejeita fortemente o uso de `!important`. Esta é uma regra obrigatória para todos os agentes e colaboradores, não uma preferência opcional:
+
+- Não usar `!important` para corrigir layout, compensar especificidade, forçar ordem de estilos ou mascarar conflitos entre folhas.
+- Só admitir como último recurso, depois de avaliar a cascata/camadas, a especificidade, o escopo do seletor e a possibilidade de corrigir a causa estrutural.
+- Qualquer nova ocorrência exige justificação explícita no código e na PR, incluindo por que as alternativas estruturais não são adequadas.
+- Rever e remover ocorrências estruturais existentes no âmbito da tarefa; ocorrências não removidas devem ficar registadas como finding com impacto e critério de remoção.
+- Antes de concluir uma tarefa de UI, pesquisar `!important` no CSS afetado e reportar o resultado. A presença de `!important` não justificado bloqueia a conclusão.
+
+## Estrutura comum obrigatória das páginas
+
+Todas as páginas autenticadas da aplicação devem usar a estrutura partilhada, sem criar shells ou cabeçalhos independentes por feature:
+
+- **Desktop:** `DesktopPageFrame` em `web/src/app/AppShell.tsx`, dentro do `main-content` global. Define largura máxima, alinhamento e ritmo vertical comuns.
+- **Mobile/tablet:** `MobilePageFrame` em `web/src/app/AppShell.tsx`, com `.mobile-page-content` para largura, gutter, scroll e espaço seguro da bottom bar. Todas as variantes mobile — incluindo Dashboard — devem renderizar dentro deste frame.
+- **Cabeçalho de página:** `PageHeader` em `web/src/shared/components/PageHeader.tsx`. Usar para título, descrição e ações nas páginas Dashboard, Movimentos, Rota Financeira, Contas, Cartões, Relatórios e Configurações.
+- **Tokens:** usar a escala `--orbe-space-*`, `--orbe-page-gutter-*`, `--orbe-page-content-max`, `--orbe-page-shell-max`, `--orbe-page-section-gap`, `--orbe-panel-padding` e tokens de cor/raio já definidos. Não criar valores equivalentes por feature.
+- **Exceções de feature:** podem alterar a composição interna necessária ao fluxo (ex.: calendário mensal ou gráficos), mas não redefinir gutter, largura de página, header, tipografia base, ritmo vertical ou comportamento de safe area.
+- **QA:** testar todas as páginas autenticadas a partir de 320 px, incluindo alinhamento esquerdo/direito do header, overflow, largura dos cards, conteúdo final acessível acima da bottom bar, tema claro/escuro e estados loading/erro/vazio.
+
+A aprovação de uma página isolada não comprova consistência global. Qualquer nova página deve usar estes componentes por defeito; uma exceção exige motivo técnico/funcional registado.
+
 ## Princípios e navegação
 - Mobile first; desktop complementar.
 - Listas compactas, hierarquia clara e sem informação repetida.
@@ -200,6 +223,19 @@ Usar os tokens já definidos no Design System. A referência visual conhecida in
 | Erro/perigo | Token de danger existente |
 
 Os valores acima são referências do sistema atual, não autorização para duplicar cores hardcoded. Procurar e utilizar os tokens reais do projeto. Se os tokens tiverem evoluído, prevalece o Design System atual.
+
+### 2.2.1 Consistência de layout e spacing — regra obrigatória
+
+- Antes de criar ou alterar margens, padding, gaps, largura de conteúdo ou alinhamentos, localizar os tokens, containers e padrões já usados no Design System e no AppShell.
+- Usar uma escala central de spacing e os containers/gutters partilhados. Não criar uma escala paralela por página nem repetir valores arbitrários em CSS/JSX.
+- Elementos equivalentes (cabeçalhos, cards, painéis, filtros, tabelas e estados vazios) devem usar o mesmo padrão de margem/padding. Diferenças só são permitidas por densidade, hierarquia ou breakpoint com razão funcional explícita.
+- CSS local deve expressar uma exceção real da feature, não corrigir inconsistências do sistema com overrides ad hoc.
+- Não usar `!important` para estabelecer a arquitetura de spacing; se já existir, avaliar e remover ao consolidar o estilo afetado, sem provocar regressões.
+- Não acrescentar tokens duplicados se já houver token equivalente. Se a escala atual estiver incompleta ou contraditória, consolidar a fonte única e atualizar os usos relevantes no escopo tocado.
+- Ao tocar numa página, verificar pelo menos a página e uma página comparável; comparar desktop/tablet/mobile e temas suportados.
+- Qualquer exceção não corrigida deve ficar documentada com página/componente, motivo e condição para remoção.
+
+**Critério de aceite:** o diff não adiciona uma nova camada de margens/paddings contraditórios; valores equivalentes vêm de tokens/padrões comuns; exceções são justificadas; lint/build e QA visual aplicável são reportados.
 
 ### 2.3 Campos e etiquetas
 

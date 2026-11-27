@@ -1,20 +1,19 @@
 /* Rota Financeira — desktop trimestral e mobile mensal */
 .main-content.route-mode { max-width: 1480px; }
-.main-content.route-mode > *:not(.financial-route-page) { display: none; }
 .financial-route-page { width: 100%; max-width: 1480px; margin: 0 auto; color: var(--orbe-text); }
 .financial-route-header { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 8px 0 18px; }
 .financial-route-title h1 { margin: 0; font-size: clamp(27px, 3vw, 36px); letter-spacing: -1px; }
 .financial-route-title p { margin: 6px 0 0; color: var(--orbe-muted); font-size: 13px; }
 .route-period-selector { display: flex; align-items: center; gap: 8px; min-height: 42px; padding: 3px 8px; border: 1px solid #d8dce5; border-radius: 999px; background: #fff; }
 .route-period-selector button { display: grid; width: 28px; height: 30px; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--orbe-text); font-size: 22px; cursor: pointer; }
-.route-period-selector button:hover { background: #f2f4f7; box-shadow: none !important; }
+.route-period-selector button:hover { background: #f2f4f7; box-shadow: none; }
 .route-period-selector span { min-width: 128px; color: var(--orbe-text); font-size: 12px; font-weight: 750; text-align: center; white-space: nowrap; }
-.route-month-selector-mobile { display: none !important; }
+.route-month-selector-mobile { display: none; }
 .route-desktop-controls { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0 0 14px; }
 .route-flow-filters { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .route-flow-filters button { min-height: 36px; padding: 0 15px; border: 1px solid #d8dce5; border-radius: 999px; background: #fff; color: #344054; font: inherit; font-size: 12px; cursor: pointer; }
 .route-flow-filters button.active { border-color: #171717; background: #171717; color: #fff; }
-.route-flow-filters button:hover { box-shadow: none !important; }
+.route-flow-filters button:hover { box-shadow: none; }
 .route-switch { display: inline-flex; align-items: center; gap: 10px; min-height: 42px; color: var(--orbe-text); font-size: 12px; font-weight: 650; cursor: pointer; white-space: nowrap; }
 .route-switch input { position: absolute; width: 1px; height: 1px; opacity: 0; }
 .route-switch-track { position: relative; width: 40px; height: 24px; flex: 0 0 40px; border-radius: 999px; background: #d0d5dd; transition: background 150ms ease; }
@@ -42,10 +41,10 @@
 .route-table tbody tr:nth-child(even) { background: #fafaf8; }
 .route-table tbody tr.has-movements { background: #fff; }
 .route-day-button { border: 0; background: transparent; color: var(--orbe-text); font: inherit; font-size: 10px; font-weight: 600; padding: 2px 0; cursor: pointer; text-align: left; }
-.route-day-button:hover { color: var(--orbe-primary); box-shadow: none !important; }
-.route-income-cell { color: #087f70 !important; }
-.route-expense-cell { color: #c24135 !important; }
-.route-balance-unavailable { color: #98a2b3 !important; font-weight: 600; }
+.route-day-button:hover { color: var(--orbe-primary); box-shadow: none; }
+.route-income-cell { color: #087f70; }
+.route-expense-cell { color: #c24135; }
+.route-balance-unavailable { color: #98a2b3; font-weight: 600; }
 .route-empty { padding: 28px 12px; color: var(--orbe-muted); text-align: center; font-size: 12px; }
 .route-mobile-month { display: none; }
 .route-days-count { color: var(--orbe-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
@@ -73,15 +72,15 @@
 .route-detail-expense { color: #bd4963; }
 .route-detail-transfer { color: #667085; }
 .route-detail-notice, .route-detail-empty { padding: 26px 22px 30px; color: var(--orbe-muted); font-size: 13px; line-height: 1.5; text-align: center; }
-.route-mobile-shell { padding-top: 0 !important; }
+.route-mobile-shell { padding-top: 0; }
 @media (max-width: 1024px) {
-  .route-mobile-shell .financial-route-page { max-width: 680px; padding: 12px 18px 0; }
+  .route-mobile-shell .financial-route-page { max-width: var(--orbe-page-content-max); padding: var(--orbe-space-3) 0 0; }
   .route-mobile-shell .financial-route-header { align-items: flex-start; justify-content: space-between; gap: 10px; margin: 0 0 16px; padding: 4px 0 0; }
   .route-mobile-shell .financial-route-title { display: block; min-width: 0; }
   .route-mobile-shell .financial-route-title h1 { font-size: 28px; line-height: 1.2; letter-spacing: -1px; }
   .route-mobile-shell .financial-route-title p { display: none; }
   .route-mobile-shell .route-desktop-period { display: none; }
-  .route-mobile-shell .route-month-selector-mobile { display: inline-flex !important; margin-top: 0; }
+  .route-mobile-shell .route-month-selector-mobile { display: inline-flex; margin-top: 0; }
   .route-mobile-shell .route-month-selector-mobile .orbe-month-selector-label { min-width: 40px; }
   .route-mobile-shell .route-desktop-controls, .route-mobile-shell .route-desktop-months { display: none; }
   .route-mobile-shell .route-mobile-month { display: block; }
@@ -120,7 +119,7 @@
 /* Rota mobile: reservar o espaço da bottom bar, sem o padding extra usado por Movimentos. */
 @media (max-width: 1024px) {
   .mobile-page-shell.route-mobile-shell {
-    padding-bottom: calc(84px + env(safe-area-inset-bottom)) !important;
+    padding-bottom: calc(160px + env(safe-area-inset-bottom));
   }
 }
 
@@ -194,4 +193,87 @@
 }
 .sidebar-account-menu-action:disabled { cursor: not-allowed; opacity: .5; }
 
-
+/* Mobile route: one month, full-width controls and readable table columns. */
+.route-mobile-flow-filters { display: none; }
+@media (max-width: 1024px) {
+  .route-mobile-shell .financial-route-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    justify-content: stretch;
+    gap: 12px;
+  }
+  .route-mobile-shell .financial-route-title { width: 100%; }
+  .route-mobile-shell .route-month-selector-mobile {
+    width: fit-content;
+    max-width: 100%;
+    justify-self: start;
+  }
+  .route-mobile-flow-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 0 0 12px;
+  }
+  .route-mobile-flow-filters button {
+    min-height: 34px;
+    padding: 0 14px;
+    border: 1px solid var(--orbe-border);
+    border-radius: 999px;
+    background: var(--orbe-surface);
+    color: var(--orbe-text);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .route-mobile-flow-filters button.active {
+    border-color: var(--orbe-text);
+    background: var(--orbe-text);
+    color: var(--orbe-surface);
+  }
+  .route-month-card-mobile,
+  .route-month-card-mobile .route-table-wrap,
+  .route-month-card-mobile .route-table { width: 100%; min-width: 0; }
+  .route-month-card-mobile .route-table { table-layout: fixed; }
+  .route-month-card-mobile .route-table th,
+  .route-month-card-mobile .route-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .route-month-card-mobile .route-table th:nth-child(1),
+  .route-month-card-mobile .route-table td:nth-child(1) { width: 18%; }
+  .route-month-card-mobile .route-table th:nth-child(2),
+  .route-month-card-mobile .route-table td:nth-child(2) { width: 28%; }
+  .route-month-card-mobile .route-table th:nth-child(3),
+  .route-month-card-mobile .route-table td:nth-child(3) { width: 28%; }
+  .route-month-card-mobile .route-table th:nth-child(4),
+  .route-month-card-mobile .route-table td:nth-child(4) { width: 26%; }
+}
+@media (max-width: 380px) {
+  .route-mobile-shell .financial-route-title h1 { font-size: 26px; }
+  .route-month-card-mobile .route-table th,
+  .route-month-card-mobile .route-table td { padding-inline: 4px; font-size: 9px; }
+  .route-month-card-mobile .route-day-button { font-size: 10px; }
+}
+@media (max-width: 1024px) {
+  .route-mobile-add-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: start;
+    min-height: 40px;
+    padding: 0 16px;
+    border: 1px solid var(--orbe-teal);
+    border-radius: 999px;
+    background: var(--orbe-teal);
+    color: #fff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+@media (min-width: 1025px) {
+  .route-mobile-add-action { display: none; }
+}

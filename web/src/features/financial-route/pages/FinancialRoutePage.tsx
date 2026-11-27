@@ -1,3 +1,4 @@
+import { PageHeader } from '../../../shared/components/PageHeader'
 import { useState } from 'react'
 import type { Operation } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
@@ -47,21 +48,23 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
   ]
 
   return <section className="financial-route-page">
-    <header className="financial-route-header">
-      <div className="financial-route-title"><h1>Rota Financeira</h1><p>Acompanhamento diário do teu dinheiro</p></div>
+    <PageHeader title="Rota Financeira" description="Acompanhamento diário do teu dinheiro" className="financial-route-header" actions={<>
       <div className="route-period-selector route-desktop-period">
         <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
         <span>{formatMonthRange(firstMonth, shiftMonth(firstMonth, 2))}</span>
         <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
       </div>
       <MonthSelector month={firstMonth} onMonthChange={onMonthChange} className="route-month-selector-mobile" />
-    </header>
+    </>} />
 
     <div className="route-desktop-controls">
       <div className="route-flow-filters" aria-label="Filtrar meses por movimento">
         {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
       </div>
       <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
+    </div>
+    <div className="route-mobile-flow-filters" aria-label="Filtrar o mês por movimento">
+      {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
     </div>
 
     <div className="route-desktop-months">

@@ -1,6 +1,7 @@
 /* Movimentos e Programações */
 .main-content.movements-mode { max-width: 1360px; }
-.main-content.movements-mode > *:not(.movements-page) { display: none; }
+.main-content.movements-mode > *:not(.desktop-page-content) { display: none; }
+.main-content.movements-mode > .desktop-page-content > *:not(.movements-page) { display: none; }
 .movements-page { width: 100%; max-width: 1180px; margin: 0 auto; color: var(--orbe-text); }
 .movements-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 10px 0 18px; }
 .movements-header h1 { margin: 0; font-size: clamp(28px, 3vw, 38px); letter-spacing: -1.2px; }
