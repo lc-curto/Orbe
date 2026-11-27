@@ -52,7 +52,18 @@ export function formatFullDate(value: string) {
 }
 
 export function operationLabel(operation: Operation) {
-  return operation.description?.trim() || (operation.operation_type === 'INCOME' ? 'Receita' : operation.operation_type === 'TRANSFER' ? 'Transferência' : 'Despesa')
+  if (operation.description?.trim()) return operation.description.trim()
+  const labels: Record<string, string> = {
+    INCOME: 'Receita',
+    EXPENSE: 'Despesa',
+    TRANSFER: 'Transferência',
+    PURCHASE: 'Compra no cartão',
+    PAYMENT: 'Pagamento',
+    CARD_PAYMENT: 'Pagamento de fatura',
+    ACCOUNT_OPENING_BALANCE: 'Saldo inicial',
+    CARD_OPENING_BALANCE: 'Saldo inicial do cartão',
+  }
+  return labels[operation.operation_type] ?? operation.operation_type.replaceAll('_', ' ').toLocaleLowerCase('pt-PT')
 }
 
 export function operationDate(operation: Operation) {
