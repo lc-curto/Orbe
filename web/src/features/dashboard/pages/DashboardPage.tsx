@@ -67,8 +67,8 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
                   <Text color="#dbeafe" fontSize={14}>Todas as contas</Text>
                 </Stack>
               </Card>
-              <SummaryCard label="Receitas" amount={displayPeriod.income} detail={`Realizadas em ${period.label}`} tone="#16805b" />
-              <SummaryCard label="Despesas" amount={displayPeriod.expenses} detail={`Realizadas em ${period.label}`} tone="#c2415d" />
+              <SummaryCard label="Ganhos" amount={displayPeriod.income} detail={`Realizadas em ${period.label}`} tone="#16805b" />
+              <SummaryCard label="Gastos" amount={displayPeriod.expenses} detail={`Realizadas em ${period.label}`} tone="#c2415d" />
             </Row>
 
             <Card className="desktop-categories-card" {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
