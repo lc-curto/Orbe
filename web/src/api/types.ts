@@ -62,7 +62,7 @@ export type RecurrenceSchedule = {
   id: number
   nature: 'EXPENSE' | 'INCOME'
   amount: string
-  account_id: number
+  account_id: number | null
   category_id: number
   description?: string | null
   frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY'
