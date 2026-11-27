@@ -5,7 +5,7 @@ import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { RouteDayModal } from '../components/RouteDayModal'
 import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
-import type { RouteDay, RouteFlowFilter } from '../types'
+import type { RouteFlowFilter } from '../types'
 import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits, projectionMonthEnd } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
@@ -40,7 +40,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   const initialTodayPositioned = useRef(false)
   const routeData = useFinancialRouteData(month, operations, invoices)
   const projection = routeData.projection
-  const months = projection?.months ?? []
+  const months = projection?.months
   const [isDesktopRoute, setIsDesktopRoute] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1025px)').matches)
 
   useEffect(() => {
@@ -51,7 +51,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
     return () => media.removeEventListener('change', update)
   }, [])
 
-  const filteredMonths = useMemo(() => months.map((item) => {
+  const filteredMonths = useMemo(() => (months ?? []).map((item) => {
     let days = onlyMovementDays
       ? item.days.filter((day) => hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
       : item.days
