@@ -1,0 +1,66 @@
+/* Shared financial summary variant. Colors intentionally remain teal in both themes. */
+.orbe-financial-highlight-card {
+  padding: var(--orbe-panel-padding);
+  border: 1px solid var(--orbe-financial-highlight-border);
+  border-radius: var(--orbe-radius-card);
+  background-color: var(--orbe-financial-highlight-start);
+  background-image: linear-gradient(135deg, var(--orbe-financial-highlight-start), var(--orbe-financial-highlight-end));
+  box-shadow: var(--orbe-financial-highlight-shadow);
+  color: var(--orbe-financial-highlight-text);
+}
+
+.orbe-financial-highlight-card .accounts-total-label,
+.orbe-financial-highlight-card .cards-summary-label,
+.orbe-financial-highlight-card .route-mobile-ending span,
+.orbe-financial-highlight-card .accounts-readonly-note,
+.orbe-financial-highlight-card .cards-invoice-total-lines,
+.orbe-financial-highlight-card .route-mobile-totals {
+  color: var(--orbe-financial-highlight-muted);
+}
+
+.orbe-financial-highlight-card .accounts-total-value,
+.orbe-financial-highlight-card .cards-available-value,
+.orbe-financial-highlight-card .route-mobile-ending strong {
+  display: block;
+  color: var(--orbe-financial-highlight-text);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.orbe-financial-highlight-card.cards-detail-summary > p {
+  color: var(--orbe-financial-highlight-muted);
+}
+
+.orbe-financial-highlight-card .cards-invoice-total-lines {
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  padding-top: 12px;
+}
+
+.orbe-financial-highlight-card .cards-invoice-total-lines strong {
+  color: var(--orbe-financial-highlight-text);
+}
+
+.orbe-financial-highlight-card.route-mobile-summary {
+  padding: var(--orbe-panel-padding-mobile);
+}
+
+.orbe-financial-highlight-card .route-mobile-ending {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.orbe-financial-highlight-card .route-month-income {
+  color: var(--orbe-financial-highlight-text);
+}
+
+.orbe-financial-highlight-card .route-month-expenses {
+  color: #fecaca;
+}
+
+@media (max-width: 1024px) {
+  .orbe-financial-highlight-card {
+    padding: var(--orbe-panel-padding-mobile);
+  }
+}
