@@ -24,21 +24,26 @@
 [data-theme="dark"] .cards-mobile-shell { background: var(--orbe-bg) !important; color: var(--orbe-text); }
 [data-theme="dark"] .main-content { color: var(--orbe-text); }
 
-/* Desktop sidebar and mobile navigation. */
+/* Desktop sidebar uses semantic theme tokens; no inline-color overrides needed. */
 [data-theme="dark"] .desktop-sidebar {
-  background: var(--orbe-surface) !important;
-  border-right-color: var(--orbe-border) !important;
-  color: var(--orbe-text) !important;
+  background: var(--orbe-surface);
+  border-right-color: var(--orbe-border);
+  color: var(--orbe-text);
 }
-[data-theme="dark"] .desktop-sidebar button,
-[data-theme="dark"] .desktop-sidebar span,
-[data-theme="dark"] .desktop-sidebar strong { color: var(--orbe-text) !important; }
-[data-theme="dark"] .desktop-sidebar button[aria-current="page"] { background: #203b38 !important; color: var(--orbe-teal) !important; }
-[data-theme="dark"] .desktop-sidebar button[aria-current="page"] span { color: var(--orbe-teal) !important; }
-[data-theme="dark"] .desktop-sidebar button[aria-label="Recolher menu"],
-[data-theme="dark"] .desktop-sidebar button[aria-label="Expandir menu"] {
-  border-color: var(--orbe-border) !important; background: var(--orbe-bg) !important;
+[data-theme="dark"] .desktop-sidebar .sidebar-nav-button { color: var(--orbe-text); }
+[data-theme="dark"] .desktop-sidebar .sidebar-nav-button[aria-current="page"] {
+  background: color-mix(in srgb, var(--orbe-teal) 16%, var(--orbe-surface));
+  color: var(--orbe-teal);
 }
+[data-theme="dark"] .desktop-sidebar .sidebar-nav-button[aria-current="page"] .orbe-text { color: var(--orbe-teal); }
+[data-theme="dark"] .desktop-sidebar .sidebar-footer-action { color: var(--orbe-text); }
+[data-theme="dark"] .desktop-sidebar .sidebar-logout-action { color: var(--orbe-danger); }
+[data-theme="dark"] .desktop-sidebar .desktop-sidebar-collapse-button {
+  border-color: var(--orbe-border);
+  background: var(--orbe-bg);
+  color: var(--orbe-muted);
+}
+[data-theme="dark"] .desktop-sidebar .desktop-sidebar-brand { color: var(--orbe-text); }
 [data-theme="dark"] .mobile-dashboard-nav,
 [data-theme="dark"] .mobile-bottom-bar {
   background: var(--orbe-surface) !important; border-top-color: var(--orbe-border) !important; color: var(--orbe-text) !important;
@@ -55,8 +60,8 @@
 [data-theme="dark"] .mobile-bottom-bar button[aria-current="page"] * { color: var(--orbe-teal) !important; }
 
 /* Shared cards, lists, forms and popovers. */
-[data-theme="dark"] .main-content [class*="Card"]:not(.mobile-balance-card),
-[data-theme="dark"] .main-content [class*="-card"]:not(.mobile-balance-card),
+[data-theme="dark"] .main-content [class*="Card"]:not(.mobile-balance-card):not(.orbe-financial-highlight-card),
+[data-theme="dark"] .main-content [class*="-card"]:not(.mobile-balance-card):not(.orbe-financial-highlight-card),
 [data-theme="dark"] .main-content .movement-kpi,
 [data-theme="dark"] .main-content .movement-list,
 [data-theme="dark"] .main-content .schedule-list,
@@ -70,13 +75,12 @@
 [data-theme="dark"] .main-content .route-month-card,
 [data-theme="dark"] .main-content .route-table-wrap,
 [data-theme="dark"] .main-content .route-day-modal,
-[data-theme="dark"] .main-content .route-mobile-summary,
-[data-theme="dark"] .main-content .accounts-total-card,
-[data-theme="dark"] .main-content .cards-total-card,
-[data-theme="dark"] .main-content .cards-detail-summary {
+[data-theme="dark"] .main-content .route-mobile-summary:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .main-content .accounts-total-card:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .main-content .cards-total-card:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .main-content .cards-detail-summary:not(.orbe-financial-highlight-card) {
   background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text);
 }
-[data-theme="dark"] .main-content .mobile-balance-card { background: #175cd3 !important; color: #fff !important; }
 [data-theme="dark"] .main-content .movement-row,
 [data-theme="dark"] .main-content .accounts-row,
 [data-theme="dark"] .main-content .cards-invoice-row,
@@ -85,7 +89,7 @@
 [data-theme="dark"] .main-content .accounts-row + .accounts-row,
 [data-theme="dark"] .main-content .cards-invoice-row + .cards-invoice-row,
 [data-theme="dark"] .main-content .cards-invoice-day-list .movement-row + .movement-row { border-top-color: var(--orbe-border) !important; }
-[data-theme="dark"] input,
+[data-theme="dark"] input:not(.orbe-input),
 [data-theme="dark"] select,
 [data-theme="dark"] textarea,
 [data-theme="dark"] .auth-input,
@@ -112,9 +116,63 @@
 [data-theme="dark"] .add-fab-menu-item:hover,
 [data-theme="dark"] .accounts-menu-item:hover { background: #263445 !important; }
 [data-theme="dark"] .mobile-more-pages-panel h2 { color: var(--orbe-muted); }
+[data-theme="dark"] .mobile-more-panel-dismiss {
+  background: rgba(0, 0, 0, .52);
+  backdrop-filter: blur(3px);
+}
+[data-theme="dark"] .mobile-more-pages-panel {
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
+  border-top-color: var(--orbe-teal) !important;
+  color: var(--orbe-text) !important;
+  box-shadow: 0 -18px 48px rgba(0, 0, 0, .48) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-account,
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-divider {
+  border-color: var(--orbe-border) !important;
+  background-color: transparent;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-account strong,
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-page-item,
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-page-item svg {
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-account small,
+[data-theme="dark"] .mobile-more-pages-panel h2 {
+  color: var(--orbe-muted) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-account-avatar {
+  border-color: var(--orbe-border) !important;
+  color: var(--orbe-teal) !important;
+  background: var(--orbe-bg) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-page-item:hover:not(:disabled),
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-page-item:focus-visible {
+  background: color-mix(in srgb, var(--orbe-teal) 12%, var(--orbe-surface)) !important;
+}
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-logout,
+[data-theme="dark"] .mobile-more-pages-panel .mobile-more-logout svg {
+  color: var(--orbe-danger) !important;
+}
+[data-theme="dark"] .sidebar-account-popover {
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .sidebar-account-popover-header,
+[data-theme="dark"] .sidebar-account-popover-header strong,
+[data-theme="dark"] .sidebar-account-menu-action,
+[data-theme="dark"] .sidebar-account-menu-action svg {
+  color: var(--orbe-text) !important;
+}
+[data-theme="dark"] .sidebar-account-popover-header small {
+  color: var(--orbe-muted) !important;
+}
+[data-theme="dark"] .sidebar-account-menu-action:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-teal) 12%, var(--orbe-surface)) !important;
+}
 
 /* Month selectors and movement filters. */
-[data-theme="dark"] .orbe-month-selector,
 [data-theme="dark"] .route-period-selector {
   background: var(--orbe-surface) !important; color: var(--orbe-text) !important; border-color: var(--orbe-border) !important;
 }
@@ -122,7 +180,9 @@
 [data-theme="dark"] .orbe-month-selector-label,
 [data-theme="dark"] .route-period-selector button,
 [data-theme="dark"] .route-period-selector span { color: var(--orbe-text) !important; }
-[data-theme="dark"] .orbe-month-selector button:hover:not(:disabled),
+[data-theme="dark"] .orbe-month-selector-arrow:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-primary) 14%, transparent) !important;
+}
 [data-theme="dark"] .route-period-selector button:hover { background: #263445 !important; }
 [data-theme="dark"] .filter-chips button,
 [data-theme="dark"] .secondary-button,
@@ -183,3 +243,225 @@
 [data-theme="dark"] .auth-screen { background: var(--orbe-bg) !important; }
 [data-theme="dark"] .auth-card { background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
 [data-theme="dark"] .feedback-toast { background: #e7edf5 !important; color: #101720 !important; }
+
+
+/* Account menu remains theme-aware. */
+[data-theme="dark"] .mobile-more-account { border-bottom-color: var(--orbe-border); }
+[data-theme="dark"] .mobile-more-account strong { color: var(--orbe-text); }
+[data-theme="dark"] .mobile-more-account small { color: var(--orbe-muted); }
+[data-theme="dark"] .mobile-more-divider { background: var(--orbe-border); }
+
+
+/* Theme-aware surfaces across desktop, tablet and mobile feature shells. */
+[data-theme="dark"] .mobile-page-shell .orbe-card:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .mobile-page-shell .movement-kpi,
+[data-theme="dark"] .mobile-page-shell .movement-list,
+[data-theme="dark"] .mobile-page-shell .schedule-list,
+[data-theme="dark"] .mobile-page-shell .accounts-total-card:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .mobile-page-shell .accounts-list,
+[data-theme="dark"] .mobile-page-shell .cards-total-card:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .mobile-page-shell .cards-detail-summary:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .mobile-page-shell .cards-invoices-list,
+[data-theme="dark"] .mobile-page-shell .report-panel,
+[data-theme="dark"] .mobile-page-shell .route-month-card,
+[data-theme="dark"] .mobile-page-shell .route-mobile-summary:not(.orbe-financial-highlight-card),
+[data-theme="dark"] .mobile-page-shell .route-table-wrap,
+[data-theme="dark"] .mobile-page-shell .settings-section,
+[data-theme="dark"] .mobile-page-shell .settings-preference-group,
+[data-theme="dark"] .mobile-page-shell .settings-detail-card,
+[data-theme="dark"] .mobile-page-shell .settings-information-panel,
+[data-theme="dark"] .mobile-page-shell .settings-profile-card,
+[data-theme="dark"] .mobile-dashboard-shell .orbe-card:not(.orbe-financial-highlight-card) {
+  background: var(--orbe-surface) !important;
+  color: var(--orbe-text) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .mobile-page-shell .empty-state,
+[data-theme="dark"] .mobile-page-shell .accounts-state,
+[data-theme="dark"] .mobile-page-shell .report-empty,
+[data-theme="dark"] .mobile-page-shell .report-state,
+[data-theme="dark"] .mobile-page-shell .schedule-list-header,
+[data-theme="dark"] .mobile-page-shell .cards-invoice-day-list,
+[data-theme="dark"] .mobile-page-shell .cards-invoice-row,
+[data-theme="dark"] .mobile-page-shell .movement-row,
+[data-theme="dark"] .mobile-page-shell .accounts-row {
+  color: var(--orbe-text);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .mobile-page-shell .movement-tabs,
+[data-theme="dark"] .mobile-page-shell .movement-tabs button,
+[data-theme="dark"] .mobile-page-shell .filter-chips button,
+[data-theme="dark"] .mobile-page-shell .route-flow-filters button,
+[data-theme="dark"] .mobile-page-shell .route-mobile-flow-filters button,
+[data-theme="dark"] .mobile-page-shell .accounts-status-filter,
+[data-theme="dark"] .mobile-page-shell .cards-invoice-search {
+  background-color: var(--orbe-surface) !important;
+  color: var(--orbe-text) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .mobile-page-shell .movement-tabs button.active,
+[data-theme="dark"] .mobile-page-shell .filter-chips button.selected,
+[data-theme="dark"] .mobile-page-shell .route-flow-filters button.active,
+[data-theme="dark"] .mobile-page-shell .route-mobile-flow-filters button.active {
+  background: color-mix(in srgb, var(--orbe-primary) 16%, var(--orbe-surface)) !important;
+  color: var(--orbe-primary) !important;
+  border-color: color-mix(in srgb, var(--orbe-primary) 38%, var(--orbe-border)) !important;
+}
+[data-theme="dark"] .mobile-page-shell .app-add-fab {
+  background: var(--orbe-primary) !important;
+  color: #08231f !important;
+}
+[data-theme="dark"] .mobile-page-shell .orbe-page-theme-toggle {
+  background: var(--orbe-surface);
+  color: var(--orbe-text);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .mobile-page-shell .orbe-month-selector {
+  background: transparent !important;
+  color: var(--orbe-text) !important;
+  border-color: transparent !important;
+}
+[data-theme="dark"] .mobile-page-shell .orbe-month-selector-label,
+[data-theme="dark"] .mobile-page-shell .orbe-month-selector-arrow {
+  color: var(--orbe-muted) !important;
+  background: transparent !important;
+}
+[data-theme="dark"] .mobile-page-shell .orbe-month-selector-arrow:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-primary) 14%, transparent) !important;
+}
+
+/* Route day sheet: explicit dark surface and foreground tokens.
+   The mobile sheet is not guaranteed to be nested inside .main-content. */
+[data-theme="dark"] .route-day-modal {
+  color-scheme: dark;
+  background: var(--orbe-surface);
+  border-color: var(--orbe-border);
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .route-day-modal .route-modal-header span,
+[data-theme="dark"] .route-day-modal .route-detail-description span,
+[data-theme="dark"] .route-day-modal .route-detail-notice,
+[data-theme="dark"] .route-day-modal .route-detail-empty {
+  color: var(--orbe-muted);
+}
+[data-theme="dark"] .route-day-modal .route-modal-header h2,
+[data-theme="dark"] .route-day-modal .route-detail-description strong,
+[data-theme="dark"] .route-day-modal .route-detail-row > strong {
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .route-day-modal .route-modal-close {
+  background: var(--orbe-bg);
+  border-color: var(--orbe-border);
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .route-day-modal .route-detail-filters {
+  border-bottom-color: var(--orbe-border);
+}
+[data-theme="dark"] .route-day-modal .route-detail-filters button {
+  color: var(--orbe-muted);
+}
+[data-theme="dark"] .route-day-modal .route-detail-filters button.active {
+  background: color-mix(in srgb, var(--orbe-primary) 16%, var(--orbe-surface));
+  border-color: color-mix(in srgb, var(--orbe-primary) 38%, var(--orbe-border));
+  color: var(--orbe-primary);
+}
+[data-theme="dark"] .route-day-modal .route-detail-row {
+  border-bottom-color: var(--orbe-border);
+}
+
+/* Portalled forms: use their dynamic semantic tokens instead of global input overrides. */
+[data-theme="dark"] .orbe-form-container,
+[data-theme="dark"] .orbe-confirm-dialog {
+  color: var(--orbe-text);
+  background: var(--orbe-surface);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .orbe-form-header,
+[data-theme="dark"] .orbe-form-actions {
+  border-color: var(--orbe-border);
+  background: var(--orbe-surface);
+}
+[data-theme="dark"] .orbe-form-header h2,
+[data-theme="dark"] .orbe-confirm-dialog h2,
+[data-theme="dark"] .orbe-field label,
+[data-theme="dark"] .orbe-option-copy strong {
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .orbe-form-header p,
+[data-theme="dark"] .orbe-confirm-dialog p,
+[data-theme="dark"] .orbe-option-copy small,
+[data-theme="dark"] .orbe-form-step-content,
+[data-theme="dark"] .orbe-step-meta {
+  color: var(--orbe-muted);
+}
+[data-theme="dark"] .orbe-option,
+[data-theme="dark"] .orbe-shortcut,
+[data-theme="dark"] .orbe-button-secondary {
+  background: var(--orbe-surface);
+  color: var(--orbe-text);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .orbe-option:hover:not(:disabled),
+[data-theme="dark"] .orbe-shortcut:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-primary) 9%, var(--orbe-surface));
+}
+[data-theme="dark"] .orbe-option.is-selected,
+[data-theme="dark"] .orbe-shortcut.is-selected {
+  background: var(--orbe-primary-soft);
+  color: var(--orbe-primary);
+  border-color: color-mix(in srgb, var(--orbe-primary) 38%, var(--orbe-border));
+}
+[data-theme="dark"] .orbe-option-icon {
+  background: color-mix(in srgb, var(--orbe-primary) 13%, var(--orbe-surface));
+}
+[data-theme="dark"] .orbe-input {
+  background: var(--orbe-input-surface);
+  color: var(--orbe-text);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .orbe-button-primary {
+  color: var(--orbe-primary-button-text);
+}
+[data-theme="dark"] .orbe-form-scroll,
+[data-theme="dark"] .route-day-modal,
+[data-theme="dark"] .mobile-more-pages-panel {
+  scrollbar-color: var(--orbe-muted) var(--orbe-surface);
+}
+
+/* System-wide dark-theme contrast for hover, feedback and primary actions. */
+[data-theme="dark"] .movements-page .toolbar-filter:hover,
+[data-theme="dark"] .movements-page .toolbar-filter[aria-expanded="true"],
+[data-theme="dark"] .movements-page .movement-filter-row > .filter-icon-button:hover,
+[data-theme="dark"] .movements-page .movement-filter-row > .filter-icon-button[aria-expanded="true"],
+[data-theme="dark"] .movements-page .search-submit-button:hover,
+[data-theme="dark"] .movements-page .search-submit-button:focus-visible {
+  background: color-mix(in srgb, var(--orbe-primary) 12%, var(--orbe-surface)) !important;
+  border-color: color-mix(in srgb, var(--orbe-primary) 34%, var(--orbe-border)) !important;
+  color: var(--orbe-primary) !important;
+}
+[data-theme="dark"] .movements-page .filter-panel {
+  background: var(--orbe-surface) !important;
+  border-color: var(--orbe-border) !important;
+}
+[data-theme="dark"] .app-add-fab,
+[data-theme="dark"] .route-mobile-add-action,
+[data-theme="dark"] .auth-submit {
+  color: var(--orbe-primary-button-text) !important;
+}
+[data-theme="dark"] .accounts-new-button {
+  background: var(--orbe-primary) !important;
+  color: var(--orbe-primary-button-text) !important;
+}
+[data-theme="dark"] .auth-error,
+[data-theme="dark"] .auth-inline-error {
+  background: var(--orbe-danger-soft) !important;
+  color: var(--orbe-danger) !important;
+  border-color: color-mix(in srgb, var(--orbe-danger) 30%, var(--orbe-border)) !important;
+}
+[data-theme="dark"] .auth-success {
+  background: var(--orbe-success-soft) !important;
+  color: var(--orbe-success) !important;
+}
+[data-theme="dark"] .movements-account-dropdown button:hover {
+  background: var(--orbe-danger-soft) !important;
+}

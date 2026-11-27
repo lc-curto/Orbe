@@ -15,7 +15,7 @@ function shiftMonth(value: string, offset: number) {
 function shortMonthLabel(value: string) {
   const date = new Date(`${value}-01T12:00:00`)
   const month = new Intl.DateTimeFormat('pt-PT', { month: 'short' }).format(date).replace('.', '')
-  return `${month.charAt(0).toUpperCase() + month.slice(1)}/${String(date.getFullYear()).slice(-2)}`
+  return `${month.charAt(0).toUpperCase() + month.slice(1)} ${date.getFullYear()}`
 }
 
 export function MonthSelector({ month, onMonthChange, minMonth, maxMonth, className = '' }: MonthSelectorProps) {
@@ -25,14 +25,16 @@ export function MonthSelector({ month, onMonthChange, minMonth, maxMonth, classN
   const canGoNext = !maxMonth || next <= maxMonth
 
   return (
-    <div className={`orbe-month-selector ${className}`}>
-      <button type="button" aria-label="Mês anterior" disabled={!canGoPrevious} onClick={() => onMonthChange(previous)}>
-        <span aria-hidden="true">‹</span>
-      </button>
+    <div className={`orbe-month-selector ${className}`} role="group" aria-label="Navegação por mês">
       <span className="orbe-month-selector-label" aria-label="Mês selecionado">{shortMonthLabel(month)}</span>
-      <button type="button" aria-label="Mês seguinte" disabled={!canGoNext} onClick={() => onMonthChange(next)}>
-        <span aria-hidden="true">›</span>
-      </button>
+      <div className="orbe-month-selector-navigation">
+        <button className="orbe-month-selector-arrow" type="button" aria-label="Mês anterior" disabled={!canGoPrevious} onClick={() => onMonthChange(previous)}>
+          <span aria-hidden="true">‹</span>
+        </button>
+        <button className="orbe-month-selector-arrow" type="button" aria-label="Mês seguinte" disabled={!canGoNext} onClick={() => onMonthChange(next)}>
+          <span aria-hidden="true">›</span>
+        </button>
+      </div>
     </div>
   )
 }

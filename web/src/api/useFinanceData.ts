@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ApiError } from './client'
 import { fetchFinanceReadModel, type FinanceReadResult } from './finance'
 import type { AuthUser } from './types'
@@ -17,8 +17,15 @@ function messageFor(error: unknown): string {
   return error instanceof Error ? error.message : 'Não foi possível carregar os dados financeiros.'
 }
 
-export function useFinanceData(user: AuthUser | null): FinanceDataState {
+export function useFinanceData(user: AuthUser | null): FinanceDataState & { refresh: () => void } {
   const [state, setState] = useState<FinanceDataState>({ data: emptyData, loading: false, error: null, userId: null })
+  const [refreshVersion, setRefreshVersion] = useState(0)
+
+  const refresh = useCallback(() => {
+    if (!user) return
+    setState((current) => ({ ...current, loading: true, error: null, userId: user.id }))
+    setRefreshVersion((version) => version + 1)
+  }, [user])
 
   useEffect(() => {
     let mounted = true
@@ -31,16 +38,24 @@ export function useFinanceData(user: AuthUser | null): FinanceDataState {
         if (mounted) setState({ data, loading: false, error: null, userId: user.id })
       })
       .catch((error: unknown) => {
-        if (mounted) setState({ data: emptyData, loading: false, error: messageFor(error), userId: user.id })
+        if (mounted) {
+          setState((current) => ({
+            data: current.userId === user.id ? current.data : emptyData,
+            loading: false,
+            error: messageFor(error),
+            userId: user.id,
+          }))
+        }
       })
 
     return () => { mounted = false }
-  }, [user])
+  }, [user, refreshVersion])
 
   const currentUserData = user !== null && state.userId === user.id
   return {
     data: currentUserData ? state.data : emptyData,
-    loading: user !== null && !currentUserData,
+    loading: user !== null && (!currentUserData || state.loading),
     error: currentUserData ? state.error : null,
+    refresh,
   }
 }

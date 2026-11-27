@@ -122,7 +122,7 @@ export function ReportsPage({ operations, loading, error, month, onMonthChange }
   const categories = useMemo(() => expensesByCategory(monthOperations), [monthOperations])
 
   return <section className="reports-page" aria-label="Relatórios financeiros">
-    <PageHeader title="Relatórios" description="Acompanha a evolução das tuas finanças." className="reports-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="movement-month-selector" />} />
+    <PageHeader title="Relatórios" className="reports-header" period={<MonthSelector month={month} onMonthChange={onMonthChange} className="movement-month-selector" />} />
 
     {loading ? <div className="report-state" role="status">A carregar dados financeiros…</div> : error ? <div className="report-state report-state-error" role="alert">{error}</div> : <>
       <div className="reports-grid">

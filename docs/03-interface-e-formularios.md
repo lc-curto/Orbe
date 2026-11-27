@@ -22,13 +22,23 @@ Todas as páginas autenticadas da aplicação devem usar a estrutura partilhada,
 
 - **Desktop:** `DesktopPageFrame` em `web/src/app/AppShell.tsx`, dentro do `main-content` global. Define largura máxima, alinhamento e ritmo vertical comuns.
 - **Mobile/tablet:** `MobilePageFrame` em `web/src/app/AppShell.tsx`, com `.mobile-page-content` para largura, gutter, scroll e espaço seguro da bottom bar. Todas as variantes mobile — incluindo Dashboard — devem renderizar dentro deste frame.
-- **Cabeçalho de página:** `PageHeader` em `web/src/shared/components/PageHeader.tsx`. Usar para título, descrição e ações nas páginas Dashboard, Movimentos, Rota Financeira, Contas, Cartões, Relatórios e Configurações.
+- **Cabeçalho de página:** `PageHeader` em `web/src/shared/components/PageHeader.tsx`. Usar em Dashboard, Movimentos, Rota Financeira, Contas, Cartões, Relatórios e Configurações. O título não deve ter subtítulo/descrição de feature por baixo. O controlo de tema claro/escuro pertence ao próprio `PageHeader` em todos os breakpoints; não criar um controlo global duplicado nem botões de tema por página. O painel `Mais` mantém uma alternativa de acesso ao tema.
 - **Seletor mensal/período:** quando existir, fica no canto superior direito, alinhado na mesma linha do título também em mobile/tablet. O título pode quebrar em duas linhas; o seletor não deve descer para uma linha separada.
 - **Tokens:** usar a escala `--orbe-space-*`, `--orbe-page-gutter-*`, `--orbe-page-content-max`, `--orbe-page-shell-max`, `--orbe-page-section-gap`, `--orbe-panel-padding` e tokens de cor/raio já definidos. Não criar valores equivalentes por feature.
 - **Exceções de feature:** podem alterar a composição interna necessária ao fluxo (ex.: calendário mensal ou gráficos), mas não redefinir gutter, largura de página, header, tipografia base, ritmo vertical ou comportamento de safe area.
 - **QA:** testar todas as páginas autenticadas a partir de 320 px, incluindo alinhamento esquerdo/direito do header, overflow, largura dos cards, conteúdo final acessível acima da bottom bar, tema claro/escuro e estados loading/erro/vazio.
 
 A aprovação de uma página isolada não comprova consistência global. Qualquer nova página deve usar estes componentes por defeito; uma exceção exige motivo técnico/funcional registado.
+
+## Desktop visual consistency — approved
+
+- Applies only to desktop widths above 1024px; mobile/tablet behavior and feature logic remain unchanged.
+- Sidebar content is left-aligned through shared navigation primitives and semantic theme tokens. Expanded and collapsed states retain their intended alignment.
+- For 1025–1199px, use shared desktop gutter and section-gap tokens at compact values, and a 220px expanded sidebar. At 1200px and above, retain established desktop geometry.
+- The page title, theme control and period/action controls share the PageHeader row. The shell-level duplicate theme control is removed; every authenticated page uses PageHeader.
+- Rota Financeira keeps its differentiated period behavior: one quarterly/range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
+- The Dashboard available-balance card and applicable financial summary cards use the shared design-system variant orbe-financial-highlight-card. Its teal gradient is intentionally identical in light and dark mode; generic dark-theme surface rules exclude this variant.
+- Layout changes use existing tokens, shared shell styles and primitive props. No new UI dependency, feature-specific layout token, or `!important` override is permitted. Pre-existing legacy overrides are tracked in the state document and must be removed as affected components migrate to semantic tokens.
 
 ## Princípios e navegação
 - Mobile first; desktop complementar.
@@ -93,6 +103,7 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - KPIs/totais apenas Entradas e Saídas; sem KPI de saldo inicial.
 - Sem gráfico e sem distinção fixa/variável na tabela principal.
 - Entradas e saídas realizadas são agregadas; transferências não alteram esses totais, mas aparecem no detalhe diário como operação neutra. Estados não realizados não entram na tabela nem nos totais.
+
 - Saldo diário e saldo final/projeção só são apresentados quando o contrato financeiro fornecer valores válidos. Até lá, indicar indisponibilidade, sem inventar números.
 - Cor só na célula/valor Saldo quando houver cálculo fiável, nunca na linha. Sem badges, legendas ou etiquetas coloridas.
 - Saldo projetado final recebe cor apenas quando negativo.
@@ -967,6 +978,15 @@ O toque na linha abre o detalhe do movimento. O menu `⋮` é um ponto de ação
 
 A composição do menu está aprovada como decisão de interface. Permissões, transições, endpoints e implementação de cada ação continuam subordinados aos contratos de domínio/API; esta secção não autoriza novas regras financeiras nem endpoints.
 
+## Implementação funcional — Movimentos (Fase 2)
+
+- Gasto e rendimento usam contas/categorias ativas obtidas da API, sem opções fictícias.
+- Dentro do fluxo de gasto/rendimento, o utilizador pode escolher movimento único ou programação recorrente; a recorrência usa periodicidade e primeira ocorrência, com data de fim opcional, sem criar operação efetiva ao guardar a programação.
+- O formulário suporta `REALIZED` e `PENDING`: realizado exige conta e data efetiva; pendente não apresenta nem envia conta e usa data prevista.
+- Transferência cria uma operação com duas pernas; origem e destino devem ser contas diferentes. Cada perna tem estado e data próprios, conforme o contrato API.
+- A submissão apresenta loading, impede submissões simultâneas, usa idempotência, mantém o formulário aberto em erros de API e atualiza os dados após sucesso.
+- As ações contextuais de edição, confirmação, cancelamento, eliminação e estorno não são consideradas concluídas apenas pela composição aprovada do menu; dependem dos contratos/endpoints específicos e permanecem pendentes quando não suportadas.
+
 ## 15. Procedimento para a IA que vai implementar
 
 Antes de alterar código:
@@ -1195,3 +1215,195 @@ Até estas decisões serem aprovadas:
 | Conferência de saldos | 02 — Correções e conferência; 04 — Contas; 07 — Conferências |
 | Dashboard/Movimentos/Rota/Relatórios | 02 — Classificação para estimativas; 04 — Páginas aprovadas; 07 — objetivos das páginas |
 
+### Refinamento visual transversal — 27/11/2026
+
+- A revisão visual deve ser aplicada transversalmente, não por correções isoladas de páginas.
+- A camada `web/src/styles/visual-polish.css` é carregada depois dos estilos de feature e centraliza a linguagem visual: tipografia sans-serif de sistema, paleta verde-azulada, superfícies e bordas subtis, raios consistentes e sombras reduzidas.
+- O FAB, navegação inferior, cabeçalhos, filtros, cartões, formulários e estados partilham os mesmos tokens e tratamentos.
+- O cartão de saldo da Dashboard usa uma superfície verde-azulada; não altera nem simula saldo financeiro.
+- O refinamento não pode alterar regras financeiras, contratos API, conteúdo ou fluxos de navegação.
+- QA visual final continua obrigatório em 320, 375, 768, 1024 e 1025+ px, em light/dark mode. CI de lint/build não substitui aprovação visual manual.
+
+
+### Consistência transversal de cabeçalhos, filtros e temas — 27/11/2026
+
+Regras obrigatórias para todas as páginas:
+
+- O cabeçalho principal apresenta apenas o título da página; não mostrar descrição, slogan ou contagem em texto imediatamente abaixo do título.
+- O seletor de mês usa o padrão partilhado minimalista: mês abreviado e ano completo (ex.: `Nov 2026`), seta anterior à esquerda e seta seguinte à direita. Sem cartão, fundo ou borda; setas discretas com área de toque, foco visível e estados disabled consistentes.
+- Em mobile/tablet, o controlo de tema permanece no cabeçalho global, separado semanticamente do seletor de período. Em desktop, manter o controlo global existente sem duplicação por página.
+- Quando uma página tem KPIs/cards de resumo, a sequência padrão é: **cabeçalho → KPIs/cards → pesquisa → filtros → resultados**. Não colocar filtros antes dos resumos nem antes da pesquisa. Exceções só quando a função principal (por exemplo, uma vista de calendário/rota) exigir controlos antes do conteúdo filtrado; manter a exceção consistente entre desktop e mobile.
+- Dark mode é suportado pelo sistema de tokens e por todas as superfícies de feature, não apenas pelo fundo: cards/KPIs, pesquisa, filtros, tabs, listas, estados vazios, popovers, botões, FAB, navegação, texto, bordas, foco e estados disabled.
+- Não introduzir cores de fundo/texto fixas para componentes comuns quando existe token de tema. Verificar light e dark em desktop, tablet e mobile; contraste e legibilidade fazem parte do QA visual.
+
+
+### Cabeçalho mobile e navegação temporal
+
+- Composição padrão A: primeira linha com título à esquerda e controlo de tema à direita; segunda linha com mês abreviado + ano alinhado à esquerda e setas de navegação à direita.
+- O seletor mensal é discreto, sem superfície ou borda própria; setas mantêm área de toque acessível.
+- O padrão é implementado no componente partilhado PageHeader e MonthSelector, não em CSS/markup isolado de cada página.
+- Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de três meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
+
+
+### Card de saldo do Dashboard — consistência de tema
+
+- O card de saldo mantém exatamente o mesmo fundo verde em light e dark mode.
+- Não aplicar overrides de cor ou gradiente específicos do tema ao `mobile-balance-card`; a tipografia interna já usa cores explícitas de alto contraste.
+
+
+- Robustness: o fundo verde do card de saldo é definido explicitamente no próprio card e reforçado por uma regra dark-mode específica com prioridade; outros cards continuam a usar os tokens de tema.
+
+
+### Navegação mobile — estado do item Mais e painel
+
+- Ao abrir o painel Mais, o item Mais é o único item da navegação inferior marcado como ativo; a página subjacente deixa de manter o destaque simultâneo.
+- O painel Mais usa superfície de tema, pega visual superior, borda de acento e sombra; o fundo recebe overlay com blur para tornar explícita a separação.
+- O contraste do painel e do overlay é ajustado também para dark mode.
+- O destaque do bottom navigation usa tokens de tema, sem cores light-mode fixas em inline styles.
+
+
+### Cards de resumo financeiro — destaque verde partilhado
+
+- O padrão visual do card de saldo do Dashboard é reutilizado nos resumos principais de Rota Financeira, Contas e Cartões.
+- Na página de faturas, o destaque aplica-se ao resumo da fatura selecionada (total, pago e em aberto).
+- O destaque é limitado aos cards de resumo; listas, tabelas, filtros e cards secundários mantêm as superfícies do tema.
+- Gradiente verde e contraste do conteúdo permanecem iguais em light e dark mode, por uma classe partilhada `orbe-financial-highlight-card` definida na camada de polimento visual.
+- O ícone da página Configurações passa a usar um símbolo de engrenagem distinto do controlo de tema.
+
+### Painel de movimentos do dia — dark mode
+
+- O bottom sheet da Rota Financeira deve usar superfície, texto, texto secundário, bordas e estados de filtro explícitos do tema escuro.
+- O modal mobile pode não estar dentro de `.main-content`; regras de tema devem selecionar `.route-day-modal` diretamente, sem depender desse ancestral.
+- O estado ativo dos filtros deve ter contraste próprio, e o estado vazio deve usar o token muted sobre a superfície escura.
+
+### Sidebar e menus da conta — dark mode
+
+- O painel mobile “Mais” usa a superfície escura opaca (`--orbe-surface`), texto principal/secundário e bordas semânticas; não usar mistura translúcida com teal como fundo base.
+- Itens, ícones, identidade da conta, ação de tema e logout devem ter cores explícitas para o tema; hover/focus usam uma superfície de destaque derivada de tokens.
+- Popover da conta desktop deve aplicar os mesmos tokens independentemente do portal estar montado em `document.body`.
+
+### Resumo financeiro de Movimentos
+
+- A página Movimentos usa o card partilhado `orbe-financial-highlight-card` para destacar o Resultado no topo.
+- Ganhos e Gastos ficam numa linha de decomposição abaixo, separados por divisor; valores e labels mantêm contraste branco no fundo verde em light e dark mode.
+- A ordem do conteúdo é: tabs da página, resumo financeiro, pesquisa, filtros e lista. Não reordenar pesquisa/filtros acima dos KPIs.
+
+### Auditoria sistémica de dark mode — 27/11/2026
+
+- Referência visual: painel mobile Mais aprovado — superfície escura opaca, texto principal claro, informação secundária muted, borda/acento teal discreto, hover/seleção tonal e logout semanticamente danger. Não usar superfícies brancas ou teal saturado como fundo de todos os elementos.
+- Corrigida a causa do contraste inconsistente no formulário de Movimentos: o modal é renderizado via portal e os tokens de formulário eram valores estáticos inline, enquanto a regra global dark mode forçava os inputs para a superfície escura. O resultado era modal claro com campo escuro.
+- MovementForm agora vincula os tokens do formulário aos tokens semânticos ativos (orbe-bg, orbe-surface, orbe-text, orbe-muted, orbe-primary, orbe-border, etc.). A regra global de inputs exclui .orbe-input; o componente recebe superfície, texto, placeholder, foco, estado selecionado e botões coerentes com o tema.
+- Backdrop, modal, confirmação de alterações, footer sticky, option lists, seletores, botões e scrollbar do formulário seguem a mesma paleta. Estados selecionados usam tint teal subtil, sem lavender/light surface em dark.
+- Revisão transversal dos estilos/overrides para Dashboard, Movimentos, Rota Financeira, Contas, Cartões/Faturas, Relatórios, Configurações, bottom navigation/Mais, sidebar e menus de perfil. Superfícies de rota, filtros de Movimentos, seletor mensal, menu de conta e feedback de autenticação passaram a usar tokens semânticos onde apropriado.
+- Dark mode mantém o card de saldo do Dashboard com o gradiente aprovado; não converter esse card em superfície neutra. O painel Mais permanece a referência para menus e overlays.
+- QA manual obrigatório antes do merge: abrir formulários/modais, confirmação de saída, sheet da Rota, menus Mais/perfil, filtros e dropdowns em dark/light; validar em mobile, tablet e desktop, incluindo hover/focus/selected, contraste, scroll e ausência de superfícies claras inesperadas.
+- Esta alteração é um ajuste de tokens e estilos partilhados, sem mudança de lógica financeira, API ou navegação.
+
+## Progressive disclosure e defaults negativos
+
+Padrão obrigatório para formulários existentes e futuros:
+
+- Mostrar primeiro os campos essenciais para concluir a operação. Campos opcionais e configurações menos frequentes ficam numa secção de disclosure recolhida por defeito.
+- Reutilizar `OrbeDisclosure` e `OrbeFormToggle` de `web/src/design-system/components.tsx`; não criar disclosures ou switches visuais isolados por feature.
+- Para seleções únicas com listas longas, preferir o `<select>` nativo, estilizado com tokens do design system, em vez de renderizar todas as opções como uma lista vertical de botões. Manter label associado, placeholder/empty state, disabled e validação.
+- Princípio de decisão conservadora (global): quando uma escolha pode produzir efeitos financeiros, alterar dados, criar obrigações ou iniciar ações futuras, o default deve ser o estado mais seguro, reversível e de menor compromisso. Não assumir consentimento ou execução; exigir intenção explícita para avançar. Se não houver informação suficiente, não inferir nem executar: pedir escolha ou manter sem ação. Defaults convenientes (ex.: mês atual) só são aceitáveis quando não produzem efeitos materiais.
+- Em operações financeiras, o estado inicial é PENDENTE. O utilizador deve marcar explicitamente “Registar como realizado” para confirmar que a operação já aconteceu. Em transferências, cada perna inicia pendente e a realização de saída/entrada é uma decisão explícita independente.
+- Opções que criam operações futuras (ex.: recorrência) começam desativadas; datas de fim e descrição opcional começam vazias. Evitar defaults positivos que possam executar, publicar, enviar, pagar, eliminar, confirmar ou comprometer sem intenção expressa.
+- Não inventar valores para campos obrigatórios. Conta/categoria não devem ser selecionadas automaticamente sem uma regra de negócio explícita. Defaults como a data de hoje só podem ser usados quando definidos pelo fluxo.
+- Não ocultar erros de validação: se um erro ocorrer dentro de uma secção recolhida, abrir essa secção e manter a mensagem junto do campo, além do resumo de erros.
+- Campos condicionais devem existir apenas quando aplicáveis. Movimento único não mostra periodicidade/fim; recorrência mostra frequência e data de fim opcional; transferência mostra detalhes de datas/estados e descrição em “Mais detalhes”.
+- Manter teclado, foco visível, labels, alvos de toque, semântica nativa de `details/summary` e `checkbox`, layout responsivo e tema claro/escuro.
+- Aplicado ao formulário de Movimentos (gasto, rendimento e transferência). Contas e Cartões/Faturas ainda não têm formulários de criação/edição nesta fase; quando forem implementados, devem reutilizar estes componentes, sem criar fluxos fictícios agora.
+- Não alterar payloads/API nem regras financeiras como parte da redução visual. A tarefa reorganiza a apresentação e usa defaults já previstos pelo fluxo.
+
+# Formulário de gasto — decisão consolidada (2026-11-27)
+
+Esta secção substitui, para o formulário de criação de gasto, qualquer descrição anterior que trate «A prazo» como método de pagamento ou misture o método com a modalidade. A decisão visual aprovada é a referência para a implementação.
+
+### Campos comuns
+- Descrição, valor total, categoria e **data do lançamento** (data em que o gasto aconteceu).
+- Método de pagamento: **Conta** ou **Cartão**. «A prazo» não é método; é uma modalidade disponível quando o método é Conta.
+- Observações opcionais.
+- O formulário é progressivo: apresenta apenas os campos relevantes ao método/modalidade escolhidos.
+
+### Método Conta — modalidade de pagamento
+Apresentar três opções visuais compactas, com ícone, título e descrição curta:
+- **Imediato** — Pago agora.
+- **Data futura** — Pago depois.
+- **Prestações** — Pago em partes.
+
+A seleção da modalidade revela os campos seguintes:
+
+**Imediato**
+- Conta de pagamento, escolhida entre as contas financeiras ativas do utilizador (inclui dinheiro quando configurado como conta).
+- Data do pagamento.
+- Ao guardar, registar o gasto e o pagamento realizado na conta/data indicadas, sem duplicar o efeito da despesa.
+
+**Data futura**
+- Conta prevista para pagamento, selecionada entre as contas ativas.
+- Data de vencimento.
+- Ao guardar, o gasto fica pendente. A conta selecionada é uma previsão de liquidação, não uma movimentação efetiva: não cria lançamento realizado nem altera saldo atual. A data e o valor alimentam a Rota Financeira.
+
+**Prestações**
+- Conta prevista para pagamento, selecionada entre as contas ativas.
+- Número de prestações.
+- Vencimento da primeira prestação; as seguintes são calculadas pelo calendário definido para o plano.
+- Checkbox «Já paguei a primeira prestação» (desmarcado por defeito).
+- Se marcado, revelar **Conta usada no pagamento** (conta ativa) e **Data em que pagou**. Estas são os dados reais da liquidação da primeira prestação e podem diferir da conta/data previstas para as restantes.
+- A primeira prestação é liquidada através de um efeito de pagamento real; as restantes ficam pendentes. O pagamento não reconhece novamente a despesa.
+
+### Método Cartão
+- Cartão de crédito selecionado entre os cartões ativos do utilizador.
+- Escolha **Compra única** ou **Compra em prestações**; se parcelada, selecionar número de prestações.
+- Não pedir conta bancária, data de vencimento da fatura, vencimento da primeira prestação nem «Já pagou a primeira prestação?».
+- O Orbe calcula a fatura/período e os vencimentos com base no cartão, na data do lançamento e no número de prestações, segundo o ciclo configurado. Mostrar pré-visualização informativa quando o cálculo estiver disponível; nunca pedir ao utilizador para preencher manualmente a distribuição pelas faturas.
+- Compra no cartão é reconhecida uma única vez. As alocações são associadas às faturas correspondentes; pagar a fatura é um fluxo separado no módulo Cartões/Faturas e não cria uma segunda despesa.
+
+### Defaults e estados
+- Não selecionar cartão ou conta por inferência; carregar opções reais e exigir escolha quando necessário.
+- Modalidade inicial visual: Imediato. A submissão nessa modalidade representa intenção de registar como pago e exige conta e data efetiva. Se o utilizador escolher Data futura, a operação é pendente.
+- «Já paguei a primeira prestação» começa desmarcado. Marcar exige conta e data efetivas.
+- Erros de validação/API mantêm o formulário aberto e os valores preenchidos.
+
+### Distinção de datas e dados
+- `transaction/launch date`: data do acontecimento/gasto.
+- `due date`: data prevista de vencimento da obrigação/prestação.
+- `effective/payment date`: data em que o pagamento realmente ocorreu.
+- Conta prevista não é conta efetivamente movimentada. A previsão pode ser guardada para a projeção; apenas pagamento realizado altera saldo.
+
+### Responsividade e acessibilidade
+- As três modalidades usam cartões de seleção compactos; em ecrãs estreitos devem adaptar-se sem truncar rótulos nem criar overflow.
+- Estados selecionado/foco devem usar tokens do tema claro/escuro, foco visível e controles acessíveis por teclado.
+- Validar desktop, tablet e mobile a partir de 320 px, incluindo estados condicionais, erro e submissão.
+
+---
+
+
+## Implementação da interface de gastos e ganhos — 27/11/2026
+
+A interface dos formulários foi implementada na branch `feature/movements-write-flows`, mantendo o shell, componentes de formulário, tokens de tema e dados do read model existentes.
+
+### Gasto
+- Método Conta/Cartão; removida a opção incorreta «A prazo» como método.
+- Conta inclui cartões de modalidade Imediato, Data futura e Prestações.
+- Imediato é o default e apresenta conta efetiva + data de pagamento; não seleciona conta automaticamente.
+- Data futura apresenta conta prevista + data prevista.
+- Prestações apresenta conta prevista, quantidade, vencimento da primeira e opção de primeira prestação já paga; quando marcada, pede conta efetiva e data efetiva.
+- Cartão apresenta cartões ativos reais, compra única/parcelada, quantidade de prestações e data da compra. Não pede conta bancária, fatura ou vencimento.
+- Cartões reais são fornecidos pelo read model; não são usados dados mockados.
+- A seleção de Conta/Cartão e modalidade é acessível por teclado e tem estados selecionado/foco com tokens do tema.
+
+### Ganho
+- Mantém o fluxo próprio de recebido/pendente, conta efetiva apenas quando recebido e data efetiva/prevista.
+- Não apresenta seletor Conta/Cartão nem modalidade de pagamento.
+
+### Limite funcional explícito
+- Conta/Imediato continua a usar o endpoint já existente de gasto realizado.
+- Data futura com conta prevista, prestações por Conta, primeira prestação paga e compras de Cartão ainda não são persistidas. A submissão fica bloqueada com mensagem explícita até o backend/API suportar esses contratos.
+- Notas estão desenhadas no campo «Mais opções», mas a API atual não as persiste; guardar com notas preenchidas fica bloqueado para evitar perda silenciosa.
+- Não apresentar estas seleções como operações financeiras concluídas.
+
+### QA pendente
+- Executar ESLint, TypeScript/build e QA visual/funcional local.
+- Validar larguras 320, 360, 768, 1024 e desktop, temas claro/escuro, teclado/foco, validação e estados sem contas/cartões.
+- Confirmar que as modalidades não suportadas permanecem bloqueadas e não criam operações parciais.

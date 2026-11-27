@@ -42,12 +42,12 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
 
 export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, categories, loading, card, invoice, setActiveKey, authError, logoutError }: DashboardPageProps) {
   return <>
-<PageHeader title={`Bom dia, ${userName.split(' ')[0]}`} description={period.date} className="desktop-dashboard-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="desktop-month-selector" />} />
+<PageHeader title={`Bom dia, ${userName.split(' ')[0]}`} className="desktop-dashboard-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="desktop-month-selector" />} />
 
             {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
 
             <Row className="dashboard-kpi-row" flexWrap="nowrap" gap={16}>
-              <Card {...border} borderRadius={16} padding={20} flex={1} minWidth={0} backgroundColor="#175cd3">
+              <Card className="orbe-financial-highlight-card" borderWidth={1} borderColor="var(--orbe-financial-highlight-border)" flex={1} minWidth={0}>
                 <Stack gap={8}>
                   <Text color="#dbeafe" fontSize={16}>Saldo disponível</Text>
                   <Text color="#ffffff" fontSize={30} fontWeight="800">Indisponível</Text>

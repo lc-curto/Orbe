@@ -59,8 +59,8 @@ function SettingsProfile({ user, onSelect }: { user: AuthUser; onSelect?: () => 
     : <div className="settings-profile-card">{content}</div>
 }
 
-function SettingsPageTitle({ title, description }: { title: string; description: string }) {
-  return <header className="settings-category-header"><h2>{title}</h2><p>{description}</p></header>
+function SettingsPageTitle({ title }: { title: string }) {
+  return <header className="settings-category-header"><h2>{title}</h2></header>
 }
 
 function PreferencesContent({ categories, onSelectCategories }: { categories: Category[]; onSelectCategories: () => void }) {
@@ -134,12 +134,12 @@ export function SettingsPage({ user, categories }: Props) {
   }
 
   return <section className="settings-page" aria-labelledby="settings-page-title">
-    {(!isMobile || !mobileDetailOpen) ? <PageHeader title="Configurações" titleId="settings-page-title" description="Personaliza a tua experiência no Orbe." className="settings-page-header" /> : null}
+    {(!isMobile || !mobileDetailOpen) ? <PageHeader title="Configurações" titleId="settings-page-title" className="settings-page-header" /> : null}
     {isMobile
       ? mobileDetailOpen
         ? <div className="settings-mobile-detail">
             <div className="settings-mobile-back"><button type="button" onClick={returnToOverview} aria-label="Voltar às configurações"><AppIcon name="chevronLeft" size={20} /><span>Configurações</span></button></div>
-            <SettingsPageTitle title={activeItem.title} description={activeItem.description} />
+            <SettingsPageTitle title={activeItem.title} />
             <SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} />
           </div>
         : <div className="settings-mobile-overview">
@@ -153,7 +153,7 @@ export function SettingsPage({ user, categories }: Props) {
             <SettingsProfile user={user} onSelect={() => selectCategory('account')} />
             <nav className="settings-sidebar-nav">{settingsCategories.map((item) => <SettingsNavItem key={item.id} item={item} selected={activeCategory === item.id} onSelect={() => selectCategory(item.id)} />)}</nav>
           </aside>
-          <div className="settings-category-panel"><SettingsPageTitle title={activeItem.title} description={activeItem.description} /><SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} /></div>
+          <div className="settings-category-panel"><SettingsPageTitle title={activeItem.title} /><SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} /></div>
         </div>}
   </section>
 }

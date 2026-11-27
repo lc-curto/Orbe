@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { Button, Card, Text, Row, Stack } from './primitives'
 import { OrbeIcon } from './Icon'
@@ -30,4 +31,52 @@ export function OrbeBadge({ children, tone = 'success' }: { children: ReactNode;
 export function OrbeBottomBar({ active, onSelect }: { active: string; onSelect: (label: string) => void }) {
   const items: Array<[string, OrbeIconName]> = [['Início', 'grid'], ['Movimentos', 'moves'], ['Novo', 'plus'], ['Contas', 'wallet'], ['Mais', 'more']]
   return <Row className="orbe-bottom-bar" backgroundColor={orbe.colors.surface} borderTopWidth={1} borderColor={orbe.colors.border} paddingHorizontal={8} paddingTop={8} paddingBottom={8}>{items.map(([label, icon]) => <Button key={label} onPress={() => onSelect(label)} aria-label={label} flex={1} height={58} padding={0} borderWidth={0} backgroundColor="transparent" color={active === label ? orbe.colors.primary : orbe.colors.neutral}><Stack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}>{label === 'Novo' ? <Stack width={48} height={48} marginTop={-24} borderRadius={orbe.radius.pill} backgroundColor={orbe.colors.primary} style={{ alignItems: 'center', justifyContent: 'center' }}><OrbeIcon name="plus" size={22} color="#ffffff" /></Stack> : <OrbeIcon name={icon} size={19} color="currentColor" />}<Text color="currentColor" fontSize={11} fontWeight={active === label ? '700' : '500'}>{label}</Text></Stack></Button>)}</Row>
+}
+
+export function OrbeDisclosure({ title, description, children, defaultOpen = false, open, onOpenChange, className }: {
+  title: string
+  description?: string
+  children: ReactNode
+  defaultOpen?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  className?: string
+}) {
+  const [internalOpen, setInternalOpen] = useState(defaultOpen)
+  const expanded = open ?? internalOpen
+
+  return <details
+    className={['orbe-disclosure', className].filter(Boolean).join(' ')}
+    open={expanded}
+    onToggle={(event) => {
+      const nextOpen = event.currentTarget.open
+      if (open === undefined) setInternalOpen(nextOpen)
+      else onOpenChange?.(nextOpen)
+    }}
+  >
+    <summary>
+      <span className="orbe-disclosure-copy">
+        <strong>{title}</strong>
+        {description ? <small>{description}</small> : null}
+      </span>
+    </summary>
+    <div className="orbe-disclosure-content">{children}</div>
+  </details>
+}
+
+export function OrbeFormToggle({ id, label, description, checked, onChange, disabled = false }: {
+  id: string
+  label: string
+  description?: string
+  checked: boolean
+  onChange: (checked: boolean) => void
+  disabled?: boolean
+}) {
+  return <label className="orbe-form-toggle" htmlFor={id}>
+    <input id={id} name={id} type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} disabled={disabled} />
+    <span className="orbe-form-toggle-copy">
+      <strong>{label}</strong>
+      {description ? <small>{description}</small> : null}
+    </span>
+  </label>
 }

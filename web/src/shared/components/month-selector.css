@@ -8,10 +8,10 @@
   min-width: 104px;
   height: 44px;
   padding: 4px;
-  border: 1px solid #d0d5dd;
+  border: 1px solid var(--orbe-border);
   border-radius: 999px;
-  background: #ffffff;
-  color: #101828;
+  background: var(--orbe-surface);
+  color: var(--orbe-text);
 }
 .orbe-month-selector button {
   display: inline-flex;
@@ -24,7 +24,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: #667085;
+  color: var(--orbe-muted);
   font: inherit;
   font-size: 18px;
   line-height: 1;
@@ -32,7 +32,7 @@
   transition: background-color .14s ease, color .14s ease;
 }
 .orbe-month-selector button:hover:not(:disabled) {
-  background: #f2f4f7;
+  background: color-mix(in srgb, var(--orbe-primary) 9%, var(--orbe-surface));
   color: #101828;
 }
 .orbe-month-selector button:focus-visible {

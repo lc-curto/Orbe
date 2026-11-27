@@ -1,0 +1,151 @@
+/* Shared financial summary variant. Colors intentionally remain teal in both themes. */
+.orbe-financial-highlight-card {
+  padding: var(--orbe-financial-highlight-padding);
+  border: 1px solid var(--orbe-financial-highlight-border);
+  border-radius: var(--orbe-radius-card);
+  background-color: var(--orbe-financial-highlight-start);
+  background-image: linear-gradient(135deg, var(--orbe-financial-highlight-start), var(--orbe-financial-highlight-end));
+  box-shadow: var(--orbe-financial-highlight-shadow);
+  color: var(--orbe-financial-highlight-text);
+}
+
+.orbe-financial-highlight-card .accounts-total-label,
+.orbe-financial-highlight-card .cards-summary-label,
+.orbe-financial-highlight-card .route-mobile-ending span,
+.orbe-financial-highlight-card .accounts-readonly-note,
+.orbe-financial-highlight-card .cards-invoice-total-lines,
+.orbe-financial-highlight-card .route-mobile-totals {
+  color: var(--orbe-financial-highlight-muted);
+}
+
+.orbe-financial-highlight-card .accounts-total-value,
+.orbe-financial-highlight-card .cards-available-value,
+.orbe-financial-highlight-card .route-mobile-ending strong {
+  display: block;
+  color: var(--orbe-financial-highlight-text);
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.orbe-financial-highlight-card.cards-detail-summary > p {
+  color: var(--orbe-financial-highlight-muted);
+}
+
+.orbe-financial-highlight-card .cards-invoice-total-lines {
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  padding-top: 12px;
+}
+
+.orbe-financial-highlight-card .cards-invoice-total-lines strong {
+  color: var(--orbe-financial-highlight-text);
+}
+
+.orbe-financial-highlight-card.route-mobile-summary {
+  padding: var(--orbe-financial-highlight-padding);
+}
+
+.orbe-financial-highlight-card .route-mobile-ending {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.orbe-financial-highlight-card .route-month-income {
+  color: var(--orbe-financial-highlight-text);
+}
+
+.orbe-financial-highlight-card .route-month-expenses {
+  color: #fecaca;
+}
+
+@media (max-width: 1024px) {
+  :root { --orbe-financial-highlight-padding: 18px; }
+}
+
+/* Movements: result leads, income and expenses remain in the lower breakdown. */
+.movement-financial-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.movement-financial-summary .movement-financial-result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.movement-financial-summary .movement-financial-result > span,
+.movement-financial-summary .movement-financial-breakdown > div > span {
+  color: var(--orbe-financial-highlight-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+.movement-financial-summary .movement-financial-result > strong {
+  color: var(--orbe-financial-highlight-text);
+  font-size: clamp(28px, 3vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.movement-financial-summary .movement-financial-breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  padding-top: 14px;
+}
+.movement-financial-summary .movement-financial-breakdown > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+.movement-financial-summary .movement-financial-breakdown > div > strong {
+  color: var(--orbe-financial-highlight-text);
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 1024px) {
+  .movement-financial-summary {
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .movement-financial-summary .movement-financial-result > span,
+  .movement-financial-summary .movement-financial-breakdown > div > span {
+    font-size: 11px;
+  }
+  .movement-financial-summary .movement-financial-result > strong {
+    font-size: 26px;
+  }
+  .movement-financial-summary .movement-financial-breakdown {
+    gap: 12px;
+    padding-top: 12px;
+  }
+  .movement-financial-summary .movement-financial-breakdown > div > strong {
+    font-size: 13px;
+  }
+}
+@media (min-width: 1025px) {
+  .movement-financial-summary {
+    width: 100%;
+    box-sizing: border-box;
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+  .movement-financial-summary .movement-financial-result > strong {
+    font-size: 36px;
+  }
+  .movement-financial-summary .movement-financial-breakdown {
+    gap: 24px;
+    padding-top: 16px;
+  }
+  .movement-financial-summary .movement-financial-breakdown > div > span {
+    font-size: 13px;
+  }
+  .movement-financial-summary .movement-financial-breakdown > div > strong {
+    font-size: 15px;
+  }
+}

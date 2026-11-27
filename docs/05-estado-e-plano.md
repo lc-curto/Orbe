@@ -177,7 +177,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Implementar endpoint mínimo de transferências com confirmação de pernas pendentes.
 - [x] Implementar endpoints de recorrências, geração idempotente, materialização e alterações de ocorrências.
 - [ ] Implementar endpoints de edição, cancelamento, eliminação e reversão contextual.
-- [ ] Integrar o frontend com a API e a autenticação.
+- [x] Integrar frontend com API e autenticação para leitura e criação básica de Movimentos; ações contextuais e restantes formulários continuam pendentes.
 
 ## 4. Dashboard e Design System
 
@@ -195,6 +195,16 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Preservar o Dashboard durante a implementação dos formulários.
 - [x] Criar tokens e componentes base reutilizáveis do Design System.
 - [ ] Auditar completamente a substituição de estilos hardcoded e regressões entre breakpoints.
+
+## Dados de QA locais — Movimentos
+
+- [x] Criar `QaFinancialDataSeeder` idempotente para preparar contas e categorias de QA antes de existirem formulários de gestão.
+- [x] Associar os registos ao utilizador local `test@example.com`, sem semear dados para todos os utilizadores.
+- [x] Incluir contas ativas BANK/CASH, uma conta encerrada, categorias ativas EXPENSE/INCOME e uma categoria arquivada.
+- [x] Integrar o seeder no `DatabaseSeeder` e documentar execução isolada.
+- [x] Não criar saldos, operações ou lançamentos artificiais; respeitar o motor financeiro para abertura de saldo.
+
+Execução local: `php artisan db:seed --class=QaFinancialDataSeeder` (na pasta `backend`). Os registos são identificados pelo prefixo `QA —`; a execução repetida atualiza os mesmos registos em vez de duplicá-los.
 
 ## 5. Especificação dos formulários
 
@@ -268,24 +278,35 @@ Estes são os únicos fluxos de escrita que têm contratos backend confirmados n
 
 ## 10. Contratos ainda necessários
 
-- [ ] Definir campos e endpoints de contas.
-- [ ] Definir campos e endpoints de categorias.
-- [ ] Definir campos e endpoints de despesas.
-- [ ] Definir campos e endpoints de receitas.
-- [ ] Definir campos e endpoints de transferências.
+- [x] Definir campos e endpoints de contas (GET/POST implementados).
+- [x] Definir campos e endpoints de categorias (GET/POST implementados).
+- [x] Definir campos e endpoints de despesas (POST implementado).
+- [x] Definir campos e endpoints de receitas (POST implementado).
+- [x] Definir campos e endpoints de transferências (POST e confirmação de perna implementados).
 - [ ] Definir permissões e ações por estado.
 - [ ] Definir edição, cancelamento, eliminação e reversão contextual.
 - [ ] Definir pagamento completo de faturas.
 - [ ] Fechar políticas de faturas vencidas, ciclos anteriores e crédito negativo.
 - [x] Fechar precisão monetária e arredondamento para o núcleo financeiro: `DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas (ARC-003).
 
-Enquanto estes contratos não existirem, o frontend não deve criar categorias, contas, endpoints, payloads ou fluxos fictícios.
+Os contratos de criação de contas, categorias, despesas, receitas e transferências estão definidos e implementados no backend. Ações por estado, edição, cancelamento, eliminação e reversão contextual continuam condicionadas aos contratos e endpoints específicos; o frontend não deve inventá-los.
+
+## Implementação frontend — Movimentos (Fase 2, branch `feature/movements-write-flows`)
+
+- Os formulários de gasto, rendimento e transferência passaram a usar o read model real de contas/categorias ativas; foram removidas listas vazias fixas.
+- Gasto/rendimento permitem estado `REALIZED` ou `PENDING`. Realizado envia conta + `effective_at`; pendente não envia conta e envia `planned_at`.
+- Transferência envia uma operação única com pernas `OUT` e `IN`, cada uma com conta, estado e data própria, respeitando o contrato existente.
+- Submissão usa os endpoints existentes, chave de idempotência, bloqueio de submissão duplicada, validação local e mapeamento de erros API para o formulário.
+- Gasto/rendimento também permitem configurar uma programação recorrente dentro do mesmo formulário, com periodicidade e data de fim opcional; a criação da programação não cria operação efetiva nem lançamento.
+- Após sucesso, o read model financeiro é atualizado e o utilizador recebe feedback contextual.
+- Validação CI no commit `fc27911e5a69f29d8882a826f64f22d7ddada605`: Web CI passou `npm ci`, ESLint e TypeScript/Vite build ([run 45991947575](https://github.com/lc-curto/Orbe/actions/runs/45991947575)); PR Quality Gate passou ([run 45991947579](https://github.com/lc-curto/Orbe/actions/runs/45991947579)). QA manual do formulário permanece pendente.
+- Edição, confirmação de movimentos pendentes na listagem, cancelamento, eliminação, reversão e menus contextuais continuam pendentes por dependerem de fluxos/endpoints adicionais. Não foram simulados.
 
 ## 11. Formulários comuns após os contratos
 
-- [ ] Implementar despesa.
-- [ ] Implementar receita.
-- [ ] Implementar transferência.
+- [x] Implementar criação de gasto (realizado ou pendente) no formulário de Movimentos.
+- [x] Implementar criação de rendimento (realizado ou pendente) no formulário de Movimentos.
+- [x] Implementar criação de transferência com estado e data independentes para cada perna.
 - [ ] Implementar criação e edição de conta.
 - [ ] Implementar criação e edição de cartão.
 - [ ] Integrar o saldo inicial à criação do cartão.
@@ -502,3 +523,166 @@ A regra de reutilização dos frames, cabeçalho e tokens está formalizada em `
 
 Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratadas como trabalho técnico incremental e registadas nas tarefas/PRs correspondentes.
 
+
+
+## Acessibilidade global — sessão e tema
+
+- Logout desktop acessível diretamente no rodapé da sidebar, inclusive recolhida.
+- Logout em viewport mobile/tablet acessível pelo painel **Mais** da bottom bar.
+- O controlo de tema é fornecido pelo `PageHeader` partilhado em todos os breakpoints; o botão duplicado do shell foi removido. Não existe implementação exclusiva do Dashboard.
+- O painel **Mais** mantém o controlo de tema como alternativa, incluindo vistas de Configurações que ocultam o cabeçalho durante a navegação interna.
+- A preferência continua a ser aplicada e persistida pelo `ThemeProvider` existente.
+- QA visual em browser desktop/tablet/mobile ainda necessário após atualização da branch.
+
+## Ajuste de composição do cabeçalho mobile/tablet
+
+- O breakpoint mobile/tablet do Orbe é `max-width: 1024px`.
+- No Dashboard, o cumprimento e o primeiro nome permanecem numa linha; nomes extensos são truncados de forma controlada.
+- Não apresentar subtítulo ou texto auxiliar debaixo do título da página; a data não é renderizada como descrição do cabeçalho.
+- O controlo de tema usa o `PageHeader` partilhado e fica alinhado à direita; não deve ser implementado isoladamente por página.
+- O período do Dashboard fica numa segunda linha, com rótulo `Período` e seletor alinhado à direita.
+- Cabeçalhos com ações de página (por exemplo, seletor mensal) mantêm essas ações e apresentam o controlo de tema de forma empilhada no lado direito em mobile/tablet, evitando sobreposição.
+- A validação final em browser nos breakpoints (incluindo 320 px, 768 px, 1024 px e 1025 px) é necessária antes de aprovar o PR.
+
+## Refinamento visual transversal — implementação inicial (27/11/2026)
+
+- Iniciada na branch `feature/movements-write-flows`, PR #12, sem alterações na `main`.
+- Adicionada `web/src/styles/visual-polish.css`, importada após os estilos existentes, para consolidar tipografia sans-serif, paleta verde-azulada, cartões/superfícies, controlos, navegação e FAB.
+- Removidos estilos inline de fundo da moldura mobile da Dashboard e do cartão de saldo para permitir que o tema/tokens partilhados controlem a apresentação.
+- A camada visual é uma primeira harmonização; ainda requer revisão de regressões, QA em browser e eventual ajuste de componentes com estilos inline legados.
+- Não foram alteradas regras financeiras nem contratos API.
+- Web CI (ESLint, TypeScript e build Vite) e PR Quality Gate passaram no commit de implementação c4483165. QA visual manual do utilizador permanece pendente.
+
+
+### Refinamento transversal de interface — 27/11/2026
+
+- Cabeçalho principal sem descrição ou texto auxiliar imediatamente abaixo do título, aplicado pelo componente `PageHeader`.
+- Seletor de mês partilhado no padrão opção 2: mês abreviado + ano completo (`Nov 2026`), setas discretas nos dois lados, sem superfície/borda; removida a etiqueta redundante “Período” na Dashboard.
+- Na Rota Financeira mobile, o resumo mensal fica antes dos filtros de visualização.
+- Regras transversais de ordem de KPIs/cards, pesquisa e filtros, além dos critérios de light/dark mode, registadas em `docs/03-interface-e-formularios.md`.
+- A correção de dark mode cobre também o shell mobile (`mobile-page-shell`), onde cards/KPIs e estados vazios não eram abrangidos por seletores anteriores.
+- Estado desta revisão: implementada na branch do PR para QA visual manual; não integrada na main. A aprovação visual em diferentes larguras e temas continua pendente.
+
+
+### Composição A do cabeçalho mobile — 27/11/2026
+
+- Saudação/título à esquerda e botão de tema à direita na primeira linha.
+- Mês abreviado + ano na linha seguinte, alinhado à esquerda; setas mínimas alinhadas à direita.
+- Composição aplicada no PageHeader e MonthSelector partilhados para Dashboard, Movimentos e Relatórios.
+- Rota Financeira mantém comportamento diferenciado: intervalo de 3 meses no desktop e mês único no mobile, sem duplicação.
+- CI passou (Web CI e PR Quality Gate); validação visual manual do utilizador ainda pendente. Implementado na branch do PR #12, sem integração na main.
+
+
+### Menu Mais mobile — refinamento transversal
+
+- Corrigido estado selecionado simultâneo: quando Mais abre, a página subjacente não permanece destacada na bottom navigation.
+- Reforçada a distinção do bottom sheet Mais com pega, borda superior teal, sombra e overlay/blur do conteúdo atrás.
+- Cores de seleção da navegação passam a respeitar tokens de light/dark mode.
+- Alteração na branch do PR #12; não integrada na main, pendente de QA visual manual.
+
+
+### Padrão de cards financeiros e ícone Configurações
+
+- Reutilizado o destaque verde do Dashboard nos resumos de saldo final da Rota Financeira (mobile), saldo total de Contas, total em dívida de Cartões e resumo da fatura selecionada.
+- O padrão é aplicado por uma classe partilhada, com gradiente e cores explícitos que não mudam em dark mode. Não afeta cards secundários, listas ou tabelas.
+- Ícone da página Configurações alterado de símbolo tipo sol para engrenagem, distinguindo-o do controlo de tema.
+- Web CI e PR Quality Gate passaram no commit de implementação c4483165; QA visual manual pendente. Não integrada na main.
+
+## Desktop visual consistency — PR #12
+
+- Aprovada a proposta de desktop: sidebar alinhada à esquerda, cabeçalho e conteúdo mais compactos, melhor aproveitamento entre 1025 e 1199px.
+- Implementação na branch feature/movements-write-flows: alinhamento da sidebar através de props dos primitives; geometria desktop por tokens partilhados; controlo de tema no PageHeader em todos os breakpoints; removido o botão duplicado do shell.
+- Criada a variante partilhada orbe-financial-highlight-card no design system, aplicada ao saldo do Dashboard desktop/mobile e aos resumos financeiros aprovados. O tema escuro exclui esta variante das regras genéricas de superfície.
+- Corrigidos os overrides important introduzidos na camada de polimento dos cards e removido o override duplicado do seletor de período da Rota Financeira.
+- Finding legado: theme.css mantém 111 ocorrências `!important` preexistentes para superfícies, formulários e componentes mobile; navigation.css mantém 5 ocorrências de estados da navegação mobile. Impacto: a cascata é mais difícil de manter e estilos semânticos podem exigir exceções. Os seletores afetados pela sidebar desktop e pelo card de destaque foram corrigidos estruturalmente. Critério de remoção dos restantes: migrar cada componente afetado de estilos inline/hardcoded para tokens/classes semânticas e eliminar o override no mesmo PR de migração. base.css mantém 4 declarações no bloco prefers-reduced-motion, usadas como override de acessibilidade para respeitar a preferência do sistema. Não expandido para mobile nesta alteração desktop.
+- Web CI (run 46012020608) e PR Quality Gate (run 46012020106) passaram no commit c4483165. QA visual manual em desktop e nos dois temas continua pendente; não integrado na main.
+
+### QA visual — correção do painel de movimentos do dia
+
+- Finding reportado durante QA: em dark mode, o bottom sheet mobile da Rota Financeira mantinha fundo claro enquanto textos e estados herdavam tokens escuros, causando baixo contraste.
+- Causa: regra dark anterior estava condicionada ao ancestral `.main-content`; o modal mobile não garante esse ancestral.
+- Corrigido em `theme.css` com superfície/foregrounds explícitos e estados de filtro/bordas theme-aware, sem alterar lógica ou markup funcional.
+- Aguardar reteste visual do utilizador em dark mode; alteração na branch do PR #12, não integrada na main.
+
+### QA visual — sidebar/menus dark mode
+
+- Finding complementar: aplicar a mesma correção de contraste ao painel mobile “Mais” e ao popover de conta da sidebar desktop; não depender de herança do container principal porque o popover é renderizado em portal.
+- Corrigido em `theme.css`: superfície opaca por token, foregrounds para textos/ícones, divisores, hover/focus e logout semânticos. Não altera navegação ou ações.
+- QA visual manual em mobile e desktop, light/dark, pendente.
+
+### QA visual — card de resumo em Movimentos
+
+- Substituído o trio de KPIs independentes por um resumo financeiro no padrão de destaque partilhado: Resultado em primeiro plano e Ganhos/Gastos na linha inferior.
+- A composição usa `orbe-financial-highlight-card` e estilos no design-system `financial-highlight.css`; removidos estilos antigos de KPI da página. Sem alteração no cálculo (operações realizadas, excluindo transferências) ou nos filtros.
+- Pesquisa e filtros continuam depois do card. Testar responsividade e legibilidade nos dois temas antes do merge.
+
+### Auditoria sistémica de dark mode — 27/11/2026
+
+- Finding confirmado pelas capturas: formulário de Movimentos apresentava modal claro com input escuro em dark mode. Causa: portal + tokens de formulário estáticos inline + override global de input.
+- Corrigido na camada partilhada: tokens do formulário ligados ao tema ativo; .orbe-input excluído do override global de input; superfícies, selected/hover/focus, botões, footer, backdrop e scrollbar harmonizados.
+- Revisão de estilos em Dashboard, Movimentos, Rota, Contas, Cartões/Faturas, Relatórios, Configurações, navegação mobile/Mais e menus de conta; substituídos vários hardcodes de superfície por tokens semânticos e adicionados estados dark de contraste.
+- Referência estética para menus/overlays: painel Mais — superfície opaca escura, borda/acento teal, texto claro, muted e tint de interação discreto. Dashboard balance highlight mantém gradiente verde aprovado.
+- QA visual manual global ainda pendente. Critério: nenhuma superfície clara involuntária em dark; texto/ícones/placeholder/valores/estados legíveis; selected/hover/focus coerentes; modal/sheet/portal e scrollbar consistentes em light/dark e 320/768/1024/1025+ px.
+- Não alterar lógica, dados, API ou navegação nesta auditoria.
+### Formulários compactos — progressive disclosure e defaults negativos
+
+- Criados no design system os componentes reutilizáveis OrbeDisclosure (secção recolhida por defeito, semântica nativa details/summary) e OrbeFormToggle (checkbox opt-in com label/descrição).
+- Formulário de Movimentos simplificado: descrição, valor, categoria, conta (quando necessária) e data permanecem no fluxo principal; recorrência, estado pendente e detalhes da transferência ficam em disclosure.
+- Princípio global registado: para decisões com impacto material, usar o estado mais seguro, reversível e de menor compromisso; não assumir consentimento/execução e exigir intenção explícita para avançar. Se faltar informação, não inferir nem executar.
+- Movimentos de gasto/rendimento começam PENDENTES. O utilizador tem de ativar “Registar como realizado” para declarar que a operação já aconteceu; a conta só é exigida no estado realizado. Transferências começam com saída e entrada pendentes, cada uma com ação explícita “Registar ... como realizada”.
+- Recorrência começa desligada. Data de fim e descrição opcional começam vazias. Ao ativar recorrência, o formulário mantém o estado conservador e não marca a operação como realizada.
+- Seletores de categoria/conta/frequência passam a usar select nativo e acessível, evitando listas verticais extensas de opções. Estado vazio e seleção de destino dependente da origem têm mensagens explícitas.
+- Datas e estados da transferência ficam recolhidos com resumo do valor predefinido; validações de data abrem automaticamente os detalhes. Erros de fim de recorrência abrem “Mais opções”.
+- DateInput mantém apenas atalhos úteis Hoje/Ontem; removido “Escolher data” redundante, pois o input date já permite escolher.
+- Sem mudança de API/payloads/regra de negócio. Contas e Cartões/Faturas ainda não dispõem de formulários de criação/edição nesta fase; o padrão fica pronto para reutilização quando esses fluxos forem implementados.
+- CI executado no commit anterior passou; após esta correção de defaults, CI deve voltar a executar e QA manual de estados pendentes/realizados em light/dark e 320–1024+ px continua necessário antes do merge.
+
+## Decisão aprovada — formulário completo de gasto (2026-11-27)
+
+O fluxo visual completo foi aprovado pelo utilizador. **A interface está implementada no PR #12**; o modelo físico, serviços e contratos necessários para persistir todas as modalidades ainda precisam de ser implementados.
+
+- Método: Conta ou Cartão; «A prazo» é modalidade, não método.
+- Conta: modalidades Imediato, Data futura e Prestações. Conta prevista separada da conta efetiva; vencimento separado da data do gasto e da data efetiva de pagamento.
+- Em prestações por Conta, permitir marcar primeira prestação já paga e recolher conta efetiva + data efetiva. O pagamento inicial liquida a prestação sem duplicar despesa.
+- Cartão: cartão + compra única/parcelada + número de prestações. Faturas/vencimentos calculados pelo ciclo; sem vencimento manual e sem checkbox de primeira prestação paga no formulário.
+- Contas e cartões são carregados das entidades reais do utilizador; não são usadas opções mockadas.
+- As modalidades ainda sem suporte API ficam bloqueadas no submit, evitando persistência parcial ou perda silenciosa.
+
+### Trabalho restante no backend
+1. Atualizar modelo ER/UML e esquema físico para conta prevista, plano e prestações individuais.
+2. Implementar serviços transacionais/idempotentes para plano parcelado e pagamento inicial opcional.
+3. Alterar contratos API para gasto pendente com conta prevista e compra de cartão calculada pelo backend.
+4. Persistir notas e distinguir data do gasto, vencimento e data efetiva.
+5. Atualizar regras/read models de Movimentos, Contas, Cartões/Faturas e Rota Financeira.
+6. Implementar testes de integridade, idempotência, arredondamento, ciclo do cartão e ausência de dupla contagem.
+7. Ligar os contratos no frontend, remover os bloqueios das modalidades já suportadas e executar QA visual/funcional desktop, tablet e mobile.
+
+Estado: UX aprovada; interface implementada no PR #12; integração financeira completa pendente.
+
+---
+
+
+## Estado atualizado — interface dos formulários de gastos e ganhos (27/11/2026)
+
+**Interface implementada na branch `feature/movements-write-flows`; integração financeira completa ainda pendente.** Esta atualização substitui a indicação anterior de que o formulário ainda não tinha sido implementado. A documentação de UX aprovada permanece válida.
+
+### Implementado na interface
+- Gasto: Conta/Cartão; Conta com Imediato/Data futura/Prestações; quantidade e primeira prestação já paga; compra de cartão única/parcelada; campos de datas e contas contextualizados.
+- Ganho: fluxo próprio recebido/pendente, sem seletor Conta/Cartão.
+- Cartões e contas ativos provenientes do read model real.
+- Notas opcionais no campo «Mais opções».
+- Modalidades que ainda não têm contrato backend são bloqueadas na submissão, sem enviar payload incorreto nem simular persistência.
+- Conta/Imediato e o fluxo existente de ganho continuam ligados aos endpoints já implementados.
+
+### Pendências para tornar os formulários funcionais
+1. **Modelo físico:** guardar conta prevista separada da conta efetiva; representar plano de prestações e vencimentos individuais; suportar compra de cartão e alocações automáticas; persistir notas.
+2. **Serviços Laravel:** criação transacional/idempotente de plano e prestações; pagamento inicial opcional da primeira prestação; impedir duplicação de despesa e garantir valores/arredondamentos exatos.
+3. **API:** ampliar contrato de gastos por Conta/Cartão e alterar criação de compras de cartão para receber cartão/data/quantidade, não alocações manuais de fatura; expor erros de validação por campo.
+4. **Read models:** Movimentos mostra compra de cartão individual e prestações/obrigações no contexto correto; Contas mostra apenas efeitos realizados; Cartões/Faturas mostra compras alocadas e pagamentos; Rota Financeira projeta conta prevista e total de cada fatura uma única vez.
+5. **Ganhos/notas:** adicionar persistência de notas sem alterar o fluxo próprio de receita; confirmar data prevista/efetiva no contrato e read model.
+6. **Testes:** isolamento por utilizador, conta/cartão ativo, idempotência, atomicidade, arredondamento residual, ciclos de fatura, primeira prestação paga, sem dupla contabilização, projeção vs saldo real.
+7. **Frontend final:** ligar os novos contratos, remover bloqueios de modalidades suportadas, atualizar o read model após sucesso e tratar 422/erros de servidor sem fechar o formulário.
+8. **QA:** executar testes backend, Pint nos ficheiros alterados, ESLint, TypeScript/build e QA manual desktop/tablet/mobile + light/dark.
+
+### Sequência
+Modelo e migrations → serviços transacionais/testes → API e read models → ligar frontend/remover bloqueios → QA local → revisão do PR. Não integrar na `main` sem validação explícita.

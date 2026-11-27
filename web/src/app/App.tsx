@@ -19,6 +19,7 @@ import { useCurrency } from '../features/currency/useCurrency'
 import type { CurrencySymbol } from '../features/currency/types'
 import { ReportsPage } from '../features/reports/pages/ReportsPage'
 import { SettingsPage } from '../features/settings/pages/SettingsPage'
+import { useTheme } from '../features/theme/useTheme'
 
 function formatMoney(amount: string, symbol: CurrencySymbol = '€'): string {
   return formatCurrency(amount, symbol)
@@ -78,6 +79,7 @@ function FinanceStatus({ loading, error, authenticated }: { loading: boolean; er
 
 export default function App() {
   const { symbol: currencySymbol } = useCurrency()
+  const { setTheme } = useTheme()
   const { user, loading: authLoading, error: authError, logout } = useAuth()
   const [logoutError, setLogoutError] = useState<string | null>(null)
   const finance = useFinanceData(user)
@@ -245,6 +247,22 @@ export default function App() {
     window.setTimeout(() => setFeedback(''), 2400)
   }
 
+  async function handleLogout() {
+    setLogoutError(null)
+    try {
+      await logout()
+    } catch {
+      const message = 'Não foi possível terminar a sessão. Tenta novamente.'
+      setLogoutError(message)
+      notify(message)
+    }
+  }
+
+  function toggleTheme() {
+    const resolved = document.documentElement.dataset.theme
+    setTheme(resolved === 'dark' ? 'light' : 'dark')
+  }
+
   function openForm(kind: 'expense' | 'income' | 'transfer') {
     setActiveForm(kind)
   }
@@ -271,31 +289,34 @@ export default function App() {
 
   return (
     <AppShell>
-        <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
+      <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <div className="desktop-layout">
-          <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} padding="20px 16px" borderRightWidth={1} borderColor="#eaecf0" backgroundColor="#ffffff">
-            <Row style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom={28}>
-              {sidebarOpen ? <Text fontSize={28} fontWeight="800" color="#101828">Orbe</Text> : null}
-              <Button onPress={toggleSidebar} aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'} width={40} height={40} borderRadius={10} padding={0} borderWidth={1} borderColor="#e4e7ec" backgroundColor={sidebarOpen ? 'transparent' : '#f7f9fc'}>
-                <AppIcon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} color="#667085" />
+          <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} borderRightWidth={1} borderRightColor="var(--orbe-border)">
+            <Row style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom="var(--orbe-space-6)">
+              {sidebarOpen ? <Text className="desktop-sidebar-brand" fontSize={28} fontWeight="800">Orbe</Text> : null}
+              <Button className="desktop-sidebar-collapse-button" onPress={toggleSidebar} aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'} borderWidth={1} backgroundColor="var(--orbe-bg)">
+                <AppIcon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} />
               </Button>
             </Row>
             <Stack className="desktop-sidebar-navigation" gap={18} flex={1}>
-              {sidebarGroups.map((group) => <Stack key={group.title} gap={7}>
-                {sidebarOpen ? <Text color="#98a2b3" fontSize={10} fontWeight="800" letterSpacing={1}>{group.title.toUpperCase()}</Text> : null}
-                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} className="sidebar-nav-button" borderWidth={0} backgroundColor={activeKey === item.label ? '#e6f4f1' : 'transparent'} color={activeKey === item.label ? '#087f70' : '#475467'}>
-                  <Row className="sidebar-nav-row" style={{ alignItems: 'center' }}><AppIcon name={item.icon} size={sidebarOpen ? 18 : 20} strokeWidth={2} />{sidebarOpen ? <Text>{item.label}</Text> : null}</Row>
+              {sidebarGroups.map((group) => <Stack key={group.title} className="sidebar-nav-group" gap={7}>
+                {sidebarOpen ? <Text className="sidebar-group-title">{group.title.toUpperCase()}</Text> : null}
+                {group.pages.map((item) => <Button key={item.label} onPress={() => navigateTo(item.label)} aria-label={item.label} aria-current={activeKey === item.label ? 'page' : undefined} className="sidebar-nav-button" justifyContent={sidebarOpen ? 'flex-start' : 'center'} backgroundColor={activeKey === item.label ? 'color-mix(in srgb, var(--orbe-teal) 13%, var(--orbe-surface))' : 'transparent'}>
+                  <Row className="sidebar-nav-row" width="100%" style={{ alignItems: 'center' }}><AppIcon name={item.icon} size={sidebarOpen ? 18 : 20} strokeWidth={2} />{sidebarOpen ? <Text>{item.label}</Text> : null}</Row>
                 </Button>)}
               </Stack>)}
             </Stack>
-            <Stack className="sidebar-footer" gap={8} borderTopWidth={1} borderColor="#eaecf0" paddingTop={14}>
-              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" className="sidebar-footer-action" borderWidth={0} backgroundColor="transparent" color="#475467" height={42}>
+            <Stack className="sidebar-footer" gap={8} borderTopWidth={1}>
+              <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" className="sidebar-footer-action" justifyContent={sidebarOpen ? 'flex-start' : 'center'}>
                 <Row alignItems="center" gap={10}><AppIcon name="bell" size={20} strokeWidth={2} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</Row>
+              </Button>
+              <Button onPress={() => void handleLogout()} aria-label="Terminar sessão" title="Terminar sessão" className="sidebar-footer-action sidebar-logout-action" justifyContent={sidebarOpen ? 'flex-start' : 'center'} disabled={authLoading}>
+                <Row alignItems="center" gap={10}><AppIcon name="logout" size={20} strokeWidth={2} />{sidebarOpen ? <Text fontSize={13}>Terminar sessão</Text> : null}</Row>
               </Button>
               <Stack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
                 <span ref={accountMenuAnchorRef} className="account-menu-anchor">
-                  <Button className="sidebar-profile-button sidebar-footer-action" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} borderWidth={0} backgroundColor={accountMenuOpen ? "#f2f4f7" : "transparent"} color="#475467" height={44}>
-                    <Row className="sidebar-profile-copy" alignItems="center" gap={10}><AppIcon name="user" size={20} strokeWidth={2} />{sidebarOpen ? <Stack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></Stack> : null}</Row>
+                  <Button className="sidebar-profile-button sidebar-footer-action" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} justifyContent={sidebarOpen ? 'flex-start' : 'center'} backgroundColor={accountMenuOpen ? 'color-mix(in srgb, var(--orbe-muted) 10%, var(--orbe-surface))' : 'transparent'}>
+                    <Row className="sidebar-profile-copy" alignItems="center" gap={10} width="100%"><AppIcon name="user" size={20} strokeWidth={2} />{sidebarOpen ? <Stack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></Stack> : null}</Row>
                   </Button>
                 </span>
                 {accountMenuOpen && typeof document !== 'undefined' ? createPortal(
@@ -349,15 +370,27 @@ export default function App() {
         {activeKey === 'Cartões' ? <MobilePageFrame className="cards-mobile-shell"><CardsPage cards={finance.data.cards} operations={finance.data.operations} loading={finance.loading} error={finance.error} /></MobilePageFrame> : activeKey === 'Contas' ? <MobilePageFrame className="accounts-mobile-shell"><AccountsPage accounts={finance.data.accounts} loading={finance.loading} error={finance.error} /></MobilePageFrame> : activeKey === 'Movimentos' ? <MobilePageFrame><MovementsPage tab={movementTab} setTab={changeMovementTab} operations={finance.data.operations} recurrences={finance.data.recurrences} accounts={finance.data.accounts} categories={finance.data.categories} month={periodMonth} onMonthChange={changeMovementMonth} onNotify={notify} /></MobilePageFrame> : activeKey === 'Rota' ? <MobilePageFrame className="route-mobile-shell"><FinancialRoutePage operations={finance.data.operations} month={routeMonth} onMonthChange={setRouteMonth} /></MobilePageFrame> : activeKey === 'Relatórios' ? <MobilePageFrame className="reports-mobile-shell"><ReportsPage operations={finance.data.operations} loading={finance.loading} error={finance.error} month={reportsMonth} onMonthChange={setReportsMonth} /></MobilePageFrame> : activeKey === 'Configurações' ? <MobilePageFrame><SettingsPage user={user} categories={finance.data.categories} /></MobilePageFrame> : <MobilePageFrame className="mobile-dashboard-shell"><MobileDashboard period={displayPeriod} month={periodMonth} onMonthChange={changeMovementMonth} card={card} invoice={invoice} setActiveKey={navigateTo} userName={user.name} authError={authError} logoutError={logoutError} currencySymbol={currencySymbol} movements={movements} categories={dashboardCategories} loading={finance.loading} /></MobilePageFrame>}
         {feedback ? <Row className="feedback-toast" role="status" aria-live="polite"><Text color="#ffffff" fontWeight="600">{feedback}</Text></Row> : null}
         <div className="mobile-bottom-bar">
-          {navigation.map((item) => <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } navigateTo(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={activeKey === item.label || (item.label === 'Mais' && morePages.some((page) => page.label === activeKey)) ? 'page' : undefined} flex={1} height={56} padding={0} borderWidth={0} backgroundColor={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#e6f4f1' : 'transparent'} color={(item.label === 'Mais' ? morePagesOpen || morePages.some((page) => page.label === activeKey) : activeKey === item.label) ? '#087f70' : '#667085'}>
-            <Stack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><AppIcon name={item.icon} size={18} /><Text fontSize={11} fontWeight="700">{item.label}</Text></Stack>
-          </Button>)}
+          {navigation.map((item) => {
+            const isSelected = item.label === 'Mais'
+              ? morePagesOpen || morePages.some((page) => page.label === activeKey)
+              : !morePagesOpen && activeKey === item.label
+            return <Button key={item.label} onPress={() => { if (item.label === 'Mais') { setMorePagesOpen((value) => !value); return } navigateTo(item.label) }} aria-label={item.label} aria-expanded={item.label === 'Mais' ? morePagesOpen : undefined} aria-current={isSelected ? 'page' : undefined} className="mobile-nav-item" flex={1} height={56} padding={0} borderWidth={0} backgroundColor="transparent" color="var(--orbe-muted)">
+              <Stack gap={4} style={{ alignItems: 'center', justifyContent: 'center' }}><AppIcon name={item.icon} size={18} /><Text fontSize={11} fontWeight="700">{item.label}</Text></Stack>
+            </Button>
+          })}
         </div>
         {morePagesOpen ? <>
           <button className="mobile-more-panel-dismiss" type="button" aria-label="Fechar menu Mais" onClick={() => setMorePagesOpen(false)} />
-          <section className="mobile-more-pages-panel" role="menu" aria-label="Páginas secundárias">
-            <h2>Mais páginas</h2>
+          <section className="mobile-more-pages-panel" role="menu" aria-label="Menu Mais">
+            <h2>Mais</h2>
+            <div className="mobile-more-account">
+              <span className="mobile-more-account-avatar"><AppIcon name="user" size={18} /></span>
+              <span><strong>{user.name}</strong><small>{user.email}</small></span>
+            </div>
             {morePages.map((page) => <button key={page.label} className="mobile-more-page-item" type="button" role="menuitem" onClick={() => { navigateTo(page.label) }}><AppIcon name={page.icon} size={18} /><span>{page.label}</span></button>)}
+            <button className="mobile-more-page-item mobile-more-theme-action" type="button" role="menuitem" onClick={toggleTheme}><AppIcon name={document.documentElement.dataset.theme === 'dark' ? 'sun' : 'moon'} size={18} /><span>{document.documentElement.dataset.theme === 'dark' ? 'Tema claro' : 'Tema escuro'}</span></button>
+            <div className="mobile-more-divider" />
+            <button className="mobile-more-page-item mobile-more-logout" type="button" role="menuitem" onClick={() => { setMorePagesOpen(false); void handleLogout() }} disabled={authLoading}><AppIcon name="logout" size={18} /><span>Terminar sessão</span></button>
           </section>
         </> : null}
         {addMenuOpen ? <><button className="add-fab-dismiss" type="button" aria-label="Fechar opções de criação" onClick={() => setAddMenuOpen(false)} /><div className="add-fab-menu" role="menu" aria-label={`Criar na página ${activeKey}`}>
@@ -366,7 +399,7 @@ export default function App() {
         {!['Relatórios', 'Configurações'].includes(activeKey) ? <button className="app-add-fab" type="button" onClick={handleAddFabClick} aria-label={`Adicionar na página ${activeKey}`} aria-expanded={addMenuOpen} title={`Adicionar — ${activeKey}`}>
           <AppIcon name="plus" size={26} color="#ffffff" strokeWidth={2.2} />
         </button> : null}
-        {activeForm ? <MovementForm kind={activeForm} onClose={() => setActiveForm(null)} onUnavailable={(message) => { setActiveForm(null); notify(message) }} /> : null}
+        {activeForm ? <MovementForm kind={activeForm} accounts={finance.data.accounts} cards={finance.data.cards} categories={finance.data.categories} onClose={() => setActiveForm(null)} onSuccess={(message) => { setActiveForm(null); finance.refresh(); notify(message) }} /> : null}
     </AppShell>
   )
 }

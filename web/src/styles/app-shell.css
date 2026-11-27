@@ -35,6 +35,15 @@
 .main-content.reports-mode,
 .main-content.route-mode { padding-inline: var(--orbe-page-gutter-desktop); }
 
+/* Compact desktop geometry for the 1025–1199px range, using the shared layout tokens. */
+@media (min-width: 1025px) and (max-width: 1199px) {
+  :root {
+    --orbe-page-gutter-desktop: 24px;
+    --orbe-page-section-gap: 20px;
+  }
+  .desktop-sidebar.expanded { width: 220px; }
+}
+
 .mobile-page-shell { display: none; }
 .mobile-dashboard-shell { display: none; }
 .mobile-dashboard-content {
@@ -49,7 +58,7 @@
 .mobile-dashboard-greeting-text { font-size: clamp(18px, 4.2vw, 26px); line-height: 1.2; }
 .mobile-dashboard-date { line-height: 1.4; }
 .mobile-balance-card { border-radius: var(--orbe-radius-card); }
-.desktop-dashboard-header { width: 100%; min-height: 72px; align-items: center; margin-bottom: 0; }
+.desktop-dashboard-header { width: 100%; min-height: 64px; align-items: center; margin-bottom: 0; }
 .desktop-dashboard-header h1 { margin: 0; line-height: 1.15; }
 .dashboard-kpi-row { align-items: stretch; gap: var(--orbe-space-4); }
 .dashboard-kpi-row > * { flex: 1 1 0; min-width: 0; min-height: 144px; }
@@ -323,6 +332,27 @@
   min-width: 0;
   max-width: 100%;
 }
+.orbe-page-theme-toggle {
+  display: inline-grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  place-items: center;
+  border: 1px solid var(--orbe-border);
+  border-radius: 50%;
+  background: var(--orbe-surface);
+  color: var(--orbe-muted);
+  cursor: pointer;
+  transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+}
+.orbe-page-theme-toggle:hover:not(:disabled) {
+  background: var(--orbe-bg);
+  color: var(--orbe-text);
+}
+.orbe-page-theme-toggle:focus-visible {
+  outline: 2px solid var(--orbe-focus);
+  outline-offset: 2px;
+}
 .accounts-page-header,
 .cards-page .accounts-page-header,
 .movements-header,
@@ -354,20 +384,23 @@
     max-width: none;
   }
   .mobile-page-shell .orbe-page-header-actions {
+    display: flex;
     flex: 0 0 auto;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: var(--orbe-space-2);
     width: auto;
     min-width: 0;
     max-width: 48%;
-    justify-content: flex-end;
-    flex-wrap: nowrap;
   }
   .mobile-page-shell .orbe-page-header-actions .orbe-month-selector {
     flex: 0 0 auto;
-    min-width: 104px;
+    min-width: 0;
     margin: 0;
   }
   .orbe-page-header-copy h1 {
-    font-size: clamp(25px, 6.5vw, 30px);
+    font-size: clamp(22px, 6.5vw, 30px);
     line-height: 1.15;
     letter-spacing: -.6px;
   }
@@ -463,4 +496,49 @@
   }
   .mobile-page-shell .reports-header { flex-wrap: nowrap; }
   .mobile-page-shell .reports-header .orbe-page-header-actions { max-width: 48%; }
+}
+
+
+/* Mobile/tablet dashboard header: keep greeting, theme and period in distinct rows. */
+@media (max-width: 1024px) {
+
+  .mobile-dashboard-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--orbe-space-3);
+    margin-bottom: 0;
+  }
+  .mobile-dashboard-header .orbe-page-header-copy {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+  }
+  .mobile-dashboard-header .orbe-page-header-copy h1 {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-wrap: normal;
+    font-size: clamp(20px, 5.4vw, 24px);
+    line-height: 1.2;
+    letter-spacing: -.45px;
+  }
+  .mobile-dashboard-header .orbe-page-header-copy p {
+    white-space: nowrap;
+  }
+  .mobile-dashboard-header .orbe-page-header-actions {
+    flex: 0 0 40px;
+    width: 40px;
+    max-width: 40px;
+    margin-left: auto;
+  }
+  .mobile-more-theme-action { color: var(--orbe-text); }
+}
+@media (max-width: 360px) {
+  .mobile-dashboard-header .orbe-page-header-copy h1 {
+    font-size: 20px;
+    letter-spacing: -.5px;
+  }
 }

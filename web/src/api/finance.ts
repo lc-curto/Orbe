@@ -55,3 +55,60 @@ export async function fetchFinanceReadModel(): Promise<FinanceReadResult> {
 }
 
 export type FinanceApiContract = ApiEnvelope<FinanceReadResult>
+
+
+export type OperationWriteInput = {
+  amount: string
+  category_id: number
+  description?: string
+  state: 'REALIZED' | 'PENDING'
+  account_id?: number
+  effective_at?: string
+  planned_at?: string
+  idempotency_key?: string
+}
+
+export type TransferLegWriteInput = {
+  account_id: number
+  state: 'REALIZED' | 'PENDING'
+  effective_at?: string
+  planned_at?: string
+}
+
+export type TransferWriteInput = {
+  amount: string
+  description?: string
+  idempotency_key?: string
+  legs: {
+    out: TransferLegWriteInput
+    in: TransferLegWriteInput
+  }
+}
+
+export async function createExpense(input: OperationWriteInput): Promise<Operation> {
+  return apiRequest<Operation>('/expenses', { method: 'POST', body: JSON.stringify(input) })
+}
+
+export async function createIncome(input: OperationWriteInput): Promise<Operation> {
+  return apiRequest<Operation>('/incomes', { method: 'POST', body: JSON.stringify(input) })
+}
+
+export async function createTransfer(input: TransferWriteInput): Promise<Operation> {
+  return apiRequest<Operation>('/transfers', { method: 'POST', body: JSON.stringify(input) })
+}
+
+
+export type RecurrenceWriteInput = {
+  nature: 'EXPENSE' | 'INCOME'
+  amount: string
+  category_id: number
+  description?: string
+  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY'
+  first_occurrence_at: string
+  end_at?: string
+  idempotency_key?: string
+}
+
+export async function createRecurrence(input: RecurrenceWriteInput): Promise<RecurrenceSchedule> {
+  return apiRequest<RecurrenceSchedule>('/recurrences', { method: 'POST', body: JSON.stringify(input) })
+}

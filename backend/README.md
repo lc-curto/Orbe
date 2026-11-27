@@ -37,6 +37,23 @@ A API fica normalmente disponível em `http://127.0.0.1:8000/api`.
 
 O `.env.example` usa SQLite. Para MySQL, configura em `.env` `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` e `DB_PASSWORD` antes de executar as migrations. Gera a chave da aplicação apenas na configuração inicial ou quando `APP_KEY` estiver vazio.
 
+## Dados de QA para Movimentos
+
+Para testar os formulários de Movimentos antes da implementação dos formulários de gestão de Contas/Categorias, prepara dados locais com o seeder:
+
+```powershell
+php artisan db:seed --class=QaFinancialDataSeeder
+```
+
+O seeder é idempotente e cria/atualiza dados associados ao utilizador local `test@example.com` (utilizador de desenvolvimento criado por `DatabaseSeeder`; palavra-passe local padrão `password`):
+- 2 contas ativas (BANK e CASH) e 1 conta encerrada;
+- 4 categorias ativas de despesa e 3 de receita;
+- 1 categoria de despesa arquivada, para validar filtros de categorias ativas.
+
+O `DatabaseSeeder` também chama este seeder, por isso `php artisan db:seed` prepara o conjunto QA completo. Os registos têm prefixo `QA —`.
+
+O seeder **não** cria saldo inicial, operações ou lançamentos. Saldos iniciais devem ser criados pelo fluxo financeiro próprio; não se devem inserir saldos diretamente na conta. Usa apenas em base de dados local/de desenvolvimento.
+
 ## Refatoração e boas práticas — obrigatórias
 
 Aplicar os Gates A/B/C de [AGENTS.md](../AGENTS.md) em toda alteração backend. Antes de editar, inspecionar o padrão do módulo e os contratos existentes; durante a implementação, corrigir problemas locais seguros em vez de perpetuá-los; antes de concluir, rever diff, testes e findings adiados.

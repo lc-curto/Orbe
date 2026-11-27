@@ -110,10 +110,9 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
         <div>
           <button className="cards-back-button" type="button" onClick={() => { setSelectedInvoiceId(null); setInvoiceSearch('') }}>‹ Voltar às faturas</button>
           <h1 id="cards-page-title">Fatura de {invoiceMonth(selectedInvoice.period_start)}</h1>
-          <p className="accounts-page-subtitle">{selectedCard.name} · Vence {date(selectedInvoice.due_date)}</p>
         </div>
       </header>
-      <div className="cards-detail-summary">
+      <div className="cards-detail-summary orbe-financial-highlight-card">
         <span className="cards-summary-label">Total da fatura</span>
         <strong className="cards-available-value">{money(selectedInvoice.summary.obligation_amount, symbol)}</strong>
         <div className="cards-invoice-total-lines">
@@ -139,7 +138,6 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
         <div>
           <button className="cards-back-button" type="button" onClick={() => { setSelectedInvoiceId(null); setSelectedCardId(null); setOpenMenuId(null) }}>‹ Cartões</button>
           <h1 id="cards-page-title">{selectedCard.name}</h1>
-          <p className="accounts-page-subtitle">Detalhes do cartão</p>
         </div>
       </header>
       <div className="cards-detail-summary">
@@ -165,8 +163,8 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
         {!loading && !error ? (selectedCard.invoices ?? []).map(renderInvoice) : null}
       </div>
     </> : <>
-      <PageHeader title="Cartões" titleId="cards-page-title" description={`${activeCards.length} ${activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}`} className="accounts-page-header" />
-      <div className="accounts-total-card cards-total-card">
+      <PageHeader title="Cartões" titleId="cards-page-title" className="accounts-page-header" />
+      <div className="accounts-total-card cards-total-card orbe-financial-highlight-card">
         <span className="accounts-total-label">TOTAL EM DÍVIDA</span>
         <strong className="accounts-total-value">{money(totalDebt, symbol)}</strong>
         <p className="accounts-readonly-note">{cards.length} {cards.length === 1 ? 'cartão' : 'cartões'}</p>

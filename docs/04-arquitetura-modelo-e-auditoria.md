@@ -871,3 +871,48 @@ Esta auditoria não altera o ER conceptual, não transforma os módulos ausentes
 - Relatórios agrega operações realizadas por dia no período selecionado em função pura de `features/reports/utils.ts`; o gráfico é SVG acessível e sem dependência externa. Excluir transferências e estados não realizados.
 - Páginas não devem permanecer na raiz de `src`. Componentes partilhados entre features devem viver em `shared` ou no módulo que os possui, evitando imports entre páginas (por exemplo, Cartões não importa componentes diretamente de Movimentos).
 - O CSS global legado é separado por área funcional e importado num único entrypoint (`index.css`), mantendo a ordem de cascata existente. Novos estilos devem ficar junto da feature e usar classes prefixadas/escopadas; não aumentar o stylesheet global monolítico.
+
+## Extensão de domínio — modalidade de gasto e destino previsto (decisão 2026-11-27)
+
+A decisão do formulário exige distinguir semanticamente os dados de previsão dos efeitos efetivos. A extensão deve ser refletida no modelo físico e nas APIs antes da implementação funcional; não assumir que os contratos atuais já a suportam.
+
+- Operação de gasto deve poder guardar método/modalidade: Conta + Imediato/Data futura/Prestações; ou Cartão + Compra única/Compra em prestações.
+- Para gastos por Conta pendentes, suportar conta prevista (`planned_account_id` ou equivalente) separada do destino efetivo do lançamento (`financial_entries.account_id`). A conta prevista não é um lançamento nem altera saldo.
+- Preservar separação entre data do gasto (`transaction_at`/data de lançamento), vencimento (`due_at` por prestação/obrigação) e data efetiva do pagamento (`effective_at`). Não reutilizar um único campo de data para os três conceitos.
+- Plano a prazo/prestações por Conta deve manter total da obrigação, número de prestações, valor/calendário de cada prestação e estado de cada uma. O modelo deve suportar liquidação individual, incluindo a primeira prestação no ato da criação.
+- O pagamento inicial deve ser uma operação/efeito de liquidação rastreável, com conta efetiva e data efetiva, ligado à prestação/obrigação. Não modificar o valor da despesa original nem criar uma segunda despesa.
+- Para Cartão, `card_id` e data do gasto são entrada para cálculo de ciclo. Alocações de prestações devem apontar às faturas/períodos calculados; vencimentos não são dados manuais do formulário. A compra não possui estado «primeira prestação paga» no formulário; pagamentos são registados no fluxo de fatura.
+- A extensão não deve quebrar ARC-001: cada lançamento financeiro continua a ter exatamente um destino específico. A conta prevista pertence à operação/plano e não substitui nem contorna o destino obrigatório dos lançamentos efetivos.
+
+### Alterações de contrato necessárias antes de implementar
+- Definir campos e enumerações de método/modalidade e validações condicionais.
+- Adicionar persistência/serialização de conta prevista separada da conta efetiva.
+- Definir comando transacional para criar plano de prestações e liquidar opcionalmente a primeira.
+- Formalizar cálculo de alocação por ciclo de cartão e contrato de pré-visualização.
+- Atualizar modelo ER/UML e testes de integridade/idempotência; só depois criar migrations e implementar UI/backend.
+
+---
+
+
+## Extensão do modelo para formulários de gastos — estado 27/11/2026
+
+A interface está implementada no PR #12; o modelo físico e os serviços necessários para as modalidades abaixo ainda não estão implementados.
+
+### Persistência a especificar
+- **Conta prevista:** referência opcional na operação/plano, validada por utilizador e conta ativa. Não é FK de lançamento efetivo e não altera saldo.
+- **Plano de prestações por Conta:** entidade de plano ligada à operação original, com conta prevista, quantidade, valor total, data da primeira prestação e estado.
+- **Prestações:** registos individuais com número sequencial, valor, vencimento, estado e valor liquidado/em aberto. A obrigação deriva de registos de prestação/lançamentos válidos, sem criar uma segunda despesa para a operação original.
+- **Pagamento inicial:** ligação rastreável da prestação 1 ao lançamento/efeito efetivo, conta e data. Deve ser criado na mesma transação do plano quando marcado como já pago.
+- **Compra de Cartão:** persistir `card_id`, data da compra, quantidade de prestações e alocações calculadas às faturas. Preservar a relação compra → alocações → faturas.
+- **Notas:** campo opcional persistido na operação de gasto/ganho e exposto nos recursos/read models.
+
+### Invariantes
+1. A operação original representa o gasto uma única vez.
+2. Conta prevista nunca é conta efetiva nem destino de `financial_entries`.
+3. O pagamento da primeira prestação reduz a obrigação correspondente e afeta a conta escolhida, sem duplicar o gasto.
+4. Soma das prestações = total da obrigação; qualquer resíduo de arredondamento é atribuído deterministicamente conforme ARC-003.
+5. Compra de cartão + alocações calculadas preservam o total da compra; pagamentos de fatura não reconhecem a compra novamente.
+6. Operação, plano, prestações e pagamento inicial são atómicos e idempotentes.
+7. Movimentos apresenta compras individuais; Rota Financeira apresenta o total da fatura uma única vez e não soma também as compras que a compõem.
+
+O modelo ER/UML e migrations devem ser atualizados com estas entidades/relacionamentos antes da implementação dos serviços. A extensão respeita ARC-001: cada lançamento efetivo continua a ter exatamente um destino específico.

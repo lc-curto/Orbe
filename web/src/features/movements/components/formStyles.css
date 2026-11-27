@@ -7,7 +7,8 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: color-mix(in srgb, var(--orbe-form-text) 42%, transparent);
+  background: rgba(7, 15, 14, .62);
+  backdrop-filter: blur(4px);
 }
 
 .orbe-form-container {
@@ -114,7 +115,7 @@
   color: var(--orbe-form-text);
   font: inherit;
   font-size: 14px;
-  background: var(--orbe-form-surface);
+  background: var(--orbe-form-input, var(--orbe-form-surface));
   border: 1px solid var(--orbe-form-border);
   border-radius: var(--orbe-form-radius-control, 12px);
   outline: 0;
@@ -180,7 +181,7 @@
   color: var(--orbe-form-danger);
   font-size: 13px;
   background: var(--orbe-form-danger-soft);
-  border: 1px solid color-mix(in srgb, var(--orbe-form-danger) 42%, white);
+  border: 1px solid color-mix(in srgb, var(--orbe-form-danger) 42%, var(--orbe-form-surface));
   border-radius: var(--orbe-form-radius-control, 12px);
 }
 
@@ -243,7 +244,7 @@
   width: 28px;
   height: 28px;
   color: currentColor;
-  background: color-mix(in srgb, var(--orbe-form-primary-soft) 75%, white);
+  background: color-mix(in srgb, var(--orbe-form-primary-soft) 75%, var(--orbe-form-surface));
   border-radius: 9px;
 }
 
@@ -368,7 +369,7 @@
 }
 
 .orbe-button-primary {
-  color: white;
+  color: var(--orbe-form-primary-button-text, white);
   background: var(--orbe-form-primary);
 }
 
@@ -587,4 +588,226 @@
     transition: none;
     animation: none;
   }
+}
+
+/* Portalled form controls inherit semantic theme tokens from the document root. */
+.orbe-form-scroll {
+  scrollbar-color: var(--orbe-form-muted) var(--orbe-form-surface);
+  scrollbar-width: thin;
+}
+
+/* Compact field rhythm for the movement creation flow. */
+.orbe-movement-form .orbe-field {
+  margin-bottom: 12px;
+}
+
+.orbe-movement-form .orbe-select-input {
+  appearance: auto;
+  cursor: pointer;
+  padding-right: 10px;
+}
+
+.orbe-movement-form .orbe-select-input:disabled {
+  cursor: not-allowed;
+}
+
+.orbe-movement-form .orbe-disclosure {
+  margin-top: 4px;
+}
+
+.orbe-movement-form .orbe-disclosure-content .orbe-field:last-child {
+  margin-bottom: 0;
+}
+
+.orbe-movement-form .orbe-transfer-direction {
+  margin-top: -2px;
+  margin-bottom: 8px;
+}
+
+
+/* Payment method selector — visual-only until payment-method flows are connected. */
+.orbe-payment-method {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 4px 0 14px;
+}
+
+.orbe-payment-method-title {
+  color: var(--orbe-form-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.orbe-payment-method-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.orbe-payment-method-option {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  color: var(--orbe-form-text);
+  font-size: 13px;
+  font-weight: 650;
+  text-align: center;
+  background: var(--orbe-form-surface);
+  border: 1px solid var(--orbe-form-border);
+  border-radius: var(--orbe-form-radius-control, 12px);
+  cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+}
+
+.orbe-payment-method-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.orbe-payment-method-option.is-selected {
+  color: var(--orbe-form-primary);
+  background: var(--orbe-form-primary-soft);
+  border-color: var(--orbe-form-primary);
+}
+
+.orbe-payment-method-option:focus-within {
+  outline: 2px solid var(--orbe-form-focus);
+  outline-offset: 2px;
+}
+
+.orbe-payment-method-option:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.orbe-payment-method-note {
+  margin: 0;
+  color: var(--orbe-form-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+@media (max-width: 360px) {
+  .orbe-payment-method-options {
+    gap: 6px;
+  }
+
+  .orbe-payment-method-option {
+    padding-inline: 4px;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbe-payment-method-option {
+    transition: none;
+  }
+}
+
+
+/* Expense payment selection — shared form design tokens, responsive at 320px. */
+.orbe-expense-payment {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 4px 0 18px;
+}
+
+.orbe-form-section-title {
+  color: var(--orbe-form-text);
+  font-size: 13px;
+  font-weight: 750;
+  margin-top: 4px;
+}
+
+.orbe-choice-grid {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.orbe-choice-grid-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.orbe-choice-grid-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+.orbe-choice-card {
+  display: flex;
+  min-width: 0;
+  min-height: 58px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 11px;
+  color: var(--orbe-form-text);
+  text-align: left;
+  background: var(--orbe-form-surface);
+  border: 1px solid var(--orbe-form-border);
+  border-radius: var(--orbe-form-radius-control, 12px);
+  cursor: pointer;
+}
+
+.orbe-choice-card strong {
+  max-width: 100%;
+  font-size: 13px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.orbe-choice-card span {
+  color: var(--orbe-form-muted);
+  font-size: 11px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.orbe-choice-card.is-selected {
+  color: var(--orbe-form-primary);
+  background: var(--orbe-form-primary-soft);
+  border-color: var(--orbe-form-primary);
+  box-shadow: inset 0 0 0 1px var(--orbe-form-primary);
+}
+
+.orbe-choice-card.is-selected span { color: var(--orbe-form-primary); }
+.orbe-choice-card:hover:not(:disabled) { border-color: var(--orbe-form-primary); }
+.orbe-choice-card:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--orbe-form-focus) 45%, transparent);
+  outline-offset: 2px;
+}
+.orbe-choice-card:disabled { cursor: not-allowed; opacity: .6; }
+
+.orbe-form-helper,
+.orbe-form-blocked-note {
+  margin: 0 0 14px;
+  padding: 11px 12px;
+  color: var(--orbe-form-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  background: var(--orbe-form-background);
+  border: 1px solid var(--orbe-form-border);
+  border-radius: var(--orbe-form-radius-control, 12px);
+}
+
+.orbe-form-blocked-note {
+  margin: 0 22px 12px;
+  color: var(--orbe-form-text);
+  border-color: color-mix(in srgb, var(--orbe-form-primary) 35%, var(--orbe-form-border));
+}
+
+@media (max-width: 360px) {
+  .orbe-choice-grid { gap: 6px; }
+  .orbe-choice-card { padding: 9px 7px; }
+  .orbe-choice-card strong { font-size: 12px; }
+  .orbe-choice-card span { font-size: 10px; }
 }

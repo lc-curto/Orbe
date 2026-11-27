@@ -141,3 +141,28 @@ Testar sempre:
 - pagamentos parciais e saldo em aberto são coerentes;
 - recorrências não duplicam ocorrências;
 - saldos agregados correspondem aos lançamentos válidos.
+
+## Formulário de gasto — regras de modalidade, conta prevista e liquidação (decisão 2026-11-27)
+
+Esta decisão complementa e, nos casos indicados, substitui a regra anterior que proibia qualquer destino numa operação pendente. A distinção obrigatória passa a ser entre **destino previsto** e **destino efetivo**.
+
+- Método de pagamento é **Conta** ou **Cartão**. «A prazo» não é método; é uma modalidade de pagamento por Conta.
+- Para Conta, as modalidades são Imediato, Data futura e Prestações.
+- `planned_account_id` (ou campo semântico equivalente) identifica a conta escolhida como previsão de liquidação. Pode ser associado a operação pendente e serve apenas para informação/projeção. Não cria `financial_entries` realizados e não altera saldo efetivo.
+- `account_id`/destino efetivo é registado apenas quando existe pagamento realizado. Não inferir o destino efetivo a partir da conta prevista.
+- Imediato exige conta e data efetiva; a operação é criada como realizada com o efeito financeiro correspondente.
+- Data futura exige conta prevista e data de vencimento; a operação permanece pendente, sem lançamento realizado. A Rota projeta o fluxo na data prevista.
+- Prestações exige conta prevista, número de prestações e vencimento da primeira. O plano gera prestações/obrigações com calendário e valores consistentes; a conta prevista não liquida nenhuma delas.
+- Se a primeira prestação já foi paga, a criação inclui a liquidação efetiva da primeira prestação com conta real e data efetiva. A despesa é reconhecida uma única vez; o pagamento reduz a obrigação e afeta a conta, sem criar despesa duplicada. Prestação restantes continuam pendentes.
+- Conta efetiva da primeira prestação pode diferir da conta prevista para as prestações futuras; ambos os dados devem ser preservados com semântica distinta.
+- As contas disponíveis no formulário são as contas financeiras ativas existentes no módulo Contas; não oferecer cartão de crédito neste seletor.
+- Cartão é fluxo distinto: compra reconhecida uma vez na data do lançamento, `card_id` obrigatório, compra única ou parcelada. O sistema aloca prestações às faturas segundo o ciclo do cartão; o formulário não recebe vencimentos manuais nem estado de pagamento de primeira prestação.
+- Liquidação de fatura é evento separado, alocado à fatura e à conta de pagamento; nunca reconhecer a compra como nova despesa.
+- A Rota parte dos saldos atuais e inclui apenas fluxos futuros ainda não refletidos. Conta prevista pode identificar a conta cujo saldo projetado será afetado na data de vencimento, mas não altera saldo atual. Se a conta prevista não puder ser usada no cálculo, manter o fluxo na projeção global e sinalizar a falta de alocação, sem inventar uma conta.
+
+### Integridade e idempotência
+- Criar gasto parcelado e, se aplicável, liquidar a primeira prestação deve ser transacional: ou persistem a operação, plano/alocações e pagamento inicial, ou não persiste nenhum deles.
+- Repetição de submit não pode duplicar gasto, prestações ou pagamento inicial; aplicar idempotência ao comando de criação.
+- Validar pertença do utilizador e estado ativo de conta/cartão; valores positivos; número de prestações válido; datas coerentes; e arredondamento monetário conforme ARC-003.
+
+---
