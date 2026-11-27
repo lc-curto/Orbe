@@ -316,7 +316,7 @@ export default function App() {
               </Button>
               <Stack className="account-menu" alignItems={sidebarOpen ? "stretch" : "center"}>
                 <span ref={accountMenuAnchorRef} className="account-menu-anchor">
-                  <Button className={`sidebar-profile-button sidebar-footer-action${accountMenuOpen ? ' is-open' : ''}`} onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} justifyContent={sidebarOpen ? 'flex-start' : 'center'} backgroundColor={accountMenuOpen ? 'color-mix(in srgb, var(--orbe-muted) 10%, var(--orbe-surface))' : 'transparent'}>
+                  <Button className="sidebar-profile-button sidebar-footer-action" onPress={() => setAccountMenuOpen((value) => !value)} aria-label="Abrir perfil" aria-expanded={accountMenuOpen} justifyContent={sidebarOpen ? 'flex-start' : 'center'} backgroundColor={accountMenuOpen ? 'color-mix(in srgb, var(--orbe-muted) 10%, var(--orbe-surface))' : 'transparent'}>
                     <Row className="sidebar-profile-copy" alignItems="center" gap={10} width="100%"><AppIcon name="user" size={20} strokeWidth={2} />{sidebarOpen ? <Stack className="sidebar-profile-name-wrap" gap={2} alignItems="flex-start"><Text className="sidebar-profile-name" fontSize={13} fontWeight="700">{user.name}</Text></Stack> : null}</Row>
                   </Button>
                 </span>
