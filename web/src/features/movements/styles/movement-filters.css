@@ -113,13 +113,7 @@
   }
 }
 
-/* Search fields use a separate, accessible, clickable submit icon */
-.search-control input,
-input.search-input,
-input[type="search"] {
-  background-image: none !important;
-  padding-left: 12px !important;
-}
+/* Search fields use a separate, accessible, clickable submit icon. */
 .movement-search-form {
   display: flex;
   align-items: end;
