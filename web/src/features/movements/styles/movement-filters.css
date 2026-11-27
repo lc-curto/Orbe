@@ -17,8 +17,8 @@
   min-height: 44px;
   border-radius: 12px;
   padding: 0 14px;
-  background: #fff;
-  border-color: #e4e7ec;
+  background: var(--orbe-surface);
+  border-color: var(--orbe-border);
   transition: border-color .15s ease, box-shadow .15s ease;
 }
 .movements-page .movement-toolbar .search-control input:focus {
@@ -40,9 +40,9 @@
 }
 .movements-page .toolbar-filter:hover,
 .movements-page .toolbar-filter[aria-expanded="true"] {
-  background: #f2f4ff;
-  border-color: #c7d2fe;
-  color: #5145cd;
+  background: color-mix(in srgb, var(--orbe-primary) 9%, var(--orbe-surface));
+  border-color: color-mix(in srgb, var(--orbe-primary) 30%, var(--orbe-border));
+  color: var(--orbe-primary);
 }
 .movements-page .filter-panel {
   display: grid;
@@ -51,8 +51,8 @@
   margin: -4px 0 16px;
   padding: 16px;
   border-radius: 14px;
-  background: #fbfcff;
-  border-color: #e4e7ec;
+  background: var(--orbe-surface);
+  border-color: var(--orbe-border);
 }
 .movements-page .filter-panel label {
   min-width: 0;
@@ -139,16 +139,16 @@
   margin-bottom: 0;
   border: 1px solid var(--orbe-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--orbe-surface);
   color: var(--orbe-muted);
   cursor: pointer;
   transition: color .15s ease, border-color .15s ease, background .15s ease;
 }
 .search-submit-button:hover,
 .search-submit-button:focus-visible {
-  color: #5145cd;
-  border-color: #c7d2fe;
-  background: #f2f4ff;
+  color: var(--orbe-primary);
+  border-color: color-mix(in srgb, var(--orbe-primary) 30%, var(--orbe-border));
+  background: color-mix(in srgb, var(--orbe-primary) 9%, var(--orbe-surface));
 }
 .search-submit-button:focus-visible {
   outline: 3px solid rgba(23, 92, 211, .18);
@@ -276,15 +276,15 @@
   padding: 0;
   border-radius: 50%;
   font-size: 0;
-  color: #667085;
-  background: #fff;
-  border: 1px solid #e4e7ec;
+  color: var(--orbe-muted);
+  background: var(--orbe-surface);
+  border: 1px solid var(--orbe-border);
 }
 .movements-page .movement-filter-row > .filter-icon-button:hover,
 .movements-page .movement-filter-row > .filter-icon-button[aria-expanded="true"] {
-  color: #5145cd;
-  background: #f2f4ff;
-  border-color: #c7d2fe;
+  color: var(--orbe-primary);
+  background: color-mix(in srgb, var(--orbe-primary) 9%, var(--orbe-surface));
+  border-color: color-mix(in srgb, var(--orbe-primary) 30%, var(--orbe-border));
 }
 .movements-page .movement-filter-row > .filter-icon-button:focus {
   outline: none;
