@@ -6,7 +6,7 @@ import { orbe } from '../../../design-system/tokens'
 import { useCurrency } from '../../currency/useCurrency'
 import { ApiError } from '../../../api/client'
 import type { Account, Category } from '../../../api/types'
-import { createExpense, createIncome, createTransfer } from '../../../api/finance'
+import { createExpense, createIncome, createRecurrence, createTransfer } from '../../../api/finance'
 import './formStyles.css'
 
 type FormKind = 'expense' | 'income' | 'transfer'
@@ -265,6 +265,9 @@ export function MovementForm({
   const [category, setCategory] = useState('')
   const [account, setAccount] = useState('')
   const [date, setDate] = useState(today)
+  const [entryMode, setEntryMode] = useState<'single' | 'recurrence'>('single')
+  const [frequency, setFrequency] = useState<'DAILY' | 'WEEKLY' | 'MONTHLY'>('MONTHLY')
+  const [endAt, setEndAt] = useState('')
   const [destination, setDestination] = useState('')
   const [operationState, setOperationState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
   const [outState, setOutState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
@@ -275,6 +278,7 @@ export function MovementForm({
   const [submitting, setSubmitting] = useState(false)
   const idempotencyKey = useRef(`orbe-movement-${window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`}`)
   const isTransfer = kind === 'transfer'
+  const isRecurring = !isTransfer && entryMode === 'recurrence'
   const title = kind === 'expense' ? 'Novo gasto' : kind === 'income' ? 'Novo rendimento' : 'Nova transferência'
   const nature = kind === 'income' ? 'INCOME' : 'EXPENSE'
   const accounts: SelectOption[] = useMemo(
@@ -292,7 +296,8 @@ export function MovementForm({
     })),
     [categoryRecords, nature],
   )
-  const dirty = Boolean(description || amount || category || account || destination
+  const dirty = Boolean(description || amount || category || account || destination || endAt
+    || entryMode !== 'single' || frequency !== 'MONTHLY'
     || operationState !== 'REALIZED' || outState !== 'REALIZED' || inState !== 'REALIZED'
     || outDate !== today() || inDate !== today() || date !== today())
 
@@ -307,8 +312,13 @@ export function MovementForm({
     } else {
       if (!description.trim()) next.description = 'Introduz uma descrição.'
       if (!category) next.category = 'Seleciona uma categoria.'
-      if (operationState === 'REALIZED' && !account) next.account = 'Seleciona uma conta para o movimento realizado.'
-      if (!date) next.date = 'Introduz uma data válida.'
+      if (isRecurring) {
+        if (!date) next.date = 'Introduz a data da primeira ocorrência.'
+        if (endAt && date && endAt < date) next.endAt = 'A data de fim não pode ser anterior à primeira ocorrência.'
+      } else {
+        if (operationState === 'REALIZED' && !account) next.account = 'Seleciona uma conta para o movimento realizado.'
+        if (!date) next.date = 'Introduz uma data válida.'
+      }
     }
     if (!validMoney(amount)) next.amount = 'O valor deve ser superior a zero.'
     setErrors(next)
@@ -322,7 +332,19 @@ export function MovementForm({
     setErrors({})
     try {
       const normalizedAmount = normalizeMoney(amount)
-      if (isTransfer) {
+      if (isRecurring) {
+        await createRecurrence({
+          nature,
+          amount: normalizedAmount,
+          category_id: Number(category),
+          description: description.trim(),
+          frequency,
+          first_occurrence_at: date,
+          end_at: endAt || undefined,
+          idempotency_key: idempotencyKey.current,
+        })
+        onSuccess(kind === 'income' ? 'Programação de rendimento criada.' : 'Programação de gasto criada.')
+      } else if (isTransfer) {
         await createTransfer({
           amount: normalizedAmount,
           description: description.trim() || undefined,
@@ -370,6 +392,8 @@ export function MovementForm({
           'legs.in.planned_at': 'inDate',
           effective_at: 'date',
           planned_at: 'date',
+          first_occurrence_at: 'date',
+          end_at: 'endAt',
           financial: 'form',
         }
         const next: FieldErrors = {}
@@ -423,15 +447,30 @@ export function MovementForm({
         <FormField label="Categoria" name="category" required error={errors.category}>
           <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder={`Não existem categorias ativas de ${kind === 'income' ? 'rendimento' : 'gasto'}.`} disabled={submitting} />
         </FormField>
-        <FormField label="Estado" name="operationState" required>
-          <SelectInput id="operationState" value={operationState} onChange={(value) => setOperationState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
+        <FormField label="Tipo" name="entryMode" required>
+          <SelectInput id="entryMode" value={entryMode} onChange={(value) => setEntryMode(value as 'single' | 'recurrence')} options={[{ value: 'single', label: 'Movimento único' }, { value: 'recurrence', label: 'Programação recorrente' }]} placeholder="Seleciona o tipo" disabled={submitting} />
         </FormField>
-        {operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
-          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Não existem contas ativas para selecionar." disabled={submitting} />
-        </FormField> : null}
-        <FormField label={operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
-          <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
-        </FormField>
+        {isRecurring ? <>
+          <FormField label="Periodicidade" name="frequency" required>
+            <SelectInput id="frequency" value={frequency} onChange={(value) => setFrequency(value as 'DAILY' | 'WEEKLY' | 'MONTHLY')} options={[{ value: 'DAILY', label: 'Diária' }, { value: 'WEEKLY', label: 'Semanal' }, { value: 'MONTHLY', label: 'Mensal' }]} placeholder="Seleciona a periodicidade" disabled={submitting} />
+          </FormField>
+          <FormField label="Primeira ocorrência" name="date" required error={errors.date}>
+            <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
+          </FormField>
+          <FormField label="Data de fim (opcional)" name="endAt" error={errors.endAt}>
+            <DateInput id="endAt" value={endAt} onChange={setEndAt} disabled={submitting} />
+          </FormField>
+        </> : <>
+          <FormField label="Estado" name="operationState" required>
+            <SelectInput id="operationState" value={operationState} onChange={(value) => setOperationState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
+          </FormField>
+          {operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
+            <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Não existem contas ativas para selecionar." disabled={submitting} />
+          </FormField> : null}
+          <FormField label={operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
+            <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
+          </FormField>
+        </>}
       </>}
       <FormField label="Valor" name="amount" required error={errors.amount}>
         <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
