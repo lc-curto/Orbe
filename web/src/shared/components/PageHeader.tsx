@@ -11,7 +11,7 @@ type PageHeaderProps = {
 }
 
 /** Shared page heading and responsive actions, including the cross-page theme control. */
-export function PageHeader({ title, description, titleId, className = '', actions }: PageHeaderProps) {
+export function PageHeader({ title, titleId, className = '', actions }: PageHeaderProps) {
   const { setTheme } = useTheme()
 
   function toggleTheme() {
@@ -24,7 +24,6 @@ export function PageHeader({ title, description, titleId, className = '', action
   return <header className={`orbe-page-header ${className}`}>
     <div className="orbe-page-header-copy">
       <h1 id={titleId}>{title}</h1>
-      {description ? <p>{description}</p> : null}
     </div>
     <div className="orbe-page-header-actions">
       <button
