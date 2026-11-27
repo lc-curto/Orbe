@@ -163,7 +163,7 @@
   .mobile-page-shell .movements-page { max-width: 720px; margin-inline: auto; padding: var(--orbe-space-5) 0 0; }
   .mobile-page-shell .movements-brand { display: flex; margin: 0 0 var(--orbe-space-4); }
   .mobile-page-shell .movements-account { display: none; }
-  .mobile-page-shell .movements-header { align-items: flex-start; padding: 0 0 var(--orbe-space-4); gap: var(--orbe-space-3); }
+  .mobile-page-shell .movements-header { align-items: center; padding: 0 0 var(--orbe-space-4); gap: var(--orbe-space-3); }
   .movements-header h1 { font-size: 28px; letter-spacing: -.7px; }
   .month-navigation { margin-top: var(--orbe-space-2); }
   .month-navigation button { width: 32px; height: 32px; }
