@@ -324,9 +324,11 @@ export function MovementForm({
   const unsupportedNotes = !isTransfer && Boolean(notes.trim())
   const blockedUntilBackend = unsupportedExpenseFlow || unsupportedNotes
   const dirty = Boolean(description || notes || amount || category || account || plannedAccount || selectedCard || destination || endAt
-    || entryMode !== 'single' || frequency !== 'MONTHLY'
-    || operationState !== 'PENDING' || outState !== 'PENDING' || inState !== 'PENDING'
-    || outDate !== today() || inDate !== today() || date !== today() || firstInstallmentPaid)
+    || entryMode !== 'single' || frequency !== 'MONTHLY' || paymentMethod !== 'account' || accountMode !== 'immediate'
+    || purchaseType !== 'single' || installmentCount !== '2' || firstInstallmentPaid || firstPaidAccount || firstPaidDate !== today()
+    || (kind === 'income' ? operationState !== 'PENDING' : kind === 'expense' ? operationState !== 'REALIZED' : false)
+    || outState !== 'PENDING' || inState !== 'PENDING'
+    || outDate !== today() || inDate !== today() || date !== today())
 
   function toggleRecurrence(enabled: boolean) {
     setEntryMode(enabled ? 'recurrence' : 'single')
@@ -366,12 +368,12 @@ export function MovementForm({
           if (paymentMethod === 'account' && accountMode === 'future' && !plannedAccount) next.plannedAccount = 'Seleciona a conta prevista para o pagamento.'
           if (paymentMethod === 'account' && accountMode === 'installments') {
             if (!plannedAccount) next.plannedAccount = 'Seleciona a conta prevista para as prestações.'
-            if (!/^\\d+$/.test(installmentCount) || Number(installmentCount) < 2 || Number(installmentCount) > 120) next.installmentCount = 'Escolhe entre 2 e 120 prestações.'
+            if (!/^\d+$/.test(installmentCount) || Number(installmentCount) < 2 || Number(installmentCount) > 120) next.installmentCount = 'Escolhe entre 2 e 120 prestações.'
             if (firstInstallmentPaid && !firstPaidAccount) next.firstPaidAccount = 'Seleciona a conta usada para pagar a primeira prestação.'
             if (firstInstallmentPaid && !firstPaidDate) next.firstPaidDate = 'Introduz a data efetiva do pagamento.'
           }
           if (paymentMethod === 'card' && !selectedCard) next.selectedCard = 'Seleciona um cartão ativo.'
-          if (paymentMethod === 'card' && purchaseType === 'installments' && (!/^\\d+$/.test(installmentCount) || Number(installmentCount) < 2 || Number(installmentCount) > 120)) next.installmentCount = 'Escolhe entre 2 e 120 prestações.'
+          if (paymentMethod === 'card' && purchaseType === 'installments' && (!/^\d+$/.test(installmentCount) || Number(installmentCount) < 2 || Number(installmentCount) > 120)) next.installmentCount = 'Escolhe entre 2 e 120 prestações.'
         } else if (operationState === 'REALIZED' && !account) next.account = 'Seleciona uma conta para o rendimento recebido.'
         if (!date) next.date = 'Introduz uma data válida.'
       }
