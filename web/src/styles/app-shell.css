@@ -527,38 +527,11 @@
     max-width: 40px;
     margin-left: auto;
   }
-  .mobile-dashboard-period-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: var(--orbe-space-3);
-    width: 100%;
-    min-width: 0;
-    margin-top: -4px;
-  }
-  .mobile-dashboard-period-label {
-    flex: 0 0 auto;
-    color: var(--orbe-muted);
-    font-size: 12px;
-    line-height: 1.4;
-  }
-  .mobile-dashboard-period-row .dashboard-month-selector {
-    flex: 0 0 auto;
-    min-width: 0;
-    margin: 0;
-  }
-  .mobile-dashboard-period-row .orbe-month-selector-label {
-    min-width: 0;
-    font-size: 12px;
-  }
   .mobile-more-theme-action { color: var(--orbe-text); }
 }
 @media (max-width: 360px) {
   .mobile-dashboard-header .orbe-page-header-copy h1 {
     font-size: 20px;
     letter-spacing: -.5px;
-  }
-  .mobile-dashboard-period-row .dashboard-month-selector {
-    min-width: 124px;
   }
 }
