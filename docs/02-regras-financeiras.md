@@ -25,7 +25,7 @@ Quando uma operação planeada é realizada, o seu efeito projetado corresponden
 ### Janela temporal, histórico e atualização da projeção
 
 - A abertura padrão usa o mês local atual como primeiro mês e apresenta 24 meses consecutivos: mês atual + 23 meses seguintes.
-- A janela é móvel: ao avançar o calendário, o mês atual passa a ser o primeiro mês e o horizonte estende-se automaticamente mais um mês. A navegação de período desloca a janela mês a mês; ao consultar um mês anterior, o respetivo histórico continua consultável.
+- A janela padrão acompanha o mês local atual e avança automaticamente quando o calendário muda, inclusive se a aplicação permanecer aberta (verificação periódica e ao recuperar foco/visibilidade). Se o utilizador navegar manualmente para outro mês, essa seleção é preservada; a janela continua com 24 meses a partir do mês selecionado e a navegação desloca o início mês a mês. Selecionar novamente o mês atual reativa o acompanhamento automático. O histórico anterior permanece consultável.
 - Meses anteriores não são apagados nem convertidos em projeções fixas. Permanecem consultáveis através da navegação mensal e refletem os efeitos efetivos registados.
 - A edição, realização ou cancelamento de uma operação histórica válida atualiza os dados financeiros comuns e provoca novo cálculo do read model. O futuro é recalculado a partir do saldo de referência atualizado e dos efeitos ainda não incorporados nele.
 - Um efeito realizado já incluído no saldo de referência não pode ser aplicado novamente. Operações pendentes vencidas continuam pendentes/vencidas; não são automaticamente realizadas nem reagendadas.
