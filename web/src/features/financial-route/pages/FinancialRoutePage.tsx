@@ -60,7 +60,7 @@ export function FinancialRoutePage({ operations, month, onMonthChange }: {
       </div>
       <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
     </div>
-    <div className="route-mobile-summary">
+    <div className="route-mobile-summary orbe-financial-highlight-card">
       <div className="route-mobile-ending"><span>Saldo final</span><strong>Indisponível</strong></div>
       <div className="route-mobile-totals">
         <span className="route-month-income">+ {mobileMonth ? formatAmount(mobileMonth.totals.income) : '0,00'} {symbol} entradas</span>
