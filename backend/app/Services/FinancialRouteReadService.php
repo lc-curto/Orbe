@@ -12,9 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 final class FinancialRouteReadService
 {
-    public function __construct(private readonly CardInvoiceSummaryService $invoiceSummaries)
-    {
-    }
+    public function __construct(private readonly CardInvoiceSummaryService $invoiceSummaries) {}
 
     /** @return array<string, mixed> */
     public function build(int $userId, string $firstMonth): array
@@ -53,6 +51,7 @@ final class FinancialRouteReadService
                 $amount = (string) $entry->amount;
                 if ($effectiveDate === null || bccomp($amount, '0', 4) < 0) {
                     $referenceBalanceValid = false;
+
                     continue;
                 }
 
@@ -67,6 +66,7 @@ final class FinancialRouteReadService
 
                 if ($effectiveDate > $today) {
                     $projectionValid = false;
+
                     continue;
                 }
 
@@ -102,10 +102,12 @@ final class FinancialRouteReadService
                 if ($date === null) {
                     $projectionValid = false;
                     $overdueItems[] = $this->overdueOperation($operation, null, $amount, $nature);
+
                     continue;
                 }
                 if ($date < $today) {
                     $overdueItems[] = $this->overdueOperation($operation, $date, $amount, $nature);
+
                     continue;
                 }
 
@@ -136,12 +138,12 @@ final class FinancialRouteReadService
                         $projectionValid = false;
                     }
                     $overdueItems[] = [
-                        'id' => 'invoice-' . $invoice->id,
+                        'id' => 'invoice-'.$invoice->id,
                         'type' => 'invoice',
                         'invoice_id' => (int) $invoice->id,
                         'operation_id' => null,
                         'date' => $dueDate,
-                        'label' => ($invoice->card?->name ? $invoice->card->name . ' · ' : '') . ($dueDate === null ? 'Fatura sem vencimento' : 'Fatura vencida'),
+                        'label' => ($invoice->card?->name ? $invoice->card->name.' · ' : '').($dueDate === null ? 'Fatura sem vencimento' : 'Fatura vencida'),
                         'amount' => $amount,
                         'nature' => 'EXPENSE',
                     ];
@@ -165,7 +167,7 @@ final class FinancialRouteReadService
                 if (array_key_exists($date, $balanceCache)) {
                     return $balanceCache[$date];
                 }
-                if (!$referenceBalanceValid) {
+                if (! $referenceBalanceValid) {
                     return null;
                 }
 
@@ -178,7 +180,7 @@ final class FinancialRouteReadService
                     }
                     $balance = bcsub($referenceBalance, $netAfter, 4);
                 } else {
-                    if (!$projectionValid) {
+                    if (! $projectionValid) {
                         return null;
                     }
                     $balance = bcadd($referenceBalance, $plannedNetByDate[$today] ?? '0.0000', 4);
@@ -190,6 +192,7 @@ final class FinancialRouteReadService
                 }
 
                 $balanceCache[$date] = $balance;
+
                 return $balance;
             };
 
@@ -202,7 +205,7 @@ final class FinancialRouteReadService
                 $expensesTotal = '0.0000';
 
                 for ($day = 1; $day <= $bounds['days']; $day++) {
-                    $date = $bounds['prefix'] . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+                    $date = $bounds['prefix'].str_pad((string) $day, 2, '0', STR_PAD_LEFT);
                     $actual = $actualFlowByDate[$date] ?? ['income' => '0.0000', 'expenses' => '0.0000'];
                     $planned = $date >= $today
                         ? ($plannedFlowByDate[$date] ?? ['income' => '0.0000', 'expenses' => '0.0000'])
@@ -254,7 +257,7 @@ final class FinancialRouteReadService
     private function addId(array &$map, string $date, int $id): void
     {
         $ids = $map[$date] ?? [];
-        if (!in_array($id, $ids, true)) {
+        if (! in_array($id, $ids, true)) {
             $ids[] = $id;
         }
         $map[$date] = $ids;
@@ -264,7 +267,7 @@ final class FinancialRouteReadService
     private function overdueOperation(Operation $operation, ?string $date, string $amount, string $nature): array
     {
         return [
-            'id' => 'operation-' . $operation->id,
+            'id' => 'operation-'.$operation->id,
             'type' => 'operation',
             'invoice_id' => null,
             'operation_id' => (int) $operation->id,
@@ -277,12 +280,12 @@ final class FinancialRouteReadService
 
     private function shiftDate(string $date, int $days): string
     {
-        return (new \DateTimeImmutable($date))->modify(($days >= 0 ? '+' : '') . $days . ' days')->format('Y-m-d');
+        return (new \DateTimeImmutable($date))->modify(($days >= 0 ? '+' : '').$days.' days')->format('Y-m-d');
     }
 
     private function shiftMonth(string $month, int $offset): string
     {
-        return (new \DateTimeImmutable($month . '-01'))->modify(($offset >= 0 ? '+' : '') . $offset . ' months')->format('Y-m');
+        return (new \DateTimeImmutable($month.'-01'))->modify(($offset >= 0 ? '+' : '').$offset.' months')->format('Y-m');
     }
 
     /** @return array{first:string,last:string,days:int} */
