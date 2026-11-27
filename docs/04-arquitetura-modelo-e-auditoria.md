@@ -772,6 +772,9 @@ As regras conceptuais do saldo inicial distribuído, das correções, dos pagame
 - Os comandos de criação do saldo inicial, redistribuição e reversão devem ter chave de idempotência com unicidade no âmbito do utilizador e do tipo de comando; a repetição devolve o resultado original sem gerar novos efeitos.
 - Para uma fatura `OPEN` por cartão no MySQL 8.4: coluna gerada nullable com índice `UNIQUE`, combinada com `SELECT ... FOR UPDATE` na linha do cartão; unicidade adicional de cartão/período.
 - Não criar tabelas para Dashboard, Movimentos ou Rota Financeira. São consultas/read models sobre as entidades acima.
+- A Rota Financeira usa o endpoint autenticado `GET /api/financial-route?month=YYYY-MM`, implementado como read model Laravel (`FinancialRouteReadService`) numa transação de leitura. O endpoint não persiste saldos projetados: deriva o saldo de lançamentos realizados e acumula operações pendentes/faturas ainda por pagar, devolvendo valores DECIMAL em strings.
+- O resumo de faturas é uma regra comum (`CardInvoiceSummaryService`) e é agregado em lote para os read models de cartões, faturas e Rota; não duplicar a fórmula de saldo aberto nem consultar individualmente cada fatura.
+- React apresenta o read model e associa IDs a detalhes já carregados; não implementa cálculo financeiro de saldo/projeção. A janela visual de três meses é uma consulta parametrizada, não uma tabela ou entidade de projeção.
 - Índices devem decorrer dos filtros reais: user, estado, tipo, datas, categoria, destino e relações de recorrência.
 
 ## 9. Fontes técnicas de referência
