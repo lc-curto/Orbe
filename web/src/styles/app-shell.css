@@ -231,3 +231,26 @@
   .mobile-more-page-item:hover { background: #f2f4f7; box-shadow: none; }
 }
 
+
+/* Responsive shell must override component-level base display rules.
+   Exactly one navigation/layout tree is rendered at each breakpoint. */
+@media (min-width: 1025px) {
+  .desktop-layout { display: flex; }
+  .mobile-page-shell,
+  .mobile-dashboard-shell,
+  .mobile-bottom-bar { display: none; }
+}
+@media (max-width: 1024px) {
+  .desktop-layout { display: none; }
+  .mobile-page-shell { display: block; }
+  .mobile-dashboard-shell { display: block; }
+  .mobile-bottom-bar { display: flex; }
+  .mobile-page-shell.route-mobile-shell {
+    padding-bottom: calc(280px + env(safe-area-inset-bottom));
+  }
+  .app-shell:has(.route-mobile-shell) { position: relative; }
+  .app-add-fab.route-add-fab {
+    position: absolute;
+    bottom: calc(190px + env(safe-area-inset-bottom));
+  }
+}
