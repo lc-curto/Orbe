@@ -1249,3 +1249,12 @@ Regras obrigatórias para todas as páginas:
 - O painel Mais usa superfície de tema, pega visual superior, borda de acento e sombra; o fundo recebe overlay com blur para tornar explícita a separação.
 - O contraste do painel e do overlay é ajustado também para dark mode.
 - O destaque do bottom navigation usa tokens de tema, sem cores light-mode fixas em inline styles.
+
+
+### Cards de resumo financeiro — destaque verde partilhado
+
+- O padrão visual do card de saldo do Dashboard é reutilizado nos resumos principais de Rota Financeira, Contas e Cartões.
+- Na página de faturas, o destaque aplica-se ao resumo da fatura selecionada (total, pago e em aberto).
+- O destaque é limitado aos cards de resumo; listas, tabelas, filtros e cards secundários mantêm as superfícies do tema.
+- Gradiente verde e contraste do conteúdo permanecem iguais em light e dark mode, por uma classe partilhada `orbe-financial-highlight-card` definida na camada de polimento visual.
+- O ícone da página Configurações passa a usar um símbolo de engrenagem distinto do controlo de tema.
