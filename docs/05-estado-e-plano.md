@@ -694,3 +694,12 @@ Estado: UX aprovada; interface implementada no PR #12; integração financeira c
 
 ### Sequência
 Modelo e migrations → serviços transacionais/testes → API e read models → ligar frontend/remover bloqueios → QA local → revisão do PR. Não integrar na `main` sem validação explícita.
+
+
+### Formulário de transferência — simplificação (2026-11-27)
+- Implementado diretamente na main: formulário com valor, conta de origem, conta de destino e observações opcionais.
+- Submissão representa transferência efetiva; ambas as pernas são enviadas como REALIZED com a mesma data efetiva automática do dia do registo.
+- Removidos do formulário os estados independentes, datas editáveis e programação de transferência. O suporte técnico/API preexistente para estados por perna não foi removido.
+- O seletor de origem limpa o destino quando a origem selecionada passa a ser a mesma conta; o destino exclui a conta de origem.
+- Documentação funcional atualizada em docs/02-regras-financeiras.md e docs/03-interface-e-formularios.md.
+- CI e QA visual/responsiva após esta alteração ainda precisam ser verificados.

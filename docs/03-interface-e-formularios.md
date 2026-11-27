@@ -527,14 +527,20 @@ Data
 
 **Recipiente:** modal centralizado em desktop/tablet; bottom sheet em mobile, salvo classificação funcional diferente.
 
-**Composição:**
+**Composição (formulário simplificado):**
 1. Título de transferência.
-2. Seletor compacto da conta de origem.
-3. Elemento visual claro de separação/direção entre origem e destino.
-4. Seletor compacto da conta de destino.
-5. Valor em destaque.
-6. Data e outros campos apenas se definidos funcionalmente.
+2. Valor.
+3. Seletor compacto da conta de origem.
+4. Elemento visual claro de separação/direção entre origem e destino.
+5. Seletor compacto da conta de destino.
+6. Caixa de observações opcional.
 7. Rodapé fixo.
+
+**Comportamento aprovado:**
+- A transferência é sempre registada como efetiva; guardar representa a confirmação explícita de que a movimentação aconteceu.
+- As duas pernas são criadas como REALIZED, com a mesma data efetiva automática do dia do registo.
+- Não apresentar datas editáveis, estados pendentes, confirmação separada de saída/entrada nem opções de programação.
+- A observação é enviada no campo description já suportado pelo contrato de transferência; não requer alteração da API.
 
 **Regras:**
 - Origem e destino têm de ser visualmente distinguíveis.
@@ -546,16 +552,17 @@ Wireframe:
 
 ```text
 Nova transferência                    [X]
-Origem
-[Conta de origem                  ▾]
-              ↓
-Destino
-[Conta de destino                 ▾]
 Valor
 [€                              0,00]
-[Restantes campos funcionais, se existirem]
+Conta de origem
+[Selecionar conta de origem     ▾]
+              ↓
+Conta de destino
+[Selecionar conta de destino    ▾]
+Observações (opcional)
+[                                ]
 ────────────────────────────────────────
-[Cancelar]                 [Continuar]
+[Cancelar]              [Guardar transferência]
 ```
 
 ### 6.4 Criar/editar conta
@@ -1310,11 +1317,12 @@ Padrão obrigatório para formulários existentes e futuros:
 - Reutilizar `OrbeDisclosure` e `OrbeFormToggle` de `web/src/design-system/components.tsx`; não criar disclosures ou switches visuais isolados por feature.
 - Para seleções únicas com listas longas, preferir o `<select>` nativo, estilizado com tokens do design system, em vez de renderizar todas as opções como uma lista vertical de botões. Manter label associado, placeholder/empty state, disabled e validação.
 - Princípio de decisão conservadora (global): quando uma escolha pode produzir efeitos financeiros, alterar dados, criar obrigações ou iniciar ações futuras, o default deve ser o estado mais seguro, reversível e de menor compromisso. Não assumir consentimento ou execução; exigir intenção explícita para avançar. Se não houver informação suficiente, não inferir nem executar: pedir escolha ou manter sem ação. Defaults convenientes (ex.: mês atual) só são aceitáveis quando não produzem efeitos materiais.
-- Em operações financeiras, o estado inicial é PENDENTE. O utilizador deve marcar explicitamente “Registar como realizado” para confirmar que a operação já aconteceu. Em transferências, cada perna inicia pendente e a realização de saída/entrada é uma decisão explícita independente.
+- Gastos e ganhos pendentes seguem o estado inicial PENDENTE e exigem confirmação explícita para serem registados como realizados.
+- Exceção: o formulário de transferência só regista movimentações efetivas. A submissão confirma que a transferência aconteceu e cria as duas pernas como REALIZED, com data efetiva automática comum. Não há transferência programada nem pernas pendentes no formulário.
 - Opções que criam operações futuras (ex.: recorrência) começam desativadas; datas de fim e descrição opcional começam vazias. Evitar defaults positivos que possam executar, publicar, enviar, pagar, eliminar, confirmar ou comprometer sem intenção expressa.
 - Não inventar valores para campos obrigatórios. Conta/categoria não devem ser selecionadas automaticamente sem uma regra de negócio explícita. Defaults como a data de hoje só podem ser usados quando definidos pelo fluxo.
 - Não ocultar erros de validação: se um erro ocorrer dentro de uma secção recolhida, abrir essa secção e manter a mensagem junto do campo, além do resumo de erros.
-- Campos condicionais devem existir apenas quando aplicáveis. Movimento único não mostra periodicidade/fim; recorrência mostra frequência e data de fim opcional; transferência mostra detalhes de datas/estados e descrição em “Mais detalhes”.
+- Campos condicionais devem existir apenas quando aplicáveis. Movimento único não mostra periodicidade/fim; recorrência mostra frequência e data de fim opcional; transferência apresenta apenas valor, origem, destino e observações opcionais.
 - Manter teclado, foco visível, labels, alvos de toque, semântica nativa de `details/summary` e `checkbox`, layout responsivo e tema claro/escuro.
 - Aplicado ao formulário de Movimentos (gasto, rendimento e transferência). Contas e Cartões/Faturas ainda não têm formulários de criação/edição nesta fase; quando forem implementados, devem reutilizar estes componentes, sem criar fluxos fictícios agora.
 - Não alterar payloads/API nem regras financeiras como parte da redução visual. A tarefa reorganiza a apresentação e usa defaults já previstos pelo fluxo.
