@@ -79,7 +79,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   }, [projection])
 
   const activeDay = selectedDay?.periodMonth === month
-    ? months.flatMap((item) => item.days).find((day) => day.date === selectedDay.date)
+    ? months?.flatMap((item) => item.days).find((day) => day.date === selectedDay.date)
     : undefined
 
   function selectDay(date: string) {
