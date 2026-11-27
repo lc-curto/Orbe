@@ -26,13 +26,15 @@ export function MonthSelector({ month, onMonthChange, minMonth, maxMonth, classN
 
   return (
     <div className={`orbe-month-selector ${className}`} role="group" aria-label="Navegação por mês">
-      <button className="orbe-month-selector-arrow" type="button" aria-label="Mês anterior" disabled={!canGoPrevious} onClick={() => onMonthChange(previous)}>
-        <span aria-hidden="true">‹</span>
-      </button>
       <span className="orbe-month-selector-label" aria-label="Mês selecionado">{shortMonthLabel(month)}</span>
-      <button className="orbe-month-selector-arrow" type="button" aria-label="Mês seguinte" disabled={!canGoNext} onClick={() => onMonthChange(next)}>
-        <span aria-hidden="true">›</span>
-      </button>
+      <div className="orbe-month-selector-navigation">
+        <button className="orbe-month-selector-arrow" type="button" aria-label="Mês anterior" disabled={!canGoPrevious} onClick={() => onMonthChange(previous)}>
+          <span aria-hidden="true">‹</span>
+        </button>
+        <button className="orbe-month-selector-arrow" type="button" aria-label="Mês seguinte" disabled={!canGoNext} onClick={() => onMonthChange(next)}>
+          <span aria-hidden="true">›</span>
+        </button>
+      </div>
     </div>
   )
 }
