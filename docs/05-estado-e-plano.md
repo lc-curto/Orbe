@@ -474,42 +474,31 @@ Para reduzir esquecimentos, o workflow `.github/workflows/pr-quality-gate.yml` v
 - A composição do Dashboard foi parcialmente unificada com `PageHeader` e `DashboardSections`; manter QA de paridade desktop/mobile e consolidar os KPIs quando a validação visual justificar.
 - O `App.tsx` continua a concentrar navegação, estados e composição de páginas; a decomposição deve ser incremental, sem reescrita nem alteração de comportamento.
 
-### QA visual ainda por executar em browser
+### Fase 1 — estabilização frontend: concluída e integrada
 
-Validar todas as páginas primárias em 320, 390, 768, 1024, 1025, 1280 e 1440 px, nos temas claro/escuro, incluindo navegação, safe areas, foco/teclado, loading, erro, vazio, filtros, seletor mensal, menus, FAB e persistência de preferências. Não marcar a fase como concluída apenas com lint/build.
+**Estado: QA visual aprovado e PR #11 integrado na `main`.**
 
-**CI remoto:** lint, TypeScript (`tsc -b`) e build Vite passaram na branch `qa/phase-1-frontend-stabilization`, commit `4ab231e5c1feb18f9ced8379fa59b49824ffabaa` (Web CI run `45985677772`). O PR Quality Gate também passou. Não foram executados localmente nem substituem QA visual em browser.
+- PR #11 foi merged em 27/11/2026. Merge commit: `d987e7ff1204328f775df3abd662db0da69244c6`.
+- Commit final da branch de estabilização: `03b9b47e7777b7b21a9bdb6f3516bfde718790fc`.
+- Web CI (ESLint, TypeScript e build Vite) e PR Quality Gate passaram no commit final.
+- QA visual responsiva foi aprovado pelo utilizador após correções, incluindo o breakpoint de 320 px e a correção de visibilidade da página Movimentos acima de 1024 px.
 
-### Condição de conclusão
+#### Padrões e comportamentos aprovados
 
-- Corrigir defeitos reproduzidos e documentar os resultados por página/viewport.
-- Confirmar que não existem valores fictícios apresentados como dados financeiros reais.
-- Executar lint e build após as correções.
-- Fazer revisão final do diff e só então preparar PR para integração.
-- QA visual real e interação em browser devem ser reportadas como pendentes até serem executadas localmente.
+- Todas as páginas autenticadas usam os frames comuns `DesktopPageFrame` e `MobilePageFrame`.
+- Todas as páginas usam o componente `PageHeader` para a estrutura comum de título/descrição/ações.
+- Largura, gutters, alinhamento, ritmo vertical e safe area são centralizados no shell e nos tokens do design system; estilos de feature devem limitar-se às necessidades específicas do módulo.
+- Seletor mensal no canto superior direito, na mesma linha do título, nas páginas que o apresentam.
+- Rota Financeira: **um mês visível até 1024 px; três meses acima de 1024 px**.
+- Movimentos permanece visível no layout desktop acima de 1024 px, dentro do `DesktopPageFrame`.
 
-### Findings de QA visual — correções aplicadas (27/11/2026)
+A regra de reutilização dos frames, cabeçalho e tokens está formalizada em `docs/03-interface-e-formularios.md` e aplica-se também a páginas futuras.
 
-As capturas locais em 320, 390 e 1024 px revelaram que a sidebar/layout desktop e a variante mobile estavam visíveis simultaneamente. A causa era a regra base de `.desktop-layout` no `app-shell.css`, importada depois das regras responsivas de navegação e reintroduzindo o layout desktop.
+#### Trabalho técnico que permanece como evolução, não bloqueio do QA aprovado
 
-Correções aplicadas na branch de QA:
-- Reforçar no CSS final do shell a exclusividade das variantes: desktop apenas acima de 1024 px; mobile/bottom bar até 1024 px.
-- Rota Financeira: apresentar um único mês até 1024 px; manter três meses apenas acima de 1024 px.
-- Empilhar o título e o seletor mensal na versão mobile, evitando corte do período em 320/390 px.
-- Disponibilizar os filtros Todos/Entradas/Saídas também na versão mobile.
-- Ajustar as larguras das quatro colunas da tabela mensal e o truncamento dos valores, evitando cabeçalhos sobrepostos.
-- Substituir o FAB fixo sobre o calendário mobile por uma ação «+ Adicionar» no cabeçalho da Rota, ligada ao mesmo menu de criação. O FAB global permanece na versão desktop.
-- O shell mobile mantém espaço inferior para a bottom bar; Configurações deve ser revalidada para confirmar que o último cartão fica totalmente acessível por scroll.
+- Migrar progressivamente estilos inline/legados para tokens e classes semânticas, removendo overrides de tema que deixem de ser necessários. A política de `!important` mantém-se: último recurso, nunca como solução estrutural, com justificação explícita para novas ocorrências.
+- Continuar a decomposição incremental de `App.tsx`, sem reescrita nem alteração de comportamento.
+- Continuar a reconciliação de CSS legado com tokens quando houver alterações nas respetivas features, evitando regressões visuais.
 
-**Regra de QA da Rota:** ≤1024 px = exatamente um mês visível; >1024 px = três meses visíveis. Verificar especialmente 320, 390, 768, 1024 e 1025 px. O CI não confirma paridade visual: a aprovação final depende de nova validação no browser local.
+Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratadas como trabalho técnico incremental e registadas nas tarefas/PRs correspondentes.
 
-### Consolidação transversal do Design System — 27/11/2026
-
-Após os screenshots adicionais a 320 px, foi identificada inconsistência entre páginas além da Rota Financeira. Foram aplicadas na branch de QA:
-- Criado `PageHeader` partilhado em `web/src/shared/components/PageHeader.tsx`, adotado em Dashboard desktop/mobile, Movimentos, Rota, Contas, Cartões, Relatórios e Configurações.
-- Criado `DesktopPageFrame` em `web/src/app/AppShell.tsx`; todas as páginas autenticadas no layout desktop passam pelo mesmo frame.
-- `MobilePageFrame` passou a ser utilizado por todas as páginas autenticadas no layout mobile/tablet, com container interno comum.
-- CSS transversal centraliza largura, gutters, espaçamento, hierarquia de título, descrição e ações do cabeçalho; os estilos de feature ficam restritos à composição funcional.
-- Documentada em `docs/03-interface-e-formularios.md` a obrigatoriedade de reutilizar os frames, PageHeader e tokens nas novas páginas.
-
-**Ainda não declarar consistência visual concluída:** o código agora estabelece a estrutura reutilizável, mas é necessário executar novo QA local em todas as páginas, sobretudo 320 px, para confirmar que CSS legado de cada feature não contradiz o frame/header comum. Corrigir os desvios encontrados antes de integrar.
