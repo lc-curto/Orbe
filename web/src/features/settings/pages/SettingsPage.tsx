@@ -133,7 +133,7 @@ export function SettingsPage({ user, categories }: Props) {
   }
 
   return <section className="settings-page" aria-labelledby="settings-page-title">
-    <header className="settings-page-header"><h1 id="settings-page-title">Configurações</h1><p>Personaliza a tua experiência no Orbe.</p></header>
+    {(!isMobile || !mobileDetailOpen) ? <header className="settings-page-header"><h1 id="settings-page-title">Configurações</h1><p>Personaliza a tua experiência no Orbe.</p></header> : null}
     {isMobile
       ? mobileDetailOpen
         ? <div className="settings-mobile-detail">
