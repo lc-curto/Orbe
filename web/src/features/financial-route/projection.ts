@@ -17,3 +17,8 @@ export function formatMoneyUnits(value: bigint): string {
   const grouped = new Intl.NumberFormat('pt-PT', { maximumFractionDigits: 0 }).format(whole)
   return (value < 0n && cents > 0n ? '−' : '') + grouped + ',' + fraction
 }
+
+export function isDisplayedNegative(value: bigint): boolean {
+  if (value >= 0n) return false
+  return ((-value + 50n) / 100n) > 0n
+}
