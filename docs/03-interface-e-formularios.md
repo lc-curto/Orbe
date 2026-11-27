@@ -1379,3 +1379,33 @@ A seleção da modalidade revela os campos seguintes:
 - Validar desktop, tablet e mobile a partir de 320 px, incluindo estados condicionais, erro e submissão.
 
 ---
+
+
+## Implementação da interface de gastos e ganhos — 27/11/2026
+
+A interface dos formulários foi implementada na branch `feature/movements-write-flows`, mantendo o shell, componentes de formulário, tokens de tema e dados do read model existentes.
+
+### Gasto
+- Método Conta/Cartão; removida a opção incorreta «A prazo» como método.
+- Conta inclui cartões de modalidade Imediato, Data futura e Prestações.
+- Imediato é o default e apresenta conta efetiva + data de pagamento; não seleciona conta automaticamente.
+- Data futura apresenta conta prevista + data prevista.
+- Prestações apresenta conta prevista, quantidade, vencimento da primeira e opção de primeira prestação já paga; quando marcada, pede conta efetiva e data efetiva.
+- Cartão apresenta cartões ativos reais, compra única/parcelada, quantidade de prestações e data da compra. Não pede conta bancária, fatura ou vencimento.
+- Cartões reais são fornecidos pelo read model; não são usados dados mockados.
+- A seleção de Conta/Cartão e modalidade é acessível por teclado e tem estados selecionado/foco com tokens do tema.
+
+### Ganho
+- Mantém o fluxo próprio de recebido/pendente, conta efetiva apenas quando recebido e data efetiva/prevista.
+- Não apresenta seletor Conta/Cartão nem modalidade de pagamento.
+
+### Limite funcional explícito
+- Conta/Imediato continua a usar o endpoint já existente de gasto realizado.
+- Data futura com conta prevista, prestações por Conta, primeira prestação paga e compras de Cartão ainda não são persistidas. A submissão fica bloqueada com mensagem explícita até o backend/API suportar esses contratos.
+- Notas estão desenhadas no campo «Mais opções», mas a API atual não as persiste; guardar com notas preenchidas fica bloqueado para evitar perda silenciosa.
+- Não apresentar estas seleções como operações financeiras concluídas.
+
+### QA pendente
+- Executar ESLint, TypeScript/build e QA visual/funcional local.
+- Validar larguras 320, 360, 768, 1024 e desktop, temas claro/escuro, teclado/foco, validação e estados sem contas/cartões.
+- Confirmar que as modalidades não suportadas permanecem bloqueadas e não criam operações parciais.
