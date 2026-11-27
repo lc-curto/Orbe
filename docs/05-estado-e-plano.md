@@ -287,6 +287,7 @@ Os contratos de criação de contas, categorias, despesas, receitas e transferê
 - Gasto/rendimento permitem estado `REALIZED` ou `PENDING`. Realizado envia conta + `effective_at`; pendente não envia conta e envia `planned_at`.
 - Transferência envia uma operação única com pernas `OUT` e `IN`, cada uma com conta, estado e data própria, respeitando o contrato existente.
 - Submissão usa os endpoints existentes, chave de idempotência, bloqueio de submissão duplicada, validação local e mapeamento de erros API para o formulário.
+- Gasto/rendimento também permitem configurar uma programação recorrente dentro do mesmo formulário, com periodicidade e data de fim opcional; a criação da programação não cria operação efetiva nem lançamento.
 - Após sucesso, o read model financeiro é atualizado e o utilizador recebe feedback contextual.
 - Edição, confirmação de movimentos pendentes na listagem, cancelamento, eliminação, reversão e menus contextuais continuam pendentes por dependerem de fluxos/endpoints adicionais. Não foram simulados.
 
