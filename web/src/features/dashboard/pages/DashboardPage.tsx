@@ -26,6 +26,7 @@ type DashboardPageProps = {
   invoice?: CardInvoice
   setActiveKey: (value: string) => void
   categories: Array<{ name: string; amount: string; percentage: number }>
+  loading: boolean
   authError: string | null
   logoutError: string | null
 }
@@ -47,7 +48,7 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
 
 
 
-export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, categories, card, invoice, setActiveKey, authError, logoutError }: DashboardPageProps) {
+export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, categories, loading, card, invoice, setActiveKey, authError, logoutError }: DashboardPageProps) {
   return <>
 <Row className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <Stack gap={4} flex={1} minWidth={0}>
@@ -76,7 +77,7 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
                 <Stack gap={3}><Text fontSize={18} fontWeight="700">Gastos por categoria</Text><Text color="#667085" fontSize={13}>Distribuição dos gastos em {period.label}</Text></Stack>
                 <Button className="dashboard-card-view-all" onPress={() => setActiveKey('Movimentos')} aria-label="Ver movimentos" borderWidth={0} backgroundColor="transparent" padding={0} marginLeft="auto" flexShrink={0} color="#087f70" fontWeight="700">Ver movimentos →</Button>
               </Row>
-              {categories.length === 0 ? <Text color="#667085" paddingVertical={12}>Sem despesas realizadas neste mês.</Text> : <Row gap={28} flexWrap="wrap">
+              {loading ? <Text color="#667085" paddingVertical={12}>A carregar despesas por categoria…</Text> : categories.length === 0 ? <Text color="#667085" paddingVertical={12}>Sem despesas realizadas neste mês.</Text> : <Row gap={28} flexWrap="wrap">
                 {categories.map((category) => <Stack key={category.name} flex={1} minWidth={220} gap={7}><Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={13}>{category.name}</Text><Text color="#101828" fontSize={13} fontWeight="700">{category.amount}</Text></Row><Stack height={7} borderRadius={99} backgroundColor="#eef2f6"><Stack width={String(category.percentage) + '%'} height={7} borderRadius={99} backgroundColor="#175cd3" /></Stack></Stack>)}
               </Row>}
             </Card>
