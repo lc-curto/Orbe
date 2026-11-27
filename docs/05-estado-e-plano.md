@@ -196,6 +196,16 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 - [x] Criar tokens e componentes base reutilizáveis do Design System.
 - [ ] Auditar completamente a substituição de estilos hardcoded e regressões entre breakpoints.
 
+## Dados de QA locais — Movimentos
+
+- [x] Criar `QaFinancialDataSeeder` idempotente para preparar contas e categorias de QA antes de existirem formulários de gestão.
+- [x] Associar os registos ao utilizador local `test@example.com`, sem semear dados para todos os utilizadores.
+- [x] Incluir contas ativas BANK/CASH, uma conta encerrada, categorias ativas EXPENSE/INCOME e uma categoria arquivada.
+- [x] Integrar o seeder no `DatabaseSeeder` e documentar execução isolada.
+- [x] Não criar saldos, operações ou lançamentos artificiais; respeitar o motor financeiro para abertura de saldo.
+
+Execução local: `php artisan db:seed --class=QaFinancialDataSeeder` (na pasta `backend`). Os registos são identificados pelo prefixo `QA —`; a execução repetida atualiza os mesmos registos em vez de duplicá-los.
+
 ## 5. Especificação dos formulários
 
 - [x] Definir e aprovar a especificação visual e de interação dos formulários.
