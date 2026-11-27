@@ -19,8 +19,8 @@ export function RouteMonthCard({ month, days, flowFilter, onSelectDay, mobile = 
       <div className="route-month-heading">
         <h2>{formatMonth(month.month)}</h2>
         <div className="route-month-totals">
-          <span className="route-month-income">+ {formatAmount(income)} {symbol} entradas</span>
-          <span className="route-month-expenses">− {formatAmount(expenses)} {symbol} saídas</span>
+          <span className="route-month-income">+ {formatAmount(income)} {symbol} ganhos</span>
+          <span className="route-month-expenses">− {formatAmount(expenses)} {symbol} gastos</span>
         </div>
       </div>
       <div className="route-month-ending"><span>Saldo final</span><strong>Indisponível</strong></div>
