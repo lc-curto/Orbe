@@ -1,6 +1,6 @@
 import type { CardInvoice, Operation } from '../../../api/types'
 import { routeFilterOptions, type RouteFilter } from '../types'
-import { formatFullDate, formatMoney, operationLabel } from '../utils'
+import { formatFullDate, operationLabel } from '../utils'
 import { formatMoneyUnits, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
@@ -30,7 +30,7 @@ export function RouteDayModal({ date, operations, invoices = [], filter, onFilte
         {detailOperations.map((operation) => <article className="route-detail-row" key={'operation-' + operation.id}>
           <div className={`route-detail-icon ${operation.operation_type === 'INCOME' ? 'income' : operation.operation_type === 'TRANSFER' ? 'transfer' : 'expense'}`}>{operation.operation_type === 'INCOME' ? '↑' : operation.operation_type === 'TRANSFER' ? '↔' : '↓'}</div>
           <div className="route-detail-description"><strong>{operationLabel(operation)}</strong><span>{operation.operation_type === 'TRANSFER' ? 'Transferência entre contas' : `${operation.category?.name ?? 'Sem categoria'} · ${operation.account?.name ?? 'Conta não identificada'} · ${operation.state === 'PENDING' ? 'Pendente' : 'Realizado'}`}</span></div>
-          <strong className={operation.operation_type === 'INCOME' ? 'route-detail-income' : operation.operation_type === 'TRANSFER' ? 'route-detail-transfer' : 'route-detail-expense'}>{operation.operation_type === 'TRANSFER' ? '' : operation.operation_type === 'INCOME' ? '+' : '−'} {formatMoney(Number(operation.amount), symbol)}</strong>
+          <strong className={operation.operation_type === 'INCOME' ? 'route-detail-income' : operation.operation_type === 'TRANSFER' ? 'route-detail-transfer' : 'route-detail-expense'}>{operation.operation_type === 'TRANSFER' ? '' : operation.operation_type === 'INCOME' ? '+' : '−'} {parseMoneyUnits(operation.amount) === null ? '—' : formatMoneyUnits(parseMoneyUnits(operation.amount) as bigint) + ' ' + symbol}</strong>
         </article>)}
         {detailInvoices.map((invoice) => {
           const openAmount = parseMoneyUnits(invoice.summary.open_amount)
