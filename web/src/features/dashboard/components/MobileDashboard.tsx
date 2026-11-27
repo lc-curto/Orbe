@@ -1,3 +1,4 @@
+import { PageHeader } from '../../../shared/components/PageHeader'
 import { Card as UiCard, Separator, Text, Row, Stack } from '../../../design-system/primitives'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { DashboardSections } from './DashboardSections'
@@ -25,13 +26,7 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
   return (
     <Stack className="mobile-dashboard" backgroundColor="#f7f9fc" minHeight="100vh">
       <Stack className="mobile-dashboard-content" gap="var(--orbe-page-section-gap)">
-        <Row className="mobile-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }}>
-          <Stack className="mobile-dashboard-greeting" flex={1} minWidth={0} gap={4}>
-            <Text className="mobile-dashboard-greeting-text" color="#101828" fontWeight="800" numberOfLines={1}>Bom dia, {userName.split(' ')[0]}</Text>
-            <Text className="mobile-dashboard-date" color="#667085" fontSize={13}>{period.date}</Text>
-          </Stack>
-          <MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />
-        </Row>
+        <PageHeader title={`Bom dia, ${userName.split(' ')[0]}`} description={period.date} className="mobile-dashboard-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="dashboard-month-selector" />} />
         {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
         <UiCard className="mobile-balance-card" borderRadius={18} padding={18} backgroundColor="#175cd3" borderWidth={0}>
           <Stack gap={12}>
