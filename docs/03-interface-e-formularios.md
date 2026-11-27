@@ -1297,3 +1297,19 @@ Regras obrigatórias para todas as páginas:
 - Dark mode mantém o card de saldo do Dashboard com o gradiente aprovado; não converter esse card em superfície neutra. O painel Mais permanece a referência para menus e overlays.
 - QA manual obrigatório antes do merge: abrir formulários/modais, confirmação de saída, sheet da Rota, menus Mais/perfil, filtros e dropdowns em dark/light; validar em mobile, tablet e desktop, incluindo hover/focus/selected, contraste, scroll e ausência de superfícies claras inesperadas.
 - Esta alteração é um ajuste de tokens e estilos partilhados, sem mudança de lógica financeira, API ou navegação.
+
+## Progressive disclosure e defaults negativos
+
+Padrão obrigatório para formulários existentes e futuros:
+
+- Mostrar primeiro os campos essenciais para concluir a operação. Campos opcionais e configurações menos frequentes ficam numa secção de disclosure recolhida por defeito.
+- Reutilizar `OrbeDisclosure` e `OrbeFormToggle` de `web/src/design-system/components.tsx`; não criar disclosures ou switches visuais isolados por feature.
+- Para seleções únicas com listas longas, preferir o `<select>` nativo, estilizado com tokens do design system, em vez de renderizar todas as opções como uma lista vertical de botões. Manter label associado, placeholder/empty state, disabled e validação.
+- Defaults negativos: opções facultativas começam desativadas/não selecionadas. A recorrência é opt-in; estados pendentes são opt-in; data de fim e descrição opcional começam vazias. Não pré-ativar comportamentos que alterem operações futuras.
+- Não inventar valores para campos obrigatórios. Conta/categoria não devem ser selecionadas automaticamente sem uma regra de negócio explícita. Defaults como a data de hoje só podem ser usados quando definidos pelo fluxo.
+- Não ocultar erros de validação: se um erro ocorrer dentro de uma secção recolhida, abrir essa secção e manter a mensagem junto do campo, além do resumo de erros.
+- Campos condicionais devem existir apenas quando aplicáveis. Movimento único não mostra periodicidade/fim; recorrência mostra frequência e data de fim opcional; transferência mostra detalhes de datas/estados e descrição em “Mais detalhes”.
+- Manter teclado, foco visível, labels, alvos de toque, semântica nativa de `details/summary` e `checkbox`, layout responsivo e tema claro/escuro.
+- Aplicado ao formulário de Movimentos (gasto, rendimento e transferência). Contas e Cartões/Faturas ainda não têm formulários de criação/edição nesta fase; quando forem implementados, devem reutilizar estes componentes, sem criar fluxos fictícios agora.
+- Não alterar payloads/API nem regras financeiras como parte da redução visual. A tarefa reorganiza a apresentação e usa defaults já previstos pelo fluxo.
+
