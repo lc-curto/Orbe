@@ -1,9 +1,12 @@
-import { useEffect, useMemo, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { OrbeIcon } from '../../../design-system/Icon'
 import type { OrbeIconName } from '../../../design-system/Icon'
 import { orbe } from '../../../design-system/tokens'
 import { useCurrency } from '../../currency/useCurrency'
+import { ApiError } from '../../../api/client'
+import type { Account, Category } from '../../../api/types'
+import { createExpense, createIncome, createTransfer } from '../../../api/finance'
 import './formStyles.css'
 
 type FormKind = 'expense' | 'income' | 'transfer'
@@ -244,20 +247,54 @@ function validMoney(value: string) {
   return !/^0+$/.test(whole) || !/^0+$/.test(fraction ?? '')
 }
 
-export function MovementForm({ kind, onClose, onUnavailable }: { kind: FormKind; onClose: () => void; onUnavailable: (message: string) => void }) {
+export function MovementForm({
+  kind,
+  accounts: accountRecords,
+  categories: categoryRecords,
+  onClose,
+  onSuccess,
+}: {
+  kind: FormKind
+  accounts: Account[]
+  categories: Category[]
+  onClose: () => void
+  onSuccess: (message: string) => void
+}) {
   const [description, setDescription] = useState('')
   const [amount, setAmount] = useState('')
   const [category, setCategory] = useState('')
   const [account, setAccount] = useState('')
   const [date, setDate] = useState(today)
   const [destination, setDestination] = useState('')
+  const [operationState, setOperationState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
+  const [outState, setOutState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
+  const [inState, setInState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
+  const [outDate, setOutDate] = useState(today)
+  const [inDate, setInDate] = useState(today)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [submitting, setSubmitting] = useState(false)
-  const dirty = Boolean(description || amount || category || account || destination)
+  const idempotencyKey = useRef(`orbe-movement-${window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`}`)
   const isTransfer = kind === 'transfer'
-  const title = kind === 'expense' ? 'Novo gasto' : kind === 'income' ? 'Novo ganho' : 'Nova transferência'
-  const categories: SelectOption[] = useMemo(() => [], [])
-  const accounts: SelectOption[] = useMemo(() => [], [])
+  const title = kind === 'expense' ? 'Novo gasto' : kind === 'income' ? 'Novo rendimento' : 'Nova transferência'
+  const nature = kind === 'income' ? 'INCOME' : 'EXPENSE'
+  const accounts: SelectOption[] = useMemo(
+    () => accountRecords.filter((item) => item.status === 'ACTIVE').map((item) => ({
+      value: String(item.id),
+      label: item.name,
+      secondary: ({ BANK: 'Conta bancária', CASH: 'Dinheiro', WALLET: 'Carteira' } as Record<string, string>)[item.account_type] ?? item.account_type,
+    })),
+    [accountRecords],
+  )
+  const categories: SelectOption[] = useMemo(
+    () => categoryRecords.filter((item) => item.status === 'ACTIVE' && item.nature === nature).map((item) => ({
+      value: String(item.id),
+      label: item.name,
+    })),
+    [categoryRecords, nature],
+  )
+  const dirty = Boolean(description || amount || category || account || destination
+    || operationState !== 'REALIZED' || outState !== 'REALIZED' || inState !== 'REALIZED'
+    || outDate !== today() || inDate !== today() || date !== today())
 
   function validate() {
     const next: FieldErrors = {}
@@ -265,23 +302,139 @@ export function MovementForm({ kind, onClose, onUnavailable }: { kind: FormKind;
       if (!account) next.account = 'Seleciona uma conta de origem.'
       if (!destination) next.destination = 'Seleciona uma conta de destino.'
       if (account && destination && account === destination) next.destination = 'A conta de origem e a conta de destino devem ser diferentes.'
+      if (!date) next.date = 'Introduz uma data válida.'
     } else {
       if (!description.trim()) next.description = 'Introduz uma descrição.'
       if (!category) next.category = 'Seleciona uma categoria.'
-      if (!account) next.account = 'Seleciona uma conta.'
+      if (operationState === 'REALIZED' && !account) next.account = 'Seleciona uma conta para o movimento realizado.'
+      if (!date) next.date = 'Introduz uma data válida.'
     }
     if (!validMoney(amount)) next.amount = 'O valor deve ser superior a zero.'
-    if (!date) next.date = 'Introduz uma data válida.'
     setErrors(next)
     return Object.keys(next).length === 0
   }
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault()
-    if (!validate()) return
+    if (submitting || !validate()) return
     setSubmitting(true)
-    window.setTimeout(() => { setSubmitting(false); onUnavailable('A integração deste formulário aguarda um endpoint de API confirmado. Nenhuma operação foi registada.') }, 350)
+    setErrors({})
+    try {
+      const normalizedAmount = normalizeMoney(amount)
+      if (isTransfer) {
+        await createTransfer({
+          amount: normalizedAmount,
+          description: description.trim() || undefined,
+          idempotency_key: idempotencyKey.current,
+          legs: {
+            out: {
+              account_id: Number(account),
+              state: outState,
+              ...(outState === 'REALIZED' ? { effective_at: outDate } : { planned_at: outDate }),
+            },
+            in: {
+              account_id: Number(destination),
+              state: inState,
+              ...(inState === 'REALIZED' ? { effective_at: inDate } : { planned_at: inDate }),
+            },
+          },
+        })
+        onSuccess('Transferência registada com sucesso.')
+      } else {
+        const input = {
+          amount: normalizedAmount,
+          category_id: Number(category),
+          description: description.trim(),
+          state: operationState,
+          ...(operationState === 'REALIZED' ? { account_id: Number(account), effective_at: date } : { planned_at: date }),
+          idempotency_key: idempotencyKey.current,
+        }
+        if (kind === 'income') await createIncome(input)
+        else await createExpense(input)
+        onSuccess(operationState === 'PENDING'
+          ? kind === 'income' ? 'Rendimento pendente criado.' : 'Gasto pendente criado.'
+          : kind === 'income' ? 'Rendimento registado com sucesso.' : 'Gasto registado com sucesso.')
+      }
+    } catch (error) {
+      if (error instanceof ApiError && Object.keys(error.errors).length > 0) {
+        const fieldMap: Record<string, string> = {
+          amount: 'amount',
+          category_id: 'category',
+          account_id: 'account',
+          'legs.out.account_id': 'account',
+          'legs.in.account_id': 'destination',
+          effective_at: 'date',
+          planned_at: 'date',
+          financial: 'form',
+        }
+        const next: FieldErrors = {}
+        Object.entries(error.errors).forEach(([key, messages]) => {
+          const field = fieldMap[key] ?? 'form'
+          next[field] = messages[0] ?? error.message
+        })
+        setErrors(next)
+      } else {
+        setErrors({ form: error instanceof Error ? error.message : 'Não foi possível guardar o movimento. Tenta novamente.' })
+      }
+    } finally {
+      setSubmitting(false)
+    }
   }
 
-  return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : 'Preenche os dados da operação.'} onClose={onClose} dirty={dirty} submitting={submitting}><form onSubmit={submit} noValidate><FormErrorSummary errors={errors} />{isTransfer ? <><FormField label="Conta de origem" name="account" required error={errors.account}><AccountList id="account" value={account} onChange={setAccount} options={accounts} emptyMessage="Não existem contas disponíveis para selecionar a origem." /></FormField><div className="orbe-transfer-direction" aria-hidden="true"><span />↓<span /></div><FormField label="Conta de destino" name="destination" required error={errors.destination}><AccountList id="destination" value={destination} onChange={setDestination} options={accounts} emptyMessage="Não existem contas disponíveis para selecionar o destino." /></FormField></> : <><FormField label="Descrição" name="description" required error={errors.description}><TextInput id="description" value={description} onChange={setDescription} maxLength={191} placeholder={kind === 'income' ? 'Ex.: Salário' : 'Ex.: Supermercado'} disabled={submitting} /></FormField><FormField label="Categoria" name="category" required error={errors.category}><CategoryList id="category" value={category} onChange={setCategory} options={categories} /></FormField><FormField label="Conta" name="account" required error={errors.account}><AccountList id="account" value={account} onChange={setAccount} options={accounts} /></FormField></>}<FormField label="Valor" name="amount" required error={errors.amount}><MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} /></FormField><FormField label="Data" name="date" required error={errors.date}><DateInput id="date" value={date} onChange={setDate} disabled={submitting} /></FormField>{isTransfer ? <FormField label="Descrição (opcional)" name="description" error={errors.description}><Textarea id="description" value={description} onChange={setDescription} maxLength={191} disabled={submitting} /></FormField> : null}<FormActions onCancel={onClose} loading={submitting} /></form></ResponsiveFormContainer>
+  const statusOptions = [
+    { value: 'REALIZED', label: 'Realizado' },
+    { value: 'PENDING', label: 'Pendente' },
+  ]
+  const legDateLabel = (state: 'REALIZED' | 'PENDING', direction: 'out' | 'in') =>
+    `Data ${state === 'REALIZED' ? 'efetiva' : 'prevista'} da ${direction === 'out' ? 'saída' : 'entrada'}`
+
+  return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : 'Preenche os dados da operação.'} onClose={onClose} dirty={dirty} submitting={submitting}>
+    <form onSubmit={submit} noValidate>
+      <FormErrorSummary errors={errors} />
+      {isTransfer ? <>
+        <FormField label="Conta de origem" name="account" required error={errors.account}>
+          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Não existem contas ativas para selecionar a origem." disabled={submitting} />
+        </FormField>
+        <FormField label="Estado da saída" name="outState" required>
+          <SelectInput id="outState" value={outState} onChange={(value) => setOutState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
+        </FormField>
+        <FormField label={legDateLabel(outState, 'out')} name="outDate" required error={errors.date}>
+          <DateInput id="outDate" value={outDate} onChange={setOutDate} disabled={submitting} />
+        </FormField>
+        <div className="orbe-transfer-direction" aria-hidden="true"><span />↓<span /></div>
+        <FormField label="Conta de destino" name="destination" required error={errors.destination}>
+          <SelectInput id="destination" value={destination} onChange={setDestination} options={accounts} placeholder="Não existem contas ativas para selecionar o destino." disabled={submitting} />
+        </FormField>
+        <FormField label="Estado da entrada" name="inState" required>
+          <SelectInput id="inState" value={inState} onChange={(value) => setInState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
+        </FormField>
+        <FormField label={legDateLabel(inState, 'in')} name="inDate" required error={errors.date}>
+          <DateInput id="inDate" value={inDate} onChange={setInDate} disabled={submitting} />
+        </FormField>
+      </> : <>
+        <FormField label="Descrição" name="description" required error={errors.description}>
+          <TextInput id="description" value={description} onChange={setDescription} maxLength={191} placeholder={kind === 'income' ? 'Ex.: Salário' : 'Ex.: Supermercado'} disabled={submitting} />
+        </FormField>
+        <FormField label="Categoria" name="category" required error={errors.category}>
+          <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder={`Não existem categorias ativas de ${kind === 'income' ? 'rendimento' : 'gasto'}.`} disabled={submitting} />
+        </FormField>
+        <FormField label="Estado" name="operationState" required>
+          <SelectInput id="operationState" value={operationState} onChange={(value) => setOperationState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
+        </FormField>
+        {operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
+          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Não existem contas ativas para selecionar." disabled={submitting} />
+        </FormField> : null}
+        <FormField label={operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
+          <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
+        </FormField>
+      </>}
+      <FormField label="Valor" name="amount" required error={errors.amount}>
+        <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
+      </FormField>
+      {isTransfer ? <FormField label="Descrição (opcional)" name="description" error={errors.description}>
+        <Textarea id="description" value={description} onChange={setDescription} maxLength={191} disabled={submitting} />
+      </FormField> : null}
+      <FormActions onCancel={onClose} loading={submitting} />
+    </form>
+  </ResponsiveFormContainer>
 }
