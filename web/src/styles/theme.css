@@ -121,7 +121,9 @@
 [data-theme="dark"] .orbe-month-selector-label,
 [data-theme="dark"] .route-period-selector button,
 [data-theme="dark"] .route-period-selector span { color: var(--orbe-text) !important; }
-[data-theme="dark"] .orbe-month-selector button:hover:not(:disabled),
+[data-theme="dark"] .orbe-month-selector-arrow:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-primary) 14%, transparent) !important;
+}
 [data-theme="dark"] .route-period-selector button:hover { background: #263445 !important; }
 [data-theme="dark"] .filter-chips button,
 [data-theme="dark"] .secondary-button,
