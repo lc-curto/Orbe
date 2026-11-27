@@ -88,7 +88,6 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 .mobile-more-page-item:focus-visible {
   outline: 2px solid rgba(8, 127, 112, .55); outline-offset: -2px;
 }
-.sidebar-group-title { display: block; padding: 4px 10px; }
 
 /* Dashboard header: consistent hierarchy on tablet and mobile */
 .mobile-dashboard-header {
