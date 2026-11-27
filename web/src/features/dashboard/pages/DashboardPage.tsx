@@ -73,7 +73,7 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
 
             <Card className="desktop-categories-card" {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
               <Row style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={16}>
-                <Stack gap={3}><Text fontSize={18} fontWeight="700">Despesas por categoria</Text><Text color="#667085" fontSize={13}>Distribuição das despesas em {period.label}</Text></Stack>
+                <Stack gap={3}><Text fontSize={18} fontWeight="700">Gastos por categoria</Text><Text color="#667085" fontSize={13}>Distribuição dos gastos em {period.label}</Text></Stack>
                 <Button onPress={() => notify('A mostrar despesas por categoria')} aria-label="Ver todas as despesas por categoria" borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontWeight="700">Ver todas →</Button>
               </Row>
               <Row gap={28} flexWrap="wrap">
