@@ -2,6 +2,8 @@ import { Button, Card, Heading, Paragraph, Separator, Text, Row, Stack } from '.
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { AppIcon, type AppIconName } from '../../../shared/components/AppIcon'
 import type { CurrencySymbol } from '../../currency/types'
+import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
+import { formatCurrency } from '../../currency/formatCurrency'
 
 type DashboardMovement = {
   icon: AppIconName
@@ -20,6 +22,8 @@ type DashboardPageProps = {
   onMonthChange: (month: string) => void
   currencySymbol: CurrencySymbol
   movements: DashboardMovement[]
+  card?: FinancialCard
+  invoice?: CardInvoice
   setActiveKey: (value: string) => void
   notify: (message: string) => void
   authError: string | null
@@ -43,7 +47,7 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
 
 
 
-export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, setActiveKey, notify, authError, logoutError }: DashboardPageProps) {
+export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, card, invoice, setActiveKey, notify, authError, logoutError }: DashboardPageProps) {
   return <>
 <Row className="desktop-dashboard-header" style={{ justifyContent: "space-between", alignItems: "center" }} gap={20}>
               <Stack gap={4} flex={1} minWidth={0}>
@@ -75,6 +79,20 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
               <Row gap={28} flexWrap="wrap">
                 {[['Casa', '€ 162,00', '82%', '#175cd3'], ['Juros', '€ 1,00', '12%', '#087f70']].map(([label, value, width, color]) => <Stack key={label} flex={1} minWidth={220} gap={7}><Row style={{ justifyContent: 'space-between' }}><Text color="#475467" fontSize={13}>{label}</Text><Text color="#101828" fontSize={13} fontWeight="700">{String(value).replace(/€/g, currencySymbol)}</Text></Row><Stack height={7} borderRadius={99} backgroundColor="#eef2f6"><Stack width={width} height={7} borderRadius={99} backgroundColor={color} /></Stack></Stack>)}
               </Row>
+            </Card>
+
+            <Card {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
+              <Row style={{ justifyContent: 'space-between', alignItems: 'center' }} marginBottom={12}>
+                <Text fontSize={18} fontWeight="700">Cartões</Text>
+                <Button onPress={() => setActiveKey('Cartões')} aria-label="Ver todos os cartões" borderWidth={0} backgroundColor="transparent" padding={0} color="#087f70" fontWeight="700">Ver todos →</Button>
+              </Row>
+              {card ? <Row padding={12} borderRadius={12} backgroundColor="#f7f9fc" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+                <Stack gap={4}>
+                  <Text color="#667085" fontSize={13}>{card.name}</Text>
+                  <Text fontSize={22} fontWeight="800">{invoice ? formatCurrency(invoice.summary.open_amount, currencySymbol) : 'Sem faturas disponíveis.'}</Text>
+                  {invoice ? <Text color="#667085" fontSize={12}>Em aberto · {invoice.cycle_state}</Text> : null}
+                </Stack>
+              </Row> : <Text color="#667085" paddingVertical={12}>Sem cartões disponíveis.</Text>}
             </Card>
 
             <Card {...border} borderRadius={16} padding={20} backgroundColor="#ffffff">
