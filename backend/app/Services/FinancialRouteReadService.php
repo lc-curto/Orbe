@@ -21,6 +21,9 @@ final class FinancialRouteReadService
     {
         return DB::transaction(function () use ($userId, $firstMonth, $projectionMonths): array {
             $today = now()->toDateString();
+            $windowStart = $firstMonth.'-01';
+            $windowEnd = (new \\DateTimeImmutable($windowStart))->modify('+'.$projectionMonths.' months -1 day')->format('Y-m-d');
+            $actualWindowEnd = min($windowEnd, $today);
             $accountIds = FinancialAccount::query()
                 ->where('user_id', $userId)
                 ->whereIn('account_type', ['BANK', 'CASH', 'WALLET'])
@@ -39,56 +42,76 @@ final class FinancialRouteReadService
             $referenceBalanceValid = true;
             $projectionValid = true;
 
-            $entries = $accountIds === []
-                ? collect()
-                : FinancialEntry::query()
+            if ($accountIds !== []) {
+                $realizedAggregate = DB::table('financial_entries')
                     ->where('user_id', $userId)
                     ->whereIn('account_id', $accountIds)
                     ->where('state', 'REALIZED')
+                    ->selectRaw("COALESCE(SUM(CASE WHEN effect = 'INCREASE' THEN amount WHEN effect = 'DECREASE' THEN -amount ELSE 0 END), 0) as balance")
+                    ->selectRaw("COALESCE(SUM(CASE WHEN effective_at IS NULL OR amount < 0 OR effect NOT IN ('INCREASE', 'DECREASE') THEN 1 ELSE 0 END), 0) as invalid_count")
+                    ->selectRaw('COALESCE(SUM(CASE WHEN effective_at > ? THEN 1 ELSE 0 END), 0) as future_count', [$today])
+                    ->whereDate('effective_at', '<=', $today)
+                    ->first();
+
+                $referenceBalance = bcadd((string) ($realizedAggregate->balance ?? '0'), '0', 4);
+                $referenceBalanceValid = (int) ($realizedAggregate->invalid_count ?? 0) === 0;
+                $projectionValid = (int) ($realizedAggregate->future_count ?? 0) === 0;
+
+                $openingAggregate = DB::table('financial_entries')
+                    ->where('user_id', $userId)
+                    ->whereIn('account_id', $accountIds)
+                    ->where('state', 'REALIZED')
+                    ->whereNotNull('effective_at')
+                    ->whereDate('effective_at', '<', $windowStart)
+                    ->whereDate('effective_at', '<=', $today)
+                    ->where('amount', '>=', 0)
+                    ->whereIn('effect', ['INCREASE', 'DECREASE'])
+                    ->selectRaw("COALESCE(SUM(CASE WHEN effect = 'INCREASE' THEN amount WHEN effect = 'DECREASE' THEN -amount ELSE 0 END), 0) as balance")
+                    ->value('balance');
+                $openingBalanceBeforeWindow = bcadd((string) ($openingAggregate ?? '0'), '0', 4);
+
+                $entries = FinancialEntry::query()
+                    ->where('user_id', $userId)
+                    ->whereIn('account_id', $accountIds)
+                    ->where('state', 'REALIZED')
+                    ->whereNotNull('effective_at')
+                    ->whereDate('effective_at', '>=', $windowStart)
+                    ->whereDate('effective_at', '<=', $actualWindowEnd)
+                    ->where('amount', '>=', 0)
+                    ->whereIn('effect', ['INCREASE', 'DECREASE'])
                     ->with('operation:id,operation_type,state')
                     ->get();
 
-            foreach ($entries as $entry) {
-                $effectiveDate = $entry->effective_at?->toDateString();
-                $amount = (string) $entry->amount;
-                if ($effectiveDate === null || bccomp($amount, '0', 4) < 0) {
-                    $referenceBalanceValid = false;
+                foreach ($entries as $entry) {
+                    $effectiveDate = $entry->effective_at?->toDateString();
+                    if ($effectiveDate === null) {
+                        continue;
+                    }
+                    $amount = (string) $entry->amount;
+                    $signedAmount = $entry->effect === 'INCREASE'
+                        ? bcadd($amount, '0', 4)
+                        : bcsub('0', $amount, 4);
+                    $actualNetByDate[$effectiveDate] = bcadd($actualNetByDate[$effectiveDate] ?? '0.0000', $signedAmount, 4);
 
-                    continue;
+                    $operation = $entry->operation;
+                    $operationType = $operation?->operation_type;
+                    if ($operationType !== 'TRANSFER' && $operationType !== 'ACCOUNT_OPENING_BALANCE') {
+                        $nature = $entry->effect === 'INCREASE' ? 'income' : 'expenses';
+                        $this->addFlow($actualFlowByDate, $effectiveDate, $nature, $amount);
+                    }
+                    if ($operation !== null && $operationType !== 'ACCOUNT_OPENING_BALANCE') {
+                        $this->addId($operationIdsByDate, $effectiveDate, (int) $operation->id);
+                    }
                 }
-
-                if ($entry->effect === 'INCREASE') {
-                    $signedAmount = bcadd($amount, '0', 4);
-                } elseif ($entry->effect === 'DECREASE') {
-                    $signedAmount = bcsub('0', $amount, 4);
-                } else {
-                    $referenceBalanceValid = false;
-
-                    continue;
-                }
-
-                if ($effectiveDate > $today) {
-                    $projectionValid = false;
-
-                    continue;
-                }
-
-                $referenceBalance = bcadd($referenceBalance, $signedAmount, 4);
-                $actualNetByDate[$effectiveDate] = bcadd($actualNetByDate[$effectiveDate] ?? '0.0000', $signedAmount, 4);
-
-                $operation = $entry->operation;
-                $operationType = $operation?->operation_type;
-                if ($operationType !== 'TRANSFER' && $operationType !== 'ACCOUNT_OPENING_BALANCE') {
-                    $nature = $entry->effect === 'INCREASE' ? 'income' : 'expenses';
-                    $this->addFlow($actualFlowByDate, $effectiveDate, $nature, $amount);
-                }
-                if ($operation !== null && $operationType !== 'ACCOUNT_OPENING_BALANCE') {
-                    $this->addId($operationIdsByDate, $effectiveDate, (int) $operation->id);
-                }
+            } else {
+                $openingBalanceBeforeWindow = '0.0000';
             }
 
             $pendingOperations = Operation::query()
                 ->where('user_id', $userId)
+                ->where(function ($query) use ($windowEnd): void {
+                    $query->whereNull('planned_at')->orWhereDate('planned_at', '<=', $windowEnd);
+                })
                 ->where('state', 'PENDING')
                 ->whereIn('operation_type', ['EXPENSE', 'INCOME'])
                 ->get();
@@ -124,6 +147,9 @@ final class FinancialRouteReadService
 
             $invoices = CardInvoice::query()
                 ->where('user_id', $userId)
+                ->where(function ($query) use ($windowEnd): void {
+                    $query->whereNull('due_date')->orWhereDate('due_date', '<=', $windowEnd);
+                })
                 ->with('card:id,name')
                 ->orderBy('due_date')
                 ->get();
@@ -202,10 +228,9 @@ final class FinancialRouteReadService
                 return $found < 0 ? '0.0000' : $prefix[$found];
             };
 
-            $actualTotal = $actualRunning;
             $plannedBeforeToday = $prefixAt($plannedDates, $plannedPrefix, $this->shiftDate($today, -1));
             $balanceCache = [];
-            $balanceAt = function (string $date) use (&$balanceCache, $referenceBalance, $referenceBalanceValid, $projectionValid, $actualDates, $actualPrefix, $actualTotal, $plannedDates, $plannedPrefix, $plannedBeforeToday, $prefixAt, $today): ?string {
+            $balanceAt = function (string $date) use (&$balanceCache, $referenceBalance, $referenceBalanceValid, $projectionValid, $openingBalanceBeforeWindow, $actualDates, $actualPrefix, $plannedDates, $plannedPrefix, $plannedBeforeToday, $prefixAt, $today): ?string {
                 if (array_key_exists($date, $balanceCache)) {
                     return $balanceCache[$date];
                 }
@@ -215,8 +240,7 @@ final class FinancialRouteReadService
 
                 if ($date < $today) {
                     $actualThroughDate = $prefixAt($actualDates, $actualPrefix, $date);
-                    $netAfter = bcsub($actualTotal, $actualThroughDate, 4);
-                    $balance = bcsub($referenceBalance, $netAfter, 4);
+                    $balance = bcadd($openingBalanceBeforeWindow, $actualThroughDate, 4);
                 } else {
                     if ($projectionValid === false) {
                         return null;
