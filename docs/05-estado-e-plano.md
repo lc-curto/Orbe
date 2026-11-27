@@ -615,3 +615,12 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Substituído o trio de KPIs independentes por um resumo financeiro no padrão de destaque partilhado: Resultado em primeiro plano e Ganhos/Gastos na linha inferior.
 - A composição usa `orbe-financial-highlight-card` e estilos no design-system `financial-highlight.css`; removidos estilos antigos de KPI da página. Sem alteração no cálculo (operações realizadas, excluindo transferências) ou nos filtros.
 - Pesquisa e filtros continuam depois do card. Testar responsividade e legibilidade nos dois temas antes do merge.
+
+### Auditoria sistémica de dark mode — 27/11/2026
+
+- Finding confirmado pelas capturas: formulário de Movimentos apresentava modal claro com input escuro em dark mode. Causa: portal + tokens de formulário estáticos inline + override global de input.
+- Corrigido na camada partilhada: tokens do formulário ligados ao tema ativo; .orbe-input excluído do override global de input; superfícies, selected/hover/focus, botões, footer, backdrop e scrollbar harmonizados.
+- Revisão de estilos em Dashboard, Movimentos, Rota, Contas, Cartões/Faturas, Relatórios, Configurações, navegação mobile/Mais e menus de conta; substituídos vários hardcodes de superfície por tokens semânticos e adicionados estados dark de contraste.
+- Referência estética para menus/overlays: painel Mais — superfície opaca escura, borda/acento teal, texto claro, muted e tint de interação discreto. Dashboard balance highlight mantém gradiente verde aprovado.
+- QA visual manual global ainda pendente. Critério: nenhuma superfície clara involuntária em dark; texto/ícones/placeholder/valores/estados legíveis; selected/hover/focus coerentes; modal/sheet/portal e scrollbar consistentes em light/dark e 320/768/1024/1025+ px.
+- Não alterar lógica, dados, API ou navegação nesta auditoria.
