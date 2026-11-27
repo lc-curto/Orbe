@@ -24,7 +24,6 @@ type DashboardPageProps = {
 }
 
 const border = { borderWidth: 1, borderColor: '#e4e7ec' as const }
-const centered = { alignItems: 'center' as const, justifyContent: 'center' as const }
 
 function SummaryCard({ label, amount, detail, tone }: { label: string; amount: string; detail: string; tone?: string }) {
   return (
