@@ -310,7 +310,7 @@
 }
 .orbe-page-header-copy p {
   margin: 0;
-  color: var(--orbe-text-muted);
+  color: var(--orbe-muted);
   font-size: 13px;
   line-height: 1.45;
 }
