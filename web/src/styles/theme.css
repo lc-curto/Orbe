@@ -111,6 +111,15 @@
 [data-theme="dark"] .add-fab-menu-item:hover,
 [data-theme="dark"] .accounts-menu-item:hover { background: #263445 !important; }
 [data-theme="dark"] .mobile-more-pages-panel h2 { color: var(--orbe-muted); }
+[data-theme="dark"] .mobile-more-panel-dismiss {
+  background: rgba(0, 0, 0, .52);
+  backdrop-filter: blur(3px);
+}
+[data-theme="dark"] .mobile-more-pages-panel {
+  background: color-mix(in srgb, var(--orbe-surface) 88%, var(--orbe-teal)) !important;
+  border-top-color: var(--orbe-teal) !important;
+  box-shadow: 0 -18px 48px rgba(0, 0, 0, .48) !important;
+}
 
 /* Month selectors and movement filters. */
 [data-theme="dark"] .route-period-selector {
