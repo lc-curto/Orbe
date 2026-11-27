@@ -89,7 +89,7 @@
 [data-theme="dark"] .main-content .accounts-row + .accounts-row,
 [data-theme="dark"] .main-content .cards-invoice-row + .cards-invoice-row,
 [data-theme="dark"] .main-content .cards-invoice-day-list .movement-row + .movement-row { border-top-color: var(--orbe-border) !important; }
-[data-theme="dark"] input,
+[data-theme="dark"] input:not(.orbe-input),
 [data-theme="dark"] select,
 [data-theme="dark"] textarea,
 [data-theme="dark"] .auth-input,
@@ -367,4 +367,63 @@
 }
 [data-theme="dark"] .route-day-modal .route-detail-row {
   border-bottom-color: var(--orbe-border);
+}
+
+/* Portalled forms: use their dynamic semantic tokens instead of global input overrides. */
+[data-theme="dark"] .orbe-form-container,
+[data-theme="dark"] .orbe-confirm-dialog {
+  color: var(--orbe-text);
+  background: var(--orbe-surface);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .orbe-form-header,
+[data-theme="dark"] .orbe-form-actions {
+  border-color: var(--orbe-border);
+  background: var(--orbe-surface);
+}
+[data-theme="dark"] .orbe-form-header h2,
+[data-theme="dark"] .orbe-confirm-dialog h2,
+[data-theme="dark"] .orbe-field label,
+[data-theme="dark"] .orbe-option-copy strong {
+  color: var(--orbe-text);
+}
+[data-theme="dark"] .orbe-form-header p,
+[data-theme="dark"] .orbe-confirm-dialog p,
+[data-theme="dark"] .orbe-option-copy small,
+[data-theme="dark"] .orbe-form-step-content,
+[data-theme="dark"] .orbe-step-meta {
+  color: var(--orbe-muted);
+}
+[data-theme="dark"] .orbe-option,
+[data-theme="dark"] .orbe-shortcut,
+[data-theme="dark"] .orbe-button-secondary {
+  background: var(--orbe-surface);
+  color: var(--orbe-text);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .orbe-option:hover:not(:disabled),
+[data-theme="dark"] .orbe-shortcut:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-primary) 9%, var(--orbe-surface));
+}
+[data-theme="dark"] .orbe-option.is-selected,
+[data-theme="dark"] .orbe-shortcut.is-selected {
+  background: var(--orbe-primary-soft);
+  color: var(--orbe-primary);
+  border-color: color-mix(in srgb, var(--orbe-primary) 38%, var(--orbe-border));
+}
+[data-theme="dark"] .orbe-option-icon {
+  background: color-mix(in srgb, var(--orbe-primary) 13%, var(--orbe-surface));
+}
+[data-theme="dark"] .orbe-input {
+  background: var(--orbe-input-surface);
+  color: var(--orbe-text);
+  border-color: var(--orbe-border);
+}
+[data-theme="dark"] .orbe-button-primary {
+  color: var(--orbe-primary-button-text);
+}
+[data-theme="dark"] .orbe-form-scroll,
+[data-theme="dark"] .route-day-modal,
+[data-theme="dark"] .mobile-more-pages-panel {
+  scrollbar-color: var(--orbe-muted) var(--orbe-surface);
 }
