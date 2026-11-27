@@ -17,8 +17,8 @@ export async function fetchOperations(): Promise<Operation[]> {
   return apiRequest<Operation[]>('/operations')
 }
 
-export async function fetchFinancialRouteReadModel(month: string, signal?: AbortSignal): Promise<FinancialRouteReadModel> {
-  return apiRequest<FinancialRouteReadModel>(`/financial-route?month=${encodeURIComponent(month)}`, { signal })
+export async function fetchFinancialRouteReadModel(month: string, signal?: AbortSignal, months = 24): Promise<FinancialRouteReadModel> {
+  return apiRequest<FinancialRouteReadModel>(`/financial-route?month=${encodeURIComponent(month)}&months=${months}`, { signal })
 }
 
 export async function fetchAccounts(): Promise<Account[]> {
