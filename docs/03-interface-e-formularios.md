@@ -16,6 +16,19 @@ O utilizador rejeita fortemente o uso de `!important`. Esta é uma regra obrigat
 - Rever e remover ocorrências estruturais existentes no âmbito da tarefa; ocorrências não removidas devem ficar registadas como finding com impacto e critério de remoção.
 - Antes de concluir uma tarefa de UI, pesquisar `!important` no CSS afetado e reportar o resultado. A presença de `!important` não justificado bloqueia a conclusão.
 
+## Estrutura comum obrigatória das páginas
+
+Todas as páginas autenticadas da aplicação devem usar a estrutura partilhada, sem criar shells ou cabeçalhos independentes por feature:
+
+- **Desktop:** `DesktopPageFrame` em `web/src/app/AppShell.tsx`, dentro do `main-content` global. Define largura máxima, alinhamento e ritmo vertical comuns.
+- **Mobile/tablet:** `MobilePageFrame` em `web/src/app/AppShell.tsx`, com `.mobile-page-content` para largura, gutter, scroll e espaço seguro da bottom bar. Todas as variantes mobile — incluindo Dashboard — devem renderizar dentro deste frame.
+- **Cabeçalho de página:** `PageHeader` em `web/src/shared/components/PageHeader.tsx`. Usar para título, descrição e ações nas páginas Dashboard, Movimentos, Rota Financeira, Contas, Cartões, Relatórios e Configurações.
+- **Tokens:** usar a escala `--orbe-space-*`, `--orbe-page-gutter-*`, `--orbe-page-content-max`, `--orbe-page-shell-max`, `--orbe-page-section-gap`, `--orbe-panel-padding` e tokens de cor/raio já definidos. Não criar valores equivalentes por feature.
+- **Exceções de feature:** podem alterar a composição interna necessária ao fluxo (ex.: calendário mensal ou gráficos), mas não redefinir gutter, largura de página, header, tipografia base, ritmo vertical ou comportamento de safe area.
+- **QA:** testar todas as páginas autenticadas a partir de 320 px, incluindo alinhamento esquerdo/direito do header, overflow, largura dos cards, conteúdo final acessível acima da bottom bar, tema claro/escuro e estados loading/erro/vazio.
+
+A aprovação de uma página isolada não comprova consistência global. Qualquer nova página deve usar estes componentes por defeito; uma exceção exige motivo técnico/funcional registado.
+
 ## Princípios e navegação
 - Mobile first; desktop complementar.
 - Listas compactas, hierarquia clara e sem informação repetida.
