@@ -98,11 +98,6 @@ function isCashAccount(account: Account): boolean {
   return account.account_type === 'BANK' || account.account_type === 'CASH' || account.account_type === 'WALLET'
 }
 
-function operationDate(operation: Operation): string | null {
-  const value = operation.state === 'PENDING' ? operation.planned_at : operation.effective_at ?? operation.planned_at
-  return projectionDateKey(value)
-}
-
 function positiveAmount(value: string): bigint | null {
   const units = parseMoneyUnits(value)
   return units === null ? null : units < 0n ? -units : units
