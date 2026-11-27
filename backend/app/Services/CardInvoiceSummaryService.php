@@ -19,7 +19,7 @@ final class CardInvoiceSummaryService
     }
 
     /**
-     * @param int[] $invoiceIds
+     * @param  int[]  $invoiceIds
      * @return array<int, array{obligation_amount:string,paid_amount:string,open_amount:string}>
      */
     public function forInvoices(array $invoiceIds): array
