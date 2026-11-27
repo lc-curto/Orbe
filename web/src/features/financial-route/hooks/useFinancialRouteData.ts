@@ -11,7 +11,9 @@ function buildMonth(operations: Operation[], month: string): RouteMonth {
   const grouped = new Map<string, Operation[]>()
 
   operations.forEach((operation) => {
-    if (operation.state !== 'REALIZED') return
+    // A Rota Financeira inclui operações realizadas e pendentes projetadas.
+    // Operações canceladas não devem afetar a projeção.
+    if (operation.state !== 'REALIZED' && operation.state !== 'PENDING') return
     const key = operationDate(operation)
     if (!key || key < first || key > last) return
     const dayOperations = grouped.get(key) ?? []
