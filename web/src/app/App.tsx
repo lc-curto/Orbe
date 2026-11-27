@@ -301,7 +301,7 @@ export default function App() {
         <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <div className="desktop-layout">
           <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} borderRightWidth={1} borderRightColor="var(--orbe-border)">
-            <Row style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom={28}>
+            <Row style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom="var(--orbe-space-6)">
               {sidebarOpen ? <Text className="desktop-sidebar-brand" fontSize={28} fontWeight="800">Orbe</Text> : null}
               <Button className="desktop-sidebar-collapse-button" onPress={toggleSidebar} aria-label={sidebarOpen ? 'Recolher menu' : 'Expandir menu'} borderWidth={1} backgroundColor="var(--orbe-bg)">
                 <AppIcon name={sidebarOpen ? 'chevronLeft' : 'chevronRight'} size={18} />
@@ -315,7 +315,7 @@ export default function App() {
                 </Button>)}
               </Stack>)}
             </Stack>
-            <Stack className="sidebar-footer" gap={8}>
+            <Stack className="sidebar-footer" gap={8} borderTopWidth={1}>
               <Button onPress={() => notify("Não existem notificações novas")} aria-label="Notificações" className="sidebar-footer-action" justifyContent={sidebarOpen ? 'flex-start' : 'center'}>
                 <Row alignItems="center" gap={10}><AppIcon name="bell" size={20} strokeWidth={2} />{sidebarOpen ? <Text fontSize={13}>Notificações</Text> : null}</Row>
               </Button>
