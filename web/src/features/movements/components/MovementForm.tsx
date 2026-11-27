@@ -414,7 +414,7 @@ export function MovementForm({
           'legs.out.account_id': 'account',
           'legs.in.account_id': 'destination',
           'legs.out.effective_at': 'outDate',
-          'legs.out.planned_at: 'outDate',
+          'legs.out.planned_at': 'outDate',
           'legs.in.effective_at': 'inDate',
           'legs.in.planned_at': 'inDate',
           effective_at: 'date',
