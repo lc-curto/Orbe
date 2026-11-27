@@ -1212,3 +1212,15 @@ Até estas decisões serem aprovadas:
 - O cartão de saldo da Dashboard usa uma superfície verde-azulada; não altera nem simula saldo financeiro.
 - O refinamento não pode alterar regras financeiras, contratos API, conteúdo ou fluxos de navegação.
 - QA visual final continua obrigatório em 320, 375, 768, 1024 e 1025+ px, em light/dark mode. CI de lint/build não substitui aprovação visual manual.
+
+
+### Consistência transversal de cabeçalhos, filtros e temas — 27/11/2026
+
+Regras obrigatórias para todas as páginas:
+
+- O cabeçalho principal apresenta apenas o título da página; não mostrar descrição, slogan ou contagem em texto imediatamente abaixo do título.
+- O seletor de mês usa o padrão partilhado: mês à esquerda e setas anterior/seguinte agrupadas à direita, com dimensões, estados disabled e foco consistentes.
+- Em mobile/tablet, o controlo de tema permanece no cabeçalho global, separado semanticamente do seletor de período. Em desktop, manter o controlo global existente sem duplicação por página.
+- Quando uma página tem KPIs/cards de resumo, a sequência padrão é: **cabeçalho → KPIs/cards → pesquisa → filtros → resultados**. Não colocar filtros antes dos resumos nem antes da pesquisa. Exceções só quando a função principal (por exemplo, uma vista de calendário/rota) exigir controlos antes do conteúdo filtrado; manter a exceção consistente entre desktop e mobile.
+- Dark mode é suportado pelo sistema de tokens e por todas as superfícies de feature, não apenas pelo fundo: cards/KPIs, pesquisa, filtros, tabs, listas, estados vazios, popovers, botões, FAB, navegação, texto, bordas, foco e estados disabled.
+- Não introduzir cores de fundo/texto fixas para componentes comuns quando existe token de tema. Verificar light e dark em desktop, tablet e mobile; contraste e legibilidade fazem parte do QA visual.
