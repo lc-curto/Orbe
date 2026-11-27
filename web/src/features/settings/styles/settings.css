@@ -1,5 +1,5 @@
 /* Settings are mobile-first: overview -> category detail. Desktop enhances the same IA with a local sidebar. */
-.settings-page { width: 100%; max-width: 1040px; min-width: 0; margin: 0 auto; color: var(--orbe-text); }
+.settings-page { width: 100%; max-width: 1040px; min-width: 0; margin: 0 auto; padding: 18px 18px 0; color: var(--orbe-text); }
 .settings-page-header { margin: 0 0 20px; }
 .settings-page-header h1 { margin: 0; font-size: clamp(26px, 5vw, 34px); line-height: 1.15; letter-spacing: -0.8px; }
 .settings-page-header p { margin: 7px 0 0; color: var(--orbe-muted); font-size: 13px; line-height: 1.5; }
@@ -78,6 +78,7 @@
 .settings-mobile-detail { display: grid; }
 
 @media (min-width: 1025px) {
+  .settings-page { padding: 0; }
   .settings-page-header { margin-bottom: 24px; }
   .settings-page-header h1 { font-size: 34px; }
   .settings-mobile-overview, .settings-mobile-detail { display: none; }
@@ -106,6 +107,7 @@
 @media (max-width: 380px) {
   .mobile-page-shell .settings-page { padding-left: 14px; padding-right: 14px; }
   .settings-page-header h1 { font-size: 26px; }
+  .settings-page { padding-left: 14px; padding-right: 14px; }
   .settings-profile-card { gap: 10px; padding: 12px; }
   .settings-profile-copy small { font-size: 11px; }
   .settings-nav-item { gap: 10px; padding-left: 12px; padding-right: 12px; }
