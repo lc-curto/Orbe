@@ -487,3 +487,18 @@ Validar todas as páginas primárias em 320, 390, 768, 1024, 1025, 1280 e 1440 p
 - Executar lint e build após as correções.
 - Fazer revisão final do diff e só então preparar PR para integração.
 - QA visual real e interação em browser devem ser reportadas como pendentes até serem executadas localmente.
+
+### Findings de QA visual — correções aplicadas (27/11/2026)
+
+As capturas locais em 320, 390 e 1024 px revelaram que a sidebar/layout desktop e a variante mobile estavam visíveis simultaneamente. A causa era a regra base de `.desktop-layout` no `app-shell.css`, importada depois das regras responsivas de navegação e reintroduzindo o layout desktop.
+
+Correções aplicadas na branch de QA:
+- Reforçar no CSS final do shell a exclusividade das variantes: desktop apenas acima de 1024 px; mobile/bottom bar até 1024 px.
+- Rota Financeira: apresentar um único mês até 1024 px; manter três meses apenas acima de 1024 px.
+- Empilhar o título e o seletor mensal na versão mobile, evitando corte do período em 320/390 px.
+- Disponibilizar os filtros Todos/Entradas/Saídas também na versão mobile.
+- Ajustar as larguras das quatro colunas da tabela mensal e o truncamento dos valores, evitando cabeçalhos sobrepostos.
+- Substituir o FAB fixo sobre o calendário mobile por uma ação «+ Adicionar» no cabeçalho da Rota, ligada ao mesmo menu de criação. O FAB global permanece na versão desktop.
+- O shell mobile mantém espaço inferior para a bottom bar; Configurações deve ser revalidada para confirmar que o último cartão fica totalmente acessível por scroll.
+
+**Regra de QA da Rota:** ≤1024 px = exatamente um mês visível; >1024 px = três meses visíveis. Verificar especialmente 320, 390, 768, 1024 e 1025 px. O CI não confirma paridade visual: a aprovação final depende de nova validação no browser local.
