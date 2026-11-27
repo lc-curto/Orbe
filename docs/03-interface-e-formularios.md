@@ -106,6 +106,9 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - Movimentos e Rota Financeira usam as mesmas operações e efeitos financeiros válidos; a Rota altera a apresentação e agrega os efeitos por data, não cria movimentos diferentes.
 - Em Movimentos, os movimentos do cartão de crédito são apresentados individualmente. Na Rota, as compras do cartão não aparecem como saídas individuais: cada fatura é projetada uma única vez pelo seu valor total a pagar, na data prevista da fatura, esteja aberta ou fechada. Assim, a Rota não duplica a compra individual e o total da fatura.
 - O saldo de partida da Rota é a soma dos saldos atuais de contas bancárias e dinheiro, excluindo cartões de crédito. Operações pendentes entram na projeção mesmo sem conta associada; operações realizadas já refletidas no saldo não voltam a ser somadas como projeções.
+- **Regra central do saldo projetado:** saldo projetado do dia = saldo projetado do dia anterior + entradas planeadas − saídas planeadas. A projeção acumula os efeitos elegíveis por data, partindo do saldo efetivo de referência e incluindo operações planeadas ainda não realizadas.
+- A Rota é uma representação calculada do cenário financeiro, não uma fonte de verdade nem um módulo financeiro independente. Consulta a mesma base de dados, operações, efeitos e regras de negócio comuns do Orbe; não cria entidades, operações, regras ou persistência financeira paralelas.
+- Quando uma operação planeada é confirmada como realizada, o efeito projetado correspondente é substituído pelo efeito efetivo na data efetiva, sem dupla contagem. Alterações/cancelamentos recalculam o cenário conforme as regras centrais.
 
 - Saldo diário e saldo final/projeção só são apresentados quando o contrato financeiro fornecer valores válidos. Até lá, indicar indisponibilidade, sem inventar números.
 - Cor só na célula/valor Saldo quando houver cálculo fiável, nunca na linha. Sem badges, legendas ou etiquetas coloridas.
