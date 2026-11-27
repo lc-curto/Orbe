@@ -246,11 +246,7 @@
   .mobile-dashboard-shell { display: block; }
   .mobile-bottom-bar { display: flex; }
   .mobile-page-shell.route-mobile-shell {
-    padding-bottom: calc(280px + env(safe-area-inset-bottom));
+    padding-bottom: calc(160px + env(safe-area-inset-bottom));
   }
-  .app-shell:has(.route-mobile-shell) { position: relative; }
-  .app-add-fab.route-add-fab {
-    position: absolute;
-    bottom: calc(190px + env(safe-area-inset-bottom));
-  }
+  .app-add-fab.route-add-fab { display: none; }
 }
