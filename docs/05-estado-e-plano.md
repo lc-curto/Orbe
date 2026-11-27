@@ -529,19 +529,18 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 
 - Logout desktop acessível diretamente no rodapé da sidebar, inclusive recolhida.
 - Logout em viewport mobile/tablet acessível pelo painel **Mais** da bottom bar.
-- Alternância claro/escuro disponível globalmente no canto superior direito em páginas autenticadas.
-- Tema continua a usar a preferência local e o `ThemeProvider` existente.
-- Validação visual desktop/tablet/mobile ainda necessária após atualização da branch.
-
-
+- Em desktop, o controlo global de tema permanece no shell.
+- Em mobile/tablet (até 1024 px), o controlo de tema é fornecido pelo `PageHeader` partilhado, em todas as páginas que apresentam cabeçalho; não existe implementação exclusiva do Dashboard.
+- O painel **Mais** mantém o controlo de tema como alternativa, incluindo vistas de Configurações que ocultam o cabeçalho durante a navegação interna.
+- A preferência continua a ser aplicada e persistida pelo `ThemeProvider` existente.
+- QA visual em browser desktop/tablet/mobile ainda necessário após atualização da branch.
 
 ## Ajuste de composição do cabeçalho mobile/tablet
 
 - O breakpoint mobile/tablet do Orbe é `max-width: 1024px`.
 - No Dashboard, o cumprimento e o primeiro nome permanecem numa linha; nomes extensos são truncados de forma controlada.
 - A data aparece abaixo do cumprimento.
-- O botão de tema fica alinhado à direita no cabeçalho, sem sobrepor o seletor de mês.
-- O período fica numa segunda linha, com rótulo `Período` e seletor alinhado à direita.
-- O tema também permanece acessível no painel `Mais` nas restantes páginas mobile/tablet; o botão global flutuante fica oculto nesse breakpoint para evitar sobreposição.
+- O controlo de tema usa o `PageHeader` partilhado e fica alinhado à direita; não deve ser implementado isoladamente por página.
+- O período do Dashboard fica numa segunda linha, com rótulo `Período` e seletor alinhado à direita.
+- Cabeçalhos com ações de página (por exemplo, seletor mensal) mantêm essas ações e apresentam o controlo de tema de forma empilhada no lado direito em mobile/tablet, evitando sobreposição.
 - A validação final em browser nos breakpoints (incluindo 320 px, 768 px, 1024 px e 1025 px) é necessária antes de aprovar o PR.
-
