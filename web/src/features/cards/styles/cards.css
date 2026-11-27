@@ -1,6 +1,5 @@
 /* Cards page — reuses Accounts page hierarchy and row/menu primitives */
-.main-content.cards-mode > :not(.cards-page) { display: none !important; }
-.cards-page { width: 100%; max-width: 1200px; margin: 0 auto; color: var(--orbe-text); }
+.cards-page { width: 100%; max-width: var(--orbe-page-content-max); margin: 0 auto; color: var(--orbe-text); }
 .cards-total-card { margin-top: 0; margin-bottom: 22px; }
 .cards-total-card .accounts-total-label { text-transform: uppercase; letter-spacing: .04em; font-weight: 700; }
 .cards-row { align-items: stretch; }
