@@ -544,3 +544,12 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - O período do Dashboard fica numa segunda linha, com rótulo `Período` e seletor alinhado à direita.
 - Cabeçalhos com ações de página (por exemplo, seletor mensal) mantêm essas ações e apresentam o controlo de tema de forma empilhada no lado direito em mobile/tablet, evitando sobreposição.
 - A validação final em browser nos breakpoints (incluindo 320 px, 768 px, 1024 px e 1025 px) é necessária antes de aprovar o PR.
+
+## Refinamento visual transversal — implementação inicial (27/11/2026)
+
+- Iniciada na branch `feature/movements-write-flows`, PR #12, sem alterações na `main`.
+- Adicionada `web/src/styles/visual-polish.css`, importada após os estilos existentes, para consolidar tipografia sans-serif, paleta verde-azulada, cartões/superfícies, controlos, navegação e FAB.
+- Removidos estilos inline de fundo da moldura mobile da Dashboard e do cartão de saldo para permitir que o tema/tokens partilhados controlem a apresentação.
+- A camada visual é uma primeira harmonização; ainda requer revisão de regressões, QA em browser e eventual ajuste de componentes com estilos inline legados.
+- Não foram alteradas regras financeiras nem contratos API.
+- Lint/build e QA visual local ainda não executados nesta sessão; aguardar CI e validação manual do utilizador antes de considerar aprovado.
