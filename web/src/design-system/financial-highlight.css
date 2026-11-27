@@ -62,3 +62,69 @@
 @media (max-width: 1024px) {
   :root { --orbe-financial-highlight-padding: 18px; }
 }
+
+/* Movements: result leads, income and expenses remain in the lower breakdown. */
+.movement-financial-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.movement-financial-summary .movement-financial-result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.movement-financial-summary .movement-financial-result > span,
+.movement-financial-summary .movement-financial-breakdown > div > span {
+  color: var(--orbe-financial-highlight-muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+.movement-financial-summary .movement-financial-result > strong {
+  color: var(--orbe-financial-highlight-text);
+  font-size: clamp(28px, 3vw, 36px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.movement-financial-summary .movement-financial-breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  padding-top: 14px;
+}
+.movement-financial-summary .movement-financial-breakdown > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 6px;
+}
+.movement-financial-summary .movement-financial-breakdown > div > strong {
+  color: var(--orbe-financial-highlight-text);
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 1024px) {
+  .movement-financial-summary {
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .movement-financial-summary .movement-financial-result > span,
+  .movement-financial-summary .movement-financial-breakdown > div > span {
+    font-size: 11px;
+  }
+  .movement-financial-summary .movement-financial-result > strong {
+    font-size: 26px;
+  }
+  .movement-financial-summary .movement-financial-breakdown {
+    gap: 12px;
+    padding-top: 12px;
+  }
+  .movement-financial-summary .movement-financial-breakdown > div > strong {
+    font-size: 13px;
+  }
+}
