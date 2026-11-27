@@ -29,8 +29,18 @@ const dateText = (value?: string | null) => value ? new Intl.DateTimeFormat('pt-
 const monthValue = (value?: string | null) => value ? new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: '2-digit' }).format(new Date(value)) : ''
 const frequencyLabel = (frequency: RecurrenceSchedule['frequency']) => ({ DAILY: 'Diária', WEEKLY: 'Semanal', MONTHLY: 'Mensal' })[frequency]
 
-function Kpi({ label, value, tone, detail }: { label: string; value: string; tone: string; detail: string }) {
-  return <div className="movement-kpi"><span>{label}</span><strong style={{ color: tone }}>{value}</strong><small>{detail}</small></div>
+function MovementFinancialSummary({ income, expenses, symbol }: { income: number; expenses: number; symbol: CurrencySymbol }) {
+  const result = income - expenses
+  return <section className="orbe-financial-highlight-card movement-financial-summary" aria-label="Resumo financeiro dos movimentos">
+    <div className="movement-financial-result">
+      <span>Resultado</span>
+      <strong>{money(Math.abs(result), result >= 0 ? '+ ' : '− ', symbol)}</strong>
+    </div>
+    <div className="movement-financial-breakdown">
+      <div><span>Ganhos</span><strong>{money(income, '+ ', symbol)}</strong></div>
+      <div><span>Gastos</span><strong>{money(expenses, '− ', symbol)}</strong></div>
+    </div>
+  </section>
 }
 
 function ScheduleRow({ schedule, accounts, categories, expanded, occurrence, loading, onToggle }: { schedule: RecurrenceSchedule; accounts: Account[]; categories: Category[]; expanded: boolean; occurrence?: RecurrenceOccurrence; loading: boolean; onToggle: () => void }) {
@@ -73,7 +83,7 @@ export function MovementsPage({ tab, setTab, operations, recurrences, accounts, 
     <PageHeader title="Movimentos" className="movements-header" period={<MonthSelector month={month} onMonthChange={onMonthChange} minMonth="2026-11" maxMonth="2026-12" className="movement-month-selector" />} />
     <div className="movement-tabs" role="tablist"><button type="button" role="tab" aria-selected={tab === 'movements'} className={tab === 'movements' ? 'active' : ''} onClick={() => setTab('movements')}>Movimentos</button><button type="button" role="tab" aria-selected={tab === 'schedules'} className={tab === 'schedules' ? 'active' : ''} onClick={() => setTab('schedules')}>Programações</button></div>
     {tab === 'movements' ? <>
-      <div className="movement-kpis"><Kpi label="Ganhos" value={money(kpis.income, '+ ', symbol)} tone="#16805b" detail="Realizadas no período" /><Kpi label="Gastos" value={money(kpis.expenses, '− ', symbol)} tone="#c2415d" detail="Realizadas no período" /><Kpi label="Resultado" value={money(Math.abs(kpis.income - kpis.expenses), kpis.income - kpis.expenses >= 0 ? '+ ' : '− ', symbol)} tone={kpis.income - kpis.expenses >= 0 ? '#175cd3' : '#c2415d'} detail="Ganhos − gastos" /></div>
+      <MovementFinancialSummary income={kpis.income} expenses={kpis.expenses} symbol={symbol} />
       <div className="movement-toolbar movement-search-form" role="search"><label className="search-control"><span>Pesquisar</span><input type="search" aria-label="Pesquisar movimentos" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Pesquisar movimentos por descrição, categoria ou conta…" /></label></div>
       <div className="movement-filter-row"><button className="secondary-button toolbar-filter filter-icon-button" type="button" aria-label="Abrir filtros de movimentos" title="Filtros" aria-expanded={showFilters} onClick={() => setShowFilters((value) => !value)}><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10m-7 6h4"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/><circle cx="15" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="18" r="1.5" fill="currentColor"/></svg></button><div className="filter-chips">{([['ALL', 'Todos'], ['PENDING', 'Pendentes'], ['REALIZED', 'Realizados'], ['CANCELLED', 'Cancelados']] as const).map(([value, label]) => <button key={value} type="button" className={filter === value ? 'selected' : ''} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
       {showFilters ? <div className="filter-panel"><label>Tipo<select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}><option value="ALL">Todos</option><option value="EXPENSE">Gastos</option><option value="INCOME">Ganhos</option><option value="TRANSFER">Transferências</option></select></label><label>Conta<select value={accountFilter} onChange={(event) => setAccountFilter(event.target.value)}><option value="ALL">Todas</option>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label>Categoria<select value={categoryFilter} onChange={(event) => setCategoryFilter(event.target.value)}><option value="ALL">Todas</option>{categories.map((category) => <option key={category.id} value={category.id}>{category.name}</option>)}</select></label></div> : null}
