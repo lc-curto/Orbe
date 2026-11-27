@@ -333,7 +333,7 @@
   max-width: 100%;
 }
 .orbe-page-theme-toggle {
-  display: none;
+  display: inline-grid;
   width: 36px;
   height: 36px;
   flex: 0 0 36px;
@@ -501,8 +501,6 @@
 
 /* Mobile/tablet dashboard header: keep greeting, theme and period in distinct rows. */
 @media (max-width: 1024px) {
-  .global-theme-toggle { display: none; }
-  .orbe-page-theme-toggle { display: inline-grid; }
 
   .mobile-dashboard-header {
     display: flex;
