@@ -42,7 +42,7 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
 
 export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, categories, loading, card, invoice, setActiveKey, authError, logoutError }: DashboardPageProps) {
   return <>
-<PageHeader title={`Bom dia, ${userName.split(' ')[0]}`} description={period.date} className="desktop-dashboard-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="desktop-month-selector" />} />
+<PageHeader title={`Bom dia, ${userName.split(' ')[0]}`} className="desktop-dashboard-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="desktop-month-selector" />} />
 
             {authError || logoutError ? <Text className="auth-inline-error" color="#c2415d" fontSize={13} role="alert">{logoutError ?? authError}</Text> : null}
 
