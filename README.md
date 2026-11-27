@@ -12,7 +12,7 @@ O Orbe é uma aplicação de gestão financeira pessoal, organizada num monorepo
 ## Estado funcional
 
 - Backend: autenticação Sanctum, contas e categorias, operações comuns pendentes/realizadas, transferências, cartões/faturas, pagamentos/reversões e recorrências nos contratos implementados.
-- Web: Dashboard, Movimentos/Programações, Contas, Cartões/faturas e interface da Rota Financeira. A branch `feature/reports-settings-ui-clean` acrescenta Relatórios e Configurações, com preferência local de símbolo de moeda apenas visual. Tamagui foi removido da stack web; CI de lint/build passou e QA visual responsiva permanece pendente.
+- Web: Dashboard, Movimentos/Programações, Contas, Cartões/faturas, Rota Financeira, Relatórios e Configurações. A interface web usa React, TypeScript, Vite, HTML semântico, CSS e primitives próprias do design system; Tamagui e React Native Web não fazem parte da stack web. As preferências locais de símbolo de moeda e tema são apenas de apresentação. Lint, TypeScript e build de produção passaram no CI; QA visual responsiva de Relatórios e Configurações permanece pendente.
 - Criação de operações: FAB global com **Novo gasto**, **Novo rendimento** e **Nova transferência** nas páginas aprovadas.
 - Dívidas/obrigações: permanecem no modelo financeiro, mas não existe página principal autónoma de Dívidas. Obrigações são relacionadas com os movimentos/faturas que lhes dão origem.
 - Mobile: stack aprovada (React Native + Expo), implementação ainda não presente.
