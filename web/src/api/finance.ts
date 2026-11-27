@@ -97,9 +97,3 @@ export async function createTransfer(input: TransferWriteInput): Promise<Operati
   return apiRequest<Operation>('/transfers', { method: 'POST', body: JSON.stringify(input) })
 }
 
-export async function confirmOperation(operationId: number, accountId: number, effectiveAt: string): Promise<Operation> {
-  return apiRequest<Operation>(`/operations/${operationId}/confirm`, {
-    method: 'POST',
-    body: JSON.stringify({ account_id: accountId, effective_at: effectiveAt }),
-  })
-}
