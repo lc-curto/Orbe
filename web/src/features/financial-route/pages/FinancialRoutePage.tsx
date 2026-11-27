@@ -1,18 +1,27 @@
+import { useEffect, useState } from 'react'
 import { PageHeader } from '../../../shared/components/PageHeader'
-import { useState } from 'react'
-import type { Account, CardInvoice, Operation } from '../../../api/types'
+import type { CardInvoice, Operation } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
 import { RouteDayModal } from '../components/RouteDayModal'
 import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
 import type { RouteDay, RouteFlowFilter } from '../types'
 import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
-import { formatMoneyUnits } from '../projection'
+import { formatMoneyUnits, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
-export function FinancialRoutePage({ operations, accounts, invoices, loading, error, month, onMonthChange }: {
+function formatAmount(value: string | null): string {
+  const units = value === null ? null : parseMoneyUnits(value)
+  return units === null ? 'Indisponível' : formatMoneyUnits(units)
+}
+
+function hasPositiveAmount(value: string): boolean {
+  const units = parseMoneyUnits(value)
+  return units !== null && units > 0n
+}
+
+export function FinancialRoutePage({ operations, invoices, loading: financeLoading, error: financeError, month, onMonthChange }: {
   operations: Operation[]
-  accounts: Account[]
   invoices: CardInvoice[]
   loading: boolean
   error: string | null
@@ -20,21 +29,27 @@ export function FinancialRoutePage({ operations, accounts, invoices, loading, er
   onMonthChange: (month: string) => void
 }) {
   const { symbol } = useCurrency()
-  const firstMonth = month
   const [onlyMovementDays, setOnlyMovementDays] = useState(false)
   const [flowFilter, setFlowFilter] = useState<RouteFlowFilter>('ALL')
   const [selectedDay, setSelectedDay] = useState<string | null>(null)
   const [detailFilter, setDetailFilter] = useState<'ALL' | 'INCOME' | 'FIXED' | 'VARIABLE'>('ALL')
-  const projection = useFinancialRouteData(operations, accounts, invoices, firstMonth, 3)
-  const months = projection.months
+  const routeData = useFinancialRouteData(month, operations, invoices)
+  const projection = routeData.projection
+  const months = projection?.months ?? []
   const mobileMonth = months[0]
+  const loading = financeLoading || routeData.loading
+  const error = routeData.error ?? financeError
+
+  useEffect(() => {
+    setSelectedDay(null)
+  }, [month])
 
   function visibleDaysFor(monthDays: RouteDay[]) {
     let visible = onlyMovementDays
-      ? monthDays.filter((day) => day.operations.length > 0 || day.invoices.length > 0 || day.income > 0n || day.expenses > 0n)
+      ? monthDays.filter((day) => day.operations.length > 0 || day.invoices.length > 0 || hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
       : monthDays
-    if (flowFilter === 'INCOME') visible = visible.filter((day) => day.income > 0n).map((day) => ({ ...day, expenses: 0n }))
-    if (flowFilter === 'EXPENSE') visible = visible.filter((day) => day.expenses > 0n).map((day) => ({ ...day, income: 0n }))
+    if (flowFilter === 'INCOME') visible = visible.filter((day) => hasPositiveAmount(day.income)).map((day) => ({ ...day, expenses: '0.0000' }))
+    if (flowFilter === 'EXPENSE') visible = visible.filter((day) => hasPositiveAmount(day.expenses)).map((day) => ({ ...day, income: '0.0000' }))
     return visible
   }
 
@@ -46,7 +61,7 @@ export function FinancialRoutePage({ operations, accounts, invoices, loading, er
   }
 
   function changePeriod(offset: number) {
-    onMonthChange(shiftMonth(firstMonth, offset))
+    onMonthChange(shiftMonth(month, offset))
   }
 
   const filterOptions: Array<{ value: RouteFlowFilter; label: string }> = [
@@ -55,25 +70,27 @@ export function FinancialRoutePage({ operations, accounts, invoices, loading, er
     { value: 'EXPENSE', label: 'Saídas' },
   ]
   const mobileEndingBalance = mobileMonth?.endingBalance ?? null
-  const mobileEndingNegative = mobileEndingBalance !== null && mobileEndingBalance < 0n
+  const mobileEndingUnits = mobileEndingBalance === null ? null : parseMoneyUnits(mobileEndingBalance)
+  const mobileEndingNegative = mobileEndingUnits !== null && mobileEndingUnits < 0n
 
   return <section className="financial-route-page">
     <PageHeader title="Rota Financeira" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
       <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
-      <span>{formatMonthRange(firstMonth, shiftMonth(firstMonth, 2))}</span>
+      <span>{formatMonthRange(month, shiftMonth(month, 2))}</span>
       <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
-    </div>} mobilePeriod={<MonthSelector month={firstMonth} onMonthChange={onMonthChange} className="route-month-selector-mobile" />} />
+    </div>} mobilePeriod={<MonthSelector month={month} onMonthChange={onMonthChange} className="route-month-selector-mobile" />} />
 
-    {loading ? <div className="route-status" role="status">A carregar dados financeiros da Rota…</div> : null}
-    {!loading && error ? <div className="route-status route-status-error" role="alert">Não foi possível atualizar os dados financeiros. {error}</div> : null}
+    {loading ? <div className="route-status" role="status">A carregar projeção financeira…</div> : null}
+    {!loading && error ? <div className="route-status route-status-error" role="alert">Não foi possível carregar a projeção financeira. {error}</div> : null}
+    {!loading && !error && !projection ? <div className="route-status" role="status">A projeção financeira está indisponível.</div> : null}
 
-    {!loading ? <>
+    {!loading && projection ? <>
       {projection.overdueItems.length > 0 ? <details className="route-overdue-summary">
-        <summary>Itens vencidos/por confirmar · {formatMoneyUnits(projection.overdueTotal)} {symbol} em saídas pendentes</summary>
+        <summary>Itens vencidos/por confirmar · {formatAmount(projection.overdueTotal)} {symbol} em saídas pendentes</summary>
         <ul>
           {projection.overdueItems.map((item) => <li key={item.id}>
-            <span>{item.label} · {formatFullDate(item.date)}</span>
-            <strong className={item.nature === 'INCOME' ? 'route-month-income' : 'route-month-expenses'}>{item.nature === 'INCOME' ? '+ ' : '− '}{formatMoneyUnits(item.amount)} {symbol}</strong>
+            <span>{item.label} · {item.date ? formatFullDate(item.date) : 'Sem data prevista'}</span>
+            <strong className={item.nature === 'INCOME' ? 'route-month-income' : 'route-month-expenses'}>{item.nature === 'INCOME' ? '+ ' : '− '}{formatAmount(item.amount)} {symbol}</strong>
           </li>)}
         </ul>
       </details> : null}
@@ -86,10 +103,10 @@ export function FinancialRoutePage({ operations, accounts, invoices, loading, er
       </div>
 
       <div className="route-mobile-summary orbe-financial-highlight-card">
-        <div className="route-mobile-ending"><span>Saldo final projetado</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{mobileMonth?.endingBalance === null || mobileMonth?.endingBalance === undefined ? 'Indisponível' : formatMoneyUnits(mobileMonth.endingBalance) + ' ' + symbol}</strong></div>
+        <div className="route-mobile-ending"><span>Saldo final projetado</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{formatAmount(mobileEndingBalance)} {mobileEndingBalance === null ? '' : symbol}</strong></div>
         <div className="route-mobile-totals">
-          <span className="route-month-income">+ {mobileMonth ? formatMoneyUnits(mobileMonth.totals.income) : '0,00'} {symbol} entradas</span>
-          <span className="route-month-expenses">− {mobileMonth ? formatMoneyUnits(mobileMonth.totals.expenses) : '0,00'} {symbol} saídas</span>
+          <span className="route-month-income">+ {formatAmount(mobileMonth?.totals.income ?? null)} {symbol} entradas</span>
+          <span className="route-month-expenses">− {formatAmount(mobileMonth?.totals.expenses ?? null)} {symbol} saídas</span>
         </div>
       </div>
       <div className="route-mobile-flow-filters" aria-label="Filtrar o mês por movimento">
