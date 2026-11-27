@@ -42,7 +42,7 @@
 }
 
 .orbe-financial-highlight-card.route-mobile-summary {
-  padding: var(--orbe-panel-padding-mobile);
+  padding: var(--orbe-financial-highlight-padding);
 }
 
 .orbe-financial-highlight-card .route-mobile-ending {
@@ -60,7 +60,5 @@
 }
 
 @media (max-width: 1024px) {
-  .orbe-financial-highlight-card {
-    padding: var(--orbe-panel-padding-mobile);
-  }
+  :root { --orbe-financial-highlight-padding: 18px; }
 }
