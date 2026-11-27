@@ -1219,7 +1219,7 @@ Até estas decisões serem aprovadas:
 Regras obrigatórias para todas as páginas:
 
 - O cabeçalho principal apresenta apenas o título da página; não mostrar descrição, slogan ou contagem em texto imediatamente abaixo do título.
-- O seletor de mês usa o padrão partilhado: mês à esquerda e setas anterior/seguinte agrupadas à direita, com dimensões, estados disabled e foco consistentes.
+- O seletor de mês usa o padrão partilhado minimalista: mês abreviado e ano completo (ex.: `Nov 2026`), seta anterior à esquerda e seta seguinte à direita. Sem cartão, fundo ou borda; setas discretas com área de toque, foco visível e estados disabled consistentes.
 - Em mobile/tablet, o controlo de tema permanece no cabeçalho global, separado semanticamente do seletor de período. Em desktop, manter o controlo global existente sem duplicação por página.
 - Quando uma página tem KPIs/cards de resumo, a sequência padrão é: **cabeçalho → KPIs/cards → pesquisa → filtros → resultados**. Não colocar filtros antes dos resumos nem antes da pesquisa. Exceções só quando a função principal (por exemplo, uma vista de calendário/rota) exigir controlos antes do conteúdo filtrado; manter a exceção consistente entre desktop e mobile.
 - Dark mode é suportado pelo sistema de tokens e por todas as superfícies de feature, não apenas pelo fundo: cards/KPIs, pesquisa, filtros, tabs, listas, estados vazios, popovers, botões, FAB, navegação, texto, bordas, foco e estados disabled.
