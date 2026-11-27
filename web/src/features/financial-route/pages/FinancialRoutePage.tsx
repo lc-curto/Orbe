@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { PageHeader } from '../../../shared/components/PageHeader'
 import type { CardInvoice, Operation } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
@@ -35,12 +35,30 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   const [flowFilter, setFlowFilter] = useState<RouteFlowFilter>('ALL')
   const [selectedDay, setSelectedDay] = useState<{ date: string; periodMonth: string } | null>(null)
   const [detailFilter, setDetailFilter] = useState<'ALL' | 'INCOME' | 'FIXED' | 'VARIABLE'>('ALL')
+  const desktopMonthsRef = useRef<HTMLDivElement>(null)
+  const mobileMonthRef = useRef<HTMLDivElement>(null)
+  const initialTodayPositioned = useRef(false)
   const routeData = useFinancialRouteData(month, operations, invoices)
   const projection = routeData.projection
   const months = projection?.months ?? []
   const mobileMonth = months[0]
   const loading = financeLoading || routeData.loading
   const error = routeData.error ?? financeError
+
+  useEffect(() => {
+    if (!projection || initialTodayPositioned.current) return
+
+    const now = new Date()
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches
+    const container = isMobile ? mobileMonthRef.current : desktopMonthsRef.current
+    const todayRow = container?.querySelector<HTMLTableRowElement>(`[data-route-date="${today}"]`)
+
+    if (todayRow) {
+      todayRow.scrollIntoView({ block: 'center', behavior: 'auto' })
+      initialTodayPositioned.current = true
+    }
+  }, [projection])
 
   function visibleDaysFor(monthDays: RouteDay[]) {
     let visible = onlyMovementDays
@@ -113,11 +131,11 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
         {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
       </div>
 
-      <div className="route-desktop-months">
+      <div className="route-desktop-months" ref={desktopMonthsRef}>
         {months.map((item) => <RouteMonthCard key={item.month} month={item} days={visibleDaysFor(item.days)} flowFilter={flowFilter} onSelectDay={selectDay} />)}
       </div>
 
-      <div className="route-mobile-month">
+      <div className="route-mobile-month" ref={mobileMonthRef}>
         <div className="route-mobile-toolbar">
           <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
           <span className="route-days-count">{visibleDaysFor(mobileMonth?.days ?? []).length} dias</span>
