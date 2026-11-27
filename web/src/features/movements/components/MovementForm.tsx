@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
+import { OrbeDisclosure, OrbeFormToggle } from '../../../design-system/components'
 import { OrbeIcon } from '../../../design-system/Icon'
 import type { OrbeIconName } from '../../../design-system/Icon'
 import { orbe } from '../../../design-system/tokens'
@@ -190,7 +191,10 @@ export function AccountList({ id = 'account', value, onChange, options, emptyMes
 }
 
 export function SelectInput({ id, value, onChange, options, placeholder, disabled }: { id: string; value: string; onChange: (value: string) => void; options: SelectOption[]; placeholder: string; disabled?: boolean }) {
-  return <div className={disabled ? 'orbe-select-disabled' : ''}><OptionList id={id} value={value} onChange={onChange} options={options.map((option) => ({ ...option, disabled: disabled || option.disabled }))} emptyMessage={placeholder} /></div>
+  return <select id={id} name={id} className="orbe-input orbe-select-input" value={value} onChange={(event) => onChange(event.target.value)} disabled={disabled || options.length === 0}>
+    <option value="" disabled>{placeholder}</option>
+    {options.map((option) => <option key={option.value} value={option.value} disabled={option.disabled}>{option.secondary ? `${option.label} · ${option.secondary}` : option.label}</option>)}
+  </select>
 }
 
 export function FormErrorSummary({ errors }: { errors: FieldErrors }) {
@@ -276,6 +280,8 @@ export function MovementForm({
   const [inState, setInState] = useState<'REALIZED' | 'PENDING'>('REALIZED')
   const [outDate, setOutDate] = useState(today)
   const [inDate, setInDate] = useState(today)
+  const [moreOptionsOpen, setMoreOptionsOpen] = useState(false)
+  const [transferDetailsOpen, setTransferDetailsOpen] = useState(false)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [submitting, setSubmitting] = useState(false)
   const idempotencyKey = useRef(`orbe-movement-${window.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`}`)
@@ -303,6 +309,23 @@ export function MovementForm({
     || operationState !== 'REALIZED' || outState !== 'REALIZED' || inState !== 'REALIZED'
     || outDate !== today() || inDate !== today() || date !== today())
 
+  function toggleRecurrence(enabled: boolean) {
+    setEntryMode(enabled ? 'recurrence' : 'single')
+    if (enabled) {
+      setAccount('')
+      setOperationState('REALIZED')
+      setMoreOptionsOpen(true)
+    } else {
+      setFrequency('MONTHLY')
+      setEndAt('')
+    }
+  }
+
+  function togglePending(enabled: boolean) {
+    setOperationState(enabled ? 'PENDING' : 'REALIZED')
+    setAccount('')
+  }
+
   function validate() {
     const next: FieldErrors = {}
     if (isTransfer) {
@@ -324,6 +347,8 @@ export function MovementForm({
     }
     if (!validMoney(amount)) next.amount = 'O valor deve ser superior a zero.'
     setErrors(next)
+    if (next.endAt) setMoreOptionsOpen(true)
+    if (isTransfer && (next.outDate || next.inDate)) setTransferDetailsOpen(true)
     return Object.keys(next).length === 0
   }
 
@@ -389,7 +414,7 @@ export function MovementForm({
           'legs.out.account_id': 'account',
           'legs.in.account_id': 'destination',
           'legs.out.effective_at': 'outDate',
-          'legs.out.planned_at': 'outDate',
+          'legs.out.planned_at: 'outDate',
           'legs.in.effective_at': 'inDate',
           'legs.in.planned_at': 'inDate',
           effective_at: 'date',
@@ -404,6 +429,8 @@ export function MovementForm({
           next[field] = messages[0] ?? error.message
         })
         setErrors(next)
+        if (next.endAt) setMoreOptionsOpen(true)
+        if (isTransfer && (next.outDate || next.inDate)) setTransferDetailsOpen(true)
       } else {
         setErrors({ form: error instanceof Error ? error.message : 'Não foi possível guardar o movimento. Tenta novamente.' })
       }
@@ -412,75 +439,68 @@ export function MovementForm({
     }
   }
 
-  const statusOptions = [
-    { value: 'REALIZED', label: 'Realizado' },
-    { value: 'PENDING', label: 'Pendente' },
-  ]
   const legDateLabel = (state: 'REALIZED' | 'PENDING', direction: 'out' | 'in') =>
     `Data ${state === 'REALIZED' ? 'efetiva' : 'prevista'} da ${direction === 'out' ? 'saída' : 'entrada'}`
+  const transferDetailsSummary = outDate === today() && inDate === today() && outState === 'REALIZED' && inState === 'REALIZED'
+    ? 'Hoje · ambas realizadas'
+    : 'Datas ou estados personalizados'
 
-  return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : 'Preenche os dados da operação.'} onClose={onClose} dirty={dirty} submitting={submitting}>
-    <form onSubmit={submit} noValidate>
+  return <ResponsiveFormContainer open title={title} description={isTransfer ? 'Regista uma transferência entre contas.' : 'Preenche os dados essenciais.'} onClose={onClose} dirty={dirty} submitting={submitting}>
+    <form className="orbe-movement-form" onSubmit={submit} noValidate>
       <FormErrorSummary errors={errors} />
       {isTransfer ? <>
+        <FormField label="Valor" name="amount" required error={errors.amount}>
+          <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
+        </FormField>
         <FormField label="Conta de origem" name="account" required error={errors.account}>
-          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Não existem contas ativas para selecionar a origem." disabled={submitting} />
-        </FormField>
-        <FormField label="Estado da saída" name="outState" required>
-          <SelectInput id="outState" value={outState} onChange={(value) => setOutState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
-        </FormField>
-        <FormField label={legDateLabel(outState, 'out')} name="outDate" required error={errors.outDate}>
-          <DateInput id="outDate" value={outDate} onChange={setOutDate} disabled={submitting} />
+          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Selecionar conta de origem" disabled={submitting} />
         </FormField>
         <div className="orbe-transfer-direction" aria-hidden="true"><span />↓<span /></div>
         <FormField label="Conta de destino" name="destination" required error={errors.destination}>
-          <SelectInput id="destination" value={destination} onChange={setDestination} options={accounts} placeholder="Não existem contas ativas para selecionar o destino." disabled={submitting} />
+          <SelectInput id="destination" value={destination} onChange={setDestination} options={accounts.filter((item) => item.value !== account)} placeholder="Selecionar conta de destino" disabled={submitting || !account} />
         </FormField>
-        <FormField label="Estado da entrada" name="inState" required>
-          <SelectInput id="inState" value={inState} onChange={(value) => setInState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
-        </FormField>
-        <FormField label={legDateLabel(inState, 'in')} name="inDate" required error={errors.inDate}>
-          <DateInput id="inDate" value={inDate} onChange={setInDate} disabled={submitting} />
-        </FormField>
+        <OrbeDisclosure title="Mais detalhes" description={transferDetailsSummary} open={transferDetailsOpen} onOpenChange={setTransferDetailsOpen}>
+          <OrbeFormToggle id="outStatePending" label="Marcar saída como pendente" description="A saída ainda não foi realizada." checked={outState === 'PENDING'} onChange={(checked) => setOutState(checked ? 'PENDING' : 'REALIZED')} disabled={submitting} />
+          <FormField label={legDateLabel(outState, 'out')} name="outDate" required error={errors.outDate}>
+            <DateInput id="outDate" value={outDate} onChange={setOutDate} disabled={submitting} />
+          </FormField>
+          <OrbeFormToggle id="inStatePending" label="Marcar entrada como pendente" description="A entrada ainda não foi realizada." checked={inState === 'PENDING'} onChange={(checked) => setInState(checked ? 'PENDING' : 'REALIZED')} disabled={submitting} />
+          <FormField label={legDateLabel(inState, 'in')} name="inDate" required error={errors.inDate}>
+            <DateInput id="inDate" value={inDate} onChange={setInDate} disabled={submitting} />
+          </FormField>
+          <FormField label="Descrição (opcional)" name="description" error={errors.description}>
+            <Textarea id="description" value={description} onChange={setDescription} maxLength={500} disabled={submitting} />
+          </FormField>
+        </OrbeDisclosure>
       </> : <>
         <FormField label="Descrição" name="description" required error={errors.description}>
           <TextInput id="description" value={description} onChange={setDescription} maxLength={500} placeholder={kind === 'income' ? 'Ex.: Salário' : 'Ex.: Supermercado'} disabled={submitting} />
         </FormField>
+        <FormField label="Valor" name="amount" required error={errors.amount}>
+          <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
+        </FormField>
         <FormField label="Categoria" name="category" required error={errors.category}>
-          <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder={`Não existem categorias ativas de ${kind === 'income' ? 'rendimento' : 'gasto'}.`} disabled={submitting} />
+          <SelectInput id="category" value={category} onChange={setCategory} options={categories} placeholder="Selecionar categoria" disabled={submitting} />
         </FormField>
-        <FormField label="Tipo" name="entryMode" required>
-          <SelectInput id="entryMode" value={entryMode} onChange={(value) => setEntryMode(value as 'single' | 'recurrence')} options={[{ value: 'single', label: 'Movimento único' }, { value: 'recurrence', label: 'Programação recorrente' }]} placeholder="Seleciona o tipo" disabled={submitting} />
+        {!isRecurring && operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
+          <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Selecionar conta" disabled={submitting} />
+        </FormField> : null}
+        <FormField label={isRecurring ? 'Primeira ocorrência' : operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
+          <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
         </FormField>
-        {isRecurring ? <>
-          <FormField label="Periodicidade" name="frequency" required>
-            <SelectInput id="frequency" value={frequency} onChange={(value) => setFrequency(value as 'DAILY' | 'WEEKLY' | 'MONTHLY')} options={[{ value: 'DAILY', label: 'Diária' }, { value: 'WEEKLY', label: 'Semanal' }, { value: 'MONTHLY', label: 'Mensal' }]} placeholder="Seleciona a periodicidade" disabled={submitting} />
-          </FormField>
-          <FormField label="Primeira ocorrência" name="date" required error={errors.date}>
-            <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
-          </FormField>
-          <FormField label="Data de fim (opcional)" name="endAt" error={errors.endAt}>
-            <DateInput id="endAt" value={endAt} onChange={setEndAt} disabled={submitting} />
-          </FormField>
-        </> : <>
-          <FormField label="Estado" name="operationState" required>
-            <SelectInput id="operationState" value={operationState} onChange={(value) => setOperationState(value as 'REALIZED' | 'PENDING')} options={statusOptions} placeholder="Seleciona o estado" disabled={submitting} />
-          </FormField>
-          {operationState === 'REALIZED' ? <FormField label="Conta" name="account" required error={errors.account}>
-            <SelectInput id="account" value={account} onChange={setAccount} options={accounts} placeholder="Não existem contas ativas para selecionar." disabled={submitting} />
-          </FormField> : null}
-          <FormField label={operationState === 'REALIZED' ? 'Data efetiva' : 'Data prevista'} name="date" required error={errors.date}>
-            <DateInput id="date" value={date} onChange={setDate} disabled={submitting} />
-          </FormField>
-        </>}
+        <OrbeDisclosure title="Mais opções" description={isRecurring ? 'Programação recorrente ativa' : 'Recorrência e estado'} open={moreOptionsOpen} onOpenChange={setMoreOptionsOpen}>
+          <OrbeFormToggle id="entryModeRecurrence" label="Programar recorrência" description="Criar esta operação com frequência definida." checked={isRecurring} onChange={toggleRecurrence} disabled={submitting} />
+          {isRecurring ? <>
+            <FormField label="Periodicidade" name="frequency" required>
+              <SelectInput id="frequency" value={frequency} onChange={(value) => setFrequency(value as 'DAILY' | 'WEEKLY' | 'MONTHLY')} options={[{ value: 'DAILY', label: 'Diária' }, { value: 'WEEKLY', label: 'Semanal' }, { value: 'MONTHLY', label: 'Mensal' }]} placeholder="Selecionar periodicidade" disabled={submitting} />
+            </FormField>
+            <FormField label="Data de fim (opcional)" name="endAt" error={errors.endAt}>
+              <DateInput id="endAt" value={endAt} onChange={setEndAt} disabled={submitting} />
+            </FormField>
+          </> : <OrbeFormToggle id="operationStatePending" label="Marcar como pendente" description="Ainda não foi realizado; não exige conta." checked={operationState === 'PENDING'} onChange={togglePending} disabled={submitting} />}
+        </OrbeDisclosure>
       </>}
-      <FormField label="Valor" name="amount" required error={errors.amount}>
-        <MoneyInput id="amount" value={amount} onChange={setAmount} disabled={submitting} />
-      </FormField>
-      {isTransfer ? <FormField label="Descrição (opcional)" name="description" error={errors.description}>
-        <Textarea id="description" value={description} onChange={setDescription} maxLength={500} disabled={submitting} />
-      </FormField> : null}
-      <FormActions onCancel={onClose} loading={submitting} />
+      <FormActions onCancel={onClose} loading={submitting} submitLabel={isRecurring ? 'Criar programação' : isTransfer ? 'Guardar transferência' : kind === 'income' ? 'Guardar rendimento' : 'Guardar gasto'} />
     </form>
   </ResponsiveFormContainer>
 }
