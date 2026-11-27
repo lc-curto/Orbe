@@ -4,6 +4,7 @@ import type { CurrencySymbol } from '../../currency/types'
 import type { Card as FinancialCard, CardInvoice } from '../../../api/types'
 import { formatCurrency } from '../../currency/formatCurrency'
 import { DashboardSections } from '../components/DashboardSections'
+import type { DashboardMovement } from '../components/DashboardSections'
 
 
 type DashboardPageProps = {
