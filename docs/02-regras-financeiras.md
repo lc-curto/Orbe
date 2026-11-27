@@ -89,7 +89,8 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Um plano de pagamento é uma intenção/projeção, não um lançamento efetivo.
 - A projeção explícita reserva apenas a parcela da obrigação que lhe está associada. A liquidação residual automática cobre apenas o valor não reservado.
 - Um plano não confirmado até à data prevista passa a vencido; deixa de ser uma saída futura na data passada, mas a obrigação permanece em aberto/vencida.
-- Sem regra de débito automático ou novo reagendamento aprovado, o sistema não inventa uma nova data futura.
+- Não existe débito automático na Rota Financeira. O sistema não presume execução nem cria reagendamento automático; o utilizador deve registar a ação efetiva de pagamento. Até essa confirmação, a obrigação permanece vencida e não é deslocada para uma nova data projetada.
+- A data de uma compra no cartão segue a regra e a configuração do ciclo do próprio cartão. A Rota utiliza a fatura à qual a compra foi efetivamente alocada pelo sistema, sem impor uma regra universal para compras no dia do fecho.
 - Um pagamento confirmado substitui o valor correspondente da projeção por lançamentos efetivos, sem duplicação.
 - O valor projetado para uma fatura nunca pode contar duas vezes a mesma parcela da obrigação.
 
