@@ -309,7 +309,7 @@ A Rota Financeira está especificada visualmente, mas não pode ser implementada
 - [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado; detalhe da fatura lista os movimentos associados, agrupados por dia e reutilizando a linha de Movimentos, sem filtros de estado).
 - [x] Decisão de produto: descontinuar a página autónoma de Dívidas.
 - [ ] Implementar consulta e liquidação de obrigações nos detalhes de movimentos/faturas, conforme os contratos aprovados.
-- [x] Implementar Relatórios na branch `feature/reports-settings-ui-clean`: gráfico de evolução diária do mês sem KPIs, composição, categorias, contas e faturas a partir dos dados disponíveis; excluir transferências e operações não realizadas do gráfico. QA visual/responsiva pendente.
+- [x] Implementar Relatórios na branch `feature/reports-settings-ui-clean`: gráfico diário como bloco principal, ranking das cinco principais despesas por categoria e resumo mensal (receitas, despesas e resultado); sem KPIs, atividade por conta ou painéis de faturas/obrigações nesta iteração. Dados realizados, sem transferências nem projeções. QA visual/responsiva pendente.
 - [x] Implementar Configurações na branch `feature/reports-settings-ui-clean`: layout de Perfil responsivo, 10 opções de moeda incluindo BRL (símbolo apenas) e preferência global de tema claro/escuro persistida localmente. QA visual/responsiva pendente.
 - [ ] Garantir que operações com vários lançamentos aparecem uma única vez.
 
