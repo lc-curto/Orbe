@@ -336,23 +336,35 @@
 .accounts-page-header .accounts-page-subtitle { margin: 0; }
 
 @media (max-width: 1024px) {
-  .orbe-page-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    justify-content: stretch;
-    align-items: start;
+  /* Keep the page title and month selector on one shared header row. */
+  .mobile-page-shell .orbe-page-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
     gap: var(--orbe-space-3);
-    margin-bottom: var(--orbe-page-section-gap);
-  }
-  .orbe-page-header-copy,
-  .orbe-page-header-actions {
     width: 100%;
     min-width: 0;
-    max-width: 100%;
+    margin-bottom: var(--orbe-page-section-gap);
   }
-  .orbe-page-header-actions {
-    justify-content: flex-start;
-    flex-wrap: wrap;
+  .mobile-page-shell .orbe-page-header-copy {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
+  .mobile-page-shell .orbe-page-header-actions {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 0;
+    max-width: 48%;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+  }
+  .mobile-page-shell .orbe-page-header-actions .orbe-month-selector {
+    flex: 0 0 auto;
+    min-width: 104px;
+    margin: 0;
   }
   .orbe-page-header-copy h1 {
     font-size: clamp(25px, 6.5vw, 30px);
@@ -372,18 +384,16 @@
     padding: 0;
   }
   .mobile-page-shell .movements-header {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    align-items: start;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
     gap: var(--orbe-space-3);
     padding: 0;
     margin: 0 0 var(--orbe-page-section-gap);
   }
-  .mobile-page-shell .movements-header .orbe-page-header-copy,
-  .mobile-page-shell .movements-header .orbe-page-header-actions {
-    width: 100%;
-    min-width: 0;
-  }
+  .mobile-page-shell .movements-header .orbe-page-header-copy { flex: 1 1 0; width: auto; }
+  .mobile-page-shell .movements-header .orbe-page-header-actions { flex: 0 0 auto; width: auto; }
   .mobile-page-shell .settings-page-header { margin-bottom: var(--orbe-page-section-gap); }
   .mobile-page-shell .settings-mobile-overview,
   .mobile-page-shell .settings-mobile-detail,
@@ -426,4 +436,31 @@
 }
 @media (max-width: 1024px) {
   .desktop-page-content { display: none; }
+}
+
+@media (max-width: 1024px) {
+  .route-mobile-shell .financial-route-header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--orbe-space-3);
+  }
+  .route-mobile-shell .financial-route-header .orbe-page-header-copy {
+    flex: 1 1 0;
+    width: auto;
+  }
+  .route-mobile-shell .financial-route-header .orbe-page-header-actions {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 48%;
+  }
+  .route-mobile-shell .route-month-selector-mobile {
+    width: auto;
+    max-width: 100%;
+    justify-self: auto;
+    margin: 0;
+  }
+  .mobile-page-shell .reports-header { flex-wrap: nowrap; }
+  .mobile-page-shell .reports-header .orbe-page-header-actions { max-width: 48%; }
 }
