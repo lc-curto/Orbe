@@ -114,7 +114,6 @@ export function useFinancialRouteData(
 
   useEffect(() => {
     invalidateMonthCacheIfFinanceChanged(operations, invoices)
-    setState((current) => ({ ...current, loading: true }))
     const controller = new AbortController()
     let cancelled = false
 
