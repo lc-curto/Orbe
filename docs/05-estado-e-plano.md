@@ -722,3 +722,21 @@ Modelo e migrations → serviços transacionais/testes → API e read models →
 - O seletor de origem limpa o destino quando a origem selecionada passa a ser a mesma conta; o destino exclui a conta de origem.
 - Documentação funcional atualizada em docs/02-regras-financeiras.md e docs/03-interface-e-formularios.md.
 - CI e QA visual/responsiva após esta alteração ainda precisam ser verificados.
+
+
+## Rota Financeira — janela progressiva e otimização de leitura (27/11/2026)
+
+Implementado no PR #13, branch `docs/financial-route-projection-rules` (PR aberto, não integrado na `main`):
+
+- Desktop apresenta 3 meses e avança a janela em blocos de 3; pré-carrega os 3 meses seguintes.
+- Mobile apresenta 1 mês e pré-carrega o mês seguinte.
+- Cache por mês no frontend, TTL de 60 segundos; meses em cache são reutilizados ao navegar. A cache é invalidada quando o read model financeiro de operações/faturas é atualizado.
+- O pedido dos meses visíveis tem prioridade; pré-carregamento é separado, cancelável e uma falha de prefetch não remove os dados já visíveis.
+- O backend materializa lançamentos realizados apenas dentro do período pedido; saldo de referência e saldo de abertura são agregados por SQL. Operações pendentes e faturas são limitadas ao horizonte solicitado e aos itens vencidos.
+- Adicionados índices compostos de apoio às consultas por utilizador/conta/estado/data e utilizador/estado/data prevista.
+- Somas acumuladas e pesquisa binária mantêm o cálculo diário sem varrer todos os lançamentos para cada dia.
+- Filtro «Só dias com movimento» considera fluxos positivos de entrada/saída apresentados na Rota; dias só com transferências não são incluídos.
+
+**Limitação de escala explicitamente registada:** o agregado de saldo de referência ainda percorre os lançamentos históricos elegíveis dentro do MySQL, embora não os hidrate individualmente em PHP. Para latência previsível com históricos muito grandes, falta implementar snapshots/checkpoints transacionais de saldo, com atualização atómica em todos os fluxos de escrita e reconciliação. Não usar cache persistente de saldo antes dessa garantia.
+
+Validação pendente no commit mais recente: CI backend/web, testes locais, QA visual e medição de latência com volume de dados sintético. Não integrar na `main` sem aprovação.
