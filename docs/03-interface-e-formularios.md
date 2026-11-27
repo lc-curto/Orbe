@@ -1286,3 +1286,14 @@ Regras obrigatórias para todas as páginas:
 - A página Movimentos usa o card partilhado `orbe-financial-highlight-card` para destacar o Resultado no topo.
 - Ganhos e Gastos ficam numa linha de decomposição abaixo, separados por divisor; valores e labels mantêm contraste branco no fundo verde em light e dark mode.
 - A ordem do conteúdo é: tabs da página, resumo financeiro, pesquisa, filtros e lista. Não reordenar pesquisa/filtros acima dos KPIs.
+
+### Auditoria sistémica de dark mode — 27/11/2026
+
+- Referência visual: painel mobile Mais aprovado — superfície escura opaca, texto principal claro, informação secundária muted, borda/acento teal discreto, hover/seleção tonal e logout semanticamente danger. Não usar superfícies brancas ou teal saturado como fundo de todos os elementos.
+- Corrigida a causa do contraste inconsistente no formulário de Movimentos: o modal é renderizado via portal e os tokens de formulário eram valores estáticos inline, enquanto a regra global dark mode forçava os inputs para a superfície escura. O resultado era modal claro com campo escuro.
+- MovementForm agora vincula os tokens do formulário aos tokens semânticos ativos (orbe-bg, orbe-surface, orbe-text, orbe-muted, orbe-primary, orbe-border, etc.). A regra global de inputs exclui .orbe-input; o componente recebe superfície, texto, placeholder, foco, estado selecionado e botões coerentes com o tema.
+- Backdrop, modal, confirmação de alterações, footer sticky, option lists, seletores, botões e scrollbar do formulário seguem a mesma paleta. Estados selecionados usam tint teal subtil, sem lavender/light surface em dark.
+- Revisão transversal dos estilos/overrides para Dashboard, Movimentos, Rota Financeira, Contas, Cartões/Faturas, Relatórios, Configurações, bottom navigation/Mais, sidebar e menus de perfil. Superfícies de rota, filtros de Movimentos, seletor mensal, menu de conta e feedback de autenticação passaram a usar tokens semânticos onde apropriado.
+- Dark mode mantém o card de saldo do Dashboard com o gradiente aprovado; não converter esse card em superfície neutra. O painel Mais permanece a referência para menus e overlays.
+- QA manual obrigatório antes do merge: abrir formulários/modais, confirmação de saída, sheet da Rota, menus Mais/perfil, filtros e dropdowns em dark/light; validar em mobile, tablet e desktop, incluindo hover/focus/selected, contraste, scroll e ausência de superfícies claras inesperadas.
+- Esta alteração é um ajuste de tokens e estilos partilhados, sem mudança de lógica financeira, API ou navegação.
