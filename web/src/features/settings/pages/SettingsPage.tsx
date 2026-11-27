@@ -59,8 +59,8 @@ function SettingsProfile({ user, onSelect }: { user: AuthUser; onSelect?: () => 
     : <div className="settings-profile-card">{content}</div>
 }
 
-function SettingsPageTitle({ title, description }: { title: string; description: string }) {
-  return <header className="settings-category-header"><h2>{title}</h2><p>{description}</p></header>
+function SettingsPageTitle({ title }: { title: string }) {
+  return <header className="settings-category-header"><h2>{title}</h2></header>
 }
 
 function PreferencesContent({ categories, onSelectCategories }: { categories: Category[]; onSelectCategories: () => void }) {
@@ -139,7 +139,7 @@ export function SettingsPage({ user, categories }: Props) {
       ? mobileDetailOpen
         ? <div className="settings-mobile-detail">
             <div className="settings-mobile-back"><button type="button" onClick={returnToOverview} aria-label="Voltar às configurações"><AppIcon name="chevronLeft" size={20} /><span>Configurações</span></button></div>
-            <SettingsPageTitle title={activeItem.title} description={activeItem.description} />
+            <SettingsPageTitle title={activeItem.title} />
             <SettingsCategoryContent category={activeCategory} user={user} categories={categories} onSelectCategory={selectCategory} />
           </div>
         : <div className="settings-mobile-overview">
