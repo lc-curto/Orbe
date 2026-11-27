@@ -1,7 +1,7 @@
 /* Reports page: mobile-first layout, shared Orbe tokens and existing month selector. */
 .main-content.reports-mode > :not(.reports-page) { display: none !important; }
 
-.reports-page { width: 100%; max-width: 1180px; min-width: 0; margin: 0 auto; color: var(--orbe-text); }
+.reports-page { width: 100%; max-width: var(--orbe-page-content-max); min-width: 0; margin: 0 auto; color: var(--orbe-text); }
 .reports-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 0 0 20px; }
 .reports-heading-copy { min-width: 0; }
 .reports-heading-copy h1 { margin: 0; color: var(--orbe-text); font-size: clamp(26px, 3vw, 34px); line-height: 1.15; letter-spacing: -.8px; }
@@ -9,7 +9,7 @@
 .reports-header .orbe-month-selector { flex: 0 0 auto; }
 
 .reports-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
-.report-panel { min-width: 0; padding: 20px; border: 1px solid var(--orbe-border); border-radius: 16px; background: var(--orbe-surface); }
+.report-panel { min-width: 0; padding: var(--orbe-panel-padding); border: 1px solid var(--orbe-border); border-radius: var(--orbe-radius-card); background: var(--orbe-surface); }
 .report-panel-evolution { grid-column: 1 / -1; }
 .report-panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin: 0 0 18px; }
 .report-panel-header > div { min-width: 0; }
@@ -75,7 +75,7 @@
   .reports-heading-copy h1 { font-size: 28px; }
   .reports-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .report-panel-evolution { grid-column: auto; }
-  .report-panel { padding: 16px; border-radius: 15px; }
+  .report-panel { padding: var(--orbe-panel-padding-mobile); border-radius: var(--orbe-radius-card); }
   .report-panel-header { margin-bottom: 16px; }
   .report-panel-header h2 { font-size: 15px; }
   .report-panel-header > span { max-width: 38%; line-height: 1.35; }
@@ -86,7 +86,6 @@
 @media (max-width: 380px) {
   .mobile-page-shell .reports-page { padding-left: 14px; padding-right: 14px; }
   .reports-header { gap: 12px; }
-  .report-panel { padding: 14px; }
   .report-panel-header { gap: 8px; }
   .report-panel-header > span { max-width: 34%; }
   .report-daily-chart { height: 165px; }
