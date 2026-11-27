@@ -45,7 +45,7 @@ Para testar os formulários de Movimentos antes da implementação dos formulár
 php artisan db:seed --class=QaFinancialDataSeeder
 ```
 
-O seeder é idempotente e cria/atualiza dados associados ao utilizador local `test@example.com`:
+O seeder é idempotente e cria/atualiza dados associados ao utilizador local `test@example.com` (utilizador de desenvolvimento criado por `DatabaseSeeder`; palavra-passe local padrão `password`):
 - 2 contas ativas (BANK e CASH) e 1 conta encerrada;
 - 4 categorias ativas de despesa e 3 de receita;
 - 1 categoria de despesa arquivada, para validar filtros de categorias ativas.
