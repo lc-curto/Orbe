@@ -289,6 +289,7 @@ Os contratos de criação de contas, categorias, despesas, receitas e transferê
 - Submissão usa os endpoints existentes, chave de idempotência, bloqueio de submissão duplicada, validação local e mapeamento de erros API para o formulário.
 - Gasto/rendimento também permitem configurar uma programação recorrente dentro do mesmo formulário, com periodicidade e data de fim opcional; a criação da programação não cria operação efetiva nem lançamento.
 - Após sucesso, o read model financeiro é atualizado e o utilizador recebe feedback contextual.
+- Validação CI no commit `fc27911e5a69f29d8882a826f64f22d7ddada605`: Web CI passou `npm ci`, ESLint e TypeScript/Vite build ([run 45991947575](https://github.com/lc-curto/Orbe/actions/runs/45991947575)); PR Quality Gate passou ([run 45991947579](https://github.com/lc-curto/Orbe/actions/runs/45991947579)). QA manual do formulário permanece pendente.
 - Edição, confirmação de movimentos pendentes na listagem, cancelamento, eliminação, reversão e menus contextuais continuam pendentes por dependerem de fluxos/endpoints adicionais. Não foram simulados.
 
 ## 11. Formulários comuns após os contratos
