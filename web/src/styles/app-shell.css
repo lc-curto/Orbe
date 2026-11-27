@@ -35,6 +35,15 @@
 .main-content.reports-mode,
 .main-content.route-mode { padding-inline: var(--orbe-page-gutter-desktop); }
 
+/* Compact desktop geometry for the 1025–1199px range, using the shared layout tokens. */
+@media (min-width: 1025px) and (max-width: 1199px) {
+  :root {
+    --orbe-page-gutter-desktop: 24px;
+    --orbe-page-section-gap: 20px;
+  }
+  .desktop-sidebar.expanded { width: 220px; }
+}
+
 .mobile-page-shell { display: none; }
 .mobile-dashboard-shell { display: none; }
 .mobile-dashboard-content {
