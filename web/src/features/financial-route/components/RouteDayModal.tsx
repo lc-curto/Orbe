@@ -4,6 +4,11 @@ import { formatFullDate, operationLabel } from '../utils'
 import { formatMoneyUnits, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
+function displayAmount(value: string, symbol: string): string {
+  const units = parseMoneyUnits(value)
+  return units === null ? '—' : formatMoneyUnits(units) + ' ' + symbol
+}
+
 export function RouteDayModal({ date, operations, invoices = [], filter, onFilterChange, onClose }: {
   date: string
   operations: Operation[]
@@ -27,19 +32,25 @@ export function RouteDayModal({ date, operations, invoices = [], filter, onFilte
         {routeFilterOptions.map((option) => <button key={option.value} type="button" className={filter === option.value ? 'active' : ''} aria-pressed={filter === option.value} onClick={() => onFilterChange(option.value)}>{option.label}</button>)}
       </nav>
       {filter === 'FIXED' || filter === 'VARIABLE' ? <div className="route-detail-notice">A classificação entre gastos fixos e variáveis ainda não está disponível nos dados financeiros.</div> : detailOperations.length || detailInvoices.length ? <div className="route-detail-list">
-        {detailOperations.map((operation) => <article className="route-detail-row" key={'operation-' + operation.id}>
-          <div className={`route-detail-icon ${operation.operation_type === 'INCOME' ? 'income' : operation.operation_type === 'TRANSFER' ? 'transfer' : 'expense'}`}>{operation.operation_type === 'INCOME' ? '↑' : operation.operation_type === 'TRANSFER' ? '↔' : '↓'}</div>
-          <div className="route-detail-description"><strong>{operationLabel(operation)}</strong><span>{operation.operation_type === 'TRANSFER' ? 'Transferência entre contas' : `${operation.category?.name ?? 'Sem categoria'} · ${operation.account?.name ?? 'Conta não identificada'} · ${operation.state === 'PENDING' ? 'Pendente' : 'Realizado'}`}</span></div>
-          <strong className={operation.operation_type === 'INCOME' ? 'route-detail-income' : operation.operation_type === 'TRANSFER' ? 'route-detail-transfer' : 'route-detail-expense'}>{operation.operation_type === 'TRANSFER' ? '' : operation.operation_type === 'INCOME' ? '+' : '−'} {parseMoneyUnits(operation.amount) === null ? '—' : formatMoneyUnits(parseMoneyUnits(operation.amount) as bigint) + ' ' + symbol}</strong>
-        </article>)}
-        {detailInvoices.map((invoice) => {
-          const openAmount = parseMoneyUnits(invoice.summary.open_amount)
-          return <article className="route-detail-row" key={'invoice-' + invoice.id}>
-            <div className="route-detail-icon expense" aria-hidden="true">↓</div>
-            <div className="route-detail-description"><strong>{invoice.card?.name ?? 'Cartão'} · Fatura</strong><span>Vencimento {formatFullDate(invoice.due_date)} · Projeção consolidada</span></div>
-            <strong className="route-detail-expense">{openAmount === null ? '—' : '− ' + formatMoneyUnits(openAmount) + ' ' + symbol}</strong>
+        {detailOperations.map((operation) => {
+          const isIncome = operation.operation_type === 'INCOME'
+          const isTransfer = operation.operation_type === 'TRANSFER'
+          const meta = isTransfer
+            ? 'Transferência entre contas'
+            : operation.category?.name
+              ? operation.category.name + ' · ' + (operation.account?.name ?? 'Conta não identificada') + ' · ' + (operation.state === 'PENDING' ? 'Pendente' : 'Realizado')
+              : (operation.account?.name ?? 'Movimento de conta') + ' · ' + (operation.state === 'PENDING' ? 'Pendente' : 'Realizado')
+          return <article className="route-detail-row" key={'operation-' + operation.id}>
+            <div className={`route-detail-icon ${isIncome ? 'income' : isTransfer ? 'transfer' : 'expense'}`}>{isIncome ? '↑' : isTransfer ? '↔' : '↓'}</div>
+            <div className="route-detail-description"><strong>{operationLabel(operation)}</strong><span>{meta}</span></div>
+            <strong className={isIncome ? 'route-detail-income' : isTransfer ? 'route-detail-transfer' : 'route-detail-expense'}>{isTransfer ? '' : isIncome ? '+' : '−'} {displayAmount(operation.amount, symbol)}</strong>
           </article>
         })}
+        {detailInvoices.map((invoice) => <article className="route-detail-row" key={'invoice-' + invoice.id}>
+          <div className="route-detail-icon expense" aria-hidden="true">↓</div>
+          <div className="route-detail-description"><strong>{invoice.card?.name ?? 'Cartão'} · Fatura</strong><span>Vencimento {formatFullDate(invoice.due_date)} · Projeção consolidada</span></div>
+          <strong className="route-detail-expense">− {displayAmount(invoice.summary.open_amount, symbol)}</strong>
+        </article>)}
       </div> : <div className="route-detail-empty">Não existem movimentos para este filtro.</div>}
     </section>
   </div>
