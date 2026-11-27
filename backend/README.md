@@ -37,6 +37,18 @@ A API fica normalmente disponível em `http://127.0.0.1:8000/api`.
 
 O `.env.example` usa SQLite. Para MySQL, configura em `.env` `DB_CONNECTION=mysql`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` e `DB_PASSWORD` antes de executar as migrations. Gera a chave da aplicação apenas na configuração inicial ou quando `APP_KEY` estiver vazio.
 
+## Refatoração e boas práticas — obrigatórias
+
+Aplicar os Gates A/B/C de [AGENTS.md](../AGENTS.md) em toda alteração backend. Antes de editar, inspecionar o padrão do módulo e os contratos existentes; durante a implementação, corrigir problemas locais seguros em vez de perpetuá-los; antes de concluir, rever diff, testes e findings adiados.
+
+Padrões Laravel/PHP:
+- Usar Form Requests ou validação apropriada para entrada; Policies/Gates para autorização.
+- Controllers coordenam HTTP; regras de domínio e efeitos financeiros ficam nos serviços/camadas de domínio existentes, sem duplicação.
+- Respeitar transações, idempotência, FKs, constraints e invariantes financeiras aprovadas.
+- Usar Eloquent evitando N+1; consultas e índices devem responder a necessidades reais.
+- Tipos/retornos claros, convenções Laravel 13 e APIs da versão instalada; não introduzir dependências ou abstrações genéricas sem justificação.
+- Refatoração local segura é obrigatória; mudanças de comportamento, contratos ou arquitetura exigem plano/decisão próprios.
+
 ## Testes e estilo
 
 ```powershell
