@@ -5,6 +5,7 @@ import { formatCurrency } from '../../currency/formatCurrency'
 import type { CurrencySymbol } from '../../currency/types'
 
 export type DashboardMovement = {
+  id: number
   icon: AppIconName
   name: string
   meta: string
@@ -101,7 +102,7 @@ export function DashboardSections({
         ) : (
           <Stack className="dashboard-recent-list">
             {movements.map((movement, index) => (
-              <Stack key={movement.name + movement.meta + index}>
+              <Stack key={movement.id}>
                 <Row className="dashboard-recent-row" style={{ alignItems: 'center' }} gap={12}>
                   <span className="dashboard-recent-icon" style={{ color: movement.iconColor }}><AppIcon name={movement.icon} size={17} color={movement.iconColor} /></span>
                   <Stack className="dashboard-recent-copy" gap={4} flex={1} minWidth={0}>
