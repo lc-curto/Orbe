@@ -121,9 +121,10 @@ final class FinancialRouteReadService
                 ->with('card:id,name')
                 ->orderBy('due_date')
                 ->get();
+            $invoiceSummaries = $this->invoiceSummaries->forInvoices($invoices->pluck('id')->all());
 
             foreach ($invoices as $invoice) {
-                $summary = $this->invoiceSummaries->forInvoice((int) $invoice->id);
+                $summary = $invoiceSummaries[$invoice->id] ?? ['open_amount' => '0.0000'];
                 $amount = $summary['open_amount'];
                 if (bccomp($amount, '0', 4) <= 0) {
                     continue;
