@@ -623,3 +623,95 @@
   margin-top: -2px;
   margin-bottom: 8px;
 }
+
+
+/* Payment method selector — visual-only until payment-method flows are connected. */
+.orbe-payment-method {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 4px 0 14px;
+}
+
+.orbe-payment-method-title {
+  color: var(--orbe-form-text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.orbe-payment-method-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.orbe-payment-method-option {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 6px;
+  color: var(--orbe-form-text);
+  font-size: 13px;
+  font-weight: 650;
+  text-align: center;
+  background: var(--orbe-form-surface);
+  border: 1px solid var(--orbe-form-border);
+  border-radius: var(--orbe-form-radius-control, 12px);
+  cursor: pointer;
+  transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease;
+}
+
+.orbe-payment-method-option input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.orbe-payment-method-option.is-selected {
+  color: var(--orbe-form-primary);
+  background: var(--orbe-form-primary-soft);
+  border-color: var(--orbe-form-primary);
+}
+
+.orbe-payment-method-option:focus-within {
+  outline: 2px solid var(--orbe-form-focus);
+  outline-offset: 2px;
+}
+
+.orbe-payment-method-option:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: .6;
+}
+
+.orbe-payment-method-note {
+  margin: 0;
+  color: var(--orbe-form-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+@media (max-width: 360px) {
+  .orbe-payment-method-options {
+    gap: 6px;
+  }
+
+  .orbe-payment-method-option {
+    padding-inline: 4px;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbe-payment-method-option {
+    transition: none;
+  }
+}
