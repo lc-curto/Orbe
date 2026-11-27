@@ -1,3 +1,4 @@
+import { PageHeader } from '../../../shared/components/PageHeader'
 import { useEffect, useRef, useState } from 'react'
 import type { Card, CardInvoice, Operation } from '../../../api/types'
 import { formatCurrency } from '../../currency/formatCurrency'
@@ -164,12 +165,7 @@ export function CardsPage({ cards, operations, loading, error }: Props) {
         {!loading && !error ? (selectedCard.invoices ?? []).map(renderInvoice) : null}
       </div>
     </> : <>
-      <header className="accounts-page-header">
-        <div>
-          <h1 id="cards-page-title">Cartões</h1>
-          <p className="accounts-page-subtitle">{activeCards.length} {activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}</p>
-        </div>
-      </header>
+      <PageHeader title="Cartões" titleId="cards-page-title" description={`${activeCards.length} ${activeCards.length === 1 ? 'cartão ativo' : 'cartões ativos'}`} className="accounts-page-header" />
       <div className="accounts-total-card cards-total-card">
         <span className="accounts-total-label">TOTAL EM DÍVIDA</span>
         <strong className="accounts-total-value">{money(totalDebt, symbol)}</strong>
