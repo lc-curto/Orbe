@@ -624,3 +624,13 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Referência estética para menus/overlays: painel Mais — superfície opaca escura, borda/acento teal, texto claro, muted e tint de interação discreto. Dashboard balance highlight mantém gradiente verde aprovado.
 - QA visual manual global ainda pendente. Critério: nenhuma superfície clara involuntária em dark; texto/ícones/placeholder/valores/estados legíveis; selected/hover/focus coerentes; modal/sheet/portal e scrollbar consistentes em light/dark e 320/768/1024/1025+ px.
 - Não alterar lógica, dados, API ou navegação nesta auditoria.
+### Formulários compactos — progressive disclosure e defaults negativos
+
+- Criados no design system os componentes reutilizáveis OrbeDisclosure (secção recolhida por defeito, semântica nativa details/summary) e OrbeFormToggle (checkbox opt-in com label/descrição).
+- Formulário de Movimentos simplificado: descrição, valor, categoria, conta (quando necessária) e data permanecem no fluxo principal; recorrência, estado pendente e detalhes da transferência ficam em disclosure.
+- Recorrência começa desligada; “Marcar como pendente” começa desligado; estados de transferência começam realizados e podem ser marcados como pendentes explicitamente. Data de fim e descrição opcional começam vazias.
+- Seletores de categoria/conta/frequência passam a usar select nativo e acessível, evitando listas verticais extensas de opções. Estado vazio e seleção de destino dependente da origem têm mensagens explícitas.
+- Datas e estados da transferência ficam recolhidos com resumo do valor predefinido; validações de data abrem automaticamente os detalhes. Erros de fim de recorrência abrem “Mais opções”.
+- DateInput mantém apenas atalhos úteis Hoje/Ontem; removido “Escolher data” redundante, pois o input date já permite escolher.
+- Sem mudança de API/payloads/regra de negócio. Contas e Cartões/Faturas ainda não dispõem de formulários de criação/edição nesta fase; o padrão fica pronto para reutilização quando esses fluxos forem implementados.
+- QA automatizado pendente após commit; QA visual manual em light/dark e 320–1024+ px necessário antes do merge.
