@@ -572,3 +572,11 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Composição aplicada no PageHeader e MonthSelector partilhados para Dashboard, Movimentos e Relatórios.
 - Rota Financeira mantém comportamento diferenciado: intervalo de 3 meses no desktop e mês único no mobile, sem duplicação.
 - CI passou (Web CI e PR Quality Gate); validação visual manual do utilizador ainda pendente. Implementado na branch do PR #12, sem integração na main.
+
+
+### Menu Mais mobile — refinamento transversal
+
+- Corrigido estado selecionado simultâneo: quando Mais abre, a página subjacente não permanece destacada na bottom navigation.
+- Reforçada a distinção do bottom sheet Mais com pega, borda superior teal, sombra e overlay/blur do conteúdo atrás.
+- Cores de seleção da navegação passam a respeitar tokens de light/dark mode.
+- Alteração na branch do PR #12; não integrada na main, pendente de QA visual manual.
