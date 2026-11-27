@@ -14,6 +14,7 @@ A política e os Gates A/B/C de `AGENTS.md` aplicam-se a todas as PRs. Não deix
 - [ ] Não introduzi abstração, dependência, override ou arquitetura sem justificação; qualquer exceção está registada abaixo.
 - [ ] Findings não corrigidos estão registados com motivo, impacto, dependência e critério de aceitação (ou indique “Nenhum” abaixo).
 - [ ] Revisei o diff final à procura de código/estilos duplicados, alterações incidentais e inconsistências.
+- [ ] Pesquisei `!important` no CSS alterado: não introduzi ocorrências; qualquer exceção é último recurso, justificada no código e descrita abaixo.
 
 **Findings adiados / exceções (escrever “Nenhum” se não existirem):**
 <!-- Área/ficheiro | motivo e risco | item de trabalho/critério de conclusão -->
