@@ -221,3 +221,60 @@ button:hover:not(:disabled) { box-shadow: none; }
   .app-add-fab,
   .orbe-page-theme-toggle { transition: none; }
 }
+
+
+/* Shared month navigation: selected period first, previous/next controls grouped at the end. */
+.orbe-month-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 132px;
+  width: fit-content;
+  padding: 4px 6px 4px 12px;
+  border: 1px solid var(--orbe-border);
+  border-radius: 14px;
+  background: var(--orbe-surface);
+  color: var(--orbe-text);
+}
+.orbe-month-selector-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: var(--orbe-text);
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  text-align: left;
+}
+.orbe-month-selector-navigation {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2px;
+}
+.orbe-month-selector-navigation button {
+  display: grid;
+  width: 28px;
+  height: 30px;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--orbe-muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.orbe-month-selector-navigation button:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--orbe-primary) 9%, var(--orbe-surface));
+  color: var(--orbe-primary);
+}
+.orbe-month-selector-navigation button:disabled {
+  opacity: .38;
+  cursor: not-allowed;
+}
+.orbe-month-selector-navigation button:focus-visible {
+  outline: 2px solid var(--orbe-focus);
+  outline-offset: 1px;
+}
