@@ -6,6 +6,16 @@
 
 Regista decisões aprovadas das páginas principais. Não substitui os mockups visuais originais. Não inventar pormenores visuais não especificados nem redesenhar páginas aprovadas sem autorização.
 
+## Regra obrigatória de CSS — `!important`
+
+O utilizador rejeita fortemente o uso de `!important`. Esta é uma regra obrigatória para todos os agentes e colaboradores, não uma preferência opcional:
+
+- Não usar `!important` para corrigir layout, compensar especificidade, forçar ordem de estilos ou mascarar conflitos entre folhas.
+- Só admitir como último recurso, depois de avaliar a cascata/camadas, a especificidade, o escopo do seletor e a possibilidade de corrigir a causa estrutural.
+- Qualquer nova ocorrência exige justificação explícita no código e na PR, incluindo por que as alternativas estruturais não são adequadas.
+- Rever e remover ocorrências estruturais existentes no âmbito da tarefa; ocorrências não removidas devem ficar registadas como finding com impacto e critério de remoção.
+- Antes de concluir uma tarefa de UI, pesquisar `!important` no CSS afetado e reportar o resultado. A presença de `!important` não justificado bloqueia a conclusão.
+
 ## Princípios e navegação
 - Mobile first; desktop complementar.
 - Listas compactas, hierarquia clara e sem informação repetida.
