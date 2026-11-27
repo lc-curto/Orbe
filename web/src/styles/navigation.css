@@ -71,6 +71,7 @@
 .desktop-sidebar.collapsed .sidebar-nav-row { justify-content: center; gap: 0; }
 .desktop-sidebar.collapsed .sidebar-footer-action { justify-content: center; padding-inline: 0; }
 .desktop-sidebar.collapsed .sidebar-profile-copy { justify-content: center; }
+.desktop-sidebar.collapsed .sidebar-profile-copy { justify-content: center; }
 
 .app-add-fab {
   position: fixed; right: calc(24px + env(safe-area-inset-right)); bottom: calc(24px + env(safe-area-inset-bottom));
