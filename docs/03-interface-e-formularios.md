@@ -967,6 +967,14 @@ O toque na linha abre o detalhe do movimento. O menu `⋮` é um ponto de ação
 
 A composição do menu está aprovada como decisão de interface. Permissões, transições, endpoints e implementação de cada ação continuam subordinados aos contratos de domínio/API; esta secção não autoriza novas regras financeiras nem endpoints.
 
+## Implementação funcional — Movimentos (Fase 2)
+
+- Gasto e rendimento usam contas/categorias ativas obtidas da API, sem opções fictícias.
+- O formulário suporta `REALIZED` e `PENDING`: realizado exige conta e data efetiva; pendente não apresenta nem envia conta e usa data prevista.
+- Transferência cria uma operação com duas pernas; origem e destino devem ser contas diferentes. Cada perna tem estado e data próprios, conforme o contrato API.
+- A submissão apresenta loading, impede submissões simultâneas, usa idempotência, mantém o formulário aberto em erros de API e atualiza os dados após sucesso.
+- As ações contextuais de edição, confirmação, cancelamento, eliminação e estorno não são consideradas concluídas apenas pela composição aprovada do menu; dependem dos contratos/endpoints específicos e permanecem pendentes quando não suportadas.
+
 ## 15. Procedimento para a IA que vai implementar
 
 Antes de alterar código:
