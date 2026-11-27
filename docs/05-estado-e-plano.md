@@ -69,6 +69,14 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 | Moeda | Se a moeda principal pode mudar depois de existirem movimentos. A precisão e o arredondamento do núcleo estão aprovados em ARC-003 (`DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas). |
 | Saldo inicial de conta | **Decidido:** informar o saldo existente ao iniciar a utilização da conta no Orbe; registar como abertura, não como receita/despesa. |
 
+### Rota Financeira — regras de projeção a rever nesta PR (2026-11-27)
+
+- Movimentos e Rota Financeira usam a mesma base de operações/efeitos válidos; a diferença é a apresentação individual em Movimentos e a agregação projetada por data na Rota.
+- O saldo de referência é a soma dos saldos atuais de contas bancárias e dinheiro; cartões de crédito ficam excluídos.
+- Gasto/ganho pendente entra na projeção mesmo sem conta associada. O saldo atual já inclui operações realizadas refletidas nas contas, que não podem ser aplicadas novamente como projeção.
+- Movimentos apresenta as compras do cartão individualmente. A Rota projeta cada fatura uma única vez pelo total a pagar, na data prevista, independentemente de estar aberta ou fechada; não projeta simultaneamente as compras individuais que compõem essa fatura.
+- Esta PR formaliza os princípios acima para revisão. Continuam em discussão os casos de faturas vencidas, reagendamento/débito automático, faturas de ciclos anteriores, crédito negativo e o read model/cálculo diário/final da Rota.
+
 **Contrato de saldo inicial de cartão definido:** saldo inicial positivo é integralmente distribuído por faturas; não existe parcela por distribuir, obrigação especial em dívidas ou novo destino financeiro. A operação original é única por cartão. Distribuições históricas são imutáveis; correções e reversões são rastreáveis. A obrigação em aberto deriva exclusivamente de `financial_entries`.
 
 **Contrato de saldo inicial de conta definido:** ao criar uma conta, informar o saldo existente no início da utilização no Orbe. O valor é reconhecido por operação `ACCOUNT_OPENING_BALANCE` e lançamento realizado dirigido à conta; não é receita/despesa. Saldo zero não gera lançamento; saldo negativo só é permitido quando compatível com o tipo de conta. Existe uma única abertura original por conta, não editável diretamente; correções preservam a origem e são rastreáveis. O saldo atual deriva dos lançamentos válidos.
