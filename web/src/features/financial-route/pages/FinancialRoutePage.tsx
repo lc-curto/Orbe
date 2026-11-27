@@ -6,8 +6,8 @@ import { RouteDayModal } from '../components/RouteDayModal'
 import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
 import type { RouteDay, RouteFlowFilter } from '../types'
-import { formatFullDate, formatMonthRange, localDateKey, shiftMonth } from '../utils'
-import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
+import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
+import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits, projectionMonthEnd } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
 const FINANCIAL_ROUTE_MONTHS = 24
@@ -93,7 +93,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   return <section className="financial-route-page">
     <PageHeader title="Rota Financeira" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
       <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
-      <span>{formatMonthRange(month, shiftMonth(month, FINANCIAL_ROUTE_MONTHS - 1))}</span>
+      <span>{formatMonthRange(month, projectionMonthEnd(month, FINANCIAL_ROUTE_MONTHS))}</span>
       <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
     </div>} mobilePeriod={<MonthSelector month={month} onMonthChange={onMonthChange} className="route-month-selector-mobile" />} />
 
