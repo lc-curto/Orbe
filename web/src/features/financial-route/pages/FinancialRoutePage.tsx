@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { PageHeader } from '../../../shared/components/PageHeader'
 import type { CardInvoice, Operation } from '../../../api/types'
 import { MonthSelector } from '../../../shared/components/MonthSelector'
@@ -41,7 +41,26 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   const routeData = useFinancialRouteData(month, operations, invoices)
   const projection = routeData.projection
   const months = projection?.months ?? []
-  const mobileMonth = months[0]
+  const [isDesktopRoute, setIsDesktopRoute] = useState(() => typeof window !== 'undefined' && window.matchMedia('(min-width: 1025px)').matches)
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 1025px)')
+    const update = () => setIsDesktopRoute(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  const filteredMonths = useMemo(() => months.map((item) => {
+    let days = onlyMovementDays
+      ? item.days.filter((day) => day.operations.length > 0 || day.invoices.length > 0 || hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
+      : item.days
+    if (flowFilter === 'INCOME') days = days.filter((day) => hasPositiveAmount(day.income))
+    if (flowFilter === 'EXPENSE') days = days.filter((day) => hasPositiveAmount(day.expenses))
+    return { month: item, days }
+  }), [months, onlyMovementDays, flowFilter])
+  const mobileMonth = filteredMonths[0]?.month
+  const mobileVisibleDays = filteredMonths[0]?.days ?? []
   const loading = financeLoading || routeData.loading
   const error = routeData.error ?? financeError
 
@@ -58,15 +77,6 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
       initialTodayPositioned.current = true
     }
   }, [projection])
-
-  function visibleDaysFor(monthDays: RouteDay[]) {
-    let visible = onlyMovementDays
-      ? monthDays.filter((day) => day.operations.length > 0 || day.invoices.length > 0 || hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
-      : monthDays
-    if (flowFilter === 'INCOME') visible = visible.filter((day) => hasPositiveAmount(day.income)).map((day) => ({ ...day, expenses: '0.0000' }))
-    if (flowFilter === 'EXPENSE') visible = visible.filter((day) => hasPositiveAmount(day.expenses)).map((day) => ({ ...day, income: '0.0000' }))
-    return visible
-  }
 
   const activeDay = selectedDay?.periodMonth === month
     ? months.flatMap((item) => item.days).find((day) => day.date === selectedDay.date)
@@ -130,16 +140,16 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
         {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
       </div>
 
-      <div className="route-desktop-months" ref={desktopMonthsRef}>
-        {months.map((item) => <RouteMonthCard key={item.month} month={item} days={visibleDaysFor(item.days)} flowFilter={flowFilter} onSelectDay={selectDay} />)}
-      </div>
+      {isDesktopRoute ? <div className="route-desktop-months" ref={desktopMonthsRef}>
+        {filteredMonths.map((item) => <RouteMonthCard key={item.month.month} month={item.month} days={item.days} flowFilter={flowFilter} onSelectDay={selectDay} />)}
+      </div> : null}
 
       <div className="route-mobile-month" ref={mobileMonthRef}>
         <div className="route-mobile-toolbar">
           <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
-          <span className="route-days-count">{visibleDaysFor(mobileMonth?.days ?? []).length} dias</span>
+          <span className="route-days-count">{mobileVisibleDays.length} dias</span>
         </div>
-        {mobileMonth ? <RouteMonthCard month={mobileMonth} days={visibleDaysFor(mobileMonth.days)} flowFilter={flowFilter} onSelectDay={selectDay} mobile /> : null}
+        {mobileMonth ? <RouteMonthCard month={mobileMonth} days={mobileVisibleDays} flowFilter={flowFilter} onSelectDay={selectDay} mobile /> : null}
       </div>
     </> : null}
 
