@@ -1,6 +1,6 @@
 import type { RouteDay, RouteFlowFilter } from '../types'
-import { formatDay, localDateKey } from '../utils'
-import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
+import { formatDay } from '../utils'
+import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
 function formatAmount(value: string | null): string {
