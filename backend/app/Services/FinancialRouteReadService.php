@@ -200,7 +200,7 @@ final class FinancialRouteReadService
             };
 
             $months = [];
-            for ($index = 0; $index < 3; $index++) {
+            for ($index = 0; $index < 24; $index++) {
                 $month = $this->shiftMonth($firstMonth, $index);
                 $bounds = $this->monthBounds($month);
                 $days = [];
