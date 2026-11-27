@@ -36,7 +36,7 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - Sidebar content is left-aligned through shared navigation primitives and semantic theme tokens. Expanded and collapsed states retain their intended alignment.
 - For 1025–1199px, use shared desktop gutter and section-gap tokens at compact values, and a 220px expanded sidebar. At 1200px and above, retain established desktop geometry.
 - The page title, theme control and period/action controls share the PageHeader row. The shell-level duplicate theme control is removed; every authenticated page uses PageHeader.
-- Rota Financeira keeps its differentiated period behavior: one 24-month range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
+- Rota Financeira keeps its differentiated period behavior: a 3-month range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
 - The Dashboard available-balance card and applicable financial summary cards use the shared design-system variant orbe-financial-highlight-card. Its teal gradient is intentionally identical in light and dark mode; generic dark-theme surface rules exclude this variant.
 - Layout changes use existing tokens, shared shell styles and primitive props. No new UI dependency, feature-specific layout token, or `!important` override is permitted. Pre-existing legacy overrides are tracked in the state document and must be removed as affected components migrate to semantic tokens.
 
@@ -1260,7 +1260,7 @@ Regras obrigatórias para todas as páginas:
 - Composição padrão A: primeira linha com título à esquerda e controlo de tema à direita; segunda linha com mês abreviado + ano alinhado à esquerda e setas de navegação à direita.
 - O seletor mensal é discreto, sem superfície ou borda própria; setas mantêm área de toque acessível.
 - O padrão é implementado no componente partilhado PageHeader e MonthSelector, não em CSS/markup isolado de cada página.
-- Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de 24 meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
+- Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de 3 meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
 
 
 ### Card de saldo do Dashboard — consistência de tema
