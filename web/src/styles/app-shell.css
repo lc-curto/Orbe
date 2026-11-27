@@ -403,6 +403,12 @@
 .mobile-page-shell .financial-route-page.financial-route-page { padding-top: 0 !important; }
 .mobile-page-shell .reports-grid { gap: 12px; }
 .mobile-page-shell .report-panel { padding: var(--orbe-panel-padding-mobile); }
+.cards-total-card,
+.cards-detail-summary,
+.accounts-total-card,
+.report-panel {
+  padding: var(--orbe-panel-padding) !important;
+}
 
 @media (max-width: 1024px) {
   .main-content.cards-mode,
@@ -425,4 +431,8 @@
   .mobile-page-shell.accounts-mobile-shell { padding-inline: var(--orbe-page-gutter-mobile) !important; }
   .mobile-page-shell.route-mobile-shell { padding-inline: var(--orbe-page-gutter-mobile) !important; }
   .mobile-page-shell .report-panel { padding: var(--orbe-panel-padding-mobile); }
+  .cards-total-card,
+  .cards-detail-summary,
+  .accounts-total-card,
+  .mobile-page-shell .report-panel { padding: var(--orbe-panel-padding-mobile) !important; }
 }
