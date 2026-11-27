@@ -289,8 +289,7 @@ export default function App() {
 
   return (
     <AppShell>
-        
-        <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
+      <FinanceStatus loading={finance.loading} error={finance.error} authenticated={user !== null} />
         <div className="desktop-layout">
           <Stack className={`desktop-sidebar ${sidebarOpen ? 'expanded' : 'collapsed'}`} borderRightWidth={1} borderRightColor="var(--orbe-border)">
             <Row style={{ justifyContent: sidebarOpen ? 'space-between' : 'center', alignItems: 'center' }} marginBottom="var(--orbe-space-6)">
