@@ -74,7 +74,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
   return <section className="financial-route-page">
     <PageHeader title="Rota Financeira" className="financial-route-header" actions={<div className="route-period-selector route-desktop-period">
       <button type="button" aria-label="Período anterior" onClick={() => changePeriod(-1)}>‹</button>
-      <span>{formatMonthRange(month, shiftMonth(month, 2))}</span>
+      <span>{formatMonthRange(month, shiftMonth(month, 23))}</span>
       <button type="button" aria-label="Período seguinte" onClick={() => changePeriod(1)}>›</button>
     </div>} mobilePeriod={<MonthSelector month={month} onMonthChange={onMonthChange} className="route-month-selector-mobile" />} />
 
