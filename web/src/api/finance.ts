@@ -97,3 +97,18 @@ export async function createTransfer(input: TransferWriteInput): Promise<Operati
   return apiRequest<Operation>('/transfers', { method: 'POST', body: JSON.stringify(input) })
 }
 
+
+export type RecurrenceWriteInput = {
+  nature: 'EXPENSE' | 'INCOME'
+  amount: string
+  category_id: number
+  description?: string
+  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY'
+  first_occurrence_at: string
+  end_at?: string
+  idempotency_key?: string
+}
+
+export async function createRecurrence(input: RecurrenceWriteInput): Promise<RecurrenceSchedule> {
+  return apiRequest<RecurrenceSchedule>('/recurrences', { method: 'POST', body: JSON.stringify(input) })
+}
