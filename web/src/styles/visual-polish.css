@@ -436,3 +436,62 @@ button:hover:not(:disabled) { box-shadow: none; }
   background-image: linear-gradient(135deg, #0f766e 0%, #115e59 100%) !important;
   box-shadow: 0 8px 22px rgba(15, 118, 110, 0.16) !important;
 }
+
+
+/* Shared financial summary highlight: identical in light and dark themes. */
+.orbe-financial-highlight-card {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%) !important;
+  background-color: #0f766e !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 22px rgba(15, 118, 110, 0.16) !important;
+  color: #ffffff !important;
+}
+.orbe-financial-highlight-card .accounts-total-label,
+.orbe-financial-highlight-card .cards-summary-label,
+.orbe-financial-highlight-card .route-mobile-ending span {
+  color: #dbeafe !important;
+}
+.orbe-financial-highlight-card .accounts-total-value,
+.orbe-financial-highlight-card .cards-available-value,
+.orbe-financial-highlight-card .route-mobile-ending strong {
+  display: block;
+  color: #ffffff !important;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+.orbe-financial-highlight-card .accounts-readonly-note,
+.orbe-financial-highlight-card .cards-invoice-total-lines,
+.orbe-financial-highlight-card .cards-invoice-total-lines strong {
+  color: #dbeafe !important;
+}
+.orbe-financial-highlight-card .cards-invoice-total-lines {
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  padding-top: 12px;
+}
+.orbe-financial-highlight-card.route-mobile-summary {
+  padding: 18px !important;
+}
+.orbe-financial-highlight-card .route-mobile-ending {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.24);
+}
+.orbe-financial-highlight-card .route-mobile-totals {
+  color: #dbeafe !important;
+}
+.orbe-financial-highlight-card .route-month-income {
+  color: #ffffff !important;
+}
+.orbe-financial-highlight-card .route-month-expenses {
+  color: #fecaca !important;
+}
+
+/* Keep financial highlight surfaces stable despite broad dark-theme card rules. */
+[data-theme="dark"] .orbe-financial-highlight-card {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 100%) !important;
+  background-color: #0f766e !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
