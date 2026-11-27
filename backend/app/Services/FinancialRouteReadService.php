@@ -107,7 +107,8 @@ final class FinancialRouteReadService
                     continue;
                 }
 
-                $this->addFlow($plannedFlowByDate, $date, strtolower($nature), $amount);
+                $flowNature = $nature === 'INCOME' ? 'income' : 'expenses';
+                $this->addFlow($plannedFlowByDate, $date, $flowNature, $amount);
                 $net = $nature === 'INCOME' ? bcadd($amount, '0', 4) : bcsub('0', $amount, 4);
                 $plannedNetByDate[$date] = bcadd($plannedNetByDate[$date] ?? '0.0000', $net, 4);
                 $this->addId($operationIdsByDate, $date, (int) $operation->id);
@@ -220,7 +221,7 @@ final class FinancialRouteReadService
                 $expensesTotal = '0.0000';
 
                 for ($day = 1; $day <= $bounds['days']; $day++) {
-                    $date = $bounds['first'] . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
+                    $date = $bounds['prefix'] . str_pad((string) $day, 2, '0', STR_PAD_LEFT);
                     $actual = $actualFlowByDate[$date] ?? ['income' => '0.0000', 'expenses' => '0.0000'];
                     $planned = $date >= $today
                         ? ($plannedFlowByDate[$date] ?? ['income' => '0.0000', 'expenses' => '0.0000'])
@@ -308,7 +309,8 @@ final class FinancialRouteReadService
     {
         $first = new \DateTimeImmutable($month . '-01');
         return [
-            'first' => $first->format('Y-m-'),
+            'first' => $first->format('Y-m-01'),
+            'prefix' => $first->format('Y-m-'),
             'last' => $first->modify('last day of this month')->format('Y-m-d'),
             'days' => (int) $first->format('t'),
         ];
