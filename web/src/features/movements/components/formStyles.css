@@ -595,3 +595,31 @@
   scrollbar-color: var(--orbe-form-muted) var(--orbe-form-surface);
   scrollbar-width: thin;
 }
+
+/* Compact field rhythm for the movement creation flow. */
+.orbe-movement-form .orbe-field {
+  margin-bottom: 12px;
+}
+
+.orbe-movement-form .orbe-select-input {
+  appearance: auto;
+  cursor: pointer;
+  padding-right: 10px;
+}
+
+.orbe-movement-form .orbe-select-input:disabled {
+  cursor: not-allowed;
+}
+
+.orbe-movement-form .orbe-disclosure {
+  margin-top: 4px;
+}
+
+.orbe-movement-form .orbe-disclosure-content .orbe-field:last-child {
+  margin-bottom: 0;
+}
+
+.orbe-movement-form .orbe-transfer-direction {
+  margin-top: -2px;
+  margin-bottom: 8px;
+}
