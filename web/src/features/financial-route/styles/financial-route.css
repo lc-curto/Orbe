@@ -294,19 +294,8 @@
 }
 
 
-/* Explicit overdue rows are separate from the projected balance and remain readable on narrow screens. */
-.route-overdue-day-detail td {
-  padding: 8px 12px;
-  background: color-mix(in srgb, var(--orbe-danger, #d92d20) 7%, var(--orbe-surface));
-  color: var(--orbe-text);
-  white-space: normal;
+
+/* Reserve scroll space so the fixed quick-action FAB never covers the final balance row. */
+@media (min-width: 1025px) {
+  .financial-route-page { padding-bottom: 96px; }
 }
-.route-overdue-day-detail td > div {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 12px;
-  font-size: 11px;
-}
-.route-overdue-day-detail strong { font-size: 11px; }
