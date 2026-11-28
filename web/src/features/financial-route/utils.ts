@@ -43,8 +43,8 @@ export function formatAmount(value: number) {
 export function formatCompactDay(value: string) {
   const date = new Date(`${value}T12:00:00`)
   const day = String(date.getDate()).padStart(2, '0')
-  const weekday = new Intl.DateTimeFormat('pt-PT', { weekday: 'short' }).format(date).replaceAll('.', '').replaceAll('-feira', '')
-  return `${day} ${weekday}`
+  const weekdays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
+  return `${day"} ${weekdays[date.getDay()]}`
 }
 
 export function formatDay(value: string) {
