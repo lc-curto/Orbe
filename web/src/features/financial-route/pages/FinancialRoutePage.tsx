@@ -6,7 +6,7 @@ import { RouteDayModal } from '../components/RouteDayModal'
 import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
 import type { RouteFlowFilter } from '../types'
-import { formatDay, formatMonth, formatFullDate, formatMonthRange, shiftMonth } from '../utils'
+import { formatDay, formatMonth, formatMonthRange, shiftMonth } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
