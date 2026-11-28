@@ -14,7 +14,10 @@ final class FinancialRouteReadService
 {
     private const PROJECTION_MONTHS = 24;
 
-    public function __construct(\n        private readonly CardInvoiceSummaryService $invoiceSummaries,\n        private readonly AccountBalanceService $accountBalances,\n    ) {}
+    public function __construct(
+        private readonly CardInvoiceSummaryService $invoiceSummaries,
+        private readonly AccountBalanceService $accountBalances,
+    ) {}
 
     /** @return array<string, mixed> */
     public function build(int $userId, string $firstMonth, int $projectionMonths = self::PROJECTION_MONTHS): array
