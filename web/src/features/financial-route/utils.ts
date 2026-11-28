@@ -44,7 +44,7 @@ export function formatCompactDay(value: string) {
   const date = new Date(`${value}T12:00:00`)
   const day = String(date.getDate()).padStart(2, '0')
   const weekdays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb']
-  return `${day"} ${weekdays[date.getDay()]}`
+  return `${day} ${weekdays[date.getDay()]}`
 }
 
 export function formatDay(value: string) {
