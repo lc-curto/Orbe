@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import type { RouteDay, RouteFlowFilter } from '../types'
 import { formatDay } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits } from '../projection'
@@ -30,22 +31,24 @@ export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
           const expenses = formatAmount(day.expenses)
           const balance = formatAmount(day.balance)
           const isToday = day.date === today
-          return <tr key={day.date} data-route-date={day.date} className={[hasMovements ? 'has-movements' : '', isToday ? 'route-today' : ''].filter(Boolean).join(' ')}>
-            <td>
-              <button className="route-day-button" type="button" aria-current={isToday ? "date" : undefined} onClick={() => onSelectDay(day.date)}>{formatDay(day.date)}</button>
-              {visibleOverdueItems.length > 0 ? <ul className="route-day-overdue-list">
-                {visibleOverdueItems.map((item) => <li key={item.id}>
-                  <span>{item.label}</span>
-                  <strong className="route-month-expenses">Vencido · {item.nature === 'INCOME' ? '+ ' : '− '}{formatAmount(item.amount)} {symbol}</strong>
-                </li>)}
-              </ul> : null}
-            </td>
+          return <Fragment key={day.date}>
+          <tr data-route-date={day.date} className={[hasMovements ? 'has-movements' : '', isToday ? 'route-today' : ''].filter(Boolean).join(' ')}>
+            <td><button className="route-day-button" type="button" aria-current={isToday ? "date" : undefined} onClick={() => onSelectDay(day.date)}>{formatDay(day.date)}</button></td>
             <td className="route-income-cell">{flowFilter === 'EXPENSE' || incomeUnits === null || incomeUnits === 0n ? '—' : '+ ' + income + ' ' + symbol}</td>
             <td className="route-expense-cell">{flowFilter === 'INCOME' || expensesUnits === null || expensesUnits === 0n ? '—' : '− ' + expenses + ' ' + symbol}</td>
             <td className={balanceNegative ? 'route-balance-cell route-balance-negative' : 'route-balance-cell'} aria-label={day.balance === null ? 'Saldo indisponível' : 'Saldo projetado'}>
               {day.balance === null ? '—' : balance + ' ' + symbol}
             </td>
           </tr>
+          {visibleOverdueItems.length > 0 ? <tr className="route-overdue-day-detail">
+            <td colSpan={4}>
+              {visibleOverdueItems.map((item) => <div key={item.id}>
+                <span>{item.label}</span>
+                <strong className={item.nature === 'INCOME' ? 'route-month-income' : 'route-month-expenses'}>Vencido · {item.nature === 'INCOME' ? '+ ' : '− '}{formatAmount(item.amount)} {symbol}</strong>
+              </div>)}
+            </td>
+          </tr> : null}
+          </Fragment>
         })}
       </tbody>
     </table>
