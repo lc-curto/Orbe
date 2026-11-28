@@ -33,6 +33,34 @@ final class FinancialRouteReadApiTest extends TestCase
     }
 
     #[Test]
+    public function route_reference_balance_matches_dashboard_active_account_balance(): void
+    {
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
+        $activeAccount = $this->account($user, 'BANK');
+        $this->openingBalance($user, $activeAccount, '1000.0000', '2026-11-01 12:00:00');
+
+        $inactiveAccount = FinancialAccount::query()->create([
+            'user_id' => $user->id,
+            'name' => 'Conta encerrada',
+            'account_type' => 'BANK',
+            'status' => 'INACTIVE',
+        ]);
+        $this->openingBalance($user, $inactiveAccount, '500.0000', '2026-11-01 12:00:00');
+        $this->operation($user, 'EXPENSE', 'PENDING', '100.0000', null, '2026-11-27 12:00:00', 'Despesa planeada hoje');
+
+        $accountsResponse = $this->getJson('/api/accounts')->assertOk();
+        $activeBalance = collect($accountsResponse->json('data'))
+            ->where('status', 'ACTIVE')
+            ->reduce(fn (string $carry, array $account): string => bcadd($carry, (string) $account['current_balance'], 4), '0.0000');
+
+        $routeResponse = $this->getJson('/api/financial-route?month=2026-11')->assertOk();
+        $routeResponse
+            ->assertJsonPath('data.reference_balance', $activeBalance)
+            ->assertJsonPath('data.months.0.days.26.balance', bcsub($activeBalance, '100.0000', 4));
+    }
+
+    #[Test]
     public function pending_operation_planned_for_reference_date_is_included_in_same_day_balance(): void
     {
         $user = User::factory()->create();
