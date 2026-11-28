@@ -29,7 +29,7 @@ final class BasicOperationsController extends Controller
         return response()->json([
             'data' => $accounts->map(function (FinancialAccount $account) use ($snapshot): array {
                 $payload = $account->toArray();
-                $payload['current_balance'] = $snapshot['accounts'][$account->id] ?? '0.0000';
+                $payload['current_balance'] = array_key_exists($account->id, $snapshot['accounts'])\n                    ? $snapshot['accounts'][$account->id]\n                    : '0.0000';
                 return $payload;
             })->values()->all(),
             'meta' => [
