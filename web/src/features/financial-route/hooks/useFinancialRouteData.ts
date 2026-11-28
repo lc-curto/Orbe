@@ -166,14 +166,22 @@ export function useFinancialRouteData(
     const operationById = new Map(operations.map((operation) => [operation.id, operation]))
     const invoiceById = new Map(invoices.map((invoice) => [invoice.id, invoice]))
     const months: RouteMonth[] = response.months.map((monthData) => {
-      const days: RouteDay[] = monthData.days.map((day) => ({
-        date: day.date,
-        income: day.income,
-        expenses: day.expenses,
-        balance: day.balance,
-        operations: day.operation_ids.map((id) => operationById.get(id)).filter((operation): operation is Operation => operation !== undefined),
-        invoices: day.invoice_ids.map((id) => invoiceById.get(id)).filter((invoice): invoice is CardInvoice => invoice !== undefined),
-      }))
+      const days: RouteDay[] = monthData.days.map((day) => {
+        const overdueItems = response.overdue_items.filter((item) => item.date === day.date)
+        const overdueOperationIds = overdueItems.flatMap((item) => item.operation_id === null ? [] : [item.operation_id])
+        const overdueInvoiceIds = overdueItems.flatMap((item) => item.invoice_id === null ? [] : [item.invoice_id])
+        const operationIds = [...new Set([...day.operation_ids, ...overdueOperationIds])]
+        const invoiceIds = [...new Set([...day.invoice_ids, ...overdueInvoiceIds])]
+        return {
+          date: day.date,
+          income: day.income,
+          expenses: day.expenses,
+          balance: day.balance,
+          operations: operationIds.map((id) => operationById.get(id)).filter((operation): operation is Operation => operation !== undefined),
+          invoices: invoiceIds.map((id) => invoiceById.get(id)).filter((invoice): invoice is CardInvoice => invoice !== undefined),
+          overdueItems,
+        }
+      })
       return {
         month: monthData.month,
         days,
