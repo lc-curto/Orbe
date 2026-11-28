@@ -31,6 +31,49 @@ final class BasicOperationsApiTest extends TestCase
         $this->assertDatabaseHas('financial_entries', ['account_id' => $account['id'], 'effect' => 'DECREASE', 'amount' => '12.5000']);
     }
 
+
+    #[Test]
+    public function account_read_model_calculates_current_balance_from_realized_entries_only(): void
+    {
+        $user = User::factory()->create();
+        $account = FinancialAccount::query()->create([
+            'user_id' => $user->id, 'name' => 'Conta principal', 'account_type' => 'BANK', 'status' => 'ACTIVE',
+        ]);
+
+        $entries = [
+            ['ACCOUNT_OPENING_BALANCE', '1200.0000', 'INCREASE', '2026-11-01 09:00:00'],
+            ['INCOME', '1800.0000', 'INCREASE', '2026-11-13 10:00:00'],
+            ['EXPENSE', '45.0000', 'DECREASE', '2026-11-25 16:00:00'],
+            ['INCOME', '500.0000', 'INCREASE', '2026-12-01 09:00:00'],
+        ];
+
+        foreach ($entries as [$type, $amount, $effect, $date]) {
+            $operation = Operation::query()->create([
+                'user_id' => $user->id,
+                'operation_type' => $type,
+                'state' => 'REALIZED',
+                'amount' => $amount,
+                'effective_at' => $date,
+            ]);
+            FinancialEntry::query()->create([
+                'user_id' => $user->id,
+                'operation_id' => $operation->id,
+                'account_id' => $account->id,
+                'amount' => $amount,
+                'effect' => $effect,
+                'state' => 'REALIZED',
+                'effective_at' => $date,
+            ]);
+        }
+
+        Sanctum::actingAs($user);
+        $this->getJson('/api/accounts')
+            ->assertOk()
+            ->assertJsonPath('data.0.current_balance', '2955.0000')
+            ->assertJsonPath('meta.total_current_balance', '2955.0000')
+            ->assertJsonPath('meta.balance_available', true);
+    }
+
     #[Test]
     public function pending_income_has_no_destination_or_entry_until_explicit_confirmation(): void
     {
