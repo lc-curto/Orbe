@@ -6,6 +6,17 @@
 
 > Fase 1 autorizada em 2026-11-24. Este contrato cobre apenas contas, categorias, despesas comuns e receitas.
 
+## Leitura de saldo de contas (read model)
+
+`GET /api/accounts` devolve as contas do utilizador e os campos derivados:
+- `current_balance`: saldo efetivo da conta, reconstruído a partir de lançamentos `REALIZED` válidos até ao fim do dia local; pendentes não alteram este valor.
+- `meta.total_current_balance`: soma dos saldos calculáveis devolvidos.
+- `meta.balance_available`: `true` apenas quando todos os saldos abrangidos são válidos; quando `false`, o cliente não deve apresentar um total parcial como saldo disponível.
+
+A leitura é fornecida pelo serviço comum `AccountBalanceService`. O saldo do Dashboard usa as contas ativas; a Rota Financeira usa o mesmo cálculo restringido às contas ativas BANK/CASH/WALLET. Cartões de crédito não integram o saldo de caixa. A Rota acrescenta separadamente os efeitos pendentes na projeção; não os grava nem os inclui no saldo efetivo.
+
+Este contrato documenta a resposta implementada; não autoriza cache persistente de saldo nem mutação direta de saldos nas contas.
+
 ## Entidades — operações base
 
 ### Conta financeira
