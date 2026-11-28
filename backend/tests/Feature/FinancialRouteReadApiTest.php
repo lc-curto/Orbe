@@ -137,7 +137,7 @@ final class FinancialRouteReadApiTest extends TestCase
         Sanctum::actingAs($user);
         $account = $this->account($user);
         $this->openingBalance($user, $account, '1000.0000', '2026-11-01 12:00:00');
-        $this->operation($user, 'EXPENSE', 'PENDING', '50.0000', null, '2026-11-20 12:00:00', 'Pendente vencido');
+        $pending = $this->operation($user, 'EXPENSE', 'PENDING', '50.0000', null, '2026-11-20 12:00:00', 'Pendente vencido');
         $card = Card::query()->create([
             'user_id' => $user->id,
             'name' => 'Cartão vencido',
@@ -169,6 +169,8 @@ final class FinancialRouteReadApiTest extends TestCase
             ->assertJsonPath('data.months.0.days.19.expenses', '0.0000')
             ->assertJsonPath('data.months.0.days.26.balance', '1000.0000')
             ->assertJsonPath('data.overdue_total', '150.0000')
+            ->assertJsonPath('data.overdue_items.0.operation_id', $pending->id)
+            ->assertJsonPath('data.overdue_items.0.date', '2026-11-20')
             ->assertJsonCount(2, 'data.overdue_items');
     }
 
