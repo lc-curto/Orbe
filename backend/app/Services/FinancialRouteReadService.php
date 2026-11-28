@@ -30,6 +30,7 @@ final class FinancialRouteReadService
             $accountIds = FinancialAccount::query()
                 ->where('user_id', $userId)
                 ->whereIn('account_type', ['BANK', 'CASH', 'WALLET'])
+                ->where('status', 'ACTIVE')
                 ->pluck('id')
                 ->map(fn ($id): int => (int) $id)
                 ->all();
@@ -46,7 +47,7 @@ final class FinancialRouteReadService
             $projectionValid = true;
 
             if ($accountIds !== []) {
-                $balanceSnapshot = $this->accountBalances->snapshot($userId, $today);
+                $balanceSnapshot = $this->accountBalances->snapshot($userId, $today, $accountIds);
                 $referenceBalance = bcadd((string) ($balanceSnapshot['total'] ?? '0'), '0', 4);
                 $referenceBalanceValid = $balanceSnapshot['valid'];
                 $projectionValid = $balanceSnapshot['future_count'] === 0;
