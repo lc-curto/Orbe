@@ -130,11 +130,10 @@ Implementado na branch `fix/route-overdue-qa-seed-data`:
 - Sidebar desktop sticky durante a rolagem, com altura da viewport dinâmica; navegação mantém scroll interno e rodapé fixo no viewport.
 - Documentação do seeder QA e comportamento foi atualizada; dados de QA são exclusivamente locais/desenvolvimento.
 
-Validação automática do commit `9f85f63887d2285517c5b64f499c6b9677b86a10`: Web CI, Backend CI e PR Quality Gate concluídos com sucesso. **QA visual manual ainda não foi executado**: validar Dashboard, Contas, Rota e sidebar em desktop/tablet/mobile, incluindo scroll da sidebar, filtros, vencidos e equivalência de saldos. A PR não deve ser considerada visualmente aprovada apenas pelos checks automáticos.
+PR #14 integrada na `main` por squash em 2026-11-28, commit `66fba7c31b8b6a84c9a37e83a2194570c14e2e90`. Web CI, Backend CI e PR Quality Gate passaram no head final `9df107bb47164a4e19d12e67b74d9149d9d72ac6`. **QA visual manual continua pendente após a integração**: validar Dashboard, Contas, Rota e sidebar em desktop/tablet/mobile, incluindo scroll da sidebar, filtros, vencidos e equivalência de saldos. A integração foi autorizada pelo utilizador; não significa aprovação visual.
 
 ## Próxima sequência recomendada (sem avançar sobre dependências ausentes)
-1. Executar QA manual da PR #14: Dashboard e Contas (saldo por conta/total), Rota (saldo de referência, pendentes/vencidos e atalho Hoje) e sidebar sticky, em desktop/tablet/mobile e temas claro/escuro. Corrigir apenas defeitos observados nesta entrega.
-2. Integrar a PR #14 na `main` após o QA manual. Checks automáticos estão verdes; a validação visual é o único gate conhecido ainda pendente.
+1. Executar QA visual pós-merge da PR #14: Dashboard e Contas (saldo por conta/total), Rota (saldo de referência, pendentes/vencidos e atalho Hoje) e sidebar sticky, em desktop/tablet/mobile e temas claro/escuro. Corrigir defeitos observados com commits pequenos na `main`.
 3. Depois da integração, avançar para QA e correções isoladas de Relatórios/Configurações, sem introduzir fluxos financeiros que dependam de formulários ou contratos não concluídos.
 4. Próxima funcionalidade candidata: completar/validar o fluxo frontend de pendente→realizado apenas onde o formulário e endpoint de confirmação já existem; primeiro confirmar cobertura real e não criar UI para destinos de cartão/fatura ainda sem contrato específico.
 5. Só depois especificar e implementar detalhes/liquidação de obrigações, planos de pagamento e recorrências projetadas, pois dependem de contratos de domínio/API ainda incompletos.
