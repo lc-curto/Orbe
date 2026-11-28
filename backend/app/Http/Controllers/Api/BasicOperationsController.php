@@ -16,13 +16,25 @@ use Illuminate\Validation\ValidationException;
 
 final class BasicOperationsController extends Controller
 {
-    public function accounts(Request $request): JsonResponse
+    public function accounts(Request $request, AccountBalanceService $balances): JsonResponse
     {
+        $accounts = FinancialAccount::query()
+            ->where('user_id', $request->user()->id)
+            ->orderBy('name')
+            ->get();
+
+        $snapshot = $balances->snapshot((int) $request->user()->id);
+
         return response()->json([
-            'data' => FinancialAccount::query()
-                ->where('user_id', $request->user()->id)
-                ->orderBy('name')
-                ->get(),
+            'data' => $accounts->map(function (FinancialAccount $account) use ($snapshot): array {
+                $payload = $account->toArray();
+                $payload['current_balance'] = $snapshot['accounts'][$account->id] ?? '0.0000';
+                return $payload;
+            })->values()->all(),
+            'meta' => [
+                'total_current_balance' => $snapshot['total'],
+                'balance_available' => $snapshot['valid'],
+            ],
         ]);
     }
 
