@@ -1,4 +1,4 @@
-import type { CardInvoice, Operation } from '../../../api/types'
+import type { CardInvoice, FinancialRouteOverdueItem, Operation } from '../../../api/types'
 import { routeFilterOptions, type RouteFilter } from '../types'
 import { formatFullDate, operationLabel } from '../utils'
 import { formatMoneyUnits, parseMoneyUnits } from '../projection'
@@ -9,15 +9,17 @@ function displayAmount(value: string, symbol: string): string {
   return units === null ? '—' : formatMoneyUnits(units) + ' ' + symbol
 }
 
-export function RouteDayModal({ date, operations, invoices = [], filter, onFilterChange, onClose }: {
+export function RouteDayModal({ date, operations, invoices = [], overdueItems = [], filter, onFilterChange, onClose }: {
   date: string
   operations: Operation[]
   invoices?: CardInvoice[]
+  overdueItems?: FinancialRouteOverdueItem[]
   filter: RouteFilter
   onFilterChange: (filter: RouteFilter) => void
   onClose: () => void
 }) {
   const { symbol } = useCurrency()
+  const overdueOperationIds = new Set(overdueItems.flatMap((item) => item.operation_id === null ? [] : [item.operation_id]))
   const detailOperations = operations.filter((operation) => {
     if (filter === 'INCOME') return operation.operation_type === 'INCOME'
     if (filter === 'FIXED' || filter === 'VARIABLE') return false
@@ -38,7 +40,7 @@ export function RouteDayModal({ date, operations, invoices = [], filter, onFilte
           const meta = isTransfer
             ? 'Transferência entre contas'
             : operation.category?.name
-              ? operation.category.name + ' · ' + (operation.account?.name ?? 'Conta não identificada') + ' · ' + (operation.state === 'PENDING' ? 'Pendente' : 'Realizado')
+              ? operation.category.name + ' · ' + (operation.account?.name ?? 'Conta não identificada') + ' · ' + (overdueOperationIds.has(operation.id) ? 'Vencido' : operation.state === 'PENDING' ? 'Pendente' : 'Realizado')
               : (operation.account?.name ?? 'Movimento de conta') + ' · ' + (operation.state === 'PENDING' ? 'Pendente' : 'Realizado')
           return <article className="route-detail-row" key={'operation-' + operation.id}>
             <div className={`route-detail-icon ${isIncome ? 'income' : isTransfer ? 'transfer' : 'expense'}`}>{isIncome ? '↑' : isTransfer ? '↔' : '↓'}</div>
