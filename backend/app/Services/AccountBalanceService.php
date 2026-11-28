@@ -18,11 +18,18 @@ final class AccountBalanceService
     /**
      * @return array{accounts: array<int, string|null>, total: string|null, valid: bool, future_count: int}
      */
-    public function snapshot(int $userId, ?string $asOfDate = null): array
+    public function snapshot(int $userId, ?string $asOfDate = null, ?array $scopeAccountIds = null): array
     {
         $cutoff = ($asOfDate ?? now()->toDateString()).' 23:59:59';
-        $accountIds = DB::table('financial_accounts')
-            ->where('user_id', $userId)
+        $accountQuery = DB::table('financial_accounts')
+            ->where('user_id', $userId);
+        if ($scopeAccountIds !== null) {
+            if ($scopeAccountIds === []) {
+                return ['accounts' => [], 'total' => '0.0000', 'valid' => true, 'future_count' => 0];
+            }
+            $accountQuery->whereIn('id', $scopeAccountIds);
+        }
+        $accountIds = $accountQuery
             ->orderBy('id')
             ->pluck('id')
             ->map(static fn ($id): int => (int) $id)
