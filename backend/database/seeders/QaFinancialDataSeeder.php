@@ -10,6 +10,7 @@ use App\Models\FinancialEntry;
 use App\Models\Operation;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -139,6 +140,33 @@ final class QaFinancialDataSeeder extends Seeder
                 'effective_at' => null,
                 'planned_at' => now()->addDays(10)->setTime(9, 0),
             ]);
+
+            // Fixed, deterministic next-quarter entries for the 3-month route view.
+            // Idempotency keys prevent duplicates when this seeder is rerun.
+            $nextQuarter = [
+                ['2027-01-05 09:00:00', 'qa:next-quarter:jan:salary', 'INCOME', '2200.0000', 'QA — Salário janeiro', $salary->id],
+                ['2027-01-08 09:00:00', 'qa:next-quarter:jan:rent', 'EXPENSE', '850.0000', 'QA — Renda janeiro', $categoryModels['QA — Habitação']->id],
+                ['2027-01-18 12:00:00', 'qa:next-quarter:jan:food', 'EXPENSE', '120.0000', 'QA — Supermercado janeiro', $food->id],
+                ['2027-02-05 09:00:00', 'qa:next-quarter:feb:salary', 'INCOME', '2200.0000', 'QA — Salário fevereiro', $salary->id],
+                ['2027-02-08 09:00:00', 'qa:next-quarter:feb:rent', 'EXPENSE', '850.0000', 'QA — Renda fevereiro', $categoryModels['QA — Habitação']->id],
+                ['2027-02-18 12:00:00', 'qa:next-quarter:feb:food', 'EXPENSE', '145.0000', 'QA — Supermercado fevereiro', $food->id],
+                ['2027-03-05 09:00:00', 'qa:next-quarter:mar:salary', 'INCOME', '2200.0000', 'QA — Salário março', $salary->id],
+                ['2027-03-08 09:00:00', 'qa:next-quarter:mar:rent', 'EXPENSE', '850.0000', 'QA — Renda março', $categoryModels['QA — Habitação']->id],
+                ['2027-03-18 12:00:00', 'qa:next-quarter:mar:food', 'EXPENSE', '160.0000', 'QA — Supermercado março', $food->id],
+            ];
+
+            foreach ($nextQuarter as [$date, $key, $type, $amount, $description, $categoryId]) {
+                $this->upsertOperation($user->id, $key, [
+                    'category_id' => $categoryId,
+                    'account_id' => $bank->id,
+                    'operation_type' => $type,
+                    'state' => 'PENDING',
+                    'amount' => $amount,
+                    'description' => $description,
+                    'effective_at' => null,
+                    'planned_at' => CarbonImmutable::parse($date),
+                ]);
+            }
         });
     }
 
