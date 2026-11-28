@@ -6,6 +6,8 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\FinancialAccount;
+use App\Models\FinancialEntry;
+use App\Models\Operation;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
