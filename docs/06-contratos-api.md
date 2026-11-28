@@ -193,3 +193,23 @@ Contrato proposto para criação atómica:
 - Transações DB, idempotência, concorrência e constraints adequadas.
 - Testar cálculo decimal e última prestação, pagamento inicial, repetição de requests, faturas no dia de fecho (regra de ciclo pendente de decisão), conta prevista sem impacto no saldo, e invariantes de Movimentos/Contas/Cartões/Rota.
 - Atualizar OpenAPI/exemplos, DTOs/requests, services, migrations, resources/read models e testes correspondentes.
+
+
+## Rota Financeira — read model diário
+
+**Implementado no PR #13 (branch aberta; ainda não integrado na `main`).** O endpoint é somente de leitura, exige autenticação Sanctum e aplica isolamento pelo utilizador autenticado.
+
+- `GET /api/financial-route?month=YYYY-MM&months=N`
+- `month` é opcional; por omissão usa o mês atual do backend. Quando informado, deve respeitar `YYYY-MM`; valor inválido retorna `422`.
+- `months` é opcional, inteiro entre 1 e 24; por omissão é 24 para compatibilidade. O read model devolve exatamente a quantidade solicitada de meses consecutivos a partir do mês indicado. A web pede 3 meses visíveis no desktop e 1 no mobile; faz um segundo pedido cancelável em segundo plano para pré-carregar respetivamente mais 3 ou 1 mês. A cache é por mês, TTL 60 s, invalidada quando os dados financeiros são atualizados.
+- O read model não é persistido. É calculado pelo `FinancialRouteReadService` em transação de leitura, com base nos lançamentos realizados elegíveis, operações pendentes e valores ainda por pagar das faturas. Os lançamentos realizados são materializados apenas no intervalo solicitado; saldo de referência e saldo de abertura são agregados em SQL. Operações pendentes e faturas são limitadas ao horizonte e vencidos relevantes. React apenas apresenta os valores e resolve os IDs para detalhes carregados. Os agregados de saldo ainda percorrem o histórico elegível no banco; snapshots/checkpoints transacionais são uma evolução necessária antes de históricos muito grandes, não uma funcionalidade já implementada. Limitação adicional: `GET /api/operations` ainda devolve todas as operações do utilizador, sem cursor/paginação, e o loader financeiro partilhado depende desse conjunto. A paginação por cursor, filtros aplicados no SQL e read models por ecrã são requisitos da próxima etapa de escala; não estão incluídos neste endpoint da Rota.
+
+Campos da resposta `data`:
+
+- `reference_date`: data local de referência (`YYYY-MM-DD`).
+- `reference_balance`: saldo efetivo agregado das contas elegíveis, como string decimal; `null` quando não é possível determinar um saldo válido.
+- `months[]`: `month` (`YYYY-MM`), `days[]`, `totals`, `opening_balance` e `ending_balance`. Cada dia contém `date`, `income`, `expenses`, `balance` (string decimal ou `null`), `operation_ids[]` e `invoice_ids[]`. Valores monetários são strings DECIMAL, sem conversão para `number` no frontend.
+- `overdue_items[]`: operações/faturas vencidas ou sem data válida, com tipo, IDs, data, descrição, valor e natureza.
+- `overdue_total`: total das saídas vencidas, como string decimal.
+
+A projeção começa no saldo de referência e não reaplica efeitos realizados já incluídos nele. Pendentes vencidas permanecem no resumo de vencidos; não são realizadas nem reagendadas automaticamente. Faturas são agregadas pelo serviço comum de resumo e projetadas uma única vez.

@@ -1,7 +1,13 @@
 import type { RouteMonth, RouteDay, RouteFlowFilter } from '../types'
 import { RouteDailyTable } from './RouteDailyTable'
-import { formatAmount, formatMonth } from '../utils'
+import { formatMonth } from '../utils'
+import { formatMoneyUnits, isDisplayedNegative, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
+
+function formatAmount(value: string | null): string {
+  const units = value === null ? null : parseMoneyUnits(value)
+  return units === null ? 'Indisponível' : formatMoneyUnits(units)
+}
 
 export function RouteMonthCard({ month, days, flowFilter, onSelectDay, mobile = false }: {
   month: RouteMonth
@@ -11,8 +17,10 @@ export function RouteMonthCard({ month, days, flowFilter, onSelectDay, mobile = 
   mobile?: boolean
 }) {
   const { symbol } = useCurrency()
-  const income = days.reduce((sum, day) => sum + (flowFilter === 'EXPENSE' ? 0 : day.income), 0)
-  const expenses = days.reduce((sum, day) => sum + (flowFilter === 'INCOME' ? 0 : day.expenses), 0)
+  const income = flowFilter === 'EXPENSE' ? '0.0000' : month.totals.income
+  const expenses = flowFilter === 'INCOME' ? '0.0000' : month.totals.expenses
+  const endingBalanceUnits = month.endingBalance === null ? null : parseMoneyUnits(month.endingBalance)
+  const endingBalanceNegative = endingBalanceUnits !== null && isDisplayedNegative(endingBalanceUnits)
 
   return <section className={`route-month-card ${mobile ? 'route-month-card-mobile' : ''}`}>
     <header className="route-month-card-header">
@@ -23,7 +31,10 @@ export function RouteMonthCard({ month, days, flowFilter, onSelectDay, mobile = 
           <span className="route-month-expenses">− {formatAmount(expenses)} {symbol} saídas</span>
         </div>
       </div>
-      <div className="route-month-ending"><span>Saldo final</span><strong>Indisponível</strong></div>
+      <div className="route-month-ending">
+        <span>Saldo final</span>
+        <strong className={endingBalanceNegative ? 'route-balance-negative' : ''}>{month.endingBalance === null ? 'Indisponível' : formatAmount(month.endingBalance) + ' ' + symbol}</strong>
+      </div>
     </header>
     <RouteDailyTable days={days} flowFilter={flowFilter} onSelectDay={onSelectDay} />
   </section>

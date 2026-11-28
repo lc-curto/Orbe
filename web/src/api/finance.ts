@@ -1,5 +1,5 @@
 import { apiRequest } from './client'
-import type { Account, ApiEnvelope, Card, CardInvoice, Category, Operation, RecurrenceOccurrence, RecurrenceSchedule } from './types'
+import type { Account, ApiEnvelope, Card, CardInvoice, Category, FinancialRouteReadModel, Operation, RecurrenceOccurrence, RecurrenceSchedule } from './types'
 
 export async function fetchCards(): Promise<Card[]> {
   return apiRequest<Card[]>('/cards')
@@ -15,6 +15,10 @@ export async function fetchInvoices(): Promise<CardInvoice[]> {
 
 export async function fetchOperations(): Promise<Operation[]> {
   return apiRequest<Operation[]>('/operations')
+}
+
+export async function fetchFinancialRouteReadModel(month: string, signal?: AbortSignal, months = 24): Promise<FinancialRouteReadModel> {
+  return apiRequest<FinancialRouteReadModel>(`/financial-route?month=${encodeURIComponent(month)}&months=${months}`, { signal })
 }
 
 export async function fetchAccounts(): Promise<Account[]> {

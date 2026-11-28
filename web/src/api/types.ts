@@ -37,7 +37,7 @@ export type Category = {
 
 export type Operation = {
   id: number
-  operation_type: 'EXPENSE' | 'INCOME' | 'TRANSFER'
+  operation_type: 'EXPENSE' | 'INCOME' | 'TRANSFER' | 'PURCHASE' | 'CARD_OPENING_BALANCE' | 'ACCOUNT_OPENING_BALANCE' | string
   state: 'REALIZED' | 'PENDING' | 'CANCELLED' | 'PARTIAL' | string
   amount: string
   description?: string | null
@@ -45,6 +45,7 @@ export type Operation = {
   planned_at?: string | null
   category?: Category | null
   account?: Account | null
+  account_id?: number | null
   entries?: FinancialEntry[]
 }
 
@@ -54,6 +55,8 @@ export type FinancialEntry = {
   effect: 'INCREASE' | 'DECREASE'
   state: string
   effective_at?: string | null
+  account_id?: number | null
+  invoice_id?: number | null
   account?: Account | null
   invoice?: CardInvoice | null
 }
@@ -115,4 +118,40 @@ export type Card = {
     available_amount: string
   }
   invoices?: CardInvoice[]
+}
+
+export type FinancialRouteDayReadModel = {
+  date: string
+  income: string
+  expenses: string
+  balance: string | null
+  operation_ids: number[]
+  invoice_ids: number[]
+}
+
+export type FinancialRouteMonthReadModel = {
+  month: string
+  days: FinancialRouteDayReadModel[]
+  totals: { income: string; expenses: string }
+  opening_balance: string | null
+  ending_balance: string | null
+}
+
+export type FinancialRouteOverdueItem = {
+  id: string
+  type: 'operation' | 'invoice'
+  operation_id: number | null
+  invoice_id: number | null
+  date: string | null
+  label: string
+  amount: string
+  nature: 'INCOME' | 'EXPENSE'
+}
+
+export type FinancialRouteReadModel = {
+  reference_date: string
+  reference_balance: string | null
+  months: FinancialRouteMonthReadModel[]
+  overdue_items: FinancialRouteOverdueItem[]
+  overdue_total: string
 }

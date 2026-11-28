@@ -61,20 +61,36 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 | Tema | Decisão pendente |
 |---|---|
-| Planos de fatura vencidos | Se existe débito automático ou reagendamento automático após o vencimento; sem aprovação, não inventar nova data. |
-| Faturas anteriores | Como apresentar faturas de ciclos anteriores que continuam com obrigação em aberto. |
-| Compra no dia do fecho | Regra de atribuição ao ciclo quando a compra ocorre na data de fecho. |
-| Crédito negativo de fatura | Se é permitido, como transita para ciclos seguintes e em que condições pode ser devolvido à conta. |
 | Estimativa variável da Rota | Categorias iniciais, janela histórica, fórmula, distribuição diária e comunicação de dados `UNCLASSIFIED`. |
 | Moeda | Se a moeda principal pode mudar depois de existirem movimentos. A precisão e o arredondamento do núcleo estão aprovados em ARC-003 (`DECIMAL(19,4)`, aritmética decimal exata e apresentação half-up a duas casas). |
-| Saldo inicial de conta | **Decidido:** informar o saldo existente ao iniciar a utilização da conta no Orbe; registar como abertura, não como receita/despesa. |
+
+### Rota Financeira — princípio consolidado e decisões (2026-11-27)
+
+**Regra fundamental aprovada:** saldo projetado do dia = saldo projetado do dia anterior + entradas planeadas − saídas planeadas. A Rota simula a evolução acumulada do cenário financeiro a partir do saldo efetivo de referência, incorporando todos os efeitos elegíveis nas respetivas datas, incluindo operações planeadas ainda não realizadas.
+
+A Rota não cria regras de negócio, entidades, operações, motor ou base de dados próprios. Usa exclusivamente os dados e as regras financeiras comuns do Orbe, consultados/calculados a partir da mesma base de dados que alimenta o restante sistema. Operação realizada substitui o efeito projetado correspondente sem duplicação; alterações e cancelamentos recalculam a projeção.
+
+**Decisões consolidadas:**
+- Movimentos e Rota usam a mesma base de operações/efeitos válidos; Movimentos apresenta operações individualmente e a Rota agrega os efeitos por data.
+- O saldo de referência é a soma dos saldos atuais de contas bancárias e dinheiro; cartões de crédito ficam excluídos.
+- Gastos/ganhos pendentes entram na projeção mesmo sem conta associada. Efeitos realizados já refletidos no saldo atual não podem ser reaplicados.
+- Movimentos apresenta compras de cartão individualmente. A Rota projeta cada fatura uma única vez pelo total ainda por pagar, na data prevista, sem projetar também as compras que a compõem.
+- Plano vencido sem confirmação permanece vencido; não recebe nova data automática.
+- Faturas de ciclos anteriores com saldo em dívida são agrupadas como vencidas no resumo, mantendo cada fatura consultável.
+- Plano parcial projeta parcelas nas datas planeadas e apenas o residual não reservado no vencimento da fatura.
+- Não existe débito automático nem reagendamento automático; o utilizador regista o pagamento quando ocorre e a obrigação permanece vencida até confirmação.
+- Compra no dia do fecho segue a configuração/ciclo do cartão e a fatura efetivamente atribuída pelo sistema.
+- Crédito/estorno segue o extrato e as regras reais do emissor: o Orbe regista o crédito na fatura/ciclo ou conta em que o emissor efetivamente o liquidou, sem abatimento automático à fatura mais antiga nem transferência fictícia para conta.
+- Pagamento realizado só pode ter data de hoje ou passada. A Rota considera a data efetiva real; efeitos anteriores à data de referência já estão incluídos no saldo atual e não são reaplicados na projeção.
+
+**Resolvido nesta revisão:** definição do saldo inicial, fórmula acumulada diária, continuidade entre dias/períodos e read model comum. A implementação do PR #13 acrescenta o endpoint Laravel `/api/financial-route`, calculado em transação de leitura a partir de lançamentos de conta realizados, operações pendentes e saldos em aberto das faturas. O read model é derivado do núcleo financeiro; não é uma fonte financeira paralela.
 
 **Contrato de saldo inicial de cartão definido:** saldo inicial positivo é integralmente distribuído por faturas; não existe parcela por distribuir, obrigação especial em dívidas ou novo destino financeiro. A operação original é única por cartão. Distribuições históricas são imutáveis; correções e reversões são rastreáveis. A obrigação em aberto deriva exclusivamente de `financial_entries`.
 
 **Contrato de saldo inicial de conta definido:** ao criar uma conta, informar o saldo existente no início da utilização no Orbe. O valor é reconhecido por operação `ACCOUNT_OPENING_BALANCE` e lançamento realizado dirigido à conta; não é receita/despesa. Saldo zero não gera lançamento; saldo negativo só é permitido quando compatível com o tipo de conta. Existe uma única abertura original por conta, não editável diretamente; correções preservam a origem e são rastreáveis. O saldo atual deriva dos lançamentos válidos.
 
 ## Trabalho funcional pendente
-- Contratos/read models de saldos e projeções continuam pendentes, especialmente saldo diário/final e projeção na Rota Financeira.
+- Read model de saldo/projeção da Rota implementado nesta PR; testes de integração e CI passaram no estado validado do PR. A classificação fixa/variável e a estimativa variável continuam pendentes.
 - Formulários de escrita ainda não estão todos integrados; implementar apenas os fluxos cobertos por contratos aprovados.
 - Dívidas/obrigações: não existe página principal autónoma. O código da página foi removido pelo PR #7, integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`). Obrigações associadas a gastos permanecem no modelo financeiro e são consultadas/liquidadas a partir dos movimentos/faturas relacionados. Financiamentos ou obrigações preexistentes exigem fluxo específico ainda por definir; isso não autoriza reintroduzir uma página autónoma. Nenhum valor é simulado.
 - Definir subpáginas e modais das páginas primárias, sem inventar campos ou regras funcionais.
@@ -83,11 +99,22 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 
 ## Estado da implementação frontend — 2026-11-27
 
+### Implementação da projeção acumulada da Rota — PR #13
+
+- O cálculo financeiro foi colocado no backend Laravel (`FinancialRouteReadService`), não no React, para manter regras e aritmética monetária no domínio/API.
+- O read model usa uma transação de leitura, soma lançamentos realizados em contas BANK/CASH/WALLET (carteiras como equivalentes de caixa; cartões de crédito excluídos) e utiliza aritmética BCMath na escala `DECIMAL(19,4)`.
+- O saldo histórico é reconstruído a partir do saldo de referência e dos efeitos realizados posteriores; o saldo atual/futuro acumula apenas operações pendentes e faturas ainda por pagar, evitando reaplicar efeitos já realizados.
+- Faturas são agregadas em lote pelo serviço comum `CardInvoiceSummaryService`, reutilizado pelos endpoints de cartões/faturas, evitando cálculos duplicados e consultas por fatura.
+- Faturas e operações pendentes vencidas permanecem no resumo de vencidos; não são reagendadas automaticamente nem descontadas como nova saída futura.
+- O frontend apenas apresenta o read model e resolve IDs para detalhes existentes; não recalcula saldos nem introduz uma fonte financeira local.
+- Testes de integração cobrem transição de mês, não duplicação de realizados, fatura única no vencimento, vencidos, neutralidade de transferências e saldo indisponível quando os efeitos têm dados inválidos. Backend CI passou com 59 testes/250 assertions e Pint; Web CI passou com 3 testes, lint e build de produção. QA visual manual no browser permanece por executar.
+- Pendências delimitadas: contratos de planos de pagamento parcelados e projeção de recorrências ainda não materializadas não fazem parte do read model atual; classificação fixa/variável permanece fora desta implementação.
+
 - PR #3: página Contas em modo de leitura publicada na `main`.
 - PR #4: página Cartões e detalhe de faturas em modo de leitura publicados na `main`.
 - PR #5: navegação responsiva, painel Mais e FAB global contextual publicados na `main` (merge commit `6b6efea51122de0d648ece393d7cc2e6a82e0f73`).
 - Movimentos/Programações: leitura implementada; formulários de programação continuam indisponíveis.
-- Rota Financeira: interface trimestral desktop e mensal mobile publicada na `main`; os dados realizados são agregados a partir do read model atual. Saldo diário/final, projeção e classificação fixa/variável continuam indisponíveis.
+- Rota Financeira: nesta PR, a interface desktop apresenta a janela móvel de 24 meses (mês atual + 23 seguintes por defeito) em grelha de três colunas; mobile apresenta um mês de cada vez dentro da janela. Enquanto acompanha o mês atual, a janela avança automaticamente ao mudar o mês, inclusive com a aplicação aberta; a navegação manual para outro período é preservada até regressar ao mês atual. A navegação mensal permite consultar meses anteriores sem apagar o histórico. O backend Laravel fornece o read model e recalcula a projeção com os dados financeiros atualizados, incluindo alterações a operações passadas, sem duplicar efeitos incorporados no saldo de referência. A página posiciona inicialmente o dia atual no ecrã e aplica-lhe um destaque subtil. O QA visual manual continua necessário em 320 px, tablet e desktop, em temas claro/escuro. A classificação fixa/variável e a estimativa variável continuam indisponíveis.
 - PR #7 foi integrado na `main` (squash commit `5058a9351deba9291a1d73f9699673cead00d6d5`): remove Dívidas da navegação e o placeholder, usa o FAB fixo **Novo gasto**, **Novo rendimento**, **Nova transferência** em Dashboard/Movimentos/Rota e mantém as mesmas ações na aba Programações. O título dos formulários comuns também usa a terminologia aprovada.
 - Backend da branch: gasto/rendimento pendente sem destino financeiro; realizado exige conta ativa; confirmação recolhe conta e cria lançamento; recorrências pendentes não guardam destino até à materialização.
 - Validação local reportada pelo utilizador: **52 testes backend passaram (217 assertions)** e Pint `--test` passou nos 7 ficheiros PHP alterados. O Pint global reporta 63 problemas de estilo em 98 ficheiros preexistentes/abrangidos; não foi aplicada formatação global.
@@ -98,7 +125,7 @@ Estas decisões não reabrem o núcleo financeiro; devem ser aprovadas antes de 
 1. QA visual/responsiva de Relatórios e Configurações em desktop/tablet/mobile, incluindo gráfico diário, cabeçalho/seletor, estados loading/erro/vazio, layout de Perfil sem quebra artificial, lista de 10 moedas, persistência do símbolo e alternância/persistência do tema claro/escuro.
 2. Validar a regra pendente→realizado no frontend: sem destino no pendente; conta obrigatória na confirmação.
 3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta/liquidação de obrigações associadas.
-4. Fechar contratos/read models financeiros pendentes, sobretudo projeção diária, e implementar os formulários suportados.
+4. Fechar os read models financeiros ainda pendentes (classificação fixa/variável, estimativa variável e contratos de recorrências/planos fora do read model atual) e implementar os formulários suportados.
 5. Executar auditoria final de consistência entre documentação, API, frontend e modelo ER.
 
 ## Critério para novas alterações estruturais
@@ -320,12 +347,12 @@ Antes de implementar os formulários concretos, o produto deve completar as subp
 
 A sequência de páginas/subpáginas é: Movimentos/Programações, Contas, Cartões e faturas, Rota Financeira, Relatórios e Configurações. Não existe página autónoma de Dívidas; os detalhes de obrigações são acessados a partir dos movimentos/faturas relacionados. Os formulários de escrita avançam respeitando os contratos backend confirmados.
 
-A Rota Financeira está especificada visualmente, mas não pode ser implementada com projeções fictícias nesta etapa. A API atual não expõe ainda um read model diário de projeção e faltam no frontend os dados de classificação fixa/variável/excluída e as regras completas de obrigações futuras. A sua implementação fica condicionada ao fecho desse contrato de leitura e projeção.
+**Estado anterior, supersedido pela implementação do PR #13:** nesta etapa de 25/11, a Rota ainda não tinha read model diário e não deveria usar projeções fictícias. O PR #13 implementa agora o read model diário real e a janela de 24 meses; continuam fora do âmbito a classificação fixa/variável/excluída, a estimativa variável e os contratos completos de obrigações/recorrências futuras.
 
 ## 12. Subpáginas
 
 - [x] Implementar Movimentos e a aba Programações em modo de leitura.
-- [x] Implementar a interface da Rota Financeira (desktop trimestral e mobile mensal). [!] Saldo diário/final, projeção e classificação fixa/variável dependem de contrato/read model ainda pendente; não apresentar valores simulados.
+- [x] Implementar a interface da Rota Financeira no PR #13 (ainda aberto, não integrado na `main`): desktop com 24 meses em grelha de três colunas e mobile com mês selecionado. Saldo diário/final e projeção são fornecidos pelo read model; classificação fixa/variável e estimativa variável continuam pendentes.
 - [x] Implementar e validar localmente a página Contas em modo de leitura (hierarquia do saldo total, secção As minhas contas e menu contextual por conta). Os saldos apresentados continuam condicionados aos dados/read model disponíveis.
 - [x] Implementar Cartões e detalhe de faturas em modo de leitura (lista reutiliza hierarquia de Contas; faturas consultadas dentro do cartão selecionado; detalhe da fatura lista os movimentos associados, agrupados por dia e reutilizando a linha de Movimentos, sem filtros de estado).
 - [x] Decisão de produto: descontinuar a página autónoma de Dívidas.
@@ -510,7 +537,7 @@ Para reduzir esquecimentos, o workflow `.github/workflows/pr-quality-gate.yml` v
 - Todas as páginas usam o componente `PageHeader` para a estrutura comum de título/descrição/ações.
 - Largura, gutters, alinhamento, ritmo vertical e safe area são centralizados no shell e nos tokens do design system; estilos de feature devem limitar-se às necessidades específicas do módulo.
 - Seletor mensal no canto superior direito, na mesma linha do título, nas páginas que o apresentam.
-- Rota Financeira: **um mês visível até 1024 px; três meses acima de 1024 px**.
+- Rota Financeira: **um mês visível até 1024 px; janela de 24 meses (grelha de três colunas) acima de 1024 px**.
 - Movimentos permanece visível no layout desktop acima de 1024 px, dentro do `DesktopPageFrame`.
 
 A regra de reutilização dos frames, cabeçalho e tokens está formalizada em `docs/03-interface-e-formularios.md` e aplica-se também a páginas futuras.
@@ -569,7 +596,7 @@ Estas melhorias não alteram o estado de QA aprovado da Fase 1; devem ser tratad
 - Saudação/título à esquerda e botão de tema à direita na primeira linha.
 - Mês abreviado + ano na linha seguinte, alinhado à esquerda; setas mínimas alinhadas à direita.
 - Composição aplicada no PageHeader e MonthSelector partilhados para Dashboard, Movimentos e Relatórios.
-- Rota Financeira mantém comportamento diferenciado: intervalo de 3 meses no desktop e mês único no mobile, sem duplicação.
+- Rota Financeira mantém comportamento diferenciado: janela de 24 meses no desktop e mês único no mobile, sem duplicação.
 - CI passou (Web CI e PR Quality Gate); validação visual manual do utilizador ainda pendente. Implementado na branch do PR #12, sem integração na main.
 
 
@@ -695,3 +722,21 @@ Modelo e migrations → serviços transacionais/testes → API e read models →
 - O seletor de origem limpa o destino quando a origem selecionada passa a ser a mesma conta; o destino exclui a conta de origem.
 - Documentação funcional atualizada em docs/02-regras-financeiras.md e docs/03-interface-e-formularios.md.
 - CI e QA visual/responsiva após esta alteração ainda precisam ser verificados.
+
+
+## Rota Financeira — janela progressiva e otimização de leitura (27/11/2026)
+
+Implementado no PR #13, branch `docs/financial-route-projection-rules` (PR aberto, não integrado na `main`):
+
+- Desktop apresenta 3 meses e avança a janela em blocos de 3; pré-carrega os 3 meses seguintes.
+- Mobile apresenta 1 mês e pré-carrega o mês seguinte.
+- Cache por mês no frontend, TTL de 60 segundos; meses em cache são reutilizados ao navegar. A cache é invalidada quando o read model financeiro de operações/faturas é atualizado.
+- O pedido dos meses visíveis tem prioridade; pré-carregamento é separado, cancelável e uma falha de prefetch não remove os dados já visíveis.
+- O backend materializa lançamentos realizados apenas dentro do período pedido; saldo de referência e saldo de abertura são agregados por SQL. Operações pendentes e faturas são limitadas ao horizonte solicitado e aos itens vencidos.
+- Adicionados índices compostos de apoio às consultas por utilizador/conta/estado/data e utilizador/estado/data prevista.
+- Somas acumuladas e pesquisa binária mantêm o cálculo diário sem varrer todos os lançamentos para cada dia.
+- Filtro «Só dias com movimento» considera fluxos positivos de entrada/saída apresentados na Rota; dias só com transferências não são incluídos.
+
+**Limitação de escala explicitamente registada:** o agregado de saldo de referência ainda percorre os lançamentos históricos elegíveis dentro do MySQL, embora não os hidrate individualmente em PHP. Para latência previsível com históricos muito grandes, falta implementar snapshots/checkpoints transacionais de saldo, com atualização atómica em todos os fluxos de escrita e reconciliação. Não usar cache persistente de saldo antes dessa garantia. O loader financeiro partilhado também continua a carregar todas as operações através de `GET /api/operations`, e a Rota resolve os IDs de detalhe a partir desse conjunto. Portanto, a leitura do endpoint da Rota está limitada por período, mas o carregamento inicial global ainda não está paginado. Próxima etapa recomendada: paginação por cursor e filtros SQL em Movimentos, seguida de read models agregados para Dashboard/Relatórios e detalhe de operações por IDs.
+
+CI Backend, Web e PR Quality Gate passaram no commit `631aa2e83246ebae3df93691b5593416773f6f31` (Backend CI `46062138308`, Web CI `46062138305`, PR Quality Gate `46062138314`). QA visual manual e medição de latência com volume de dados sintético continuam pendentes. Não integrar na `main` sem aprovação.

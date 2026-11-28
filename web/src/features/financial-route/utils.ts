@@ -4,6 +4,7 @@ import type { Operation } from '../../api/types'
 
 export function dateKey(value?: string | null) {
   if (!value) return null
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value
   const date = new Date(value)
   if (Number.isNaN(date.getTime())) return null
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
@@ -51,9 +52,24 @@ export function formatFullDate(value: string) {
 }
 
 export function operationLabel(operation: Operation) {
-  return operation.description?.trim() || (operation.operation_type === 'INCOME' ? 'Receita' : operation.operation_type === 'TRANSFER' ? 'Transferência' : 'Despesa')
+  if (operation.description?.trim()) return operation.description.trim()
+  const labels: Record<string, string> = {
+    INCOME: 'Receita',
+    EXPENSE: 'Despesa',
+    TRANSFER: 'Transferência',
+    PURCHASE: 'Compra no cartão',
+    PAYMENT: 'Pagamento',
+    CARD_PAYMENT: 'Pagamento de fatura',
+    ACCOUNT_OPENING_BALANCE: 'Saldo inicial',
+    CARD_OPENING_BALANCE: 'Saldo inicial do cartão',
+  }
+  return labels[operation.operation_type] ?? operation.operation_type.replaceAll('_', ' ').toLocaleLowerCase('pt-PT')
 }
 
 export function operationDate(operation: Operation) {
-  return dateKey(operation.effective_at ?? operation.planned_at)
+  // Pendentes são projetadas na data prevista; realizadas usam a data efetiva.
+  const value = operation.state === 'PENDING'
+    ? operation.planned_at
+    : operation.effective_at ?? operation.planned_at
+  return dateKey(value)
 }

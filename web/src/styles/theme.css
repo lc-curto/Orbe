@@ -213,7 +213,10 @@
 
 /* Financial route table and status colors. */
 [data-theme="dark"] .route-table th { background: #202c3a !important; color: var(--orbe-muted) !important; }
-[data-theme="dark"] .route-table td { background: var(--orbe-surface) !important; border-top-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
+[data-theme="dark"] .route-table td:not(.route-income-cell):not(.route-expense-cell):not(.route-balance-negative) { background: var(--orbe-surface) !important; border-top-color: var(--orbe-border) !important; color: var(--orbe-text); }
+[data-theme="dark"] .route-table td.route-income-cell { color: var(--orbe-success); }
+[data-theme="dark"] .route-table td.route-expense-cell,
+[data-theme="dark"] .route-table td.route-balance-negative { color: var(--orbe-danger); }
 [data-theme="dark"] .route-table tbody tr:nth-child(even) { background: #1c2937 !important; }
 [data-theme="dark"] .route-flow-filters button { background: var(--orbe-surface) !important; border-color: var(--orbe-border) !important; color: var(--orbe-text) !important; }
 [data-theme="dark"] .route-flow-filters button.active { background: var(--orbe-text) !important; color: var(--orbe-bg) !important; }

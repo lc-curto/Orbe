@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Http\Controllers\Api\FinancialController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ReadController;
 use App\Http\Controllers\Api\BasicOperationsController;
-use App\Http\Controllers\Api\TransferController;
+use App\Http\Controllers\Api\FinancialController;
+use App\Http\Controllers\Api\FinancialRouteController;
+use App\Http\Controllers\Api\ReadController;
 use App\Http\Controllers\Api\RecurrenceController;
+use App\Http\Controllers\Api\TransferController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('throttle:auth')->post('/auth/login', [AuthController::class, 'login']);
@@ -22,6 +23,7 @@ Route::middleware(['auth:sanctum', 'throttle:api'])->group(function (): void {
     Route::get('/cards/{card}', [ReadController::class, 'card']);
     Route::get('/invoices', [ReadController::class, 'invoices']);
     Route::get('/operations', [ReadController::class, 'operations']);
+    Route::get('/financial-route', [FinancialRouteController::class, 'index']);
     Route::get('/accounts', [BasicOperationsController::class, 'accounts']);
     Route::post('/accounts', [BasicOperationsController::class, 'storeAccount']);
     Route::get('/categories', [BasicOperationsController::class, 'categories']);

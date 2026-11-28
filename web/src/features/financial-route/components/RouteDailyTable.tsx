@@ -1,6 +1,12 @@
 import type { RouteDay, RouteFlowFilter } from '../types'
-import { formatAmount, formatDay } from '../utils'
+import { formatDay } from '../utils'
+import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
+
+function formatAmount(value: string | null): string {
+  const units = value === null ? null : parseMoneyUnits(value)
+  return units === null ? '—' : formatMoneyUnits(units)
+}
 
 export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
   days: RouteDay[]
@@ -8,16 +14,30 @@ export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
   onSelectDay: (date: string) => void
 }) {
   const { symbol } = useCurrency()
+  const today = localDateKey()
   return <div className="route-table-wrap">
     <table className="route-table">
-      <thead><tr><th>Dia</th><th>Entrada</th><th>Saída</th><th>Saldo</th></tr></thead>
+      <thead><tr><th>Dia</th><th>Entradas</th><th>Saídas</th><th>Saldo</th></tr></thead>
       <tbody>
-        {days.map((day) => <tr key={day.date} className={day.operations.length ? 'has-movements' : ''}>
-          <td><button className="route-day-button" type="button" onClick={() => onSelectDay(day.date)}>{formatDay(day.date)}</button></td>
-          <td className="route-income-cell">{flowFilter === 'EXPENSE' || !day.income ? '—' : `${formatAmount(day.income)} ${symbol}`}</td>
-          <td className="route-expense-cell">{flowFilter === 'INCOME' || !day.expenses ? '—' : `− ${formatAmount(day.expenses)} ${symbol}`}</td>
-          <td className="route-balance-unavailable" aria-label="Saldo indisponível">—</td>
-        </tr>)}
+        {days.map((day) => {
+          const hasMovements = day.operations.length > 0 || day.invoices.length > 0
+          const balanceUnits = day.balance === null ? null : parseMoneyUnits(day.balance)
+          const balanceNegative = balanceUnits !== null && isDisplayedNegative(balanceUnits)
+          const incomeUnits = parseMoneyUnits(day.income)
+          const expensesUnits = parseMoneyUnits(day.expenses)
+          const income = formatAmount(day.income)
+          const expenses = formatAmount(day.expenses)
+          const balance = formatAmount(day.balance)
+          const isToday = day.date === today
+          return <tr key={day.date} data-route-date={day.date} className={[hasMovements ? 'has-movements' : '', isToday ? 'route-today' : ''].filter(Boolean).join(' ')}>
+            <td><button className="route-day-button" type="button" aria-current={isToday ? "date" : undefined} onClick={() => onSelectDay(day.date)}>{formatDay(day.date)}</button></td>
+            <td className="route-income-cell">{flowFilter === 'EXPENSE' || incomeUnits === null || incomeUnits === 0n ? '—' : '+ ' + income + ' ' + symbol}</td>
+            <td className="route-expense-cell">{flowFilter === 'INCOME' || expensesUnits === null || expensesUnits === 0n ? '—' : '− ' + expenses + ' ' + symbol}</td>
+            <td className={balanceNegative ? 'route-balance-cell route-balance-negative' : 'route-balance-cell'} aria-label={day.balance === null ? 'Saldo indisponível' : 'Saldo projetado'}>
+              {day.balance === null ? '—' : balance + ' ' + symbol}
+            </td>
+          </tr>
+        })}
       </tbody>
     </table>
     {days.length === 0 ? <div className="route-empty">Não existem movimentos para este filtro neste mês.</div> : null}

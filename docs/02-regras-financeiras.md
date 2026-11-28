@@ -12,6 +12,35 @@ Estas invariantes são obrigatórias. Uma implementação que as viole está inc
 - Saldos agregados podem ser armazenados como otimização se forem reconstruíveis.
 - Rota Financeira é simulação sobre o motor central, não um segundo motor.
 
+## Princípio fundamental da Rota Financeira
+
+**Saldo projetado do dia = saldo projetado do dia anterior + entradas planeadas − saídas planeadas.**
+
+A Rota Financeira representa a evolução acumulada do cenário financeiro. Parte do saldo efetivo de referência e incorpora, em cada data, todos os efeitos financeiros elegíveis, incluindo operações planeadas ainda não realizadas. Cada saldo diário resulta do saldo projetado do dia anterior acrescido das entradas e deduzido das saídas previstas para o dia.
+
+Este cálculo é uma projeção, não um saldo efetivo nem uma nova regra de negócio. A Rota consulta e calcula exclusivamente a partir dos dados, entidades, efeitos e regras financeiras comuns do Orbe, na mesma base de dados que alimenta as restantes páginas. Não cria uma base de dados, um motor financeiro, operações ou regras exclusivas.
+
+Quando uma operação planeada é realizada, o seu efeito projetado correspondente é substituído pelo efeito efetivo na data efetiva, sem duplicação. Alterações e cancelamentos válidos recalculam a projeção segundo as regras centrais do sistema.
+
+### Janela temporal, histórico e atualização da projeção
+
+- A abertura padrão usa o mês local atual como início da janela. A interface mostra 3 meses consecutivos no desktop e um mês no mobile; pré-carrega, respetivamente, os 3 meses seguintes ou o mês seguinte.
+- No desktop, a navegação desloca a janela em blocos de 3 meses; no mobile, mês a mês. Meses anteriores são carregados sob demanda e continuam consultáveis.
+- A janela acompanha o mês local atual quando está nesse modo; a seleção manual de outro período é preservada. A cache mensal tem TTL de 60 segundos e é invalidada quando o read model de operações/faturas é atualizado. A API mantém 24 meses como default compatível, mas a interface não carrega/renderiza 24 meses no arranque.
+- Meses anteriores não são apagados nem convertidos em projeções fixas. Permanecem consultáveis através da navegação mensal e refletem os efeitos efetivos registados.
+- A edição, realização ou cancelamento de uma operação histórica válida atualiza os dados financeiros comuns e provoca novo cálculo do read model. O futuro é recalculado a partir do saldo de referência atualizado e dos efeitos ainda não incorporados nele.
+- Um efeito realizado já incluído no saldo de referência não pode ser aplicado novamente. Operações pendentes vencidas continuam pendentes/vencidas; não são automaticamente realizadas nem reagendadas.
+
+## Dados partilhados entre Movimentos e Rota Financeira
+
+- Movimentos e Rota Financeira partem do mesmo conjunto de operações e efeitos financeiros válidos; a Rota não mantém um registo financeiro paralelo.
+- A diferença é de finalidade e agregação: Movimentos apresenta as operações individualmente; a Rota apresenta a evolução projetada do saldo, agregando os efeitos por data.
+- O saldo de referência da Rota é a soma dos efeitos realizados válidos dirigidos a contas bancárias, dinheiro e carteiras digitais (WALLET tratada como equivalente de caixa); cartões de crédito ficam excluídos. O limite de crédito não é saldo próprio.
+- A data de referência é a data local do pedido de projeção. O read model calcula o saldo no backend, dentro de uma transação de leitura, somando lançamentos de conta em estado REALIZED com data efetiva até essa referência. Se um efeito realizado necessário ao saldo tiver valor, destino ou data inválidos, o saldo é apresentado como indisponível, não estimado.
+- A associação de um gasto ou ganho pendente a uma conta não é condição para o incluir na projeção. A operação entra na Rota com base no seu valor, natureza, estado e data prevista, mesmo sem conta associada.
+- Operações já realizadas e refletidas no saldo de referência não podem ser novamente aplicadas como saídas/entradas projetadas. A projeção futura acrescenta apenas efeitos ainda pendentes e faturas ainda por pagar.
+- Canceladas não permanecem projetadas. Pendentes não alteram o saldo efetivo das contas.
+
 A separação operação/lançamentos (1:N) está aprovada. O destino de cada lançamento também está decidido: referência específica a uma conta, fatura ou dívida, com exatamente um destino por lançamento (ARC-001). O modelo conceptual e as relações entre entidades estão detalhados em [07 — Modelo ER](04-arquitetura-modelo-e-auditoria.md); o esquema físico continua por validar.
 
 ## Realizado, pendente e projetado
@@ -19,6 +48,8 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Gasto ou ganho pendente pode ser guardado sem destino financeiro: não exige nem apresenta conta, cartão, fatura ou outro meio de liquidação.
 - Gasto ou ganho realizado exige selecionar o destino/instrumento adequado ao fluxo antes de guardar. Se a operação estava pendente, essa associação é recolhida ao confirmá-la como realizado.
 - Data prevista não confirma pagamento ou recebimento.
+- Uma operação só pode ser registada como realizada quando o pagamento/recebimento já ocorreu: a data efetiva é hoje ou uma data passada, nunca futura.
+- A data efetiva do pagamento determina quando o efeito ocorreu. Se for anterior ou igual à data de referência do saldo atual, o efeito já está refletido no saldo atual e não pode ser novamente projetado; se for hoje, a Rota considera-o no dia efetivo, sem o deslocar para o vencimento.
 - Pendentes e projeções não alteram saldos efetivos.
 - Cancelamento preserva histórico e retira a operação da projeção.
 - Apenas a Rota Financeira apresenta projeções.
@@ -30,11 +61,19 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Na compra parcelada, as alocações das parcelas são criadas na confirmação da compra e associadas aos respetivos períodos de faturação, mesmo que estejam em estado `PLANNED`.
 - Cada alocação de compra produz no máximo um lançamento de obrigação dirigido à respetiva fatura/período. A abertura operacional da fatura não cria novos lançamentos.
 - Os períodos `PLANNED` podem conter obrigações efetivas já reconhecidas; não são projeções nem faturas abertas na interface.
+- Movimentos apresenta as compras/lançamentos do cartão individualmente, incluindo as parcelas individuais que pertencem à operação.
+- A Rota Financeira não projeta cada compra do cartão como uma saída individual. Para cada fatura, projeta uma única saída consolidada pelo valor total a pagar da fatura: para fatura aberta, o total acumulado até ao momento; para fatura fechada, o total final. O estado aberto/fechado não determina se a fatura é incluída na projeção.
+- A projeção consolidada é colocada na data prevista de pagamento/vencimento da respetiva fatura. A mesma fatura não pode ser projetada mais de uma vez, nem em conjunto com as compras individuais que a compõem.
+- O total projetado da fatura deve refletir reduções de obrigação por pagamentos efetivamente confirmados. O pagamento confirmado é refletido como saída realizada na conta e redução da fatura; o mesmo valor não pode continuar projetado como pagamento futuro.
+- Planos de pagamento e parcelas de projeção devem ser reconciliados com o total da fatura: podem distribuir a projeção por datas quando existir plano válido, mas a soma projetada não pode exceder nem duplicar o montante ainda por pagar da fatura. Sem plano válido, projetar o montante por pagar na data prevista da fatura.
 - A projeção de pagamentos futuros é separada dos lançamentos de obrigação. Só a confirmação do pagamento cria os efeitos efetivos na conta e na fatura.
 - Pagamento da fatura é uma operação distinta: cria saída na conta e redução da obrigação da fatura; não cria uma segunda despesa.
 - A redução de cada fatura é alocada explicitamente a um ou mais lançamentos de obrigação dessa mesma fatura, sem exceder o saldo de cada obrigação.
 - Um único pagamento pode abranger várias faturas: uma saída total na conta e uma redução por fatura; todos os efeitos e alocações são atómicos.
 - Reembolsos mantêm ligação à operação de origem e o respetivo destino é determinado pelos lançamentos ARC-001.
+- Crédito/estorno de uma compra no cartão deve reproduzir o lançamento real do emissor: reduzir a obrigação da fatura/ciclo em que o crédito foi efetivamente aplicado pelo emissor. Não aplicar automaticamente o crédito à fatura mais antiga nem escolher um ciclo por regra interna do Orbe.
+- Se o emissor mantiver o valor como crédito disponível no cartão, registá-lo como crédito do cartão e transportá-lo/compensá-lo nas faturas seguintes conforme o extrato e as regras reais do emissor; não criar entrada fictícia numa conta bancária.
+- Se o emissor devolver o valor à conta bancária, registar a entrada nessa conta pela data efetiva da devolução. A origem do reembolso permanece ligada à compra original. A Rota reflete o destino e a data efetivos, sem duplicar a despesa original.
 
 ### Saldo inicial de cartões
 - O saldo já utilizado antes da entrada no Orbe é registado por uma operação própria, sem natureza de receita/despesa e sem saída de conta.
@@ -65,8 +104,10 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - Um plano de pagamento é uma intenção/projeção, não um lançamento efetivo.
 - A projeção explícita reserva apenas a parcela da obrigação que lhe está associada. A liquidação residual automática cobre apenas o valor não reservado.
 - Um plano não confirmado até à data prevista passa a vencido; deixa de ser uma saída futura na data passada, mas a obrigação permanece em aberto/vencida.
-- Sem regra de débito automático ou novo reagendamento aprovado, o sistema não inventa uma nova data futura.
+- Não existe débito automático na Rota Financeira. O sistema não presume execução nem cria reagendamento automático; o utilizador deve registar a ação efetiva de pagamento. Até essa confirmação, a obrigação permanece vencida e não é deslocada para uma nova data projetada.
+- A data de uma compra no cartão segue a regra e a configuração do ciclo do próprio cartão. A Rota utiliza a fatura à qual a compra foi efetivamente alocada pelo sistema, sem impor uma regra universal para compras no dia do fecho.
 - Um pagamento confirmado substitui o valor correspondente da projeção por lançamentos efetivos, sem duplicação.
+- Pagamento realizado não pode ter data efetiva futura. A data efetiva é a data real em que o pagamento aconteceu (hoje ou no passado); a Rota considera essa data, nunca uma data futura prevista nem o vencimento como se fossem pagamento.
 - O valor projetado para uma fatura nunca pode contar duas vezes a mesma parcela da obrigação.
 
 ### Ciclos de faturação

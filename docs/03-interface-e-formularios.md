@@ -36,7 +36,7 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - Sidebar content is left-aligned through shared navigation primitives and semantic theme tokens. Expanded and collapsed states retain their intended alignment.
 - For 1025–1199px, use shared desktop gutter and section-gap tokens at compact values, and a 220px expanded sidebar. At 1200px and above, retain established desktop geometry.
 - The page title, theme control and period/action controls share the PageHeader row. The shell-level duplicate theme control is removed; every authenticated page uses PageHeader.
-- Rota Financeira keeps its differentiated period behavior: one quarterly/range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
+- Rota Financeira keeps its differentiated period behavior: a 3-month range selector on desktop and one monthly selector on mobile/tablet, never both visible at the same breakpoint.
 - The Dashboard available-balance card and applicable financial summary cards use the shared design-system variant orbe-financial-highlight-card. Its teal gradient is intentionally identical in light and dark mode; generic dark-theme surface rules exclude this variant.
 - Layout changes use existing tokens, shared shell styles and primitive props. No new UI dependency, feature-specific layout token, or `!important` override is permitted. Pre-existing legacy overrides are tracked in the state document and must be removed as affected components migrate to semantic tokens.
 
@@ -93,20 +93,31 @@ A aprovação de uma página isolada não comprova consistência global. Qualque
 - A edição e as ações sobre programações/ocorrências usam botões dedicados e não permitem edição inline.
 
 ## Rota Financeira — aprovado
-- Desktop: mostrar pelo menos três meses consecutivos lado a lado; navegação anterior/seguinte desloca o período um mês.
-- Cada mês apresenta título, totais de entradas/saídas, indicação do saldo final e tabela diária.
-- Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura. A lista cresce com a página (sem scroll interno) e termina junto da área reservada à bottom bar; o FAB global fica fixo no viewport e sobrepõe a lista.
+- Desktop: apresentar uma janela de 3 meses consecutivos em grelha de três colunas, iniciada no mês atual por defeito. Navegação anterior/seguinte desloca a janela 3 meses. A aplicação acompanha a mudança de mês automaticamente enquanto estiver a seguir o mês atual; se o utilizador navegar manualmente, preserva a seleção.
+- A navegação para meses anteriores mantém o histórico consultável; não elimina nem congela operações. Ao alterar operações históricas, o read model é atualizado e a projeção futura recalculada a partir do saldo de referência atualizado, sem duplicar efeitos já refletidos nele.
+- Ao carregar a página, posicionar o scroll para que a linha do dia local atual fique visível. O dia atual recebe destaque subtil com token semântico, sem competir com os estados de saldo/alerta. O posicionamento inicial deve funcionar em desktop e mobile e não repetir-se em cada atualização de dados.
+- Cada mês apresenta título, totais de entradas/saídas, saldo final projetado e tabela diária.
+- Mobile: mostrar um mês de cada vez, com navegação mensal, resumo do mês, switch **Só dias com movimento** e tabela adaptada à largura. A lista cresce com a página (sem scroll interno) e termina junto da área reservada à bottom bar; o FAB global fica fixo no viewport e sobrepõe a lista. Pré-carregar o mês seguinte em segundo plano.
 - Cabeçalho mobile segue o padrão de Movimentos: título alinhado à esquerda e seletor mensal partilhado alinhado à direita; ocultar subtítulo neste breakpoint.
 - Tabela diária: Dia, Entradas, Saídas, Saldo; incluir todos os dias do mês quando o switch está desligado.
-- O switch ligado mostra apenas dias com movimentos realizados elegíveis.
+- O switch ligado mostra dias com entradas ou saídas positivas exibidas na Rota; dias que contêm apenas transferências não são incluídos, porque transferências não alteram o saldo global nem representam fluxo agregado.
 - Selecionar a data abre modal de detalhe; filtros numa linha e nesta ordem: Todos, Receitas, G. fixos, G. variáveis.
-- KPIs/totais apenas Entradas e Saídas; sem KPI de saldo inicial.
+- Totais mensais apenas Entradas e Saídas; sem KPI de saldo inicial.
 - Sem gráfico e sem distinção fixa/variável na tabela principal.
-- Entradas e saídas realizadas são agregadas; transferências não alteram esses totais, mas aparecem no detalhe diário como operação neutra. Estados não realizados não entram na tabela nem nos totais.
-
-- Saldo diário e saldo final/projeção só são apresentados quando o contrato financeiro fornecer valores válidos. Até lá, indicar indisponibilidade, sem inventar números.
-- Cor só na célula/valor Saldo quando houver cálculo fiável, nunca na linha. Sem badges, legendas ou etiquetas coloridas.
-- Saldo projetado final recebe cor apenas quando negativo.
+- Entradas e saídas representam efeitos de caixa em contas elegíveis. Transferências não alteram os totais agregados (as duas pernas compensam-se), mas aparecem no detalhe diário como operação neutra. Saldo inicial de conta não é entrada/saída do período.
+- Operações realizadas já incluídas no saldo de referência não voltam a alterar o saldo projetado. Os seus efeitos de caixa aparecem na data efetiva para consulta histórica.
+- Operações pendentes de gasto/ganho entram na projeção pela data prevista, mesmo sem conta associada. Pendentes com data passada permanecem vencidas/por confirmar; não são deslocadas automaticamente para hoje ou para uma data futura.
+- Em Movimentos, compras do cartão são apresentadas individualmente. Na Rota, compra do cartão não é saída de caixa individual: cada fatura é projetada uma única vez pelo seu valor ainda por pagar (`open_amount`), na data de vencimento, esteja aberta ou fechada. A fatura é apresentada no detalhe do dia. Faturas vencidas permanecem vencidas, aparecem agrupadas no resumo e não são reagendadas automaticamente.
+- O saldo de referência é calculado a partir dos lançamentos realizados válidos dirigidos a contas bancárias, dinheiro e carteiras digitais (tratadas como equivalentes de caixa); cartões de crédito ficam excluídos. A referência considera efeitos efetivos até à data local de cálculo.
+- **Regra central do saldo projetado:** saldo projetado do dia = saldo projetado do dia anterior + entradas planeadas − saídas planeadas. O saldo de hoje parte do saldo de referência e adiciona apenas projeções pendentes para hoje; os dias seguintes acumulam os efeitos previstos nas respetivas datas.
+- Para dias anteriores à referência, o saldo histórico é reconstruído retrocedendo os efeitos realizados posteriores à data. Para dias futuros, a projeção avança a partir do saldo de referência. A passagem entre meses é uma sequência contínua: o saldo final de um mês é o saldo de partida do dia seguinte, sem reinicialização mensal.
+- A API mantém 24 meses como valor padrão compatível, mas a interface pede apenas a janela necessária: desktop consulta 3 meses visíveis e pré-carrega os 3 seguintes; mobile consulta 1 mês visível e pré-carrega o seguinte. Os meses são cacheados individualmente por 60 segundos e reutilizados ao navegar; meses anteriores são carregados sob demanda. O buffer nunca é montado no DOM até ficar visível.
+- A Rota é uma representação calculada do cenário financeiro, não uma fonte de verdade nem um módulo financeiro independente. Consulta a mesma base de dados, operações, lançamentos, faturas e regras comuns do Orbe; não cria entidades, operações, regras ou persistência financeira paralelas.
+- Quando uma operação planeada é confirmada como realizada, o efeito projetado correspondente é substituído pelo efeito efetivo na data efetiva, sem dupla contagem. Alterações/cancelamentos recalculam o cenário conforme as regras centrais.
+- Uma operação realizada só pode ter data efetiva de hoje ou passada; não é possível registar um pagamento futuro como já realizado. A Rota usa a data real do pagamento. Efeitos realizados já incorporados no saldo de referência não são reaplicados.
+- Crédito/estorno de cartão segue o extrato e a aplicação efetiva do emissor: reduz a fatura/ciclo em que o emissor o lançou; não se presume abatimento à fatura mais antiga. Crédito mantido no cartão continua como crédito do cartão e é compensado conforme o emissor; devolução para conta bancária é entrada nessa conta na data real.
+- Saldo diário e saldo final são apresentados apenas quando o saldo de referência e os efeitos necessários são válidos; em caso de dados financeiros inválidos, indicar indisponibilidade em vez de inventar valores.
+- Cor apenas no valor/célula do saldo, nunca na linha nem em badges/legendas. Saldo diário negativo à precisão apresentada (arredondado a cêntimos) recebe cor de perigo; saldo não negativo/zero mantém cor neutra. Saldo final do mês recebe cor apenas quando o valor apresentado é negativo.
 - O FAB global é o único ponto de criação; não adicionar botão + local.
 
 ## Contas — aprovado
@@ -1249,7 +1260,7 @@ Regras obrigatórias para todas as páginas:
 - Composição padrão A: primeira linha com título à esquerda e controlo de tema à direita; segunda linha com mês abreviado + ano alinhado à esquerda e setas de navegação à direita.
 - O seletor mensal é discreto, sem superfície ou borda própria; setas mantêm área de toque acessível.
 - O padrão é implementado no componente partilhado PageHeader e MonthSelector, não em CSS/markup isolado de cada página.
-- Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de três meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
+- Exceção da Rota Financeira: desktop mantém um único seletor de intervalo de 3 meses; mobile mantém um único seletor mensal. Não renderizar dois seletores temporais visíveis simultaneamente.
 
 
 ### Card de saldo do Dashboard — consistência de tema
