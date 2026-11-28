@@ -213,3 +213,12 @@ Campos da resposta `data`:
 - `overdue_total`: total das saídas vencidas, como string decimal.
 
 A projeção começa no saldo de referência e não reaplica efeitos realizados já incluídos nele. Pendentes vencidas permanecem no resumo de vencidos; não são realizadas nem reagendadas automaticamente. Faturas são agregadas pelo serviço comum de resumo e projetadas uma única vez.
+
+
+## Contas — read model de saldos atuais
+
+`GET /api/accounts` devolve cada conta com `current_balance` (`DECIMAL` como string ou `null`) calculado pelo `AccountBalanceService`. O saldo inclui apenas lançamentos `REALIZED` dirigidos à conta, com `effective_at` até ao fim do dia local atual. O lançamento de saldo inicial está incluído pela sua data efetiva. Pendentes/vencidos não entram neste saldo.
+
+A resposta inclui `meta.total_current_balance` e `meta.balance_available`. O total agrega todas as contas do utilizador, ativas e encerradas; o filtro da interface não altera o total. Se algum lançamento realizado impedir um cálculo seguro, o saldo afetado e o total são `null` (indisponível), nunca zero presumido.
+
+A Rota Financeira usa o mesmo serviço para obter o saldo efetivo de referência. A partir desse saldo, calcula separadamente a projeção: movimentos pendentes, incluindo vencidos, afetam o saldo projetado na data planeada, mas não o saldo atual de Contas nem o estado real da operação.
