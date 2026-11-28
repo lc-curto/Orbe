@@ -69,6 +69,14 @@ final class BasicOperationsApiTest extends TestCase
             ]);
         }
 
+        Operation::query()->create([
+            'user_id' => $user->id,
+            'operation_type' => 'EXPENSE',
+            'state' => 'PENDING',
+            'amount' => '300.0000',
+            'planned_at' => $today->copy()->addDays(5),
+        ]);
+
         Sanctum::actingAs($user);
         $this->getJson('/api/accounts')
             ->assertOk()
