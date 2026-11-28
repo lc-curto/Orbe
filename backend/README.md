@@ -50,7 +50,8 @@ O seeder é idempotente e cria/atualiza dados associados ao utilizador local `te
 - 4 categorias ativas de despesa e 3 de receita;
 - 1 categoria de despesa arquivada, para validar filtros de categorias ativas;
 - saldo inicial e lançamentos realizados de exemplo;
-- uma despesa pendente vencida de 100 € (`Supermercado`), uma despesa futura e um rendimento futuro, para testar a Rota Financeira.
+- uma despesa pendente vencida de 100 € (`Supermercado`), uma despesa futura e um rendimento futuro;
+- nove movimentos pendentes distribuídos por janeiro, fevereiro e março de 2027, para validar a visão de 3 meses e os cabeçalhos mensais.
 
 O `DatabaseSeeder` também chama este seeder, por isso `php artisan db:seed` prepara o conjunto QA completo. Os registos têm prefixo `QA —`, exceto o movimento `Supermercado`, que reproduz o exemplo visível na interface.
 
