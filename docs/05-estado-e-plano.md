@@ -134,11 +134,11 @@ PR #14 integrada na `main` por squash em 2026-11-28, commit `66fba7c31b8b6a84c9a
 
 ## Próxima sequência recomendada (sem avançar sobre dependências ausentes)
 1. QA visual pós-merge da PR #14 aprovado pelo utilizador; não há defeitos bloqueantes reportados.
-2. Avançar para QA e correções isoladas de Relatórios/Configurações, sem introduzir fluxos financeiros que dependam de formulários ou contratos não concluídos.
-4. Próxima funcionalidade candidata: completar/validar o fluxo frontend de pendente→realizado apenas onde o formulário e endpoint de confirmação já existem; primeiro confirmar cobertura real e não criar UI para destinos de cartão/fatura ainda sem contrato específico.
-5. Só depois especificar e implementar detalhes/liquidação de obrigações, planos de pagamento e recorrências projetadas, pois dependem de contratos de domínio/API ainda incompletos.
-6. Manter classificação fixa/variável e estimativa variável bloqueadas até aprovação da fórmula, janela histórica, categorias e tratamento de `UNCLASSIFIED`.
-7. Auditoria final de consistência entre documentação, API, frontend e modelo ER após os fluxos aprovados estarem implementados.
+2. Completar e validar o fluxo frontend de pendente→realizado apenas onde o formulário e endpoint de confirmação já existem; confirmar primeiro a cobertura real e não criar UI para destinos de cartão/fatura sem contrato específico.
+3. Especificar e implementar detalhes/liquidação de obrigações, planos de pagamento e recorrências projetadas após fechar os contratos de domínio/API necessários.
+4. Manter classificação fixa/variável e estimativa variável bloqueadas até aprovação da fórmula, janela histórica, categorias e tratamento de `UNCLASSIFIED`.
+5. **Deixar QA e correções de Relatórios/Configurações para a fase final do desenvolvimento**, depois de concluídos e validados os fluxos financeiros principais.
+6. Auditoria final de consistência entre documentação, API, frontend e modelo ER; executar após os fluxos aprovados e o QA final das páginas estarem concluídos.
 
 ## Critério para novas alterações estruturais
 A implementação estrutural do frontend e do núcleo já está em curso e tem entregas publicadas na `main`. Para novas alterações estruturais, continuam obrigatórios: arquitetura/UML aprovada, precisão monetária e integridade transacional definidas, fluxos críticos especificados e critérios de aceitação/testes identificados. Não interpretar uma entrega parcial como aprovação de contratos ou funcionalidades ainda pendentes.
