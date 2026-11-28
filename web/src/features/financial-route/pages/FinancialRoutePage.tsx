@@ -58,10 +58,10 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
 
   const filteredMonths = useMemo(() => (months ?? []).slice(0, visibleMonthCount).map((item) => {
     let days = onlyMovementDays
-      ? item.days.filter((day) => hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
+      ? item.days.filter((day) => hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses) || day.overdueItems.length > 0)
       : item.days
-    if (flowFilter === 'INCOME') days = days.filter((day) => hasPositiveAmount(day.income))
-    if (flowFilter === 'EXPENSE') days = days.filter((day) => hasPositiveAmount(day.expenses))
+    if (flowFilter === 'INCOME') days = days.filter((day) => hasPositiveAmount(day.income) || day.overdueItems.some((item) => item.nature === 'INCOME'))
+    if (flowFilter === 'EXPENSE') days = days.filter((day) => hasPositiveAmount(day.expenses) || day.overdueItems.some((item) => item.nature === 'EXPENSE'))
     return { month: item, days }
   }), [months, visibleMonthCount, onlyMovementDays, flowFilter])
   const mobileMonth = filteredMonths[0]?.month
@@ -117,7 +117,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
     {!loading && !error && !projection ? <div className="route-status" role="status">A projeção financeira está indisponível.</div> : null}
 
     {!loading && projection ? <>
-      {projection.overdueItems.length > 0 ? <details className="route-overdue-summary">
+      {projection.overdueItems.length > 0 ? <details className="route-overdue-summary" open>
         <summary>Itens vencidos/por confirmar · {formatAmount(projection.overdueTotal)} {symbol} em saídas pendentes</summary>
         <ul>
           {projection.overdueItems.map((item) => <li key={item.id}>
