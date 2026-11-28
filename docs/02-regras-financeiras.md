@@ -105,6 +105,7 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - A projeção explícita reserva apenas a parcela da obrigação que lhe está associada. A liquidação residual automática cobre apenas o valor não reservado.
 - Um plano não confirmado até à data prevista passa a vencido; deixa de ser uma saída futura na data passada, mas a obrigação permanece em aberto/vencida.
 - Não existe débito automático na Rota Financeira. O sistema não presume execução nem cria reagendamento automático; o utilizador deve registar a ação efetiva de pagamento. Até essa confirmação, a obrigação permanece vencida e não é deslocada para uma nova data projetada.
+- A Rota mantém o item vencido visível na data original, identificado como vencido e separado dos fluxos projetados. A sua exibição e inclusão no filtro «Só dias com movimento» não altera o saldo histórico nem o saldo final projetado.
 - A data de uma compra no cartão segue a regra e a configuração do ciclo do próprio cartão. A Rota utiliza a fatura à qual a compra foi efetivamente alocada pelo sistema, sem impor uma regra universal para compras no dia do fecho.
 - Um pagamento confirmado substitui o valor correspondente da projeção por lançamentos efetivos, sem duplicação.
 - Pagamento realizado não pode ter data efetiva futura. A data efetiva é a data real em que o pagamento aconteceu (hoje ou no passado); a Rota considera essa data, nunca uma data futura prevista nem o vencimento como se fossem pagamento.
