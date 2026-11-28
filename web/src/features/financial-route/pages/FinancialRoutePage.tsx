@@ -6,7 +6,7 @@ import { RouteDayModal } from '../components/RouteDayModal'
 import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
 import type { RouteFlowFilter } from '../types'
-import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
+import { formatDay, formatMonth, formatFullDate, formatMonthRange, shiftMonth } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
@@ -125,7 +125,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
       </div>
 
       <div className="route-mobile-summary orbe-financial-highlight-card">
-        <div className="route-mobile-ending"><span>Saldo final projetado · até {mobileMonth?.days[mobileMonth.days.length - 1]?.date ? formatFullDate(mobileMonth.days[mobileMonth.days.length - 1].date) : 'fim do mês selecionado'}</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{formatAmount(mobileEndingBalance)} {mobileEndingBalance === null ? '' : symbol}</strong></div>
+        <div className="route-mobile-ending"><span>Saldo final projetado · até {mobileMonth?.days[mobileMonth.days.length - 1]?.date ? formatDay(mobileMonth.days[mobileMonth.days.length - 1].date) + ' · ' + formatMonth(mobileMonth.days[mobileMonth.days.length - 1].date.slice(0, 7), true) : 'fim do mês selecionado'}</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{formatAmount(mobileEndingBalance)} {mobileEndingBalance === null ? '' : symbol}</strong></div>
         <div className="route-mobile-totals">
           <span className="route-month-income">+ {formatAmount(mobileMonth?.totals.income ?? null)} {symbol} entradas</span>
           <span className="route-month-expenses">− {formatAmount(mobileMonth?.totals.expenses ?? null)} {symbol} saídas</span>
