@@ -40,11 +40,12 @@ final class BasicOperationsApiTest extends TestCase
             'user_id' => $user->id, 'name' => 'Conta principal', 'account_type' => 'BANK', 'status' => 'ACTIVE',
         ]);
 
+        $today = now()->startOfDay();
         $entries = [
-            ['ACCOUNT_OPENING_BALANCE', '1200.0000', 'INCREASE', '2026-11-01 09:00:00'],
-            ['INCOME', '1800.0000', 'INCREASE', '2026-11-13 10:00:00'],
-            ['EXPENSE', '45.0000', 'DECREASE', '2026-11-25 16:00:00'],
-            ['INCOME', '500.0000', 'INCREASE', '2026-12-01 09:00:00'],
+            ['ACCOUNT_OPENING_BALANCE', '1200.0000', 'INCREASE', $today->copy()->subDays(20)->setTime(9, 0)->toDateTimeString()],
+            ['INCOME', '1800.0000', 'INCREASE', $today->copy()->subDays(10)->setTime(10, 0)->toDateTimeString()],
+            ['EXPENSE', '45.0000', 'DECREASE', $today->copy()->subDays(3)->setTime(16, 0)->toDateTimeString()],
+            ['INCOME', '500.0000', 'INCREASE', $today->copy()->addDays(10)->setTime(9, 0)->toDateTimeString()],
         ];
 
         foreach ($entries as [$type, $amount, $effect, $date]) {
