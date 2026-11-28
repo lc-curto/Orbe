@@ -83,13 +83,26 @@ function overdueSignedUnits(item: FinancialRouteReadModel['overdue_items'][numbe
   return item.nature === 'INCOME' ? absolute : -absolute
 }
 
+function sumOverdueBefore(items: FinancialRouteReadModel['overdue_items'], date: string): bigint {
+  return items.reduce((total, item) => item.date !== null && item.date < date ? total + overdueSignedUnits(item) : total, 0n)
+}
+
 function sumOverdueThrough(items: FinancialRouteReadModel['overdue_items'], date: string): bigint {
   return items.reduce((total, item) => item.date !== null && item.date <= date ? total + overdueSignedUnits(item) : total, 0n)
 }
 
-function sumOverdueBetween(items: FinancialRouteReadModel['overdue_items'], start: string, end: string, nature?: 'INCOME' | 'EXPENSE'): bigint {
+function sumOverdueOnDate(items: FinancialRouteReadModel['overdue_items'], date: string, nature: 'INCOME' | 'EXPENSE'): bigint {
   return items.reduce((total, item) => {
-    if (item.date === null || item.date < start || item.date > end || (nature && item.nature !== nature)) return total
+    if (item.date !== date || item.nature !== nature) return total
+    const units = parseMoneyUnits(item.amount)
+    if (units === null) return total
+    return total + (units < 0n ? -units : units)
+  }, 0n)
+}
+
+function sumOverdueBetween(items: FinancialRouteReadModel['overdue_items'], start: string, endExclusive: string, nature?: 'INCOME' | 'EXPENSE'): bigint {
+  return items.reduce((total, item) => {
+    if (item.date === null || item.date < start || item.date >= endExclusive || (nature && item.nature !== nature)) return total
     const units = parseMoneyUnits(item.amount)
     if (units === null) return total
     const absolute = units < 0n ? -units : units
@@ -196,8 +209,8 @@ export function useFinancialRouteData(
         const invoiceIds = [...new Set([...day.invoice_ids, ...overdueInvoiceIds])]
         return {
           date: day.date,
-          income: formatMoneyUnits((parseMoneyUnits(day.income) ?? 0n) + sumOverdueBetween(response.overdue_items, day.date, day.date, 'INCOME')),
-          expenses: formatMoneyUnits((parseMoneyUnits(day.expenses) ?? 0n) + sumOverdueBetween(response.overdue_items, day.date, day.date, 'EXPENSE')),
+          income: formatMoneyUnits((parseMoneyUnits(day.income) ?? 0n) + sumOverdueOnDate(response.overdue_items, day.date, 'INCOME')),
+          expenses: formatMoneyUnits((parseMoneyUnits(day.expenses) ?? 0n) + sumOverdueOnDate(response.overdue_items, day.date, 'EXPENSE')),
           balance: day.balance === null ? null : formatMoneyUnits((parseMoneyUnits(day.balance) ?? 0n) + sumOverdueThrough(response.overdue_items, day.date)),
           operations: operationIds.map((id) => operationById.get(id)).filter((operation): operation is Operation => operation !== undefined),
           invoices: invoiceIds.map((id) => invoiceById.get(id)).filter((invoice): invoice is CardInvoice => invoice !== undefined),
@@ -211,8 +224,8 @@ export function useFinancialRouteData(
           income: formatMoneyUnits((parseMoneyUnits(monthData.totals.income) ?? 0n) + sumOverdueBetween(response.overdue_items, monthData.month + '-01', shiftMonth(monthData.month, 1) + '-01', 'INCOME')),
           expenses: formatMoneyUnits((parseMoneyUnits(monthData.totals.expenses) ?? 0n) + sumOverdueBetween(response.overdue_items, monthData.month + '-01', shiftMonth(monthData.month, 1) + '-01', 'EXPENSE')),
         },
-        openingBalance: monthData.opening_balance === null ? null : formatMoneyUnits((parseMoneyUnits(monthData.opening_balance) ?? 0n) + sumOverdueThrough(response.overdue_items, monthData.month + '-01') - sumOverdueBetween(response.overdue_items, monthData.month + '-01', monthData.month + '-01')),
-        endingBalance: monthData.ending_balance === null ? null : formatMoneyUnits((parseMoneyUnits(monthData.ending_balance) ?? 0n) + sumOverdueThrough(response.overdue_items, shiftMonth(monthData.month, 1) + '-01')),
+        openingBalance: monthData.opening_balance === null ? null : formatMoneyUnits((parseMoneyUnits(monthData.opening_balance) ?? 0n) + sumOverdueBefore(response.overdue_items, monthData.month + '-01')),
+        endingBalance: monthData.ending_balance === null ? null : formatMoneyUnits((parseMoneyUnits(monthData.ending_balance) ?? 0n) + sumOverdueBefore(response.overdue_items, shiftMonth(monthData.month, 1) + '-01')),
       }
     })
     return {
