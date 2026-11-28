@@ -10,6 +10,7 @@ export type RouteDay = {
   balance: string | null
   operations: Operation[]
   invoices: CardInvoice[]
+  overdueItems: FinancialRouteOverdueItem[]
 }
 
 export type RouteMonth = {
