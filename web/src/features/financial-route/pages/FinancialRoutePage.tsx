@@ -65,6 +65,11 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
     return { month: item, days }
   }), [months, visibleMonthCount, onlyMovementDays, flowFilter])
   const mobileMonth = filteredMonths[0]?.month
+  const todayMonth = localDateKey().slice(0, 7)
+  const desktopWindowEnd = shiftMonth(month, DESKTOP_VISIBLE_MONTHS - 1)
+  const showReturnToToday = isDesktopRoute
+    ? todayMonth < month || todayMonth > desktopWindowEnd
+    : month !== todayMonth
   const mobileVisibleDays = filteredMonths[0]?.days ?? []
   const loading = financeLoading || routeData.loading
   const error = routeData.error ?? financeError
@@ -121,7 +126,10 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
         <div className="route-flow-filters" aria-label="Filtrar meses por movimento">
           {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
         </div>
-        <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
+        <div className="route-desktop-control-actions">
+          {showReturnToToday ? <button type="button" className="route-return-today" onClick={() => onMonthChange(todayMonth)}>Hoje</button> : null}
+          <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
+        </div>
       </div>
 
       {!isDesktopRoute ? <>
@@ -143,6 +151,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
 
       <div className="route-mobile-month" ref={mobileMonthRef}>
         <div className="route-mobile-toolbar">
+          {showReturnToToday ? <button type="button" className="route-return-today" onClick={() => onMonthChange(todayMonth)}>Hoje</button> : null}
           <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
           <span className="route-days-count">{mobileVisibleDays.length} dias</span>
         </div>
