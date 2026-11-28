@@ -36,8 +36,10 @@
 .route-table-wrap { overflow: hidden; background: var(--orbe-surface); }
 .route-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 11px; font-variant-numeric: tabular-nums; }
 .route-table th { padding: 10px 8px; background: var(--orbe-bg); color: var(--orbe-muted); font-size: 9px; font-weight: 800; text-align: right; text-transform: uppercase; letter-spacing: .03em; }
-.route-table th:first-child, .route-table td:first-child { width: 25%; text-align: left; }
-.route-table th:last-child, .route-table td:last-child { width: 19%; }
+.route-table th:first-child, .route-table td:first-child { width: 17%; text-align: left; }
+.route-table th:nth-child(2), .route-table td:nth-child(2) { width: 28%; }
+.route-table th:nth-child(3), .route-table td:nth-child(3) { width: 28%; }
+.route-table th:last-child, .route-table td:last-child { width: 27%; }
 .route-table td { height: 29px; padding: 5px 8px; border-top: 1px solid var(--orbe-border); color: var(--orbe-text); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: clip; }
 .route-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--orbe-bg) 70%, var(--orbe-surface)); }
 .route-table tbody tr.has-movements { background: var(--orbe-surface); }
@@ -257,7 +259,7 @@
     white-space: nowrap;
   }
   .route-month-card-mobile .route-table th:nth-child(1),
-  .route-month-card-mobile .route-table td:nth-child(1) { width: 18%; }
+  .route-month-card-mobile .route-table td:nth-child(1) { width: 15%; }
   .route-month-card-mobile .route-table th:nth-child(2),
   .route-month-card-mobile .route-table td:nth-child(2) { width: 28%; }
   .route-month-card-mobile .route-table th:nth-child(3),
