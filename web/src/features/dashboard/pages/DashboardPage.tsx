@@ -10,6 +10,7 @@ import type { DashboardMovement } from '../components/DashboardSections'
 type DashboardPageProps = {
   period: { label: string; date: string }
   userName: string
+  availableBalance: string | null
   displayPeriod: { label: string; income: string; expenses: string }
   month: string
   onMonthChange: (month: string) => void
@@ -40,7 +41,7 @@ function SummaryCard({ label, amount, detail, tone }: { label: string; amount: s
 
 
 
-export function DashboardPage({ period, userName, displayPeriod, month, onMonthChange, currencySymbol, movements, categories, loading, card, invoice, setActiveKey, authError, logoutError }: DashboardPageProps) {
+export function DashboardPage({ period, userName, availableBalance, displayPeriod, month, onMonthChange, currencySymbol, movements, categories, loading, card, invoice, setActiveKey, authError, logoutError }: DashboardPageProps) {
   return <>
 <PageHeader title={`Bom dia, ${userName.split(' ')[0]}`} className="desktop-dashboard-header" actions={<MonthSelector month={month} onMonthChange={onMonthChange} className="desktop-month-selector" />} />
 
@@ -50,8 +51,8 @@ export function DashboardPage({ period, userName, displayPeriod, month, onMonthC
               <Card className="orbe-financial-highlight-card" borderWidth={1} borderColor="var(--orbe-financial-highlight-border)" flex={1} minWidth={0}>
                 <Stack gap={8}>
                   <Text color="#dbeafe" fontSize={16}>Saldo disponível</Text>
-                  <Text color="#ffffff" fontSize={30} fontWeight="800">Indisponível</Text>
-                  <Text color="#dbeafe" fontSize={13}>O read model atual não fornece saldo de contas.</Text>
+                  <Text color="#ffffff" fontSize={30} fontWeight="800">{availableBalance ?? 'Indisponível'}</Text>
+                  {availableBalance === null ? <Text color="#dbeafe" fontSize={13}>Não foi possível calcular o saldo das contas ativas.</Text> : <Text color="#dbeafe" fontSize={13}>Saldo atual das contas ativas.</Text>}
                 </Stack>
               </Card>
               <SummaryCard label="Ganhos" amount={displayPeriod.income} detail={`Realizadas em ${period.label}`} tone="#16805b" />
