@@ -1,5 +1,4 @@
 import type { RouteDay, RouteFlowFilter } from '../types'
-import type { FinancialRouteOverdueItem } from '../../../api/types'
 import { formatCompactDay, formatDay } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
@@ -9,13 +8,6 @@ function formatAmount(value: string | null): string {
   return units === null ? '—' : formatMoneyUnits(units)
 }
 
-function sumOverdue(items: FinancialRouteOverdueItem[], nature: FinancialRouteOverdueItem['nature']): bigint {
-  return items.reduce((total, item) => {
-    if (item.nature !== nature) return total
-    const units = parseMoneyUnits(item.amount)
-    return units === null ? total : total + (units < 0n ? -units : units)
-  }, 0n)
-}
 
 export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
   days: RouteDay[]
@@ -33,8 +25,8 @@ export function RouteDailyTable({ days, flowFilter, onSelectDay }: {
           const hasMovements = day.operations.length > 0 || day.invoices.length > 0 || hasOverdueMovement
           const balanceUnits = day.balance === null ? null : parseMoneyUnits(day.balance)
           const balanceNegative = balanceUnits !== null && isDisplayedNegative(balanceUnits)
-          const incomeUnits = (parseMoneyUnits(day.income) ?? 0n) + sumOverdue(day.overdueItems, 'INCOME')
-          const expensesUnits = (parseMoneyUnits(day.expenses) ?? 0n) + sumOverdue(day.overdueItems, 'EXPENSE')
+          const incomeUnits = parseMoneyUnits(day.income) ?? 0n
+          const expensesUnits = parseMoneyUnits(day.expenses) ?? 0n
           const income = formatMoneyUnits(incomeUnits)
           const expenses = formatMoneyUnits(expensesUnits)
           const balance = formatAmount(day.balance)
