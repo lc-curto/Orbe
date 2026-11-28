@@ -37,12 +37,14 @@ export function RouteDayModal({ date, operations, invoices = [], overdueItems = 
         {detailOperations.map((operation) => {
           const isIncome = operation.operation_type === 'INCOME'
           const isTransfer = operation.operation_type === 'TRANSFER'
+          const isOverdue = overdueOperationIds.has(operation.id)
+          const status = isOverdue ? 'Vencido' : operation.state === 'PENDING' ? 'Pendente' : 'Realizado'
           const meta = isTransfer
             ? 'Transferência entre contas'
             : operation.category?.name
-              ? operation.category.name + ' · ' + (operation.account?.name ?? 'Conta não identificada') + ' · ' + (overdueOperationIds.has(operation.id) ? 'Vencido' : operation.state === 'PENDING' ? 'Pendente' : 'Realizado')
-              : (operation.account?.name ?? 'Movimento de conta') + ' · ' + (operation.state === 'PENDING' ? 'Pendente' : 'Realizado')
-          return <article className="route-detail-row" key={'operation-' + operation.id}>
+              ? operation.category.name + ' · ' + (operation.account?.name ?? 'Conta não identificada') + ' · ' + status
+              : (operation.account?.name ?? 'Movimento de conta') + ' · ' + status
+          return <article className={`route-detail-row ${isOverdue ? 'route-detail-row-overdue' : ''}`} key={'operation-' + operation.id}>
             <div className={`route-detail-icon ${isIncome ? 'income' : isTransfer ? 'transfer' : 'expense'}`}>{isIncome ? '↑' : isTransfer ? '↔' : '↓'}</div>
             <div className="route-detail-description"><strong>{operationLabel(operation)}</strong><span>{meta}</span></div>
             <strong className={isIncome ? 'route-detail-income' : isTransfer ? 'route-detail-transfer' : 'route-detail-expense'}>{isTransfer ? '' : isIncome ? '+' : '−'} {displayAmount(operation.amount, symbol)}</strong>
