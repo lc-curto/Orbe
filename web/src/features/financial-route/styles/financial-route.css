@@ -9,6 +9,21 @@
 .route-period-selector button:hover { background: #f2f4f7; box-shadow: none; }
 .route-period-selector span { min-width: 128px; color: var(--orbe-text); font-size: 12px; font-weight: 750; text-align: center; white-space: nowrap; }
 
+.route-desktop-control-actions { display: flex; align-items: center; gap: 12px; }
+.route-return-today {
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid var(--orbe-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--orbe-muted);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.route-return-today:hover { border-color: var(--orbe-teal); color: var(--orbe-teal); box-shadow: none; }
+.route-return-today:focus-visible { outline: 2px solid var(--orbe-focus); outline-offset: 2px; }
 .route-desktop-controls { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0 0 14px; }
 .route-flow-filters { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .route-flow-filters button { min-height: 36px; padding: 0 15px; border: 1px solid var(--orbe-border); border-radius: 999px; background: var(--orbe-surface); color: var(--orbe-text); font: inherit; font-size: 12px; cursor: pointer; }
