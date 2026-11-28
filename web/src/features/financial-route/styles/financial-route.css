@@ -299,3 +299,16 @@
 @media (min-width: 1025px) {
   .financial-route-page { padding-bottom: 96px; }
 }
+
+/* Overdue state is intentionally confined to the day-detail item, not the day list. */
+.route-detail-row-overdue .route-detail-description span,
+.route-detail-row-overdue > strong {
+  color: var(--orbe-danger);
+}
+
+/* Whole day rows are clickable; preserve a visible keyboard focus indicator. */
+.route-table tbody tr[tabindex="0"] { cursor: pointer; }
+.route-table tbody tr[tabindex="0"]:focus-visible {
+  outline: 2px solid var(--orbe-focus);
+  outline-offset: -2px;
+}
