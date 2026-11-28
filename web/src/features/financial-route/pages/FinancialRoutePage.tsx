@@ -117,16 +117,6 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
     {!loading && !error && !projection ? <div className="route-status" role="status">A projeção financeira está indisponível.</div> : null}
 
     {!loading && projection ? <>
-      {projection.overdueItems.length > 0 ? <details className="route-overdue-summary" open>
-        <summary>Itens vencidos/por confirmar · {formatAmount(projection.overdueTotal)} {symbol} em saídas pendentes</summary>
-        <ul>
-          {projection.overdueItems.map((item) => <li key={item.id}>
-            <span>{item.label} · {item.date ? formatFullDate(item.date) : 'Sem data prevista'}</span>
-            <strong className={item.nature === 'INCOME' ? 'route-month-income' : 'route-month-expenses'}>{item.nature === 'INCOME' ? '+ ' : '− '}{formatAmount(item.amount)} {symbol}</strong>
-          </li>)}
-        </ul>
-      </details> : null}
-
       <div className="route-desktop-controls">
         <div className="route-flow-filters" aria-label="Filtrar meses por movimento">
           {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
@@ -135,7 +125,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
       </div>
 
       <div className="route-mobile-summary orbe-financial-highlight-card">
-        <div className="route-mobile-ending"><span>Saldo final projetado</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{formatAmount(mobileEndingBalance)} {mobileEndingBalance === null ? '' : symbol}</strong></div>
+        <div className="route-mobile-ending"><span>Saldo final projetado · até {mobileMonth?.days[mobileMonth.days.length - 1]?.date ? formatFullDate(mobileMonth.days[mobileMonth.days.length - 1].date) : 'fim do mês selecionado'}</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{formatAmount(mobileEndingBalance)} {mobileEndingBalance === null ? '' : symbol}</strong></div>
         <div className="route-mobile-totals">
           <span className="route-month-income">+ {formatAmount(mobileMonth?.totals.income ?? null)} {symbol} entradas</span>
           <span className="route-month-expenses">− {formatAmount(mobileMonth?.totals.expenses ?? null)} {symbol} saídas</span>
@@ -158,6 +148,6 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
       </div>
     </> : null}
 
-    {selectedDay && selectedDay.periodMonth === month && activeDay ? <RouteDayModal date={selectedDay.date} operations={activeDay.operations} invoices={activeDay.invoices} filter={detailFilter} onFilterChange={setDetailFilter} onClose={() => setSelectedDay(null)} /> : null}
+    {selectedDay && selectedDay.periodMonth === month && activeDay ? <RouteDayModal date={selectedDay.date} operations={activeDay.operations} invoices={activeDay.invoices} overdueItems={activeDay.overdueItems} filter={detailFilter} onFilterChange={setDetailFilter} onClose={() => setSelectedDay(null)} /> : null}
   </section>
 }
