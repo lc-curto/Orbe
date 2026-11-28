@@ -9,6 +9,21 @@
 .route-period-selector button:hover { background: #f2f4f7; box-shadow: none; }
 .route-period-selector span { min-width: 128px; color: var(--orbe-text); font-size: 12px; font-weight: 750; text-align: center; white-space: nowrap; }
 
+.route-desktop-control-actions { display: flex; align-items: center; gap: 12px; }
+.route-return-today {
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid var(--orbe-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--orbe-muted);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.route-return-today:hover { border-color: var(--orbe-teal); color: var(--orbe-teal); box-shadow: none; }
+.route-return-today:focus-visible { outline: 2px solid var(--orbe-focus); outline-offset: 2px; }
 .route-desktop-controls { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0 0 14px; }
 .route-flow-filters { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
 .route-flow-filters button { min-height: 36px; padding: 0 15px; border: 1px solid var(--orbe-border); border-radius: 999px; background: var(--orbe-surface); color: var(--orbe-text); font: inherit; font-size: 12px; cursor: pointer; }
@@ -36,8 +51,10 @@
 .route-table-wrap { overflow: hidden; background: var(--orbe-surface); }
 .route-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 11px; font-variant-numeric: tabular-nums; }
 .route-table th { padding: 10px 8px; background: var(--orbe-bg); color: var(--orbe-muted); font-size: 9px; font-weight: 800; text-align: right; text-transform: uppercase; letter-spacing: .03em; }
-.route-table th:first-child, .route-table td:first-child { width: 25%; text-align: left; }
-.route-table th:last-child, .route-table td:last-child { width: 19%; }
+.route-table th:first-child, .route-table td:first-child { width: 17%; text-align: left; }
+.route-table th:nth-child(2), .route-table td:nth-child(2) { width: 28%; }
+.route-table th:nth-child(3), .route-table td:nth-child(3) { width: 28%; }
+.route-table th:last-child, .route-table td:last-child { width: 27%; }
 .route-table td { height: 29px; padding: 5px 8px; border-top: 1px solid var(--orbe-border); color: var(--orbe-text); text-align: right; white-space: nowrap; overflow: hidden; text-overflow: clip; }
 .route-table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--orbe-bg) 70%, var(--orbe-surface)); }
 .route-table tbody tr.has-movements { background: var(--orbe-surface); }
@@ -257,7 +274,7 @@
     white-space: nowrap;
   }
   .route-month-card-mobile .route-table th:nth-child(1),
-  .route-month-card-mobile .route-table td:nth-child(1) { width: 18%; }
+  .route-month-card-mobile .route-table td:nth-child(1) { width: 15%; }
   .route-month-card-mobile .route-table th:nth-child(2),
   .route-month-card-mobile .route-table td:nth-child(2) { width: 28%; }
   .route-month-card-mobile .route-table th:nth-child(3),
@@ -291,4 +308,24 @@
 }
 @media (min-width: 1025px) {
   .route-mobile-add-action { display: none; }
+}
+
+
+
+/* Reserve scroll space so the fixed quick-action FAB never covers the final balance row. */
+@media (min-width: 1025px) {
+  .financial-route-page { padding-bottom: 96px; }
+}
+
+/* Overdue state is intentionally confined to the day-detail item, not the day list. */
+.route-detail-row-overdue .route-detail-description span,
+.route-detail-row-overdue > strong {
+  color: var(--orbe-danger);
+}
+
+/* Whole day rows are clickable; preserve a visible keyboard focus indicator. */
+.route-table tbody tr[tabindex="0"] { cursor: pointer; }
+.route-table tbody tr[tabindex="0"]:focus-visible {
+  outline: 2px solid var(--orbe-focus);
+  outline-offset: -2px;
 }

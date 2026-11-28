@@ -6,6 +6,17 @@
 
 > Fase 1 autorizada em 2026-11-24. Este contrato cobre apenas contas, categorias, despesas comuns e receitas.
 
+## Leitura de saldo de contas (read model)
+
+`GET /api/accounts` devolve as contas do utilizador e os campos derivados:
+- `current_balance`: saldo efetivo da conta, reconstruído a partir de lançamentos `REALIZED` válidos até ao fim do dia local; pendentes não alteram este valor.
+- `meta.total_current_balance`: soma dos saldos calculáveis devolvidos.
+- `meta.balance_available`: `true` apenas quando todos os saldos abrangidos são válidos; quando `false`, o cliente não deve apresentar um total parcial como saldo disponível.
+
+A leitura é fornecida pelo serviço comum `AccountBalanceService`. O saldo do Dashboard usa as contas ativas; a Rota Financeira usa o mesmo cálculo restringido às contas ativas BANK/CASH/WALLET. Cartões de crédito não integram o saldo de caixa. A Rota acrescenta separadamente os efeitos pendentes na projeção; não os grava nem os inclui no saldo efetivo.
+
+Este contrato documenta a resposta implementada; não autoriza cache persistente de saldo nem mutação direta de saldos nas contas.
+
 ## Entidades — operações base
 
 ### Conta financeira
@@ -213,3 +224,12 @@ Campos da resposta `data`:
 - `overdue_total`: total das saídas vencidas, como string decimal.
 
 A projeção começa no saldo de referência e não reaplica efeitos realizados já incluídos nele. Pendentes vencidas permanecem no resumo de vencidos; não são realizadas nem reagendadas automaticamente. Faturas são agregadas pelo serviço comum de resumo e projetadas uma única vez.
+
+
+## Contas — read model de saldos atuais
+
+`GET /api/accounts` devolve cada conta com `current_balance` (`DECIMAL` como string ou `null`) calculado pelo `AccountBalanceService`. O saldo inclui apenas lançamentos `REALIZED` dirigidos à conta, com `effective_at` até ao fim do dia local atual. O lançamento de saldo inicial está incluído pela sua data efetiva. Pendentes/vencidos não entram neste saldo.
+
+A resposta inclui `meta.total_current_balance` e `meta.balance_available`. O total agrega todas as contas do utilizador, ativas e encerradas; o filtro da interface não altera o total. Se algum lançamento realizado impedir um cálculo seguro, o saldo afetado e o total são `null` (indisponível), nunca zero presumido.
+
+A Rota Financeira usa o mesmo serviço para obter o saldo efetivo de referência. A partir desse saldo, calcula separadamente a projeção: movimentos pendentes, incluindo vencidos, afetam o saldo projetado na data planeada, mas não o saldo atual de Contas nem o estado real da operação.

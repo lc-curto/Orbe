@@ -25,6 +25,7 @@ export type Account = {
   name: string
   account_type: 'BANK' | 'CASH' | 'WALLET'
   status: string
+  current_balance?: string | null
 }
 
 export type Category = {

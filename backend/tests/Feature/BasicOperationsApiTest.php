@@ -6,6 +6,8 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\FinancialAccount;
+use App\Models\FinancialEntry;
+use App\Models\Operation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
@@ -29,6 +31,58 @@ final class BasicOperationsApiTest extends TestCase
         ]);
         $response->assertCreated()->assertJsonPath('data.operation_type', 'EXPENSE')->assertJsonCount(1, 'data.entries');
         $this->assertDatabaseHas('financial_entries', ['account_id' => $account['id'], 'effect' => 'DECREASE', 'amount' => '12.5000']);
+    }
+
+
+    #[Test]
+    public function account_read_model_calculates_current_balance_from_realized_entries_only(): void
+    {
+        $user = User::factory()->create();
+        $account = FinancialAccount::query()->create([
+            'user_id' => $user->id, 'name' => 'Conta principal', 'account_type' => 'BANK', 'status' => 'ACTIVE',
+        ]);
+
+        $today = now()->startOfDay();
+        $entries = [
+            ['ACCOUNT_OPENING_BALANCE', '1200.0000', 'INCREASE', $today->copy()->subDays(20)->setTime(9, 0)->toDateTimeString()],
+            ['INCOME', '1800.0000', 'INCREASE', $today->copy()->subDays(10)->setTime(10, 0)->toDateTimeString()],
+            ['EXPENSE', '45.0000', 'DECREASE', $today->copy()->subDays(3)->setTime(16, 0)->toDateTimeString()],
+            ['INCOME', '500.0000', 'INCREASE', $today->copy()->addDays(10)->setTime(9, 0)->toDateTimeString()],
+        ];
+
+        foreach ($entries as [$type, $amount, $effect, $date]) {
+            $operation = Operation::query()->create([
+                'user_id' => $user->id,
+                'operation_type' => $type,
+                'state' => 'REALIZED',
+                'amount' => $amount,
+                'effective_at' => $date,
+            ]);
+            FinancialEntry::query()->create([
+                'user_id' => $user->id,
+                'operation_id' => $operation->id,
+                'account_id' => $account->id,
+                'amount' => $amount,
+                'effect' => $effect,
+                'state' => 'REALIZED',
+                'effective_at' => $date,
+            ]);
+        }
+
+        Operation::query()->create([
+            'user_id' => $user->id,
+            'operation_type' => 'EXPENSE',
+            'state' => 'PENDING',
+            'amount' => '300.0000',
+            'planned_at' => $today->copy()->addDays(5),
+        ]);
+
+        Sanctum::actingAs($user);
+        $this->getJson('/api/accounts')
+            ->assertOk()
+            ->assertJsonPath('data.0.current_balance', '2955.0000')
+            ->assertJsonPath('meta.total_current_balance', '2955.0000')
+            ->assertJsonPath('meta.balance_available', true);
     }
 
     #[Test]

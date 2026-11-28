@@ -121,12 +121,25 @@ A Rota não cria regras de negócio, entidades, operações, motor ou base de da
 - Após o PR #7, a workflow `Web CI` passou lint, TypeScript e build de produção na branch `feature/reports-settings-ui-clean` (PR #9, run 45975451168, commit `71cff376`). A QA visual/responsiva em desktop/tablet/mobile continua pendente. O rate limit da Vercel é um limite de deploy e não invalida o CI concluído.
 - Formulários de escrita, consulta/liquidação contextual de obrigações e projeções reais permanecem por implementar/validar. A ausência de página autónoma de Dívidas é uma decisão aprovada, não uma funcionalidade em falta.
 
-## Próxima sequência recomendada
-1. QA visual/responsiva de Relatórios e Configurações em desktop/tablet/mobile, incluindo gráfico diário, cabeçalho/seletor, estados loading/erro/vazio, layout de Perfil sem quebra artificial, lista de 10 moedas, persistência do símbolo e alternância/persistência do tema claro/escuro.
-2. Validar a regra pendente→realizado no frontend: sem destino no pendente; conta obrigatória na confirmação.
-3. Desenhar/validar detalhes e modais de Movimentos e Cartões/faturas, incluindo consulta/liquidação de obrigações associadas.
-4. Fechar os read models financeiros ainda pendentes (classificação fixa/variável, estimativa variável e contratos de recorrências/planos fora do read model atual) e implementar os formulários suportados.
-5. Executar auditoria final de consistência entre documentação, API, frontend e modelo ER.
+## Estado da PR #14 — QA financeiro e ajustes da Rota (2026-11-28)
+
+Implementado na branch `fix/route-overdue-qa-seed-data`:
+- Corrigida a leitura de saldo por conta e saldo disponível no Dashboard com reutilização de `AccountBalanceService`; valor agregado fica indisponível se houver saldo de conta ativa inválido, sem apresentar soma parcial.
+- Saldo de referência da Rota usa as mesmas contas ativas elegíveis do Dashboard (BANK/CASH/WALLET); operações pendentes afetam projeção, não saldo efetivo.
+- Rota: tratamento visual/consulta de operações vencidas, janela e dados QA para jan–mar/2027, atalho “Hoje” e ajustes de interação/layout.
+- Sidebar desktop sticky durante a rolagem, com altura da viewport dinâmica; navegação mantém scroll interno e rodapé fixo no viewport.
+- Documentação do seeder QA e comportamento foi atualizada; dados de QA são exclusivamente locais/desenvolvimento.
+
+Validação automática do commit `9f85f63887d2285517c5b64f499c6b9677b86a10`: Web CI, Backend CI e PR Quality Gate concluídos com sucesso. **QA visual manual ainda não foi executado**: validar Dashboard, Contas, Rota e sidebar em desktop/tablet/mobile, incluindo scroll da sidebar, filtros, vencidos e equivalência de saldos. A PR não deve ser considerada visualmente aprovada apenas pelos checks automáticos.
+
+## Próxima sequência recomendada (sem avançar sobre dependências ausentes)
+1. Executar QA manual da PR #14: Dashboard e Contas (saldo por conta/total), Rota (saldo de referência, pendentes/vencidos e atalho Hoje) e sidebar sticky, em desktop/tablet/mobile e temas claro/escuro. Corrigir apenas defeitos observados nesta entrega.
+2. Integrar a PR #14 na `main` após o QA manual. Checks automáticos estão verdes; a validação visual é o único gate conhecido ainda pendente.
+3. Depois da integração, avançar para QA e correções isoladas de Relatórios/Configurações, sem introduzir fluxos financeiros que dependam de formulários ou contratos não concluídos.
+4. Próxima funcionalidade candidata: completar/validar o fluxo frontend de pendente→realizado apenas onde o formulário e endpoint de confirmação já existem; primeiro confirmar cobertura real e não criar UI para destinos de cartão/fatura ainda sem contrato específico.
+5. Só depois especificar e implementar detalhes/liquidação de obrigações, planos de pagamento e recorrências projetadas, pois dependem de contratos de domínio/API ainda incompletos.
+6. Manter classificação fixa/variável e estimativa variável bloqueadas até aprovação da fórmula, janela histórica, categorias e tratamento de `UNCLASSIFIED`.
+7. Auditoria final de consistência entre documentação, API, frontend e modelo ER após os fluxos aprovados estarem implementados.
 
 ## Critério para novas alterações estruturais
 A implementação estrutural do frontend e do núcleo já está em curso e tem entregas publicadas na `main`. Para novas alterações estruturais, continuam obrigatórios: arquitetura/UML aprovada, precisão monetária e integridade transacional definidas, fluxos críticos especificados e critérios de aceitação/testes identificados. Não interpretar uma entrega parcial como aprovação de contratos ou funcionalidades ainda pendentes.
@@ -138,7 +151,7 @@ Ao fechar uma decisão, atualizar o documento de origem, o estado nesta lista e 
 
 ---
 
-> Documento de controlo do projeto. Atualizado em 2026-11-26.
+ > Documento de controlo do projeto. Atualizado em 2026-11-28.
 >
 > Este documento regista o estado conhecido no repositório e orienta a sequência de trabalho. Um item marcado como concluído significa que existe implementação ou decisão versionada; não significa que todos os fluxos relacionados estejam completos ou que a auditoria final tenha sido concluída.
 
@@ -739,4 +752,4 @@ Implementado no PR #13, branch `docs/financial-route-projection-rules` (PR abert
 
 **Limitação de escala explicitamente registada:** o agregado de saldo de referência ainda percorre os lançamentos históricos elegíveis dentro do MySQL, embora não os hidrate individualmente em PHP. Para latência previsível com históricos muito grandes, falta implementar snapshots/checkpoints transacionais de saldo, com atualização atómica em todos os fluxos de escrita e reconciliação. Não usar cache persistente de saldo antes dessa garantia. O loader financeiro partilhado também continua a carregar todas as operações através de `GET /api/operations`, e a Rota resolve os IDs de detalhe a partir desse conjunto. Portanto, a leitura do endpoint da Rota está limitada por período, mas o carregamento inicial global ainda não está paginado. Próxima etapa recomendada: paginação por cursor e filtros SQL em Movimentos, seguida de read models agregados para Dashboard/Relatórios e detalhe de operações por IDs.
 
-CI Backend, Web e PR Quality Gate passaram no commit `631aa2e83246ebae3df93691b5593416773f6f31` (Backend CI `46062138308`, Web CI `46062138305`, PR Quality Gate `46062138314`). QA visual manual e medição de latência com volume de dados sintético continuam pendentes. Não integrar na `main` sem aprovação.
+Histórico de validação anterior: CI Backend, Web e PR Quality Gate passaram no commit `631aa2e83246ebae3df93691b5593416773f6f31` (Backend CI `46062138308`, Web CI `46062138305`, PR Quality Gate `46062138314`). Este registo não substitui o estado atual acima. Para a PR #14, os checks automáticos passaram no commit `9f85f63887d2285517c5b64f499c6b9677b86a10`; os commits de documentação posteriores estão a ser revalidados. A integração da PR #14 continua condicionada ao QA visual manual registado na secção atual.

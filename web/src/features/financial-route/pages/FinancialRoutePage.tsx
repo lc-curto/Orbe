@@ -6,7 +6,7 @@ import { RouteDayModal } from '../components/RouteDayModal'
 import { RouteMonthCard } from '../components/RouteMonthCard'
 import { useFinancialRouteData } from '../hooks/useFinancialRouteData'
 import type { RouteFlowFilter } from '../types'
-import { formatFullDate, formatMonthRange, shiftMonth } from '../utils'
+import { formatDay, formatMonth, formatMonthRange, shiftMonth } from '../utils'
 import { formatMoneyUnits, isDisplayedNegative, localDateKey, parseMoneyUnits } from '../projection'
 import { useCurrency } from '../../currency/useCurrency'
 
@@ -58,13 +58,18 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
 
   const filteredMonths = useMemo(() => (months ?? []).slice(0, visibleMonthCount).map((item) => {
     let days = onlyMovementDays
-      ? item.days.filter((day) => hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses))
+      ? item.days.filter((day) => hasPositiveAmount(day.income) || hasPositiveAmount(day.expenses) || day.overdueItems.length > 0)
       : item.days
-    if (flowFilter === 'INCOME') days = days.filter((day) => hasPositiveAmount(day.income))
-    if (flowFilter === 'EXPENSE') days = days.filter((day) => hasPositiveAmount(day.expenses))
+    if (flowFilter === 'INCOME') days = days.filter((day) => hasPositiveAmount(day.income) || day.overdueItems.some((item) => item.nature === 'INCOME'))
+    if (flowFilter === 'EXPENSE') days = days.filter((day) => hasPositiveAmount(day.expenses) || day.overdueItems.some((item) => item.nature === 'EXPENSE'))
     return { month: item, days }
   }), [months, visibleMonthCount, onlyMovementDays, flowFilter])
   const mobileMonth = filteredMonths[0]?.month
+  const todayMonth = localDateKey().slice(0, 7)
+  const desktopWindowEnd = shiftMonth(month, DESKTOP_VISIBLE_MONTHS - 1)
+  const showReturnToToday = isDesktopRoute
+    ? todayMonth < month || todayMonth > desktopWindowEnd
+    : month !== todayMonth
   const mobileVisibleDays = filteredMonths[0]?.days ?? []
   const loading = financeLoading || routeData.loading
   const error = routeData.error ?? financeError
@@ -117,30 +122,25 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
     {!loading && !error && !projection ? <div className="route-status" role="status">A projeção financeira está indisponível.</div> : null}
 
     {!loading && projection ? <>
-      {projection.overdueItems.length > 0 ? <details className="route-overdue-summary">
-        <summary>Itens vencidos/por confirmar · {formatAmount(projection.overdueTotal)} {symbol} em saídas pendentes</summary>
-        <ul>
-          {projection.overdueItems.map((item) => <li key={item.id}>
-            <span>{item.label} · {item.date ? formatFullDate(item.date) : 'Sem data prevista'}</span>
-            <strong className={item.nature === 'INCOME' ? 'route-month-income' : 'route-month-expenses'}>{item.nature === 'INCOME' ? '+ ' : '− '}{formatAmount(item.amount)} {symbol}</strong>
-          </li>)}
-        </ul>
-      </details> : null}
-
       <div className="route-desktop-controls">
         <div className="route-flow-filters" aria-label="Filtrar meses por movimento">
           {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
         </div>
-        <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
+        <div className="route-desktop-control-actions">
+          {showReturnToToday ? <button type="button" className="route-return-today" onClick={() => onMonthChange(todayMonth)}>Hoje</button> : null}
+          <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
+        </div>
       </div>
 
+      {!isDesktopRoute ? <>
       <div className="route-mobile-summary orbe-financial-highlight-card">
-        <div className="route-mobile-ending"><span>Saldo final projetado</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{formatAmount(mobileEndingBalance)} {mobileEndingBalance === null ? '' : symbol}</strong></div>
+        <div className="route-mobile-ending"><span>Saldo final projetado · até {mobileMonth?.days[mobileMonth.days.length - 1]?.date ? formatDay(mobileMonth.days[mobileMonth.days.length - 1].date) + ' · ' + formatMonth(mobileMonth.days[mobileMonth.days.length - 1].date.slice(0, 7), true) : 'fim do mês selecionado'}</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{formatAmount(mobileEndingBalance)} {mobileEndingBalance === null ? '' : symbol}</strong></div>
         <div className="route-mobile-totals">
           <span className="route-month-income">+ {formatAmount(mobileMonth?.totals.income ?? null)} {symbol} entradas</span>
           <span className="route-month-expenses">− {formatAmount(mobileMonth?.totals.expenses ?? null)} {symbol} saídas</span>
         </div>
       </div>
+      </> : null}
       <div className="route-mobile-flow-filters" aria-label="Filtrar o mês por movimento">
         {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
       </div>
@@ -151,6 +151,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
 
       <div className="route-mobile-month" ref={mobileMonthRef}>
         <div className="route-mobile-toolbar">
+          {showReturnToToday ? <button type="button" className="route-return-today" onClick={() => onMonthChange(todayMonth)}>Hoje</button> : null}
           <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
           <span className="route-days-count">{mobileVisibleDays.length} dias</span>
         </div>
@@ -158,6 +159,6 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
       </div>
     </> : null}
 
-    {selectedDay && selectedDay.periodMonth === month && activeDay ? <RouteDayModal date={selectedDay.date} operations={activeDay.operations} invoices={activeDay.invoices} filter={detailFilter} onFilterChange={setDetailFilter} onClose={() => setSelectedDay(null)} /> : null}
+    {selectedDay && selectedDay.periodMonth === month && activeDay ? <RouteDayModal date={selectedDay.date} operations={activeDay.operations} invoices={activeDay.invoices} overdueItems={activeDay.overdueItems} filter={detailFilter} onFilterChange={setDetailFilter} onClose={() => setSelectedDay(null)} /> : null}
   </section>
 }

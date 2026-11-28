@@ -48,11 +48,14 @@ php artisan db:seed --class=QaFinancialDataSeeder
 O seeder é idempotente e cria/atualiza dados associados ao utilizador local `test@example.com` (utilizador de desenvolvimento criado por `DatabaseSeeder`; palavra-passe local padrão `password`):
 - 2 contas ativas (BANK e CASH) e 1 conta encerrada;
 - 4 categorias ativas de despesa e 3 de receita;
-- 1 categoria de despesa arquivada, para validar filtros de categorias ativas.
+- 1 categoria de despesa arquivada, para validar filtros de categorias ativas;
+- saldo inicial e lançamentos realizados de exemplo;
+- uma despesa pendente vencida de 100 € (`Supermercado`), uma despesa futura e um rendimento futuro;
+- nove movimentos pendentes distribuídos por janeiro, fevereiro e março de 2027, para validar a visão de 3 meses e os cabeçalhos mensais.
 
-O `DatabaseSeeder` também chama este seeder, por isso `php artisan db:seed` prepara o conjunto QA completo. Os registos têm prefixo `QA —`.
+O `DatabaseSeeder` também chama este seeder, por isso `php artisan db:seed` prepara o conjunto QA completo. Os registos têm prefixo `QA —`, exceto o movimento `Supermercado`, que reproduz o exemplo visível na interface.
 
-O seeder **não** cria saldo inicial, operações ou lançamentos. Saldos iniciais devem ser criados pelo fluxo financeiro próprio; não se devem inserir saldos diretamente na conta. Usa apenas em base de dados local/de desenvolvimento.
+O seeder usa chaves de idempotência e atualiza os registos QA existentes; pode ser executado repetidamente sem duplicar os exemplos. Usa apenas em base de dados local/de desenvolvimento.
 
 ## Refatoração e boas práticas — obrigatórias
 

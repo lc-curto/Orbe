@@ -7,8 +7,9 @@ import type { DashboardMovement } from './DashboardSections'
 import type { CurrencySymbol } from '../../currency/types'
 
 
-export function MobileDashboard({ period, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading, authError, logoutError }: {
+export function MobileDashboard({ period, availableBalance, month, onMonthChange, card, invoice, setActiveKey, userName, currencySymbol, movements, categories, loading, authError, logoutError }: {
   period: { label: string; shortLabel: string; date: string; income: string; expenses: string }
+  availableBalance: string | null
   month: string
   onMonthChange: (month: string) => void
   card?: FinancialCard
@@ -39,8 +40,8 @@ export function MobileDashboard({ period, month, onMonthChange, card, invoice, s
         >
           <Stack gap={12}>
             <Text color="#dbeafe" fontSize={11} fontWeight="800" letterSpacing={1}>SALDO DISPONÍVEL</Text>
-            <Text color="#ffffff" fontSize={28} fontWeight="800">Indisponível</Text>
-            <Text color="#dbeafe" fontSize={12}>O read model atual não fornece saldo de contas.</Text>
+            <Text color="#ffffff" fontSize={28} fontWeight="800">{availableBalance ?? 'Indisponível'}</Text>
+            <Text color="#dbeafe" fontSize={12}>{availableBalance === null ? 'Não foi possível calcular o saldo das contas ativas.' : 'Saldo atual das contas ativas.'}</Text>
             <Separator borderColor="rgba(255,255,255,0.24)" />
             <Row className="dashboard-card-header" width="100%" style={{ justifyContent: 'space-between' }}>{[['Ganhos', period.income], ['Gastos', period.expenses]].map(([label, value]) => <Stack key={label} gap={3} flex={1}><Text color="#dbeafe" fontSize={11}>{label}</Text><Text color="#ffffff" fontSize={13} fontWeight="800">{value}</Text></Stack>)}</Row>
           </Stack>

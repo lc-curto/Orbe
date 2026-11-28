@@ -1,11 +1,16 @@
 /* Responsive shell: one visible layout tree at each breakpoint. */
 .desktop-layout { display: flex; flex: 1 1 auto; align-items: stretch; min-height: 100vh; }
 .desktop-sidebar {
+  position: sticky;
+  top: 0;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  height: 100dvh;
   max-height: 100vh;
+  max-height: 100dvh;
   min-height: 0;
+  align-self: flex-start;
   overflow: hidden;
   border-right: 1px solid var(--orbe-border);
   background: var(--orbe-surface);

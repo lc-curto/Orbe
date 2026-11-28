@@ -1,6 +1,7 @@
 import { PageHeader } from '../../../shared/components/PageHeader'
 import { useEffect, useRef, useState } from 'react'
 import type { Account } from '../../../api/types'
+import { formatCurrency } from '../../currency/formatCurrency'
 
 type Props = {
   accounts: Account[]
@@ -9,6 +10,20 @@ type Props = {
 }
 
 type AccountFilter = 'ACTIVE' | 'CLOSED'
+
+function amountToUnits(value: string): bigint {
+  const negative = value.startsWith('-')
+  const normalized = negative ? value.slice(1) : value
+  const [whole, fraction = ''] = normalized.split('.')
+  const units = BigInt(whole || '0') * 10000n + BigInt((fraction + '0000').slice(0, 4))
+  return negative ? -units : units
+}
+
+function unitsToAmount(value: bigint): string {
+  const negative = value < 0n
+  const absolute = negative ? -value : value
+  return (negative ? '-' : '') + String(absolute / 10000n) + '.' + String(absolute % 10000n).padStart(4, '0')
+}
 
 const accountTypeLabel: Record<Account['account_type'], string> = {
   BANK: 'Banco',
@@ -30,6 +45,10 @@ export function AccountsPage({ accounts, loading, error }: Props) {
   const activeAccounts = accounts.filter((account) => account.status === 'ACTIVE')
   const closedAccounts = accounts.filter((account) => account.status !== 'ACTIVE')
   const visibleAccounts = filter === 'ACTIVE' ? activeAccounts : closedAccounts
+  const balancesAvailable = accounts.every((account) => account.current_balance !== null && account.current_balance !== undefined)
+  const totalBalance = balancesAvailable
+    ? unitsToAmount(accounts.reduce((total, account) => total + amountToUnits(account.current_balance ?? '0.0000'), 0n))
+    : null
 
   useEffect(() => {
     if (openMenuId === null) return
@@ -54,9 +73,9 @@ export function AccountsPage({ accounts, loading, error }: Props) {
     <PageHeader title="Contas" titleId="accounts-page-title" className="accounts-page-header" />
 
     <div className="accounts-total-card orbe-financial-highlight-card">
-      <span className="accounts-total-label">Saldo total</span>
-      <strong className="accounts-total-value">—</strong>
-      <p className="accounts-readonly-note">O saldo calculado será apresentado quando o modelo de saldos estiver disponível.</p>
+      <span className="accounts-total-label">Saldo total das contas</span>
+      <strong className="accounts-total-value">{loading ? 'A calcular…' : totalBalance === null ? '—' : formatCurrency(totalBalance)}</strong>
+      {!loading && totalBalance === null ? <p className="accounts-readonly-note">Saldo indisponível: existe pelo menos um lançamento realizado sem dados financeiros válidos.</p> : null}
     </div>
 
     <div className="accounts-filter-row">
@@ -98,7 +117,7 @@ export function AccountsPage({ accounts, loading, error }: Props) {
             <span>{accountTypeLabel[account.account_type]}</span>
           </div>
           <div className="accounts-row-balance">
-            <strong>—</strong>
+            <strong>{account.current_balance === null || account.current_balance === undefined ? '—' : formatCurrency(account.current_balance)}</strong>
             <span>Saldo atual</span>
           </div>
           <div className="accounts-row-actions">

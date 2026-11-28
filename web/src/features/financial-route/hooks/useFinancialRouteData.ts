@@ -170,6 +170,7 @@ export function useFinancialRouteData(
         date: day.date,
         income: day.income,
         expenses: day.expenses,
+        overdueItems: response.overdue_items.filter((item) => item.date === day.date),
         balance: day.balance,
         operations: day.operation_ids.map((id) => operationById.get(id)).filter((operation): operation is Operation => operation !== undefined),
         invoices: day.invoice_ids.map((id) => invoiceById.get(id)).filter((invoice): invoice is CardInvoice => invoice !== undefined),

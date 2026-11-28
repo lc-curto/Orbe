@@ -105,6 +105,7 @@ A separação operação/lançamentos (1:N) está aprovada. O destino de cada la
 - A projeção explícita reserva apenas a parcela da obrigação que lhe está associada. A liquidação residual automática cobre apenas o valor não reservado.
 - Um plano não confirmado até à data prevista passa a vencido; deixa de ser uma saída futura na data passada, mas a obrigação permanece em aberto/vencida.
 - Não existe débito automático na Rota Financeira. O sistema não presume execução nem cria reagendamento automático; o utilizador deve registar a ação efetiva de pagamento. Até essa confirmação, a obrigação permanece vencida e não é deslocada para uma nova data projetada.
+- A Rota mantém o item vencido visível na data original e identificado como vencido. Para responder à pergunta «se tudo tivesse acontecido como planeado, qual seria o meu saldo?», o vencido entra no fluxo projetado nessa data e altera o saldo projetado acumulado a partir daí, incluindo saldo final mensal e períodos seguintes. Continua pendente no sistema: não altera o saldo efetivo atual da conta, não é marcado como realizado e não é reagendado automaticamente.
 - A data de uma compra no cartão segue a regra e a configuração do ciclo do próprio cartão. A Rota utiliza a fatura à qual a compra foi efetivamente alocada pelo sistema, sem impor uma regra universal para compras no dia do fecho.
 - Um pagamento confirmado substitui o valor correspondente da projeção por lançamentos efetivos, sem duplicação.
 - Pagamento realizado não pode ter data efetiva futura. A data efetiva é a data real em que o pagamento aconteceu (hoje ou no passado); a Rota considera essa data, nunca uma data futura prevista nem o vencimento como se fossem pagamento.
@@ -210,3 +211,15 @@ Esta decisão complementa e, nos casos indicados, substitui a regra anterior que
 - Validar pertença do utilizador e estado ativo de conta/cartão; valores positivos; número de prestações válido; datas coerentes; e arredondamento monetário conforme ARC-003.
 
 ---
+
+
+## Saldo atual das contas — cálculo central
+
+- O saldo atual de cada conta é reconstruído exclusivamente a partir de `financial_entries` da própria conta, em estado `REALIZED`, com `effective_at` até ao fim do dia local de referência.
+- Cada lançamento `INCREASE` soma o valor; cada `DECREASE` subtrai. O valor armazenado deve ser não negativo; a direção pertence ao campo `effect`.
+- O saldo inicial da conta é um lançamento normal `ACCOUNT_OPENING_BALANCE` e participa uma única vez no saldo desde a sua data efetiva.
+- Operações pendentes, vencidas e projeções não alteram o saldo atual. Só entram na Rota Financeira.
+- Transferências afetam cada conta pela sua perna efetiva; no total consolidado das contas, as pernas de transferência anulam-se.
+- A conta é apresentada como indisponível, não como zero, se existir lançamento realizado sem data efetiva ou com valor/efeito inválido. O total consolidado também fica indisponível se algum saldo de conta necessário não puder ser determinado.
+- `AccountBalanceService` é a fonte de cálculo partilhada pela API de Contas e pelo saldo de referência da Rota. Não duplicar fórmulas de saldo nos controllers ou componentes frontend.
+- O total apresentado em Contas soma todas as contas do utilizador, incluindo contas encerradas; o filtro de estado altera apenas a lista, não o total patrimonial.
