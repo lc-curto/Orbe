@@ -131,7 +131,7 @@ final class FinancialRouteReadApiTest extends TestCase
     }
 
     #[Test]
-    public function overdue_pending_items_are_not_automatically_rescheduled(): void
+    public function overdue_pending_items_reduce_projected_balance_without_being_rescheduled(): void
     {
         $user = User::factory()->create();
         Sanctum::actingAs($user);
@@ -166,8 +166,12 @@ final class FinancialRouteReadApiTest extends TestCase
 
         $this->getJson('/api/financial-route?month=2026-11')
             ->assertOk()
-            ->assertJsonPath('data.months.0.days.19.expenses', '0.0000')
-            ->assertJsonPath('data.months.0.days.26.balance', '1000.0000')
+            ->assertJsonPath('data.months.0.days.19.expenses', '150.0000')
+            ->assertJsonPath('data.months.0.days.19.balance', '850.0000')
+            ->assertJsonPath('data.months.0.days.26.balance', '850.0000')
+            ->assertJsonPath('data.months.0.totals.expenses', '150.0000')
+            ->assertJsonPath('data.months.0.ending_balance', '850.0000')
+            ->assertJsonPath('data.months.1.opening_balance', '850.0000')
             ->assertJsonPath('data.overdue_total', '150.0000')
             ->assertJsonPath('data.overdue_items.0.operation_id', $pending->id)
             ->assertJsonPath('data.overdue_items.0.date', '2026-11-20')
