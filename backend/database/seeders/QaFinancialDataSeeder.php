@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\DB;
 /**
  * Creates a predictable, non-destructive dataset for local UI/API QA.
  *
- * Intended for development databases only. It does not create opening-balance
- * entries; balances must be produced by the application's financial engine.
+ * Intended for development databases only. It creates opening-balance entries
+ * through financial_entries, plus repeatable realized and pending operations.
  */
 final class QaFinancialDataSeeder extends Seeder
 {
