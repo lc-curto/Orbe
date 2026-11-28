@@ -14,7 +14,7 @@ final class FinancialRouteReadService
 {
     private const PROJECTION_MONTHS = 24;
 
-    public function __construct(private readonly CardInvoiceSummaryService $invoiceSummaries) {}
+    public function __construct(\n        private readonly CardInvoiceSummaryService $invoiceSummaries,\n        private readonly AccountBalanceService $accountBalances,\n    ) {}
 
     /** @return array<string, mixed> */
     public function build(int $userId, string $firstMonth, int $projectionMonths = self::PROJECTION_MONTHS): array
@@ -43,18 +43,10 @@ final class FinancialRouteReadService
             $projectionValid = true;
 
             if ($accountIds !== []) {
-                $realizedAggregate = DB::table('financial_entries')
-                    ->where('user_id', $userId)
-                    ->whereIn('account_id', $accountIds)
-                    ->where('state', 'REALIZED')
-                    ->selectRaw("COALESCE(SUM(CASE WHEN effective_at <= ? AND effect = 'INCREASE' THEN amount WHEN effective_at <= ? AND effect = 'DECREASE' THEN -amount ELSE 0 END), 0) as balance", [$today.' 23:59:59', $today.' 23:59:59'])
-                    ->selectRaw("COALESCE(SUM(CASE WHEN effective_at IS NULL OR amount < 0 OR effect NOT IN ('INCREASE', 'DECREASE') THEN 1 ELSE 0 END), 0) as invalid_count")
-                    ->selectRaw('COALESCE(SUM(CASE WHEN effective_at > ? THEN 1 ELSE 0 END), 0) as future_count', [$today.' 23:59:59'])
-                    ->first();
-
-                $referenceBalance = bcadd((string) ($realizedAggregate->balance ?? '0'), '0', 4);
-                $referenceBalanceValid = (int) ($realizedAggregate->invalid_count ?? 0) === 0;
-                $projectionValid = (int) ($realizedAggregate->future_count ?? 0) === 0;
+                $balanceSnapshot = $this->accountBalances->snapshot($userId, $today);
+                $referenceBalance = bcadd((string) ($balanceSnapshot['total'] ?? '0'), '0', 4);
+                $referenceBalanceValid = $balanceSnapshot['valid'];
+                $projectionValid = $balanceSnapshot['future_count'] === 0;
 
                 $openingAggregate = DB::table('financial_entries')
                     ->where('user_id', $userId)
