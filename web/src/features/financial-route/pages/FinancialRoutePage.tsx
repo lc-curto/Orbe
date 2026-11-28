@@ -124,6 +124,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
         <label className="route-switch"><input type="checkbox" checked={onlyMovementDays} onChange={(event) => setOnlyMovementDays(event.target.checked)} /><span className="route-switch-track" aria-hidden="true" /><span>Só dias com movimento</span></label>
       </div>
 
+      {!isDesktopRoute ? <>
       <div className="route-mobile-summary orbe-financial-highlight-card">
         <div className="route-mobile-ending"><span>Saldo final projetado · até {mobileMonth?.days[mobileMonth.days.length - 1]?.date ? formatDay(mobileMonth.days[mobileMonth.days.length - 1].date) + ' · ' + formatMonth(mobileMonth.days[mobileMonth.days.length - 1].date.slice(0, 7), true) : 'fim do mês selecionado'}</span><strong className={mobileEndingNegative ? 'route-balance-negative' : ''}>{formatAmount(mobileEndingBalance)} {mobileEndingBalance === null ? '' : symbol}</strong></div>
         <div className="route-mobile-totals">
@@ -131,6 +132,7 @@ export function FinancialRoutePage({ operations, invoices, loading: financeLoadi
           <span className="route-month-expenses">− {formatAmount(mobileMonth?.totals.expenses ?? null)} {symbol} saídas</span>
         </div>
       </div>
+      </> : null}
       <div className="route-mobile-flow-filters" aria-label="Filtrar o mês por movimento">
         {filterOptions.map((option) => <button key={option.value} type="button" className={flowFilter === option.value ? 'active' : ''} aria-pressed={flowFilter === option.value} onClick={() => setFlowFilter(option.value)}>{option.label}</button>)}
       </div>
