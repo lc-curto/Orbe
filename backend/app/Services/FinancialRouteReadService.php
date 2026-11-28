@@ -133,6 +133,11 @@ final class FinancialRouteReadService
                 }
                 if ($date < $today) {
                     $overdueItems[] = $this->overdueOperation($operation, $date, $amount, $nature);
+                    $flowNature = $nature === 'INCOME' ? 'income' : 'expenses';
+                    $this->addFlow($plannedFlowByDate, $date, $flowNature, $amount);
+                    $net = $nature === 'INCOME' ? bcadd($amount, '0', 4) : bcsub('0', $amount, 4);
+                    $plannedNetByDate[$date] = bcadd($plannedNetByDate[$date] ?? '0.0000', $net, 4);
+                    $this->addId($operationIdsByDate, $date, (int) $operation->id);
 
                     continue;
                 }
@@ -176,6 +181,11 @@ final class FinancialRouteReadService
                         'amount' => $amount,
                         'nature' => 'EXPENSE',
                     ];
+                    if ($dueDate !== null) {
+                        $this->addFlow($plannedFlowByDate, $dueDate, 'expenses', $amount);
+                        $plannedNetByDate[$dueDate] = bcsub($plannedNetByDate[$dueDate] ?? '0.0000', $amount, 4);
+                        $this->addId($invoiceIdsByDate, $dueDate, (int) $invoice->id);
+                    }
 
                     continue;
                 }
@@ -227,9 +237,8 @@ final class FinancialRouteReadService
                 return $found < 0 ? '0.0000' : $prefix[$found];
             };
 
-            $plannedBeforeToday = $prefixAt($plannedDates, $plannedPrefix, $this->shiftDate($today, -1));
             $balanceCache = [];
-            $balanceAt = function (string $date) use (&$balanceCache, $referenceBalance, $referenceBalanceValid, $projectionValid, $openingBalanceBeforeWindow, $actualDates, $actualPrefix, $plannedDates, $plannedPrefix, $plannedBeforeToday, $prefixAt, $today): ?string {
+            $balanceAt = function (string $date) use (&$balanceCache, $referenceBalance, $referenceBalanceValid, $projectionValid, $openingBalanceBeforeWindow, $actualDates, $actualPrefix, $plannedDates, $plannedPrefix, $prefixAt, $today): ?string {
                 if (array_key_exists($date, $balanceCache)) {
                     return $balanceCache[$date];
                 }
@@ -239,14 +248,14 @@ final class FinancialRouteReadService
 
                 if ($date < $today) {
                     $actualThroughDate = $prefixAt($actualDates, $actualPrefix, $date);
-                    $balance = bcadd($openingBalanceBeforeWindow, $actualThroughDate, 4);
+                    $plannedThroughDate = $prefixAt($plannedDates, $plannedPrefix, $date);
+                    $balance = bcadd(bcadd($openingBalanceBeforeWindow, $actualThroughDate, 4), $plannedThroughDate, 4);
                 } else {
                     if ($projectionValid === false) {
                         return null;
                     }
                     $plannedThroughDate = $prefixAt($plannedDates, $plannedPrefix, $date);
-                    $plannedSinceToday = bcsub($plannedThroughDate, $plannedBeforeToday, 4);
-                    $balance = bcadd($referenceBalance, $plannedSinceToday, 4);
+                    $balance = bcadd($referenceBalance, $plannedThroughDate, 4);
                 }
 
                 $balanceCache[$date] = $balance;
@@ -265,9 +274,7 @@ final class FinancialRouteReadService
                 for ($day = 1; $day <= $bounds['days']; $day++) {
                     $date = $bounds['prefix'].str_pad((string) $day, 2, '0', STR_PAD_LEFT);
                     $actual = $actualFlowByDate[$date] ?? ['income' => '0.0000', 'expenses' => '0.0000'];
-                    $planned = $date >= $today
-                        ? ($plannedFlowByDate[$date] ?? ['income' => '0.0000', 'expenses' => '0.0000'])
-                        : ['income' => '0.0000', 'expenses' => '0.0000'];
+                    $planned = $plannedFlowByDate[$date] ?? ['income' => '0.0000', 'expenses' => '0.0000'];
                     $income = bcadd($actual['income'], $planned['income'], 4);
                     $expenses = bcadd($actual['expenses'], $planned['expenses'], 4);
                     $incomeTotal = bcadd($incomeTotal, $income, 4);
